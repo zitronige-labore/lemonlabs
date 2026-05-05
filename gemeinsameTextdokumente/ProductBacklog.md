@@ -156,12 +156,12 @@ Ziel: Sichere Speicherung und Verwaltung aller Nutzerdaten.
 
 ### FA 029 – Daten speichern
 Als Nutzer möchte ich meine Daten speichern können, damit ich sie später einsehen oder exportieren kann.  
-**Akzeptanzkriterium:** Basisdaten und Symptome werden in DB gespeichert und einem Zugriffscode zugeordnet  
+**Akzeptanzkriterium:** Basisdaten, Zusatzangaben, Symptome und Einschätzung werden in DB gespeichert und einem Zugriffscode zugeordnet  
 **Priorität:** hoch  
 
 ### FA 030 – Daten abrufen
 Als Nutzer möchte ich meine Daten einsehen können, damit ich meine Angaben im Nachhinein nachvollziehen kann.   
-**Akzeptanzkriterium:** relevante Daten (Symptome, Basisangaben, Zusatzangaben) werden bei Abfrage per Zugriffscode vollständig und verständlich angezeigt  
+**Akzeptanzkriterium:** relevante Daten (Symptome, Basisangaben, Zusatzangaben, Einschätzung) werden bei Abfrage per Zugriffscode vollständig und verständlich angezeigt  
 **Priorität:** mittel  
 
 ### FA 031 – Daten löschen
