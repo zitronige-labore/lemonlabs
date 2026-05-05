@@ -4,8 +4,8 @@
 Ziel: Vollständige Erfassung grundlegender Nutzerdaten und Vorbereitung der Ersteinschätzung ohne inhaltliche Bewertung.
 
 ### FA 001 – Basisdaten erfassen
-Als Nutzer möchte ich grundlegende Angaben machen, damit eine genauere Einschätzung möglich ist.  
-**Akzeptanzkriterium:** Eingabefelder für Basisdaten (Alter, Geschlecht, Schwangerschaft, Stillzeit) sind vorhanden, Pflichtfelder werden validiert, Eingaben werden gespeichert  
+Als Nutzer möchte ich grundlegende Angaben machen, damit eine Ersteinschätzung durchgeführt werden kann.  
+**Akzeptanzkriterium:** Eingabefelder für Basisdaten (Alter, Geschlecht, Schwangerschaft, Stillzeit) sind vorhanden, Eingaben werden gespeichert  
 **Priorität:** hoch  
 
 ### FA 002 – Symptome finden und erfassen
