@@ -37,10 +37,19 @@ export async function saveFormData(formData: FormData, redFlags: any, selectedRe
         Insert into cases (age, sex)
         VALUES ($1, $2)
 
-        returning case_id
+        returning case_id;
         `,
         [age, sex]
     );
+
+    /*await connectionPool.query(
+        `
+        insert into assessments (access_code)
+        VALUES ($1)
+        `,
+        [accessCode]
+    );*/
+
 
     // test logs
     console.log("Formulardaten in DB gespeichert");
