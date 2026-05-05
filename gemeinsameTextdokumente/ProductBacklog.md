@@ -140,6 +140,11 @@ Als Nutzer möchte ich über die generellen Unsicherheiten und Grenzen der Anwen
 **Akzeptanzkriterium:** Hinweise zu Grenzen der Anwendung sind von Homepage abrufbar und werden vor Start der Einschätzung angezeigt, sie weisen darauf hin, dass keine medizinische Diagnose ersetzt wird und, dass das System durch Nutzung von llms Fehler machen kann  
 **Priorität:** hoch 
 
+### FA 052 – Red Flags im Offline-Modus anzeigen  
+Als Nutzer möchte ich auch ohne Internet kritische Symptome einsehen können, damit ich im Notfall reagieren kann.  
+**Akzeptanzkriterium:** Red Flags sind offline verfügbar und sichtbar  
+**Priorität:** mittel  
+
 
 ## Epic: Datenhaltung (hohe Priorität)
 Ziel: Sichere Speicherung und Verwaltung aller Nutzerdaten.
@@ -173,6 +178,11 @@ Als Nutzer möchte ich meine Daten für meinen persönlichen Gebrauch exportiere
 Als Nutzer möchte ich, dass meine Eingaben während einer Sitzung gespeichert werden, damit ich die Anwendung später fortsetzen kann.  
 **Akzeptanzkriterium:** Eingaben werden während der Nutzung gespeichert, Daten bleiben bei erneutem Aufruf der Anwendung erhalten  
 **Priorität:** mittel   
+
+### FA 049 – Offline-Speicherung
+Als Nutzer möchte ich Daten offline speichern können, um auch ohne Internet angegebene Daten später abrufen zu können.  
+**Akzeptanzkriterium:** Synchronisation erfolgt später  
+**Priorität:** niedrig 
 
 ## Epic: Transparenz (hohe Priorität)
 
@@ -245,6 +255,46 @@ Als Nutzer möchte ich die Anwendung ohne Registrierung oder Login nutzen könne
 **Akzeptanzkriterium:** Anwendung ist ohne Login zugänglich, alle Funktionen sind ohne Anmeldung nutzbar  
 **Priorität:** hoch  
 
+### FA 000 – Bedienungsanleitung
+Als Nutzer möchte ich zu jeder Seite Hilfestellung angeboten bekommen, um Unklarheiten bei der Anwendung aufklären zu können.  
+**Akzeptanzkriterium:** Auf jeder Seite befindet sich ein Hilfe-Button, Nach Anklicken wird eine Erklärung zur aktuellen Seite angezeigt  
+**Priorität:** hoch  
+
+### FA 048 – Offline-Modus
+Als Nutzer möchte ich die Anwendung offline nutzen können, damit ich im Falle keiner Internetverbindung trotzdem eine allgemeinere Handlungsempfehlung erhalten kann.  
+**Akzeptanzkriterium:** Ersatzfunktionen sind offline verfügbar  
+**Priorität:** niedrig  
+ 
+### FA 050 – Installierbarkeit
+Als Nutzer möchte ich die Anwendung installieren können, damit ich sie be Bedarf einfacher aufrufen kann.  
+**Akzeptanzkriterium:** Installation über Browser möglich  
+**Priorität:** niedrig  
+
+### FA 051 – Dark Mode einstellen
+Als Nutzer möchte ich zwischen hellem und dunklem Design wählen können, damit ich die Anwendung angenehmer nutzen kann.  
+**Akzeptanzkriterium:** Umschaltung zwischen hell und dunkel möglich  
+**Priorität:** niedrig  
+
+### FA 053 – Anleitung im Offline-Modus anzeigen
+Als Nutzer möchte ich auch ohne Internet eine Anleitung nutzen können, damit ich die Anwendung verstehe.  
+**Akzeptanzkriterium:** Anleitung ist offline abrufbar  
+**Priorität:** niedrig 
+
+### FA 054 – Sprache einstellen
+Als Nutzer möchte ich die Sprache der Anwendung ändern können, damit ich sie besser verstehe.  
+**Akzeptanzkriterium:** mindestens zwei Sprachen auswählbar, Auswahl wird gespeichert und beim nächsten Start wiederverwendet  
+**Priorität:** niedrig 
+
+### FA 055 – KI-Unterstützung bei der Symptomsuche
+Als Nutzer möchte ich bei der Eingabe von Symptomen durch eine KI unterstützt werden, damit ich passende Symptome schneller finde.  
+**Akzeptanzkriterium:** Während der Eingabe werden Vorschläge angezeigt, Vorschläge basieren auf Nutzereingaben, Auswahl ist möglich  
+**Priorität:** hoch 
+
+### FA 056 – Bildverarbeitung
+Als Nutzer möchte ich relevante Bilder hochladen können, sodass diese dem Einschätzungsprozess zu gute kommen können.  
+**Akzeptanzkriterium:** bei der Symptomeingabe können auch Bilder hochgeladen werden
+**Priorität:** niedrig 
+
 ### NFA 001 – Intuitive Bedienbarkeit
 Als Nutzer möchte ich die Anwendung einfach bedienen können, damit ich sie ohne lange Einarbeitung nutzen kann.  
 **Akzeptanzkriterium:** Navigation ist selbsterklärend, zentrale Funktionen sind schnell auffindbar  
@@ -267,7 +317,7 @@ Als Nutzer möchte ich Inhalte gut lesen können, damit ich die Anwendung unabh�
 
 ### FA 045 – Schriftgröße anpassen
 Als Nutzer möchte ich die Schriftgröße der Anwendung anpassen können, damit ich Inhalte besser lesen kann.  
-**Akzeptanzkriterium:** Schriftgröße kann vergrößert und verkleinert werden, Anpassung wirkt sich auf alle relevanten Texte aus, Einstellung bleibt gespeichert  
+**Akzeptanzkriterium:** Schriftgröße kann vergrößert und verkleinert werden, Anpassung wirkt sich auf alle Texte aus, Einstellung bleibt gespeichert  
 **Priorität:** mittel
 
 ### NFA 005 – Barrierearme Bedienbarkeit
@@ -287,69 +337,16 @@ Als Nutzer möchte ich eine visuell ansprechende Oberfläche haben, damit ich di
 
 ### NFA 008 – Unterstützung durch Icons
 Als Nutzer möchte ich Inhalte durch Icons unterstützt sehen, damit ich Informationen schneller verstehe.  
-**Akzeptanzkriterium:** wichtige Funktionen werden durch verständliche Icons ergänzt  
+**Akzeptanzkriterium:** wichtige Funktionen (bis jetzt bekannt: Benutzeranleitungsbutton, Angaben zu Geschlecht, Navigationsbuttons auf der Homepage) werden durch verständliche Icons ergänzt  
 **Priorität:** niedrig  
  
-
 ## Epic: Interoperabilität (mittlere Priorität) 
-
-### FA 046 – Daten bereitstellen
-Als Nutzer möchte ich Daten weitergeben können, damit diese weiter verwendet werden können.  
-**Akzeptanzkriterium:** Schnittstelle oder Export vorhanden  
-**Priorität:** mittel  
 
 ### FA 047 – FHIR-Kompatibilität
 Als Nutzer möchte ich meine Daten an Krankenhäuser weitergeben können, damit medizinische Einrichtungen diese ohne Probleme weiterverarbeiten können.    
 **Akzeptanzkriterium:** Daten werden in einem FHIR-konformen Format bereitgestellt  
 **Priorität:** mittel  
 
-
-## Epic: Zusatzfeatures (niedrige Priorität)
-
-### FA 048 – Offline-Modus
-Als Nutzer möchte ich die Anwendung offline nutzen können, damit ich im Falle keiner Internetverbindung trotzdem eine allgemeinere Handlungsempfehlung erhalten kann.  
-**Akzeptanzkriterium:** Ersatzfunktionen sind offline verfügbar  
-**Priorität:** niedrig  
-
-### FA 049 – Offline-Speicherung
-Als Nutzer möchte ich Daten offline speichern können, um auch ohne Internet angegebene Daten später abrufen zu können.  
-**Akzeptanzkriterium:** Synchronisation erfolgt später  
-**Priorität:** niedrig  
-
-### FA 050 – Installierbarkeit
-Als Nutzer möchte ich die Anwendung installieren können, damit ich sie be Bedarf einfacher aufrufen kann.  
-**Akzeptanzkriterium:** Installation über Browser möglich  
-**Priorität:** niedrig  
-
-### FA 051 – Dark Mode einstellen
-Als Nutzer möchte ich zwischen hellem und dunklem Design wählen können, damit ich die Anwendung angenehmer nutzen kann.  
-**Akzeptanzkriterium:** Umschaltung zwischen hell und dunkel möglich  
-**Priorität:** niedrig  
-
-### FA 052 – Red Flags im Offline-Modus anzeigen
-Als Nutzer möchte ich auch ohne Internet kritische Symptome einsehen können, damit ich im Notfall reagieren kann.  
-**Akzeptanzkriterium:** Red Flags sind offline verfügbar und sichtbar  
-**Priorität:** mittel  
-
-### FA 053 – Anleitung im Offline-Modus anzeigen
-Als Nutzer möchte ich auch ohne Internet eine Anleitung nutzen können, damit ich die Anwendung verstehe.  
-**Akzeptanzkriterium:** Anleitung ist offline abrufbar  
-**Priorität:** niedrig 
-
-### FA 054 – Sprache einstellen
-Als Nutzer möchte ich die Sprache der Anwendung ändern können, damit ich sie besser verstehe.  
-**Akzeptanzkriterium:** mindestens zwei Sprachen auswählbar, Auswahl wird gespeichert und beim nächsten Start wiederverwendet  
-**Priorität:** niedrig 
-
-### FA 055 – KI-Unterstützung bei der Symptomsuche
-Als Nutzer möchte ich bei der Eingabe von Symptomen durch eine KI unterstützt werden, damit ich passende Symptome schneller finde.  
-**Akzeptanzkriterium:** Während der Eingabe werden Vorschläge angezeigt, Vorschläge basieren auf Nutzereingaben, Auswahl ist möglich  
-**Priorität:** hoch 
-
-### FA 056 – Bildverarbeitung
-Als Nutzer möchte ich relevante Bilder hochladen können, sodass diese dem Einschätzungsprozess zu gute kommen können.  
-**Akzeptanzkriterium:** bei der Symptomeingabe können auch Bilder hochgeladen werden
-**Priorität:** niedrig 
 
 ## Legende
 FA = Funktionale Anforderung (beschreibt konkrete Funktionen des Systems)  
