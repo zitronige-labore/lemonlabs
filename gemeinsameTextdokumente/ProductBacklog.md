@@ -156,7 +156,7 @@ Als Nutzer möchte ich meine Daten speichern können, damit ich sie später eins
 
 ### FA 027 – Daten abrufen
 Als Nutzer möchte ich meine Daten einsehen können, damit ich meine Angaben überprüfen und nachvollziehen kann.   
-**Akzeptanzkriterium:** relevante Daten (Symptome, Basisangaben) werden bei Abfrage per Zugriffscode vollständig und verständlich angezeigt  
+**Akzeptanzkriterium:** relevante Daten (Symptome, Basisangaben, Zusatzangaben) werden bei Abfrage per Zugriffscode vollständig und verständlich angezeigt  
 **Priorität:** mittel  
 
 ### FA 028 – Daten löschen
