@@ -46,7 +46,7 @@ Als Nutzer möchte ich mehrere Symptome erfassen können, damit all meine Beschw
 ### FA 009 – Intensitätsregler für Schmerzen
 Als Nutzer möchte ich bei Schmerzen die Stärke auf der Schmerzskala (1-10) angeben können, sodass diese in der Auswertung berücksichtigt wird.  
 **Akzeptanzkriterium:** alle Schmerzsymptome haben einen Regler für die Schmerzskala  
-**Priorität:** hoch  
+**Priorität:** niedrig  
 
 ### FA 010 – Eingaben bearbeiten
 Als Nutzer möchte ich meine Eingaben ändern können, damit ich Fehler korrigieren kann.  
