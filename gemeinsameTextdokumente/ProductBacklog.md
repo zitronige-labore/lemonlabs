@@ -1,7 +1,7 @@
 # Product Backlog
 
 ## Epic: Datenerfassung von Basisdaten und Symptomen (hohe Priorität)
-Ziel: Vollständige Erfassung grundlegender Nutzerdaten und Vorbereitung der Ersteinschätzung ohne inhaltliche Bewertung.
+Ziel: Erfassung grundlegender Nutzerdaten und Vorbereitung der Ersteinschätzung ohne inhaltliche Bewertung.
 
 ### FA 001 – Basisdaten erfassen
 Als Nutzer möchte ich grundlegende Angaben machen, damit eine Ersteinschätzung durchgeführt werden kann.  
