@@ -43,6 +43,11 @@ Als Nutzer möchte ich mehrere Symptome erfassen können, damit all meine Beschw
 **Akzeptanzkriterium:** bis zu 25 Symptome können hinzugefügt und gespeichert werden  
 **Priorität:** hoch  
 
+### FA 008 – Intesnitätsregler für Schmerzen
+Als Nutzer möchte ich bei Schmerzen die Stärke auf der Schmerzskala (1-10) angeben können, sodass diese in der Auswertung berücksichtigt wird.  
+**Akzeptanzkriterium:** alle Schmerzsymptome haben einen Regler für die Schmerzskala  
+**Priorität:** hoch  
+
 ### FA 009 – Eingaben bearbeiten
 Als Nutzer möchte ich meine Eingaben ändern können, damit ich Fehler korrigieren kann.  
 **Akzeptanzkriterium:** Bereits eingegebene Basisdaten, sowie gewählte Symptome sind editierbar, Änderungen werden gespeichert  
