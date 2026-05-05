@@ -156,8 +156,8 @@ Als Nutzer möchte ich meine Daten löschen können, damit ich die Kontrolle üb
 **Priorität:** mittel  
 
 ### FA 029 – Automatische Datenlöschung
-Als Nutzer möchte ich, dass meine Daten nach einer bestimmten Zeit automatisch gelöscht werden, damit meine Privatsphäre geschützt wird.  
-**Akzeptanzkriterium:** Daten werden nach definierter Zeit automatisch gelöscht  
+Als Nutzer möchte ich, dass meine Daten nach 7 Tagen automatisch gelöscht werden, damit meine Privatsphäre geschützt wird.  
+**Akzeptanzkriterium:** Daten werden nach 7 Tagen automatisch gelöscht  
 **Priorität:** hoch  
 
 ### FA 030 – Daten exportieren
