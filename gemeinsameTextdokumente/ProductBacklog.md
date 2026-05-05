@@ -160,7 +160,7 @@ Als Nutzer möchte ich meine Daten speichern können, damit ich sie später eins
 **Priorität:** hoch  
 
 ### FA 030 – Daten abrufen
-Als Nutzer möchte ich meine Daten einsehen können, damit ich meine Angaben überprüfen und nachvollziehen kann.   
+Als Nutzer möchte ich meine Daten einsehen können, damit ich meine Angaben im Nachhinein nachvollziehen kann.   
 **Akzeptanzkriterium:** relevante Daten (Symptome, Basisangaben, Zusatzangaben) werden bei Abfrage per Zugriffscode vollständig und verständlich angezeigt  
 **Priorität:** mittel  
 
