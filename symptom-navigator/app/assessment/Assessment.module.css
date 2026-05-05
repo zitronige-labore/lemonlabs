@@ -3,11 +3,15 @@
 .main {
   min-height: 100vh;
   background: #ffffff;
+
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+
   font-family: Arial, sans-serif;
-  padding: 24px 12px;
+  padding: 24px 12px 12px;
+  box-sizing: border-box;
 }
 
 /* Zentrale Formular-Karte */
@@ -20,6 +24,9 @@
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   text-align: center;
   box-sizing: border-box;
+
+  /* sorgt dafür, dass der Footer nach unten gedrückt wird */
+  margin-bottom: auto;
 }
 
 /* ================= Typografie ================= */
@@ -181,7 +188,6 @@ textarea.input {
 
 /* ================= Interaktive Körperkarte ================= */
 
-/* Container für die SVG-Körperkarte */
 .bodyWrapper {
   width: 100%;
   max-width: 340px;
@@ -194,14 +200,12 @@ textarea.input {
   box-sizing: border-box;
 }
 
-/* SVG-Größe */
 .bodyMap {
   width: 100%;
   height: auto;
   display: block;
 }
 
-/* Normale Körperteile */
 .bodyPart {
   fill: #f2c7a5;
   stroke: #c89b7b;
@@ -210,21 +214,18 @@ textarea.input {
   transition: fill 0.2s ease, stroke 0.2s ease, filter 0.2s ease;
 }
 
-/* Hover-Effekt: wird beim Darüberfahren orange */
 .bodyPart:hover {
   fill: #fb923c;
   stroke: #ea580c;
   filter: drop-shadow(0 0 6px rgba(249, 115, 22, 0.45));
 }
 
-/* Ausgewähltes Körperteil: bleibt nach dem Klick orange */
 .selectedBodyPart {
   fill: #f97316;
   stroke: #c2410c;
   filter: drop-shadow(0 0 7px rgba(249, 115, 22, 0.55));
 }
 
-/* Wenn ausgewählt und Hover gleichzeitig aktiv ist */
 .selectedBodyPart:hover {
   fill: #f97316;
   stroke: #c2410c;
@@ -264,6 +265,19 @@ textarea.input {
   background: #f97316;
   color: #ffffff;
   border-color: #f97316;
+}
+
+/* ================= Slider ================= */
+
+.slider {
+  width: 100%;
+  cursor: pointer;
+}
+
+.sliderHint {
+  color: #4b5563;
+  font-size: 0.85rem;
+  font-weight: 400;
 }
 
 /* ================= Ergebnisbereich ================= */
@@ -307,9 +321,46 @@ textarea.input {
   transform: translateY(-1px);
 }
 
+/* ================= Footer ================= */
+
+.footer {
+  width: 100%;
+  border-top: 1px solid #d1d5db;
+  padding: 18px 0 6px;
+  margin-top: 40px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 48px;
+
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.footerLink {
+  background: none;
+  border: none;
+  color: #374151;
+  cursor: pointer;
+  font-family: Arial, sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 4px 8px;
+}
+
+.footerLink:hover {
+  color: #000000;
+  text-decoration: underline;
+}
+
 /* ================= Mobile Ansicht ================= */
 
 @media (max-width: 600px) {
+  .main {
+    padding: 24px 12px 12px;
+  }
+
   .card {
     padding: 20px;
   }
@@ -335,16 +386,13 @@ textarea.input {
     padding: 18px;
   }
 
-
-
-  .slider {
-    width: 100%;
-    cursor: pointer;
+  .footer {
+    gap: 14px;
+    font-size: 0.85rem;
+    flex-wrap: wrap;
   }
 
-  .sliderHint {
-    color: #4b5563;
+  .footerLink {
     font-size: 0.85rem;
-    font-weight: 400;
   }
 }

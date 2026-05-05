@@ -5,7 +5,8 @@
 - Symptomerfassung
 - Red Flag Detection
  
-🔴 SOS-Button      
+🔴 Notfall-Button: wählt 112
+
 🟡 Hinweise und Haftungsausschluss vor Beginn der Abfrage  
 🟢 Offline-Modus  
 🟢 Rezept/Terminvergabe  

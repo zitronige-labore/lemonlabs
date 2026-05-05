@@ -13,4 +13,4 @@ https://lemonlabs-plum.vercel.app/
 
 # Anweisungen lokal hosten
 Root folder -> Terminal öffnen -> npm install -> npm dev run  
-.env muss eingefügt werden, Vorlage ist auf Discord unter "code"
+falls .env nicht mitgepushe dist (was eigentlich der Fall sein sollte) funktioniert die DB Verbindung nicht, einfach nach .env fragen ist wahrscheinlich gerade die beste Lösung
