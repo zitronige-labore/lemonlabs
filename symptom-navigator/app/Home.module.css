@@ -1,0 +1,248 @@
+/* ================= Grundlayout der Startseite ================= */
+
+.main {
+  min-height: 100vh;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+
+/* Begrenzter Inhaltsbereich */
+.hauptbox {
+  max-width: 800px;
+  width: 100%;
+  text-align: center;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Zentrale Karte mit Hintergrund und Schatten */
+.kopfbox {
+  width: 100%;
+  background: #f2f8fc;
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* ================= Header mit Titel und Logo ================= */
+
+.header {
+  margin-bottom: 4vh;
+}
+
+.title {
+  color: #000000;
+  font-family: "Arial Black", Arial, sans-serif;
+  font-size: 4rem;
+  font-weight: 700;
+  margin-bottom: 0;
+}
+
+.subtitle {
+  color: #778899;
+  font-size: 2rem;
+  font-weight: 350;
+  margin-top: -1vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* ================= Textbereiche ================= */
+
+.intro {
+  margin-bottom: 20px;
+  line-height: 1.4;
+  color: #000000;
+  font-size: 2.3rem;
+  font-weight: 800;
+}
+
+.warningText {
+  color: #000000;
+  font-size: 1rem;
+  margin-bottom: 14px;
+  font-weight: 700;
+  line-height: 1.6;
+}
+
+.notrufBox {
+  background: #fff4e5;
+  color: #92400e;
+  padding: 14px;
+  border-radius: 10px;
+  margin-bottom: 24px;
+  line-height: 1.6;
+  font-size: 0.98rem;
+  font-weight: 700;
+}
+
+.checkboxLabel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  color: #000000;
+  font-size: 0.98rem;
+  font-weight: 700;
+  margin: 20px 0;
+  line-height: 1.4;
+}
+
+.checkboxLabel input {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+/* ================= Buttons ================= */
+
+.buttonBox {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+
+.emergencyButton,
+.primaryButton,
+.secondaryButton {
+  border: none;
+  padding: 12px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  width: 100%;
+  max-width: 320px;
+  text-decoration: none;
+  display: block;
+  box-sizing: border-box;
+  text-align: center;
+  font-family: Arial, sans-serif;
+}
+
+.primaryButton {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.secondaryButton {
+  background: #ffffff;
+  color: #2563eb;
+  border: 2px solid #2563eb;
+}
+
+.primaryButton:disabled {
+  background: #93c5fd;
+  cursor: not-allowed;
+}
+
+.emergencyButton {
+  background: #dc2626;
+  color: #ffffff;
+}
+
+.sosButton {
+  position: fixed;
+  right: 24px;
+  bottom: 72px;
+  background: #dc2626;
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 900;
+  font-size: 1rem;
+  border-radius: 999px;
+  padding: 16px 20px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  z-index: 20;
+}
+
+/* ================= Footer ================= */
+
+.footer {
+  width: 100%;
+  border-top: 1px solid #d1d5db;
+  padding: 18px 0 6px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 48px;
+  font-size: 1rem;
+}
+
+.footerLink {
+  background: none;
+  border: none;
+  color: #374151;
+  cursor: pointer;
+  font-family: Arial, sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 4px 8px;
+}
+
+.footerLink:hover {
+  color: #000000;
+  text-decoration: underline;
+}
+
+/* ================= Mobile Ansicht ================= */
+
+@media (max-width: 600px) {
+  .main {
+    padding: 24px 12px 12px;
+  }
+
+  .kopfbox {
+    padding: 22px;
+  }
+
+  .title {
+    font-size: 2.6rem;
+  }
+
+  .subtitle {
+    font-size: 1.4rem;
+  }
+
+  .intro {
+    font-size: 1.8rem;
+  }
+
+  .checkboxLabel {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .sosButton {
+    right: 16px;
+    bottom: 76px;
+    padding: 14px 18px;
+  }
+
+  .footer {
+    gap: 14px;
+    font-size: 0.85rem;
+    flex-wrap: wrap;
+  }
+
+  .footerLink {
+    font-size: 0.85rem;
+  }
+}

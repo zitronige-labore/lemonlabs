@@ -1,0 +1,398 @@
+/* ================= Grundlayout der Assessment-Seite ================= */
+
+.main {
+  min-height: 100vh;
+  background: #ffffff;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+
+  font-family: Arial, sans-serif;
+  padding: 24px 12px 12px;
+  box-sizing: border-box;
+}
+
+/* Zentrale Formular-Karte */
+.card {
+  width: 100%;
+  max-width: 560px;
+  background: #f2f8fc;
+  border-radius: 16px;
+  padding: clamp(18px, 4vw, 32px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  box-sizing: border-box;
+
+  /* sorgt dafür, dass der Footer nach unten gedrückt wird */
+  margin-bottom: auto;
+}
+
+/* ================= Typografie ================= */
+
+.title {
+  color: #000000;
+  font-family: "Arial Black", Arial, sans-serif;
+  font-size: clamp(1.8rem, 7vw, 2.6rem);
+  line-height: 1.1;
+  margin-bottom: 16px;
+}
+
+.text {
+  color: #000000;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.selectedText {
+  margin: 18px 0 0;
+  font-weight: 700;
+  font-size: 1.05rem;
+  text-align: center;
+  color: #000000;
+}
+
+/* ================= Formularbereiche ================= */
+
+.fieldset {
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  padding: clamp(14px, 4vw, 20px);
+  margin-bottom: 24px;
+  text-align: left;
+  background: #ffffff;
+  box-sizing: border-box;
+}
+
+.legend {
+  font-weight: 700;
+  color: #000000;
+  padding: 0 8px;
+}
+
+.label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  color: #000000;
+  margin-bottom: 14px;
+  cursor: pointer;
+  line-height: 1.5;
+  font-size: 0.98rem;
+}
+
+.formLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: #000000;
+  font-weight: 700;
+  margin-bottom: 16px;
+  font-size: 0.98rem;
+}
+
+.input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  font-size: 1rem;
+  box-sizing: border-box;
+  background: #ffffff;
+  color: #000000;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+textarea.input {
+  min-height: 140px;
+  resize: vertical;
+}
+
+.characterCounter {
+  color: #4b5563;
+  font-size: 0.85rem;
+  font-weight: 400;
+  text-align: right;
+}
+
+/* ================= Buttons ================= */
+
+.primaryButton {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  width: 100%;
+  max-width: 320px;
+  margin-top: 18px;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.primaryButton:hover {
+  background: #1e4fd1;
+  transform: translateY(-1px);
+}
+
+.primaryButton:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.emergencyBox {
+  background: #ffe4e4;
+  color: #7f1d1d;
+  padding: 18px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  line-height: 1.6;
+  border: 1px solid #fecaca;
+}
+
+.emergencyTitle {
+  color: #b91c1c;
+  font-size: clamp(1.3rem, 5vw, 1.6rem);
+  margin-bottom: 8px;
+}
+
+.emergencyButton {
+  background: #dc2626;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 10px;
+  text-decoration: none;
+  display: inline-block;
+  margin-top: 10px;
+  font-weight: 700;
+  width: 100%;
+  max-width: 280px;
+  box-sizing: border-box;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.emergencyButton:hover {
+  background: #b91c1c;
+  transform: translateY(-1px);
+}
+
+/* ================= Interaktive Körperkarte ================= */
+
+.bodyWrapper {
+  width: 100%;
+  max-width: 340px;
+  margin: 24px auto;
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+  box-sizing: border-box;
+}
+
+.bodyMap {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.bodyPart {
+  fill: #f2c7a5;
+  stroke: #c89b7b;
+  stroke-width: 2.5;
+  cursor: pointer;
+  transition: fill 0.2s ease, stroke 0.2s ease, filter 0.2s ease;
+}
+
+.bodyPart:hover {
+  fill: #fb923c;
+  stroke: #ea580c;
+  filter: drop-shadow(0 0 6px rgba(249, 115, 22, 0.45));
+}
+
+.selectedBodyPart {
+  fill: #f97316;
+  stroke: #c2410c;
+  filter: drop-shadow(0 0 7px rgba(249, 115, 22, 0.55));
+}
+
+.selectedBodyPart:hover {
+  fill: #f97316;
+  stroke: #c2410c;
+}
+
+/* ================= Schnell-Auswahl ================= */
+
+.quickSelect {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.regionButton {
+  background: #ffffff;
+  color: #000000;
+  border: 1px solid #d1d5db;
+  padding: 14px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
+  width: 100%;
+  transition: background 0.2s ease, border 0.2s ease, color 0.2s ease,
+    transform 0.15s ease;
+}
+
+.regionButton:hover {
+  background: #e6f2fb;
+  border-color: #0078bf;
+  transform: translateY(-1px);
+}
+
+.selectedRegion {
+  background: #f97316;
+  color: #ffffff;
+  border-color: #f97316;
+}
+
+/* ================= Slider ================= */
+
+.slider {
+  width: 100%;
+  cursor: pointer;
+}
+
+.sliderHint {
+  color: #4b5563;
+  font-size: 0.85rem;
+  font-weight: 400;
+}
+
+/* ================= Ergebnisbereich ================= */
+
+.resultBox {
+  margin-top: 24px;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 20px;
+  color: #000000;
+  border: 1px solid #d1d5db;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+}
+
+.resultBox p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.continueButton {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 14px 18px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  width: 100%;
+  max-width: 280px;
+  text-decoration: none;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.continueButton:hover {
+  background: #1e4fd1;
+  transform: translateY(-1px);
+}
+
+/* ================= Footer ================= */
+
+.footer {
+  width: 100%;
+  border-top: 1px solid #d1d5db;
+  padding: 18px 0 6px;
+  margin-top: 40px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 48px;
+
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.footerLink {
+  background: none;
+  border: none;
+  color: #374151;
+  cursor: pointer;
+  font-family: Arial, sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 4px 8px;
+}
+
+.footerLink:hover {
+  color: #000000;
+  text-decoration: underline;
+}
+
+/* ================= Mobile Ansicht ================= */
+
+@media (max-width: 600px) {
+  .main {
+    padding: 24px 12px 12px;
+  }
+
+  .card {
+    padding: 20px;
+  }
+
+  .title {
+    font-size: 2rem;
+  }
+
+  .bodyWrapper {
+    max-width: 320px;
+    padding: 12px;
+  }
+
+  .quickSelect {
+    margin-top: 22px;
+  }
+
+  .regionButton {
+    padding: 13px 14px;
+  }
+
+  .resultBox {
+    padding: 18px;
+  }
+
+  .footer {
+    gap: 14px;
+    font-size: 0.85rem;
+    flex-wrap: wrap;
+  }
+
+  .footerLink {
+    font-size: 0.85rem;
+  }
+}
