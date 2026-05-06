@@ -60,7 +60,7 @@ Als Nutzer möchte ich alle meine Eingaben löschen können, damit ich den Einsc
 
 ### FA 012 – Eingaben validieren
 Als System sollen Eingaben überprüft werden, damit fehlerhafte oder unvollständige Daten erkannt werden.  
-**Akzeptanzkriterium:** Pflichtfelder werden geprüft, fehlerhafte Eingaben werden erkannt, Fehlermeldungen werden angezeigt  
+**Akzeptanzkriterium:** Pflichtfelder müssen ausgefüllt werden, Datentypen müssen übereinstimmen, fehlerhafte Eingaben werden erkannt, Zahlen liegen in einem realistischen Bereich (Alter bis 130, Gewicht bis 600kg), Fehlermeldungen werden angezeigt  
 **Priorität:** hoch  
 
 ### FA 013 – Zusatzangaben hinzufügen
