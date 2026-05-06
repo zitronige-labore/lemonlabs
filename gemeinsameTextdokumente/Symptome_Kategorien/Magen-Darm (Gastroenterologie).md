@@ -1,5 +1,3 @@
-# Symptom-Katalog: Magen-Darm (Gastroenterologie)
-
 | Bereich | Symptom |
 | :--- | :--- |
 | **Speiseröhre** | **Sodbrennen:** Brennendes Gefühl hinter dem Brustbein, oft nach dem Essen oder im Liegen. |
