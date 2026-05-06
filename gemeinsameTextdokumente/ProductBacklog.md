@@ -5,7 +5,7 @@ Ziel: Erfassung grundlegender Nutzerdaten und Vorbereitung der Ersteinschätzung
 
 ### FA 001 – Basisdaten erfassen
 Als Nutzer möchte ich grundlegende Angaben machen, damit diese zu einer Ersteinschätzung beitragen können.  
-**Akzeptanzkriterium:** Eingabefelder für Basisdaten (Alter, Geschlecht, Schwangerschaft, Stillzeit) sind vorhanden, Eingaben werden gespeichert  
+**Akzeptanzkriterium:** Eingabefelder für Basisdaten (Alter, Geschlecht, Schwangerschaft, Stillzeit) sind vorhanden 
 **Priorität:** hoch  
 
 ### FA 002 – Symptome finden und erfassen
@@ -356,3 +356,5 @@ Als Nutzer möchte ich meine Daten an Krankenhäuser weitergeben können, damit 
 ## Legende
 FA = Funktionale Anforderung (beschreibt konkrete Funktionen des Systems)  
 NFA = Nicht funktionale Anforderung (beschreibt Qualitätsmerkmale wie Usability oder Performance)  
+  
+Anmerkung zu Akzeptanzkriterien bei NFA's: Bei Befragung von Personen (min. 10 Personen) empfinden 80% die Akzeptanzkriterien als erfüllt
