@@ -52,7 +52,7 @@ CREATE TABLE symptom_catalog (
 );
 
 INSERT INTO symptom_catalog (name_de, snomed_code, is_red_flag)
-VALUES ("Besitz einer Katze", "1234", no);
+VALUES ('Besitz einer Katze', '1234', false);
 
 CREATE TABLE redflag_scan (
   	redflag_id SERIAL PRIMARY KEY,
