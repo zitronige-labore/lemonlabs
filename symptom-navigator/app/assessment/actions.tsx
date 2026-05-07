@@ -23,6 +23,11 @@ export async function saveFormData(formData: FormData, redFlags: any, selectedRe
         sex = 'd';
     }
 
+    let pregnancy = false;
+    if (formData.get("pregnancy") === "ja") {
+        pregnancy = true;
+    }
+
     //test log
     console.log("test:", formData.toString());
     console.log("redFlags:", redFlags);
@@ -34,12 +39,12 @@ export async function saveFormData(formData: FormData, redFlags: any, selectedRe
     // schreiben der Daten in die DB und return der ID zum Abruf auf assesment
     const dbReturn = await connectionPool.query(
         `
-        Insert into cases (age, sex)
-        VALUES ($1, $2)
+        Insert into cases (age, sex, pregnancy)
+        VALUES ($1, $2, $3)
 
         returning case_id;
         `,
-        [age, sex]
+        [age, sex, pregnancy]
     );
 
     /*await connectionPool.query(
