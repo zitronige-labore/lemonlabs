@@ -32,7 +32,7 @@ CREATE TABLE cases (
 );
 
 CREATE TABLE drug_use (
-	alcohol BOOLEAN
+	alcohol BOOLEAN,
 	cigarettes BOOLEAN,
 	drugs BOOLEAN,
 	drug_name VARCHAR(100)
@@ -41,7 +41,7 @@ CREATE TABLE drug_use (
 CREATE TABLE details_no_certain_count (
 	case_id INTEGER,
 	detail VARCHAR(25),
-	value(50)
+	value VARCHAR(50)
 );
 
 CREATE TABLE symptom_catalog (
@@ -52,9 +52,7 @@ CREATE TABLE symptom_catalog (
 );
 
 INSERT INTO symptom_catalog (name_de, snomed_code, is_redflag)
-VALUES ("Besitz einer Katze", "1234", no) 
-
-;
+VALUES ("Besitz einer Katze", "1234", no);
 
 CREATE TABLE redflag_scan (
   	redflag_id SERIAL PRIMARY KEY,
