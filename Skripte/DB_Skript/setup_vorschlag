@@ -14,7 +14,7 @@ CREATE TABLE cases (
 	pregnancy BOOLEAN,
 	weight INTEGER,
 	height INTEGER,
-	date TIMESTAMP
+	date TIMESTAMP,
 	access_code INTEGER UNIQUE
 );
 
