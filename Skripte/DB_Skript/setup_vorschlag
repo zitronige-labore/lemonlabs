@@ -1,5 +1,5 @@
 DROP TABLE IF EXISTS recommendations CASCADE;
-DROP TABLE IF EXISTS assessment_symptoms CASCADE;
+DROP TABLE IF EXISTS case_symptoms CASCADE;
 DROP TABLE IF EXISTS symptom_catalog CASCADE;
 DROP TABLE IF EXISTS cases CASCADE;
 DROP TABLE IF EXISTS redflag_scan CASCADE;
@@ -60,7 +60,7 @@ CREATE TABLE case_symptoms (
 
 CREATE TABLE recommendations (
 	rec_id SERIAL PRIMARY KEY,
-	assessment_id INTEGER UNIQUE REFERENCES assessments(assessment_id) ON DELETE CASCADE,
+	case_id INTEGER UNIQUE REFERENCES cases(case_id) ON DELETE CASCADE,
 	urgency_level INTEGER,
 	advice_text TEXT,
 	context_data JSONB,
