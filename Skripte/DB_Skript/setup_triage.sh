@@ -31,6 +31,7 @@ CREATE TABLE cases (
 	sex CHAR(1),
 	pregnancy BOOLEAN,
 	weight INTEGER,
+	height INTEGER,
 	date TIMESTAMP
 );
 
