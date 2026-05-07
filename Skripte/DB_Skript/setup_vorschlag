@@ -1,3 +1,5 @@
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+
 DROP TABLE IF EXISTS recommendations CASCADE;
 DROP TABLE IF EXISTS case_symptoms CASCADE;
 DROP TABLE IF EXISTS symptom_catalog CASCADE;
@@ -19,6 +21,7 @@ CREATE TABLE cases (
 );
 
 CREATE TABLE drug_use (
+	drug_use_id SERIAL PRIMARY KEY,
 	alcohol BOOLEAN,
 	cigarettes BOOLEAN,
 	drugs BOOLEAN,
