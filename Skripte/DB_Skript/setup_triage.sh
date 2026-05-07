@@ -60,7 +60,7 @@ VALUES ('Besitz einer Katze', '1234', false);
 CREATE TABLE redflag_scan (
   	redflag_id SERIAL PRIMARY KEY,
 	redflag_name VARCHAR(100)
-)
+);
 
 CREATE TABLE assessments (
 	assessment_id SERIAL PRIMARY KEY, 
