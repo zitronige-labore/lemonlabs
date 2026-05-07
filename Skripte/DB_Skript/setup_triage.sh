@@ -24,10 +24,24 @@ DROP TABLE IF EXISTS cases CASCADE;
 
 CREATE TABLE cases (
 	case_id SERIAL PRIMARY KEY,
-	first_name VARCHAR(100),
-	last_name VARCHAR (100),
 	age INTEGER,
-	sex CHAR(1)
+	sex CHAR(1),
+	pregnancy BOOLEAN,
+	weight INTEGER,
+	date TIMESTAMP
+);
+
+CREATE TABLE drug_use (
+	alcohol BOOLEAN
+	cigarettes BOOLEAN,
+	drugs BOOLEAN,
+	drug_name VARCHAR(100)
+);
+
+CREATE TABLE details_no_certain_count (
+	case_id INTEGER,
+	detail VARCHAR(25),
+	value(50)
 );
 
 CREATE TABLE symptom_catalog (
@@ -36,6 +50,11 @@ CREATE TABLE symptom_catalog (
 	snomed_code VARCHAR(50) UNIQUE,
 	is_red_flag BOOLEAN DEFAULT FALSE
 );
+
+INSERT INTO symptom_catalog (name_de, snomed_code, is_redflag)
+VALUES ("Besitz einer Katze", "1234", no) 
+
+;
 
 CREATE TABLE redflag_scan (
   	redflag_id SERIAL PRIMARY KEY,
@@ -46,9 +65,13 @@ CREATE TABLE assessments (
 	assessment_id SERIAL PRIMARY KEY, 
 	case_id INTEGER REFERENCES cases(case_id) ON DELETE CASCADE,
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	raw_input TEXT,
 	access_code INTEGER UNIQUE 
         
+);
+
+CREATE TABLE raw_text_symptoms (
+	raw_id SERIAL PRIMARY KEY,
+	raw_symptoms VARCHAR(500)
 );
 
 CREATE TABLE assessment_symptoms ( 
