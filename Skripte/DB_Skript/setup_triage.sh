@@ -17,7 +17,7 @@ psql -d $DB_NAME <<EOF
 
 DROP TABLE IF EXISTS recommendations CASCADE;
 DROP TABLE IF EXISTS assessment_symptoms CASCADE;
-DROP TABLE IF EXISTS assessment CASCADE;
+DROP TABLE IF EXISTS assessments CASCADE;
 DROP TABLE IF EXISTS symptom_catalog CASCADE;
 DROP TABLE IF EXISTS cases CASCADE;
 
@@ -51,7 +51,7 @@ CREATE TABLE symptom_catalog (
 	is_red_flag BOOLEAN DEFAULT FALSE
 );
 
-INSERT INTO symptom_catalog (name_de, snomed_code, is_redflag)
+INSERT INTO symptom_catalog (name_de, snomed_code, is_red_flag)
 VALUES ("Besitz einer Katze", "1234", no);
 
 CREATE TABLE redflag_scan (
