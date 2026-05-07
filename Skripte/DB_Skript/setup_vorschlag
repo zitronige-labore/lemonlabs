@@ -17,7 +17,7 @@ CREATE TABLE cases (
 	weight INTEGER,
 	height INTEGER,
 	date TIMESTAMP,
-	access_code TYPE UUID USING gen_random_uuid()
+	access_code UUID DEFAULT gen_random_uuid()
 );
 
 CREATE TABLE drug_use (
