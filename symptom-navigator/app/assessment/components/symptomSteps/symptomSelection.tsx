@@ -51,7 +51,7 @@ export default function SymptomSelection({symptoms,selectedSymptoms, inputMode, 
     <button
         type="button"
         className={assessmentStyles.primaryButton}
-        onClick={() => setStep("result")}
+        onClick={() => setStep("basisDetails")}
                 >
                   Weiter
     </button>

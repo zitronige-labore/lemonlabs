@@ -302,8 +302,8 @@ export default function Home() {
 
           {step === "aussenOhr" && (
              <SymptomSelection
-                      symptoms={[{symptomName: "autsch aussenohr", schmerzen: true, symptomValue: "1"},
-                                 {symptomName: "autschi aussenohr", schmerzen: true, symptomValue: "1"}
+                      symptoms={[{symptomName: "autsch aussenohr", schmerzen: true, symptomValue: "starke Schmerzen am Aussenohr"},
+                                 {symptomName: "autschi aussenohr", schmerzen: true, symptomValue: "Schmerzen am Aussenohr"}
                       ]}
                       inputMode={inputMode}
                       setStep={setStep}
@@ -316,8 +316,8 @@ export default function Home() {
 
           {step === "innenOhr" && (
              <SymptomSelection
-                      symptoms={[{symptomName: "autsch innennohr", schmerzen: true, symptomValue: "1"},
-                                 {symptomName: "autschi innenenohr", schmerzen: true, symptomValue: "1"}
+                      symptoms={[{symptomName: "autsch innennohr", schmerzen: true, symptomValue: "starke Schmerzen im Innnohr"},
+                                 {symptomName: "autschi innenenohr", schmerzen: true, symptomValue: "Schmerzen im Innenohr"}
                       ]}
                       inputMode={inputMode}
                       setStep={setStep}

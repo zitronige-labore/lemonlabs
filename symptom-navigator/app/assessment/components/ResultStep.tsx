@@ -159,7 +159,8 @@ export function ResultStep({
       {aiAnswer?.assessment?.urgency && (
       <>
         <p>
-          Dringlichkeitsstufe: {aiAnswer.assessment.urgency} 
+          Dringlichkeitsstufe: {aiAnswer.assessment.urgency}: 
+          {aiAnswer.assessment.urgencyText} 
         </p>
 
         <p>

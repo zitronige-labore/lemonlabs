@@ -40,7 +40,7 @@ export async function saveFormData(formData: FormData) {
 
     // symptoms (prewritten, raw Text)
     const selectedSymptoms = formData.get("selectedSymptoms") as string;
-    const symptomList = selectedSymptoms?selectedSymptoms.split(",").map(Number).filter((n)=> !isNaN):[];
+    const symptomList = selectedSymptoms.split(",");
 
     const symptomText = formData.get("symptomText") as string;
 
@@ -76,11 +76,13 @@ export async function saveFormData(formData: FormData) {
 
     if(symptomList.length>0){
       // writing prewritten symptoms into case_symptoms
-      await connectionPool.query(
-        `INSERT INTO case_symptoms (symptom_id, case_id) 
-        VALUES ($1, $2)`,
-        [symptomList[0], dbReturn.rows[0].case_id]
-      );
+      for(let i=0; i<symptomList.length; i++) {
+        await connectionPool.query(
+          `INSERT INTO case_symptoms (symptom_id, case_id) 
+          VALUES ($1, $2)`,
+          [symptomList[0], dbReturn.rows[0].case_id]
+        );
+      }
     }
 
     if(symptomText != ""){
@@ -176,6 +178,7 @@ export async function sendDataToAi() {
   NUR die vorgegebenen xml tags nutzen, keine weiteren ausdenken, in next steps: nur eine handlungsempfehlung in einfacher sprache im tag <nextSteps> ausgeben:
   <assessment>
   <urgency></urgency>
+  <urgencyText></urgencyText>
   <suspicions>
     <suspicion1>
       <reasonForSuspicion1></reasonForSuspicion1>
