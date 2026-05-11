@@ -59,6 +59,7 @@ type ResultStepProps = {
 
   symptomText: string;
   selectedSymptoms: string[];
+  aiAnswer: any;
 
   onGoHome: () => void;
 };
@@ -78,8 +79,13 @@ export function ResultStep({
   inputMode,
   symptomText,
   selectedSymptoms,
+  aiAnswer,
   onGoHome,
 }: ResultStepProps) {
+
+  // test log
+  console.log("aiAnswer in ResultStep:", aiAnswer);
+
   return (
     <div className={assessmentStyles.resultBox}>
       {/* Hinweis auf erfolgreich erfasste Angaben */}
@@ -149,6 +155,26 @@ export function ResultStep({
       <p>
         Stärke: <strong>{basisData.intensity}</strong>
       </p>
+
+      {aiAnswer?.assessment?.urgency && (
+      <>
+        <p>
+          Dringlichkeitsstufe: {aiAnswer.assessment.urgency} 
+        </p>
+
+        <p>
+          Handlungsempfehlung: {aiAnswer.assessment.nextSteps} 
+        </p>
+        </>
+        )}
+
+        {!aiAnswer?.assessment?.urgency && (
+        <>
+        <p>
+          Die Auswertung laedt noch...
+        </p>
+      </>
+      )}
 
       {/* Zurück zur Startseite */}
       <button

@@ -12,6 +12,18 @@ import { useState } from "react";
 import homeStyles from "./Home.module.css";
 import assessmentStyles from "./assessment/Assessment.module.css";
 
+
+
+// import the useSaveForm to call the saveFormData function
+import { useSaveForm } from "./useSaveForm";
+
+// import the sendDataToAi function to use AI connection
+import { sendDataToAi } from "./actions";
+
+// import component for symptom category and symptomselection
+import SymptomCategory from "./assessment/components/symptomSteps/symptomCategory";
+import SymptomSelection from "./assessment/components/symptomSteps/symptomSelection";
+
 /*
   Import der ausgelagerten Komponenten.
   Jede Komponente stellt einen bestimmten Schritt oder Layout-Bereich dar.
@@ -109,6 +121,14 @@ export default function Home() {
   */
   const hasEmergency = Object.values(redFlags).some(Boolean);
 
+
+  // page.tsx – korrigiert
+  const handleSaveForm = useSaveForm(basisData, redFlags, selectedMainRegion, selectedSubRegion, selectedSymptoms, symptomText);
+
+  // assessment speichern, um es strukturiert auszugeben
+  const [aiAnswer, setAiAnswer] = useState<any>(null);
+
+
   /*
     Aktualisiert ein einzelnes Warnzeichen.
     Sobald ein Warnzeichen ausgewählt wird, wird
@@ -184,7 +204,7 @@ export default function Home() {
     Die gesammelten Angaben werden aktuell in der Konsole ausgegeben
     und danach wird die Ergebnisansicht angezeigt.
   */
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const formData = {
@@ -197,6 +217,12 @@ export default function Home() {
       selectedSymptoms,
       basisData,
     };
+
+    // calling function to save form data in db
+    handleSaveForm();
+    // calling function to send data from db to ai and get the response
+    const aiAnswer = await sendDataToAi();
+    setAiAnswer(aiAnswer);
 
     console.log("Formulardaten:", formData);
     setStep("result");
@@ -300,6 +326,7 @@ export default function Home() {
               symptomText={symptomText}
               selectedSymptoms={selectedSymptoms}
               onGoHome={() => setStep("start")}
+              aiAnswer={aiAnswer}
             />
           )}
         </AssessmentLayout>
