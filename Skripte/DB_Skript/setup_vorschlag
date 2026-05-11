@@ -35,7 +35,8 @@ CREATE TABLE details_no_certain_count (
 );
 
 CREATE TABLE symptom_catalog (
-	name_de VARCHAR(255) PRIMARY KEY,
+	symptom_id PRIMARY KEY,
+	name_de VARCHAR(255) NOT NULL,
 	snomed_code VARCHAR(50) UNIQUE,
 	is_red_flag BOOLEAN DEFAULT FALSE
 );
