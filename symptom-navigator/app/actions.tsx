@@ -78,7 +78,7 @@ export async function saveFormData(formData: FormData) {
       // writing prewritten symptoms into case_symptoms
       for(let i=0; i<symptomList.length; i++) {
         await connectionPool.query(
-          `INSERT INTO case_symptoms (symptom_id, case_id) 
+          `INSERT INTO case_symptoms (name_de, case_id) 
           VALUES ($1, $2)`,
           [symptomList[0], dbReturn.rows[0].case_id]
         );
@@ -153,10 +153,10 @@ export async function sendDataToAi() {
   // DB query
   // to be replaced later
   const DatenAusDB = await connectionPool.query(`
-    SELECT weight, height, raw_symptoms, name_de, snomed_code
+    SELECT weight, height, raw_symptoms, case_symptoms.name_de
     FROM cases LEFT JOIN case_symptoms ON cases.case_id = case_symptoms.case_id
     LEFT JOIN raw_text_symptoms ON raw_text_symptoms.raw_id = case_symptoms.raw_id
-    LEFT JOIN symptom_catalog ON symptom_catalog.symptom_id = case_symptoms.symptom_id
+    LEFT JOIN symptom_catalog ON symptom_catalog.name_de = case_symptoms.name_de
     WHERE cases.case_id = $1
     ;
     `,
@@ -168,7 +168,8 @@ export async function sendDataToAi() {
 
   // define master prompt
   const masterPrompt = `
-  du bekommst gleich daten ueber einen Fall, bestehend aus Alter, Geschlecht, Schwangerschaft, Gewicht, Höhe und Symptomen. 
+  du bekommst gleich daten ueber einen Fall, bestehend aus Alter, Geschlecht, Schwangerschaft, Gewicht, Höhe und Symptomen.
+  Die Symptome findest du entweder in "raw_symptoms" als freitext oder als "name_de" als name fuer ein bestimmtes symptom. 
   Erstelle basierend auf diesen Daten eine Einschaetzung der Dringlchkeit 
   (auf einer Skala von 1: keine Aerztliche Abklaerung noetig, 2: ärztliche Abklärung empfohlen, 3: ärztliche Abklärung zeitnah erforderlich, 4: gang in die notaufnahme erforderlich, 5: Notruf taetigen),
   eine Liste von 5 möglichen vermutungen was der Grund ist, und dazu die Wahrscheinlichkeit der vermutung. 
