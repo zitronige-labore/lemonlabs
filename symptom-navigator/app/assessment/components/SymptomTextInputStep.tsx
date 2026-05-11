@@ -48,17 +48,12 @@ import { getSymptomsForSubRegion } from "../utils/assessmentData";
   onContinue:
   Funktion zum Wechseln zum nächsten Schritt
 */
-type SymptomInputStepProps = {
+type SymptomTextInputStepProps = {
   selectedSubRegion: SubRegion | null;
 
-  inputMode: InputMode;
-
   symptomText: string;
+
   setSymptomText: (text: string) => void;
-
-  selectedSymptoms: string[];
-
-  toggleSymptom: (symptom: string) => void;
 
   onContinue: () => void;
 };
@@ -71,15 +66,12 @@ type SymptomInputStepProps = {
   - Symptome frei beschrieben werden
   - oder aus einer Liste ausgewählt werden
 */
-export function SymptomInputStep({
+export function SymptomTextInputStep({
   selectedSubRegion,
-  inputMode,
   symptomText,
   setSymptomText,
-  selectedSymptoms,
-  toggleSymptom,
-  onContinue,
-}: SymptomInputStepProps) {
+  onContinue
+}: SymptomTextInputStepProps) {
   return (
     <>
       {/* Anzeige der ausgewählten Unterregion */}
@@ -100,7 +92,7 @@ export function SymptomInputStep({
           Dieser Bereich wird angezeigt,
           wenn "text" als Eingabeart gewählt wurde.
         */}
-        {inputMode === "text" && (
+        
           <label className={assessmentStyles.formLabel}>
             Beschreiben Sie Ihre Beschwerden:
 
@@ -124,39 +116,8 @@ export function SymptomInputStep({
               {symptomText.length}/1000 Zeichen
             </span>
           </label>
-        )}
 
-        {/*
-          Auswahl typischer Symptome per Checkbox.
-
-          Die Symptome werden passend
-          zur Unterregion geladen.
-        */}
-        {inputMode === "select" &&
-          getSymptomsForSubRegion(
-            selectedSubRegion
-          ).map((symptom) => (
-            <label
-              key={symptom}
-              className={assessmentStyles.label}
-            >
-              <input
-                type="checkbox"
-
-                checked={selectedSymptoms.includes(
-                  symptom
-                )}
-
-                onChange={() =>
-                  toggleSymptom(symptom)
-                }
-              />
-
-              {symptom}
-            </label>
-          ))}
-      </fieldset>
-
+        
       {/* Button zum Wechseln zum nächsten Schritt */}
       <button
         type="button"
@@ -168,13 +129,12 @@ export function SymptomInputStep({
           solange keine Beschwerden angegeben wurden.
         */
         disabled={
-          inputMode === "text"
-            ? symptomText.trim().length === 0
-            : selectedSymptoms.length === 0
+            symptomText.trim().length === 0
         }
       >
         Weiter
       </button>
+      </fieldset>
     </>
   );
 }

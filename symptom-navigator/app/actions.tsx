@@ -2,7 +2,7 @@
 "use server"
 
 import { log } from "console";
-import { connectionPool } from "./db"; // for database queries
+import { connectionPool } from "./dbs/db"; // for database queries
 import { cookies } from 'next/headers' // for cookies
 import { parseString } from 'xml2js'; // for xml
 

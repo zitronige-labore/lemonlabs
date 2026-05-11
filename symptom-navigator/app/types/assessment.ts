@@ -2,6 +2,18 @@
   Beschreibt alle möglichen Schritte des gesamten Ablaufs
   der Ersteinschätzung innerhalb der Anwendung.
 */
+
+export type subregionCategory =
+  | SubRegion
+  | null;
+
+export type categoryAfterCategoryIfNeeded =
+  | "bsp";
+
+export type symptomChoiceStep =
+  | "innenOhr"
+  | "aussenOhr";
+
 export type Step =
   | "start"
   | "hinweise"
@@ -11,8 +23,14 @@ export type Step =
   | "symptomChoice"
   | "symptomInput"
   | "basisDetails"
-  | "result";
+  | "result"
+  | "textInput"
+  | subregionCategory
+  | categoryAfterCategoryIfNeeded
+  | symptomChoiceStep;
 
+  
+  
 /*
   Hauptregionen der interaktiven Körperkarte.
 

@@ -37,7 +37,7 @@ import { RedFlagsStep } from "./assessment/components/RedFlagsStep";
 import { ResultStep } from "./assessment/components/ResultStep";
 import { StartScreen } from "./assessment/components/StartScreen";
 import { SymptomChoiceStep } from "./assessment/components/SymptomChoiceStep";
-import { SymptomInputStep } from "./assessment/components/SymptomInputStep";
+import { SymptomTextInputStep } from "./assessment/components/SymptomTextInputStep";
 
 /*
   Import der TypeScript-Typen für Zustände und Auswahlwerte.
@@ -283,27 +283,57 @@ export default function Home() {
               selectMainRegion={selectMainRegion}
               selectSubRegion={selectSubRegion}
               onContinue={continueAfterRegionSelection}
+              setStep={setStep}
             />
           )}
 
-          {/* Schritt 4: Eingabeart für Symptome wählen */}
-          {step === "symptomChoice" && (
-            <SymptomChoiceStep
-              selectedSubRegion={selectedSubRegion}
-              setInputMode={setInputMode}
-              onContinue={() => setStep("symptomInput")}
-            />
+          {/* Schritt 4: Symptombaum navigieren */}
+          {step === "Ohren" && (
+            <SymptomCategory
+              categories={[{category: "innenohr", step: "innenOhr"},
+                           {category: "aussenohr", step: "aussenOhr"}
+                      ]}
+                      setStep={setStep}
+                      setInputMode={setInputMode}
+                      selectedSubRegion={selectedSubRegion}
+            >
+            </SymptomCategory>
           )}
 
-          {/* Schritt 5: Symptome eingeben oder auswählen */}
-          {step === "symptomInput" && (
-            <SymptomInputStep
+          {step === "aussenOhr" && (
+             <SymptomSelection
+                      symptoms={[{symptomName: "autsch aussenohr", schmerzen: true, symptomValue: "1"},
+                                 {symptomName: "autschi aussenohr", schmerzen: true, symptomValue: "1"}
+                      ]}
+                      inputMode={inputMode}
+                      setStep={setStep}
+                      toggleSymptoms={toggleSymptom}
+                      selectedSymptoms={selectedSymptoms}
+                  >
+                  </SymptomSelection>
+          )
+          }
+
+          {step === "innenOhr" && (
+             <SymptomSelection
+                      symptoms={[{symptomName: "autsch innennohr", schmerzen: true, symptomValue: "1"},
+                                 {symptomName: "autschi innenenohr", schmerzen: true, symptomValue: "1"}
+                      ]}
+                      inputMode={inputMode}
+                      setStep={setStep}
+                      toggleSymptoms={toggleSymptom}
+                      selectedSymptoms={selectedSymptoms}
+                  >
+                  </SymptomSelection>
+          )
+          }
+
+          {/* Schritt 5: Texinput, falls in Symptombaum aufgerufen */}
+          {step === "textInput" && (
+            <SymptomTextInputStep
               selectedSubRegion={selectedSubRegion}
-              inputMode={inputMode}
               symptomText={symptomText}
               setSymptomText={setSymptomText}
-              selectedSymptoms={selectedSymptoms}
-              toggleSymptom={toggleSymptom}
               onContinue={() => setStep("basisDetails")}
             />
           )}

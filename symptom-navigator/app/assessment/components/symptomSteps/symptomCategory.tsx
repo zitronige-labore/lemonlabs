@@ -48,7 +48,7 @@ export default function SymptomCategory({categories, setStep, setInputMode, sele
                       className={assessmentStyles.regionButton}
                       onClick={() => {
                         setInputMode("text");
-                        setStep("symptomInput");
+                        setStep("textInput");
                       }}
                     >
                       Freitext eingeben

@@ -7,6 +7,7 @@ import assessmentStyles from "../Assessment.module.css";
   Import der Typdefinitionen für Haupt- und Unterregionen.
 */
 import type {
+  Step,
   MainRegion,
   SubRegion,
 } from "../../types/assessment";
@@ -16,6 +17,7 @@ import type {
   die passende Unterregionen zu einer Hauptregion liefert.
 */
 import { getSubRegions } from "../utils/assessmentData";
+import { parseString } from "xml2js";
 
 /*
   Eigenschaften der BodyRegionStep-Komponente.
@@ -43,6 +45,7 @@ type BodyRegionStepProps = {
   selectSubRegion: (region: SubRegion) => void;
 
   onContinue: () => void;
+  setStep: (step: Step) => void;
 };
 
 /*
@@ -58,6 +61,7 @@ export function BodyRegionStep({
   selectMainRegion,
   selectSubRegion,
   onContinue,
+  setStep
 }: BodyRegionStepProps) {
   return (
     <>
@@ -453,9 +457,9 @@ export function BodyRegionStep({
                       ? assessmentStyles.selectedRegion
                       : ""
                   }`}
-                  onClick={() =>
+                  onClick={() => {
                     selectSubRegion(subRegion)
-                  }
+                  }}
                 >
                   {subRegion}
                 </button>
@@ -469,7 +473,9 @@ export function BodyRegionStep({
       <button
         type="button"
         className={assessmentStyles.primaryButton}
-        onClick={onContinue}
+        onClick={()=>{
+          setStep(selectedSubRegion);
+        }}
 
         /*
           Der Button bleibt deaktiviert,
