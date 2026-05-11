@@ -58,7 +58,7 @@ CREATE TABLE raw_text_symptoms (
 CREATE TABLE case_symptoms ( 
 	case_id INTEGER,
 	name_de VARCHAR,
-	raw_id INTEGER REFERENCES
+	raw_id INTEGER
 );
 
 CREATE TABLE recommendations (
