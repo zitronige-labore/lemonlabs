@@ -56,7 +56,7 @@ CREATE TABLE raw_text_symptoms (
 
 CREATE TABLE case_symptoms ( 
 	case_id INTEGER REFERENCES cases(case_id) ON DELETE CASCADE,
-	symptom_id INTEGER REFERENCES symptom_catalog(symptom_id),
+	name_de INTEGER REFERENCES symptom_catalog(name_de),
 	raw_id INTEGER REFERENCES raw_text_symptoms(raw_id)
 );
 
