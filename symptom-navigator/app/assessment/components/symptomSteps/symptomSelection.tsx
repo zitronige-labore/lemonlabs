@@ -1,3 +1,6 @@
+/*
+  component for a reusable symptom selection page
+*/
 "use client"
 
 //css import
