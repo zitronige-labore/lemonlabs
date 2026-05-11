@@ -1,0 +1,101 @@
+/*
+  Beschreibt alle möglichen Schritte des gesamten Ablaufs
+  der Ersteinschätzung innerhalb der Anwendung.
+*/
+export type Step =
+  | "start"
+  | "hinweise"
+  | "redflags"
+  | "basisStart"
+  | "bodyRegion"
+  | "symptomChoice"
+  | "symptomInput"
+  | "basisDetails"
+  | "result";
+
+/*
+  Hauptregionen der interaktiven Körperkarte.
+
+  Diese Bereiche werden zuerst ausgewählt,
+  bevor eine genauere Unterregion bestimmt wird.
+*/
+export type MainRegion =
+  | "Kopf & Gesicht"
+  | "Hals & Nacken"
+  | "Brust"
+  | "Bauch"
+  | "Rücken"
+  | "Becken & Unterleib"
+  | "Arme & Hände"
+  | "Beine & Füße"
+  | "Haut (gesamt)"
+  | "Allgemein (ganzer Körper)";
+
+/*
+  Genauere Unterregionen innerhalb einer Hauptregion.
+
+  Diese Auswahl dient dazu, Beschwerden
+  präziser zuzuordnen.
+*/
+export type SubRegion =
+  | "Kopf"
+  | "Augen"
+  | "Ohren"
+  | "Nase"
+  | "Mund / Zähne"
+  | "Hals"
+  | "Nacken"
+  | "Brust links"
+  | "Brust rechts"
+  | "Oberbauch"
+  | "Unterbauch"
+  | "Rücken oben"
+  | "Rücken unten"
+  | "Becken"
+  | "Genitalbereich"
+  | "Schulter"
+  | "Oberarm"
+  | "Unterarm"
+  | "Hand"
+  | "Oberschenkel"
+  | "Knie"
+  | "Unterschenkel"
+  | "Fuß"
+  | "Haut allgemein"
+  | "Keine bestimmte Region / mehrere Stellen";
+
+/*
+  Gibt an, wie Beschwerden eingegeben werden.
+
+  "text"   = Freitextbeschreibung
+  "select" = Auswahl aus vorgegebenen Symptomen
+  null     = Noch keine Auswahl getroffen
+*/
+export type InputMode = "text" | "select" | null;
+
+/*
+  Enthält alle möglichen Warnzeichen,
+  die auf einen medizinischen Notfall
+  hinweisen können.
+*/
+export type RedFlags = {
+  chestPain: boolean;
+  breathingProblems: boolean;
+  unconsciousness: boolean;
+  severeBleeding: boolean;
+  strokeSymptoms: boolean;
+  highFeverConfusion: boolean;
+};
+
+/*
+  Speichert allgemeine Angaben der Nutzerin
+  oder des Nutzers sowie zusätzliche Informationen
+  zu den Beschwerden.
+*/
+export type BasisData = {
+  age: string;
+  gender: string;
+  pregnancy: string;
+  duration: string;
+  intensity: string;
+};
