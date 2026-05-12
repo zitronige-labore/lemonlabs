@@ -173,7 +173,7 @@ export function AdditionalInfoStep({
                 checked={additionalData.conditions.includes(condition)}
                 onChange={() => setAdditionalData({
                   ...additionalData,
-                  conditions: additionalData.conditions + "," + condition,
+                  conditions: additionalData.conditions + condition + ",",
                 })}
               />
 

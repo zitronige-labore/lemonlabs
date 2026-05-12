@@ -39,15 +39,15 @@ export async function saveFormData(formData: FormData) {
 
     // medication
     const medication = formData.get("medication") as string;
-    const medicationList = medication.split(",");
+    const medicationList = medication.split(",").map(s => s.trim()).filter(s => s !== "");;
 
     // conditions
     const conditions = formData.get("conditions") as string;
-    const conditionList = conditions.split(",");
+    const conditionList = conditions.split(",").map(s => s.trim()).filter(s => s !== "");;
 
     // allergies
     const allergies = formData.get("allergies") as string;
-    const allergyList = allergies.split(",");
+    const allergyList = allergies.split(",").map(s => s.trim()).filter(s => s !== "");;
 
     // temperature
     const temperature = formData.get("temperature") as string;
@@ -102,7 +102,10 @@ export async function saveFormData(formData: FormData) {
         [age, sex, pregnancy, timestamp]
     );
 
+
     // writing additional info into db
+
+    // insert for singular values
     await connectionPool.query(
         `
         Insert into additional_information 
@@ -113,6 +116,41 @@ export async function saveFormData(formData: FormData) {
         [dbReturn.rows[0].case_id, weight || null, height || null, temperatureFloat|| null, duration|| null, 
         worseningBool|| null, breastfeedingBool|| null, extraInfo|| null]
     );
+
+    // insert for multiple values
+    for(const element of allergyList) {
+      await connectionPool.query(
+        `
+        Insert into details_no_certain_count 
+        (case_id, category, detail)
+        VALUES ($1, $2, $3);
+        `,
+        [dbReturn.rows[0].case_id, "allergy", element|| null]
+    );
+    }
+
+    for(const element of conditionList) {
+      await connectionPool.query(
+        `
+        Insert into details_no_certain_count 
+        (case_id, category, detail)
+        VALUES ($1, $2, $3);
+        `,
+        [dbReturn.rows[0].case_id, "condition", element || null]
+    );
+    }
+
+    for(const element of medicationList) {
+      await connectionPool.query(
+        `
+        Insert into details_no_certain_count 
+        (case_id, category, detail)
+        VALUES ($1, $2, $3);
+        `,
+        [dbReturn.rows[0].case_id, "medication", element || null]
+    );
+    }
+
 
     let raw_id = null;
     if(symptomTextList.length>0){
@@ -212,6 +250,7 @@ export async function sendDataToAi() {
   const DatenAusDB = await connectionPool.query(`
     SELECT weight, height, temperature, duration, worsening, breastfeeding, extrainfo raw_symptoms, case_symptoms.name_de
     FROM cases LEFT JOIN case_symptoms ON cases.case_id = case_symptoms.case_id
+    LEFT JOIN details_no_certain_count ON details_no_certain_count.case_id = cases.case_id
     LEFT JOIN additional_information ON additional_information.case_id = cases.case_id
     LEFT JOIN raw_text_symptoms ON raw_text_symptoms.raw_id = case_symptoms.raw_id
     LEFT JOIN symptom_catalog ON symptom_catalog.name_de = case_symptoms.name_de
