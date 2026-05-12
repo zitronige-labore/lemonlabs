@@ -16,6 +16,11 @@ CREATE TABLE cases (
 	pregnancy BOOLEAN,
 	weight INTEGER,
 	height INTEGER,
+	fever INTEGER,
+	duration INTEGER,
+	worsening BOOLEAN,
+	breastfeeding BOOLEAN,
+	extraInfo VARCHAR,
 	date TIMESTAMP,
 	access_code UUID DEFAULT gen_random_uuid()
 );
