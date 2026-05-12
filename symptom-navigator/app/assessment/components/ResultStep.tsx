@@ -129,7 +129,7 @@ export function ResultStep({
       </p>
 
       <p>
-        Fieber: <strong>{additionalData.fever || "Keine Angabe"}</strong>
+        Fieber: <strong>{additionalData.temperature || "Keine Angabe"}</strong>
       </p>
 
       <p>
@@ -166,7 +166,7 @@ export function ResultStep({
       </p>
 
       <p>
-        Fieber: <strong>{additionalData.fever || "Keine Angabe"}</strong>
+        Fieber: <strong>{additionalData.temperature || "Keine Angabe"}</strong>
       </p>
 
       <p>

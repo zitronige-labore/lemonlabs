@@ -49,8 +49,9 @@ export async function saveFormData(formData: FormData) {
     const allergies = formData.get("allergies") as string;
     const allergyList = allergies.split(",");
 
-    // fever
-    const fever = parseInt(formData.get("fever") as string);
+    // temperature
+    const temperature = formData.get("temperature") as string;
+    const temperatureFloat = parseFloat(temperature.replace(",", "."));
 
     // duration
     const duration = parseInt(formData.get("duration") as string);
@@ -105,11 +106,12 @@ export async function saveFormData(formData: FormData) {
     await connectionPool.query(
         `
         Insert into additional_information 
-        (case_id, weight, height, fever, duration, 
+        (case_id, weight, height, temperature, duration, 
         worsening, breastfeeding, extrainfo)
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8);
         `,
-        [dbReturn.rows[0].case_id, weight, height, fever, duration, worseningBool, breastfeedingBool, extraInfo]
+        [dbReturn.rows[0].case_id, weight || null, height || null, temperatureFloat|| null, duration|| null, 
+        worseningBool|| null, breastfeedingBool|| null, extraInfo|| null]
     );
 
     let raw_id = null;
@@ -208,7 +210,7 @@ export async function sendDataToAi() {
   // DB query
   // to be replaced later
   const DatenAusDB = await connectionPool.query(`
-    SELECT weight, height, fever, duration, worsening, breastfeeding, extrainfo raw_symptoms, case_symptoms.name_de
+    SELECT weight, height, temperature, duration, worsening, breastfeeding, extrainfo raw_symptoms, case_symptoms.name_de
     FROM cases LEFT JOIN case_symptoms ON cases.case_id = case_symptoms.case_id
     LEFT JOIN additional_information ON additional_information.case_id = cases.case_id
     LEFT JOIN raw_text_symptoms ON raw_text_symptoms.raw_id = case_symptoms.raw_id
@@ -224,7 +226,7 @@ export async function sendDataToAi() {
 
   // define master prompt
   const masterPrompt = `
-  du bekommst gleich daten ueber einen Fall, bestehend aus Alter, Geschlecht, Schwangerschaft, Gewicht, Größe, Fieber in Grad Celsius
+  du bekommst gleich daten ueber einen Fall, bestehend aus Alter, Geschlecht, Schwangerschaft, Gewicht, Größe, Temperatur in Grad Celsius
   wie lange die Symptome schon anhalten(duration), ob die symptome schlimmer werden(worsening), ob eine Stillzeit vorleigt, 
   sonstige Informationen(extrainfo), und Symptomen.
   Die Symptome findest du entweder in "raw_symptoms" als freitext oder als "name_de" als name fuer ein bestimmtes symptom. 

@@ -127,7 +127,7 @@ const [additionalData, setAdditionalData] = useState<AdditionalData>({
 
   allergies: "",
 
-  fever: "",
+  temperature: "",
   worsening: "",
 
   weight: "",

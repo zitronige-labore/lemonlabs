@@ -38,7 +38,7 @@ export type AdditionalData = {
 
   allergies: string;
 
-  fever: string;
+  temperature: string;
   duration: string;
   worsening: string;
 
@@ -120,7 +120,7 @@ export type RedFlags = {
   unconsciousness: boolean;
   severeBleeding: boolean;
   strokeSymptoms: boolean;
-  highFeverConfusion: boolean;
+  hightemperatureConfusion: boolean;
 };
 
 /*

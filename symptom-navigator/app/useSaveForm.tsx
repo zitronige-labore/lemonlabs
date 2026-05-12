@@ -23,7 +23,7 @@ export function useSaveForm(basisData: any, additionalData:any, redFlags: any, s
         formData.set("breastfeeding", additionalData.breastfeeding);
         formData.set("conditions", additionalData.conditions);
         formData.set("allergies", additionalData.allergies);
-        formData.set("fever", additionalData.fever);
+        formData.set("temperature", additionalData.temperature);
         formData.set("duration", additionalData.duration);
         formData.set("worsening", additionalData.worsening);
         formData.set("extraInfo", additionalData.extraInfo);

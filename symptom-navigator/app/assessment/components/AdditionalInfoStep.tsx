@@ -222,16 +222,17 @@ export function AdditionalInfoStep({
 
         {/* Fieber */}
         <label className={assessmentStyles.formLabel}>
-          Haben Sie Fieber gemessen?
+          Haben Sie Ihre Temperatur gemessen?
 
           <input
             className={assessmentStyles.input}
-            type="text"
-            value={additionalData.fever}
+            type="number"
+            step="0.01"
+            value={additionalData.temperature}
             onChange={(event) =>
               setAdditionalData({
                 ...additionalData,
-                fever: event.target.value,
+                temperature: event.target.value,
               })
             }
             placeholder="Zum Beispiel: 38,5 °C oder nicht gemessen"
