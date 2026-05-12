@@ -3,54 +3,17 @@
 */
 import assessmentStyles from "../Assessment.module.css";
 
-/*
-  Import der benötigten Typdefinitionen.
-
-  BasisData:
-  Allgemeine Angaben und Beschwerdedaten
-
-  InputMode:
-  Art der Symptomeingabe
-
-  MainRegion:
-  Ausgewählte Hauptregion der Körperkarte
-
-  SubRegion:
-  Ausgewählte Unterregion der Körperkarte
-*/
 import type {
+  AdditionalData,
   BasisData,
   InputMode,
   MainRegion,
   SubRegion,
 } from "../../types/assessment";
 
-/*
-  Eigenschaften der ResultStep-Komponente.
-
-  basisData:
-  Allgemeine Angaben und Beschwerdedaten
-
-  selectedMainRegion:
-  Gewählte Hauptregion
-
-  selectedSubRegion:
-  Gewählte Unterregion
-
-  inputMode:
-  Art der Symptomeingabe
-
-  symptomText:
-  Freitextbeschreibung der Beschwerden
-
-  selectedSymptoms:
-  Liste ausgewählter Symptome
-
-  onGoHome:
-  Funktion zum Zurückkehren zur Startseite
-*/
 type ResultStepProps = {
   basisData: BasisData;
+  additionalData: AdditionalData;
 
   selectedMainRegion: MainRegion | null;
   selectedSubRegion: SubRegion | null;
@@ -64,16 +27,9 @@ type ResultStepProps = {
   onGoHome: () => void;
 };
 
-/*
-  Dieser Schritt zeigt eine Zusammenfassung
-  aller eingegebenen Informationen an.
-
-  Die Angaben dienen aktuell nur
-  der Übersicht und werden noch nicht
-  an ein Backend übertragen.
-*/
 export function ResultStep({
   basisData,
+  additionalData,
   selectedMainRegion,
   selectedSubRegion,
   inputMode,
@@ -88,26 +44,18 @@ export function ResultStep({
 
   return (
     <div className={assessmentStyles.resultBox}>
-      {/* Hinweis auf erfolgreich erfasste Angaben */}
       <p className={assessmentStyles.selectedText}>
         Ihre Angaben wurden erfasst.
       </p>
 
-      {/* Alter */}
       <p>
         Alter: <strong>{basisData.age}</strong>
       </p>
 
-      {/* Geschlecht */}
       <p>
         Geschlecht: <strong>{basisData.gender}</strong>
       </p>
 
-      {/*
-        Schwangerschaft oder Stillzeit
-        wird nur angezeigt,
-        wenn "weiblich" ausgewählt wurde.
-      */}
       {basisData.gender === "weiblich" && (
         <p>
           Schwangerschaft oder Stillzeit:{" "}
@@ -115,69 +63,123 @@ export function ResultStep({
         </p>
       )}
 
-      {/* Ausgewählte Hauptregion */}
       <p>
         Hauptregion: <strong>{selectedMainRegion}</strong>
       </p>
 
-      {/* Ausgewählte Unterregion */}
       <p>
         Unterregion: <strong>{selectedSubRegion}</strong>
       </p>
 
-      {/*
-        Anzeige der Freitextbeschreibung,
-        falls Freitext als Eingabeart gewählt wurde.
-      */}
       {inputMode === "text" && (
         <p>
           Beschreibung: <strong>{symptomText}</strong>
         </p>
       )}
 
-      {/*
-        Anzeige der ausgewählten Symptome,
-        falls die Symptomauswahl verwendet wurde.
-      */}
       {inputMode === "select" && (
         <p>
-          Symptome:{" "}
-          <strong>{selectedSymptoms.join(", ")}</strong>
+          Symptome: <strong>{selectedSymptoms.join(", ")}</strong>
         </p>
       )}
 
-      {/* Dauer der Beschwerden */}
       <p>
         Dauer: <strong>{basisData.duration}</strong>
       </p>
 
-      {/* Schmerzintensität */}
       <p>
         Stärke: <strong>{basisData.intensity}</strong>
       </p>
 
       {aiAnswer?.assessment?.urgency && (
-      <>
-        <p>
-          Dringlichkeitsstufe: {aiAnswer.assessment.urgency}: 
-          {aiAnswer.assessment.urgencyText} 
-        </p>
-
-        <p>
-          Handlungsempfehlung: {aiAnswer.assessment.nextSteps} 
-        </p>
-        </>
-        )}
-
-        {!aiAnswer?.assessment?.urgency && (
         <>
-        <p>
-          Die Auswertung laedt noch...
-        </p>
-      </>
+          <p>
+            Dringlichkeitsstufe: {aiAnswer.assessment.urgency}:{" "}
+            {aiAnswer.assessment.urgencyText}
+          </p>
+
+          <p>Handlungsempfehlung: {aiAnswer.assessment.nextSteps}</p>
+        </>
       )}
 
+      {!aiAnswer?.assessment?.urgency && (
+        <p>Die Auswertung lädt noch...</p>
+      )}
+
+      <hr />
+
+      <p className={assessmentStyles.selectedText}>Zusatzangaben</p>
+
+      <p>
+        Medikamente:{" "}
+        <strong>{additionalData.medications || "Keine Angabe"}</strong>
+      </p>
+
+      <p>
+        Vorerkrankungen:{" "}
+        <strong>
+          {additionalData.conditions.length > 0
+            ? additionalData.conditions.join(", ")
+            : "Keine Angabe"}
+        </strong>
+      </p>
+
+      <p>
+        Allergien: <strong>{additionalData.allergies || "Keine Angabe"}</strong>
+      </p>
+
+      <p>
+        Fieber: <strong>{additionalData.fever || "Keine Angabe"}</strong>
+      </p>
+
+      <p>
+        Beschwerden werden stärker:{" "}
+        <strong>{additionalData.worsening || "Keine Angabe"}</strong>
+      </p>
+
+      <p>
+        Weitere Informationen:{" "}
+        <strong>{additionalData.extraInfo || "Keine Angabe"}</strong>
+      </p>
+
       {/* Zurück zur Startseite */}
+      <hr />
+
+      <p className={assessmentStyles.selectedText}>Zusatzangaben</p>
+
+      <p>
+        Medikamente:{" "}
+        <strong>{additionalData.medications || "Keine Angabe"}</strong>
+      </p>
+
+      <p>
+        Vorerkrankungen:{" "}
+        <strong>
+          {additionalData.conditions.length > 0
+            ? additionalData.conditions.join(", ")
+            : "Keine Angabe"}
+        </strong>
+      </p>
+
+      <p>
+        Allergien: <strong>{additionalData.allergies || "Keine Angabe"}</strong>
+      </p>
+
+      <p>
+        Fieber: <strong>{additionalData.fever || "Keine Angabe"}</strong>
+      </p>
+
+      <p>
+        Beschwerden werden stärker:{" "}
+        <strong>{additionalData.worsening || "Keine Angabe"}</strong>
+      </p>
+
+      <p>
+        Weitere Informationen:{" "}
+        <strong>{additionalData.extraInfo || "Keine Angabe"}</strong>
+      </p>
+
+>>>>>>> e855f93 (Code ausgelagert und kommentiert)
       <button
         type="button"
         className={assessmentStyles.continueButton}

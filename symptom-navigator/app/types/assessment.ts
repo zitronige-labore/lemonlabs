@@ -23,14 +23,30 @@ export type Step =
   | "symptomChoice"
   | "symptomInput"
   | "basisDetails"
+  | "basisDetails"
+  | "additionalInfo"
   | "result"
   | "textInput"
   | subregionCategory
   | categoryAfterCategoryIfNeeded
   | symptomChoiceStep;
 
-  
-  
+export type AdditionalData = {
+  medications: string;
+  conditions: string[];
+
+  allergies: string;
+
+  fever: string;
+  worsening: string;
+
+  weight: string;
+  height: string;
+
+  breastfeeding: string;
+
+  extraInfo: string;
+};
 /*
   Hauptregionen der interaktiven Körperkarte.
 

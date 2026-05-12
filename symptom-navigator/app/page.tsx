@@ -28,6 +28,7 @@ import SymptomSelection from "./assessment/components/symptomSteps/symptomSelect
   Import der ausgelagerten Komponenten.
   Jede Komponente stellt einen bestimmten Schritt oder Layout-Bereich dar.
 */
+import { AdditionalInfoStep } from "./assessment/components/AdditionalInfoStep";
 import { AssessmentLayout } from "./assessment/components/AssessmentLayout";
 import { BasisDetailsStep } from "./assessment/components/BasisDetailsStep";
 import { BasisStartStep } from "./assessment/components/BasisStartStep";
@@ -43,6 +44,7 @@ import { SymptomTextInputStep } from "./assessment/components/SymptomTextInputSt
   Import der TypeScript-Typen für Zustände und Auswahlwerte.
 */
 import type {
+  AdditionalData,
   BasisData,
   InputMode,
   MainRegion,
@@ -115,6 +117,27 @@ export default function Home() {
     duration: "",
     intensity: "0",
   });
+
+  /*
+    Speichert optionale Zusatzangaben.
+    Diese Angaben sind nicht verpflichtend.
+  */
+const [additionalData, setAdditionalData] = useState<AdditionalData>({
+  medications: "",
+  conditions: [],
+
+  allergies: "",
+
+  fever: "",
+  worsening: "",
+
+  weight: "",
+  height: "",
+
+  breastfeeding: "",
+
+  extraInfo: "",
+});
 
   /*
     Prüft, ob mindestens ein Warnzeichen ausgewählt wurde.
@@ -199,6 +222,19 @@ export default function Home() {
   }
 
   /*
+    Fügt eine Vorerkrankung zur Auswahl hinzu
+    oder entfernt sie wieder.
+  */
+  function toggleCondition(condition: string) {
+    setAdditionalData((previousData) => ({
+      ...previousData,
+      conditions: previousData.conditions.includes(condition)
+        ? previousData.conditions.filter((item) => item !== condition)
+        : [...previousData.conditions, condition],
+    }));
+  }
+
+  /*
     Wird beim Abschließen des Formulars ausgeführt.
 
     Die gesammelten Angaben werden aktuell in der Konsole ausgegeben
@@ -216,6 +252,7 @@ export default function Home() {
       symptomText,
       selectedSymptoms,
       basisData,
+      additionalData,
     };
 
     // calling function to save form data in db
@@ -343,10 +380,21 @@ export default function Home() {
             <BasisDetailsStep
               basisData={basisData}
               setBasisData={setBasisData}
+              onContinue={() => setStep("additionalInfo")}
             />
           )}
 
-          {/* Schritt 7: Ergebnis und Zusammenfassung */}
+          {/* Schritt 7: Optionale Zusatzangaben */}
+          {step === "additionalInfo" && (
+            <AdditionalInfoStep
+              additionalData={additionalData}
+              setAdditionalData={setAdditionalData}
+              toggleCondition={toggleCondition}
+              onSkip={() => setStep("result")}
+            />
+          )}
+
+          {/* Schritt 8: Ergebnis und Zusammenfassung */}
           {step === "result" && (
             <ResultStep
               basisData={basisData}
@@ -355,6 +403,7 @@ export default function Home() {
               inputMode={inputMode}
               symptomText={symptomText}
               selectedSymptoms={selectedSymptoms}
+              additionalData={additionalData}
               onGoHome={() => setStep("start")}
               aiAnswer={aiAnswer}
             />

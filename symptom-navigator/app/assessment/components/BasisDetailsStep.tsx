@@ -16,10 +16,14 @@ import type { BasisData } from "../../types/assessment";
 
   setBasisData:
   Funktion zum Aktualisieren der gespeicherten Angaben
+
+  onContinue:
+  Führt zum nächsten Schritt der Ersteinschätzung
 */
 type BasisDetailsStepProps = {
   basisData: BasisData;
   setBasisData: (basisData: BasisData) => void;
+  onContinue: () => void;
 };
 
 /*
@@ -33,6 +37,7 @@ type BasisDetailsStepProps = {
 export function BasisDetailsStep({
   basisData,
   setBasisData,
+  onContinue,
 }: BasisDetailsStepProps) {
   return (
     <>
@@ -94,13 +99,14 @@ export function BasisDetailsStep({
         </label>
       </fieldset>
 
-      {/* Button zum Abschließen der Ersteinschätzung */}
+      {/* Button zum Wechsel zur Seite "Zusatzangaben" */}
       <button
-        type="submit"
+        type="button"
         className={assessmentStyles.primaryButton}
+        onClick={onContinue}
         disabled={!basisData.duration || !basisData.intensity}
       >
-        Einschätzung abschließen
+        Weiter
       </button>
     </>
   );
