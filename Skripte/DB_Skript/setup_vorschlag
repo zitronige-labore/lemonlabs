@@ -23,7 +23,7 @@ CREATE TABLE additional_information (
 	case_id INTEGER,
 	weight INTEGER,
 	height INTEGER,
-	fever INTEGER,
+	temperature REAL,
 	duration INTEGER,
 	worsening BOOLEAN,
 	breastfeeding BOOLEAN,
