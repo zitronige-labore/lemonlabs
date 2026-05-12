@@ -24,6 +24,7 @@ import { sendDataToAi } from "./actions";
   Import der ausgelagerten Komponenten.
   Jede Komponente stellt einen bestimmten Schritt oder Layout-Bereich dar.
 */
+import SelectMoreSymptoms from "./assessment/components/SelectMoreSymptomsStep";
 import { AdditionalInfoStep } from "./assessment/components/AdditionalInfoStep";
 import { AssessmentLayout } from "./assessment/components/AssessmentLayout";
 import { BasisDetailsStep } from "./assessment/components/BasisDetailsStep";
@@ -33,7 +34,6 @@ import { HinweiseScreen } from "./assessment/components/HinweiseScreen";
 import { RedFlagsStep } from "./assessment/components/RedFlagsStep";
 import { ResultStep } from "./assessment/components/ResultStep";
 import { StartScreen } from "./assessment/components/StartScreen";
-import { SymptomChoiceStep } from "./assessment/components/SymptomChoiceStep";
 import { SymptomTextInputStep } from "./assessment/components/SymptomTextInputStep";
 
 /*
@@ -54,6 +54,7 @@ import type {
 */
 import { emptyRedFlags } from "./assessment/utils/assessmentData";
 import SymptomTree from "./assessment/components/symptomSteps/symptomTree";
+import SymptomSelection from "./assessment/components/symptomSteps/symptomSelection";
 
 export default function Home() {
   /*
@@ -326,20 +327,20 @@ const [additionalData, setAdditionalData] = useState<AdditionalData>({
               selectedSubRegion={selectedSubRegion}
               symptomText={symptomText}
               setSymptomText={setSymptomText}
-              onContinue={() => setStep("basisDetails")}
+              onContinue={() => setStep("selectMoreSymptoms")}
             />
           )}
 
-          {/* Schritt 6: Weitere Angaben zu Dauer und Stärke */}
-          {step === "basisDetails" && (
-            <BasisDetailsStep
-              basisData={basisData}
-              setBasisData={setBasisData}
-              onContinue={() => setStep("additionalInfo")}
+          {/* Schritt 5,5: weitere Symptomangabe */}
+          {step === "selectMoreSymptoms" && (
+            <SelectMoreSymptoms
+            setSelectedMainRegion={setSelectedMainRegion}
+            setSelectedSubRegion={setSelectedSubRegion}
+            setStep={setStep}
             />
           )}
 
-          {/* Schritt 7: Optionale Zusatzangaben */}
+          {/* Schritt 6: Optionale Zusatzangaben */}
           {step === "additionalInfo" && (
             <AdditionalInfoStep
               additionalData={additionalData}
@@ -348,7 +349,7 @@ const [additionalData, setAdditionalData] = useState<AdditionalData>({
             />
           )}
 
-          {/* Schritt 8: Ergebnis und Zusammenfassung */}
+          {/* Schritt 7: Ergebnis und Zusammenfassung */}
           {step === "result" && (
             <ResultStep
               basisData={basisData}

@@ -47,13 +47,13 @@ export function AdditionalInfoStep({
     Speichert mögliche Fehlermeldungen
     für das Allergie-Feld.
   */
-  const [allergyError, setAllergyError] = useState("");
+  const [inputError, setInputError] = useState("");
 
   /*
     Erlaubt Buchstaben, Leerzeichen,
     Kommas und Bindestriche.
   */
-  const allergyPattern = /^[a-zA-ZäöüÄÖÜß,\-\s]*$/;
+  const Pattern = /^[^,]+(,[^,]+)*$/;
 
   return (
     <>
@@ -73,7 +73,7 @@ export function AdditionalInfoStep({
         <label className={assessmentStyles.formLabel}>
           Nehmen Sie aktuell Medikamente ein?
 
-          <textarea
+          <input
             className={assessmentStyles.input}
             value={additionalData.medications}
             onChange={(event) =>
@@ -82,17 +82,27 @@ export function AdditionalInfoStep({
                 medications: event.target.value,
               })
             }
+
+            onBlur={(event) => {
+              const value = event.target.value.trim();
+              if (value === "" || Pattern.test(value)) {
+                setInputError("");
+              } else {
+                setInputError("Bitte schreiben als: Medikament1, Medikament2, ...");
+              }
+            }}
+
             placeholder="Zum Beispiel: Ibuprofen, Blutdruckmedikamente..."
           />
         </label>
 
         {/* Gewicht */}
         <label className={assessmentStyles.formLabel}>
-          Gewicht
+          Gewicht in kg
 
           <input
             className={assessmentStyles.input}
-            type="text"
+            type="number"
             value={additionalData.weight}
             onChange={(event) =>
               setAdditionalData({
@@ -106,11 +116,11 @@ export function AdditionalInfoStep({
 
         {/* Größe */}
         <label className={assessmentStyles.formLabel}>
-          Größe
+          Größe in cm
 
           <input
             className={assessmentStyles.input}
-            type="text"
+            type="number"
             value={additionalData.height}
             onChange={(event) =>
               setAdditionalData({
@@ -152,7 +162,6 @@ export function AdditionalInfoStep({
             "Bluthochdruck",
             "Herzkrankheit",
             "Asthma",
-            "Allergien",
             "Keine bekannt",
           ].map((condition) => (
             <label
@@ -185,27 +194,28 @@ export function AdditionalInfoStep({
             onChange={(event) => {
               const value = event.target.value;
 
-              if (!allergyPattern.test(value)) {
-                setAllergyError(
-                  "Bitte nur Buchstaben, Leerzeichen, Kommas und Bindestriche verwenden."
-                );
-                return;
-              }
-
-              setAllergyError("");
-
               setAdditionalData({
                 ...additionalData,
                 allergies: value,
               });
             }}
+
+            onBlur={(event) => {
+              const value = event.target.value.trim();
+              if (value === "" || Pattern.test(value)) {
+                setInputError("");
+              } else {
+                setInputError("Bitte schreiben als: Allergie1, Allergie2, ...");
+              }
+            }}
+            
             placeholder="Zum Beispiel: Medikamente, Lebensmittel, Pollen..."
           />
 
           {/* Fehlermeldung bei ungültiger Eingabe */}
-          {allergyError && (
+          {inputError && (
             <p className={assessmentStyles.errorText}>
-              {allergyError}
+              {inputError}
             </p>
           )}
         </label>
