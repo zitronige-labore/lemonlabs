@@ -13,7 +13,12 @@ CREATE TABLE cases (
 	case_id SERIAL PRIMARY KEY,
 	age INTEGER,
 	sex CHAR(1),
-	pregnancy BOOLEAN,
+	date TIMESTAMP,
+	access_code UUID DEFAULT gen_random_uuid()
+);
+
+CREATE TABLE cases (
+	case_id,
 	weight INTEGER,
 	height INTEGER,
 	fever INTEGER,
@@ -21,8 +26,6 @@ CREATE TABLE cases (
 	worsening BOOLEAN,
 	breastfeeding BOOLEAN,
 	extraInfo VARCHAR,
-	date TIMESTAMP,
-	access_code UUID DEFAULT gen_random_uuid()
 );
 
 CREATE TABLE drug_use (
