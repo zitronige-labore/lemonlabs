@@ -18,7 +18,7 @@ CREATE TABLE cases (
 );
 
 CREATE TABLE cases (
-	case_id,
+	case_id INTEGER,
 	weight INTEGER,
 	height INTEGER,
 	fever INTEGER,
