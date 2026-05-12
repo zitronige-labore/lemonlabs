@@ -37,6 +37,45 @@ export async function saveFormData(formData: FormData) {
     // height
     const height = parseInt(formData.get("height") as string); 
 
+    // medication
+    const medication = formData.get("medication") as string;
+    const medicationList = medication.split(",");
+
+    // conditions
+    const conditions = formData.get("conditions") as string;
+    const conditionList = conditions.split(",");
+
+    // allergies
+    const allergies = formData.get("allergies") as string;
+    const allergyList = allergies.split(",");
+
+    // fever
+    const fever = parseInt(formData.get("fever") as string);
+
+    // duration
+    const duration = parseInt(formData.get("duration") as string);
+
+    // worsening
+    const worsening = formData.get("worsening") as string;
+    let worseningBool = null;
+    if(worsening === "ja") {
+      worseningBool = true; 
+    }
+    else if(worsening === "nein") {
+      worseningBool = false;
+    }
+
+    // breastfeeding
+    const breastfeeding = formData.get("breastfeeding") as string;
+    let breastfeedingBool = null;
+    if(breastfeeding === "ja") {
+      breastfeedingBool = true; 
+    }
+    else if(breastfeeding === "nein") {
+      breastfeedingBool = false;
+    }
+
+    const extraInfo = formData.get("extraInfo") as string;
 
     // symptoms (prewritten, raw Text)
     const selectedSymptoms = formData.get("selectedSymptoms") as string;
@@ -60,6 +99,17 @@ export async function saveFormData(formData: FormData) {
         returning case_id, access_code;
         `,
         [age, sex, pregnancy, timestamp]
+    );
+
+    // writing additional info into db
+    await connectionPool.query(
+        `
+        Insert into additional_information 
+        (case_id, weight, height, fever, duration, 
+        worsening, breastfeeding, extrainfo)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8);
+        `,
+        [dbReturn.rows[0].case_id, weight, height, fever, duration, worseningBool, breastfeedingBool, extraInfo]
     );
 
     let raw_id = null;
@@ -158,8 +208,9 @@ export async function sendDataToAi() {
   // DB query
   // to be replaced later
   const DatenAusDB = await connectionPool.query(`
-    SELECT weight, height, raw_symptoms, case_symptoms.name_de
+    SELECT weight, height, fever, duration, worsening, breastfeeding, extrainfo raw_symptoms, case_symptoms.name_de
     FROM cases LEFT JOIN case_symptoms ON cases.case_id = case_symptoms.case_id
+    LEFT JOIN additional_information ON additional_information.case_id = cases.case_id
     LEFT JOIN raw_text_symptoms ON raw_text_symptoms.raw_id = case_symptoms.raw_id
     LEFT JOIN symptom_catalog ON symptom_catalog.name_de = case_symptoms.name_de
     WHERE cases.case_id = $1
@@ -173,7 +224,9 @@ export async function sendDataToAi() {
 
   // define master prompt
   const masterPrompt = `
-  du bekommst gleich daten ueber einen Fall, bestehend aus Alter, Geschlecht, Schwangerschaft, Gewicht, Höhe und Symptomen.
+  du bekommst gleich daten ueber einen Fall, bestehend aus Alter, Geschlecht, Schwangerschaft, Gewicht, Größe, Fieber in Grad Celsius
+  wie lange die Symptome schon anhalten(duration), ob die symptome schlimmer werden(worsening), ob eine Stillzeit vorleigt, 
+  sonstige Informationen(extrainfo), und Symptomen.
   Die Symptome findest du entweder in "raw_symptoms" als freitext oder als "name_de" als name fuer ein bestimmtes symptom. 
   Erstelle basierend auf diesen Daten eine Einschaetzung der Dringlchkeit 
   (auf einer Skala von 1: keine Aerztliche Abklaerung noetig, 2: ärztliche Abklärung empfohlen, 3: ärztliche Abklärung zeitnah erforderlich, 4: gang in die notaufnahme erforderlich, 5: Notruf taetigen),
