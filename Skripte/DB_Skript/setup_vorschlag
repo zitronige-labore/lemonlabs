@@ -25,7 +25,7 @@ CREATE TABLE cases (
 	duration INTEGER,
 	worsening BOOLEAN,
 	breastfeeding BOOLEAN,
-	extraInfo VARCHAR,
+	extraInfo VARCHAR
 );
 
 CREATE TABLE drug_use (
