@@ -313,12 +313,15 @@ export async function sendDataToAi() {
 
   try {
     // Make request to Ollama API
-    const response = await fetch('http://141.19.141.150:11434/api/generate', {
+    const response = await fetch('http://141.19.141.155:8501/api/generate?api_key=sk-rwai1swh1cJ0JOROAK8iLA', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer sk-rwai1swh1cJ0JOROAK8iLA',
+        'x-api-key:': 'sk-rwai1swh1cJ0JOROAK8iLA'
       },
       body: JSON.stringify({
+        api_key: 'sk-rwai1swh1cJ0JOROAK8iLA',
         model: 'medgemma:27b',
         prompt: prompt,
         stream: false,
