@@ -36,6 +36,7 @@ export default function SymptomSelection({symptoms, selectedSymptoms, inputMode,
                         type="checkbox"
                         id={element.symptomName}
                         name= {element.symptomName}
+                        checked={selectedSymptoms.includes(element.symptomValue)}
                         className={assessmentStyles.regionButton}
                         onChange={() => {
                             toggleSymptom(element.symptomValue);

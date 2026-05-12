@@ -298,14 +298,6 @@ export function AdditionalInfoStep({
       {/* Buttons */}
       <div className={assessmentStyles.quickSelect}>
         <button
-          type="button"
-          className={assessmentStyles.secondaryButton}
-          onClick={onSkip}
-        >
-          Überspringen
-        </button>
-
-        <button
           type="submit"
           className={assessmentStyles.primaryButton}
         >

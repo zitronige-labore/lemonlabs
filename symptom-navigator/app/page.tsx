@@ -189,7 +189,6 @@ const [additionalData, setAdditionalData] = useState<AdditionalData>({
     setSelectedSubRegion(null);
     setInputMode(null);
     setSymptomText("");
-    setSelectedSymptoms([]);
   }
 
   /*
