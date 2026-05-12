@@ -18,7 +18,16 @@ export function useSaveForm(basisData: any, additionalData:any, redFlags: any, s
         formData.set("selectedMainRegion", selectedMainRegion);
         formData.set("selectedSubRegion", selectedSubRegion);
         formData.set("medication", additionalData.medication);
-        formData.set("redFlags", redFlags); // convert redFlags object to string for storage
+        formData.set("weight", additionalData.weight);
+        formData.set("height", additionalData.height);
+        formData.set("breastfeeding", additionalData.breastfeeding);
+        formData.set("conditions", additionalData.conditions);
+        formData.set("allergies", additionalData.allergies);
+        formData.set("fever", additionalData.fever);
+        formData.set("duration", additionalData.duration);
+        formData.set("worsening", additionalData.worsening);
+        formData.set("extraInfo", additionalData.extraInfo);
+        formData.set("redFlags", redFlags); 
         await saveFormData(formData); // call the server action to save the form data in the db and set the cookie
         }
     return handleSaveForm;

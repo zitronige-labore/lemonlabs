@@ -121,7 +121,8 @@ export default function Home() {
   */
 const [additionalData, setAdditionalData] = useState<AdditionalData>({
   medications: "",
-  conditions: [],
+  conditions: "",
+  duration: "",
 
   allergies: "",
 
@@ -216,19 +217,6 @@ const [additionalData, setAdditionalData] = useState<AdditionalData>({
         ? previousSymptoms.filter((item) => item !== symptom)
         : [...previousSymptoms, symptom]
     );
-  }
-
-  /*
-    Fügt eine Vorerkrankung zur Auswahl hinzu
-    oder entfernt sie wieder.
-  */
-  function toggleCondition(condition: string) {
-    setAdditionalData((previousData) => ({
-      ...previousData,
-      conditions: previousData.conditions.includes(condition)
-        ? previousData.conditions.filter((item) => item !== condition)
-        : [...previousData.conditions, condition],
-    }));
   }
 
   /*
@@ -356,7 +344,6 @@ const [additionalData, setAdditionalData] = useState<AdditionalData>({
             <AdditionalInfoStep
               additionalData={additionalData}
               setAdditionalData={setAdditionalData}
-              toggleCondition={toggleCondition}
               onSkip={() => setStep("result")}
             />
           )}

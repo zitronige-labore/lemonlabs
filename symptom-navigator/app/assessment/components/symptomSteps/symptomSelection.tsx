@@ -18,7 +18,7 @@ interface SymptomSelectionProps {
   selectedSymptoms: string[];
 }
 
-export default function SymptomSelection({symptoms,selectedSymptoms, inputMode, setStep, toggleSymptom}: SymptomSelectionProps) {
+export default function SymptomSelection({symptoms, selectedSymptoms, inputMode, setStep, toggleSymptom}: SymptomSelectionProps) {
   return (
     
     <>

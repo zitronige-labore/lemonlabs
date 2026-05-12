@@ -31,7 +31,6 @@ import type { AdditionalData } from "../../types/assessment";
 type AdditionalInfoStepProps = {
   additionalData: AdditionalData;
   setAdditionalData: (data: AdditionalData) => void;
-  toggleCondition: (condition: string) => void;
   onSkip: () => void;
 };
 
@@ -42,7 +41,6 @@ type AdditionalInfoStepProps = {
 export function AdditionalInfoStep({
   additionalData,
   setAdditionalData,
-  toggleCondition,
   onSkip,
 }: AdditionalInfoStepProps) {
   /*
@@ -164,7 +162,10 @@ export function AdditionalInfoStep({
               <input
                 type="checkbox"
                 checked={additionalData.conditions.includes(condition)}
-                onChange={() => toggleCondition(condition)}
+                onChange={() => setAdditionalData({
+                  ...additionalData,
+                  conditions: additionalData.conditions + "," + condition,
+                })}
               />
 
               {condition}
@@ -224,6 +225,24 @@ export function AdditionalInfoStep({
               })
             }
             placeholder="Zum Beispiel: 38,5 °C oder nicht gemessen"
+          />
+        </label>
+
+        {/* Dauer */}
+        <label className={assessmentStyles.formLabel}>
+          Seit wie vielen Tagen haben Sie die Beschwerden?
+
+          <input
+            className={assessmentStyles.input}
+            type="number"
+            value={additionalData.duration}
+            onChange={(event) =>
+              setAdditionalData({
+                ...additionalData,
+                duration: event.target.value,
+              })
+            }
+            placeholder="Zum Beispiel: 2"
           />
         </label>
 
