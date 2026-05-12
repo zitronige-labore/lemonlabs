@@ -80,7 +80,7 @@ export async function saveFormData(formData: FormData) {
         await connectionPool.query(
           `INSERT INTO case_symptoms (name_de, case_id) 
           VALUES ($1, $2)`,
-          [symptomList[0], dbReturn.rows[0].case_id]
+          [symptomList[i], dbReturn.rows[0].case_id]
         );
       }
     }
