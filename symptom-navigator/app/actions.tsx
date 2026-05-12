@@ -32,10 +32,10 @@ export async function saveFormData(formData: FormData) {
     }
 
     //weight
-    const weight = /*parseInt(formData.get("weight") as string)*/ 70; // 70 is placeholder
+    const weight = parseInt(formData.get("weight") as string);
 
     // height
-    const height = /*parseInt(formData.get("height") as string)*/ 170; // 170 is placeholder
+    const height = parseInt(formData.get("height") as string); 
 
 
     // symptoms (prewritten, raw Text)
@@ -54,12 +54,12 @@ export async function saveFormData(formData: FormData) {
     // writing data into db and returning id for later use
     const dbReturn = await connectionPool.query(
         `
-        Insert into cases (age, sex, pregnancy, weight, height, date)
-        VALUES ($1, $2, $3, $4, $5, $6)
+        Insert into cases (age, sex, pregnancy, date)
+        VALUES ($1, $2, $3, $4)
 
         returning case_id, access_code;
         `,
-        [age, sex, pregnancy, weight, height, timestamp]
+        [age, sex, pregnancy, timestamp]
     );
 
     let raw_id = null;
