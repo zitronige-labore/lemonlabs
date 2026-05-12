@@ -33,11 +33,12 @@ export type Step =
 
 export type AdditionalData = {
   medications: string;
-  conditions: string[];
+  conditions: string;
 
   allergies: string;
 
   fever: string;
+  duration: string;
   worsening: string;
 
   weight: string;

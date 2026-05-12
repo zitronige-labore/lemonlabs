@@ -20,10 +20,6 @@ import { useSaveForm } from "./useSaveForm";
 // import the sendDataToAi function to use AI connection
 import { sendDataToAi } from "./actions";
 
-// import component for symptom category and symptomselection
-import SymptomCategory from "./assessment/components/symptomSteps/symptomCategory";
-import SymptomSelection from "./assessment/components/symptomSteps/symptomSelection";
-
 /*
   Import der ausgelagerten Komponenten.
   Jede Komponente stellt einen bestimmten Schritt oder Layout-Bereich dar.
@@ -57,6 +53,7 @@ import type {
   Anfangszustand für die Warnzeichen.
 */
 import { emptyRedFlags } from "./assessment/utils/assessmentData";
+import SymptomTree from "./assessment/components/symptomSteps/symptomTree";
 
 export default function Home() {
   /*
@@ -146,7 +143,7 @@ const [additionalData, setAdditionalData] = useState<AdditionalData>({
 
 
   // page.tsx – korrigiert
-  const handleSaveForm = useSaveForm(basisData, redFlags, selectedMainRegion, selectedSubRegion, selectedSymptoms, symptomText);
+  const handleSaveForm = useSaveForm(basisData, additionalData, redFlags, selectedMainRegion, selectedSubRegion, selectedSymptoms, symptomText);
 
   // assessment speichern, um es strukturiert auszugeben
   const [aiAnswer, setAiAnswer] = useState<any>(null);
@@ -325,45 +322,15 @@ const [additionalData, setAdditionalData] = useState<AdditionalData>({
           )}
 
           {/* Schritt 4: Symptombaum navigieren */}
-          {step === "Ohren" && (
-            <SymptomCategory
-              categories={[{category: "innenohr", step: "innenOhr"},
-                           {category: "aussenohr", step: "aussenOhr"}
-                      ]}
-                      setStep={setStep}
-                      setInputMode={setInputMode}
-                      selectedSubRegion={selectedSubRegion}
-            >
-            </SymptomCategory>
-          )}
-
-          {step === "aussenOhr" && (
-             <SymptomSelection
-                      symptoms={[{symptomName: "autsch aussenohr", schmerzen: true, symptomValue: "starke Schmerzen am Aussenohr"},
-                                 {symptomName: "autschi aussenohr", schmerzen: true, symptomValue: "Schmerzen am Aussenohr"}
-                      ]}
-                      inputMode={inputMode}
-                      setStep={setStep}
-                      toggleSymptoms={toggleSymptom}
-                      selectedSymptoms={selectedSymptoms}
-                  >
-                  </SymptomSelection>
-          )
-          }
-
-          {step === "innenOhr" && (
-             <SymptomSelection
-                      symptoms={[{symptomName: "autsch innennohr", schmerzen: true, symptomValue: "starke Schmerzen im Innnohr"},
-                                 {symptomName: "autschi innenenohr", schmerzen: true, symptomValue: "Schmerzen im Innenohr"}
-                      ]}
-                      inputMode={inputMode}
-                      setStep={setStep}
-                      toggleSymptoms={toggleSymptom}
-                      selectedSymptoms={selectedSymptoms}
-                  >
-                  </SymptomSelection>
-          )
-          }
+          <SymptomTree
+            step={step}
+            setStep={setStep}
+            inputMode={inputMode}
+            setInputMode={setInputMode}
+            selectedSubRegion={selectedSubRegion}
+            toggleSymptom={toggleSymptom}
+            selectedSymptoms={selectedSymptoms}
+          ></SymptomTree>
 
           {/* Schritt 5: Texinput, falls in Symptombaum aufgerufen */}
           {step === "textInput" && (

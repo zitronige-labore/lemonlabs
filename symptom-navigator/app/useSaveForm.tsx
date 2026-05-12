@@ -1,8 +1,8 @@
 "use client"
 
-import { saveFormData, sendDataToAi } from "./actions"; // form data is being importet here so it will be called in page when function is called
+import { saveFormData} from "./actions"; // form data is being importet here so it will be called in page when function is called
 
-export function useSaveForm(basisData: any, redFlags: any, selectedMainRegion: any, selectedSubRegion: any, selectedSymptoms: any, symptomText: any, ) {
+export function useSaveForm(basisData: any, additionalData:any, redFlags: any, selectedMainRegion: any, selectedSubRegion: any, selectedSymptoms: any, symptomText: any, ) {
 
     // actual function to be used in components
     const handleSaveForm =
@@ -17,6 +17,7 @@ export function useSaveForm(basisData: any, redFlags: any, selectedMainRegion: a
         formData.set("symptomText", symptomText);
         formData.set("selectedMainRegion", selectedMainRegion);
         formData.set("selectedSubRegion", selectedSubRegion);
+        formData.set("medication", additionalData.medication);
         formData.set("redFlags", redFlags); // convert redFlags object to string for storage
         await saveFormData(formData); // call the server action to save the form data in the db and set the cookie
         }

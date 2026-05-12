@@ -119,7 +119,7 @@ export function ResultStep({
         Vorerkrankungen:{" "}
         <strong>
           {additionalData.conditions.length > 0
-            ? additionalData.conditions.join(", ")
+            ? additionalData.conditions
             : "Keine Angabe"}
         </strong>
       </p>
@@ -156,7 +156,7 @@ export function ResultStep({
         Vorerkrankungen:{" "}
         <strong>
           {additionalData.conditions.length > 0
-            ? additionalData.conditions.join(", ")
+            ? additionalData.conditions
             : "Keine Angabe"}
         </strong>
       </p>
@@ -179,7 +179,7 @@ export function ResultStep({
         <strong>{additionalData.extraInfo || "Keine Angabe"}</strong>
       </p>
 
->>>>>>> e855f93 (Code ausgelagert und kommentiert)
+
       <button
         type="button"
         className={assessmentStyles.continueButton}

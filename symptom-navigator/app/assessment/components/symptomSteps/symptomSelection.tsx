@@ -14,11 +14,11 @@ interface SymptomSelectionProps {
   symptoms: {symptomName: string, schmerzen: boolean, symptomValue: string}[];
   inputMode: InputMode;
   setStep: (step: Step) => void;
-  toggleSymptoms: (symptom: string) => void;
+  toggleSymptom: (symptom: string) => void;
   selectedSymptoms: string[];
 }
 
-export default function SymptomSelection({symptoms,selectedSymptoms, inputMode, setStep, toggleSymptoms}: SymptomSelectionProps) {
+export default function SymptomSelection({symptoms,selectedSymptoms, inputMode, setStep, toggleSymptom}: SymptomSelectionProps) {
   return (
     
     <>
@@ -38,7 +38,7 @@ export default function SymptomSelection({symptoms,selectedSymptoms, inputMode, 
                         name= {element.symptomName}
                         className={assessmentStyles.regionButton}
                         onChange={() => {
-                            toggleSymptoms(element.symptomValue);
+                            toggleSymptom(element.symptomValue);
                             }}
                             >
                             </input>
