@@ -7,7 +7,7 @@ DROP TABLE IF EXISTS cases CASCADE;
 DROP TABLE IF EXISTS redflag_scan CASCADE;
 DROP TABLE IF EXISTS details_no_certain_count CASCADE;
 DROP TABLE IF EXISTS raw_text_symptoms CASCADE;
-DROP TABLE IF EXISTS additionalInformation CASCADE;
+DROP TABLE IF EXISTS additional_information CASCADE;
 
 
 CREATE TABLE cases (
@@ -18,7 +18,7 @@ CREATE TABLE cases (
 	access_code UUID DEFAULT gen_random_uuid()
 );
 
-CREATE TABLE additionalInformation (
+CREATE TABLE additional_information (
 	case_id INTEGER,
 	weight INTEGER,
 	height INTEGER,
