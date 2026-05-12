@@ -43,6 +43,7 @@ export async function saveFormData(formData: FormData) {
     const symptomList = selectedSymptoms.split(",");
 
     const symptomText = formData.get("symptomText") as string;
+    const symptomTextList = symptomText.split("|||");
 
     //test log
     console.log("test:", formData.toString());
@@ -62,16 +63,18 @@ export async function saveFormData(formData: FormData) {
     );
 
     let raw_id = null;
-    if(symptomText != ""){
+    if(symptomTextList.length>0){
       // writing raw text symptoms in db
-      raw_id = await connectionPool.query(
-          `
-          insert into raw_text_symptoms (raw_symptoms)
-          VALUES ($1)
-          returning raw_id;
-          `,
-          [symptomText]
-      );
+      for(let i=0; i<symptomTextList.length; i++) {
+        raw_id = await connectionPool.query(
+            `
+            insert into raw_text_symptoms (raw_symptoms)
+            VALUES ($1)
+            returning raw_id;
+            `,
+            [symptomTextList[i]]
+        );
+      }
     }
 
     if(symptomList.length>0){
@@ -85,15 +88,17 @@ export async function saveFormData(formData: FormData) {
       }
     }
 
-    if(symptomText != ""){
+    if(symptomText.length){
       // writing raw text ids into case_symptoms
+      for(let i=0; i<symptomTextList.length; i++) {
       await connectionPool.query(
-          `
-          insert into case_symptoms (raw_id, case_id)
-          VALUES ($1, $2)
-          `,
-          [raw_id.rows[0].raw_id, dbReturn.rows[0].case_id]
-      );
+            `
+            insert into case_symptoms (raw_id, case_id)
+            VALUES ($1, $2)
+            `,
+            [raw_id.rows[i].raw_id, dbReturn.rows[0].case_id]
+        );
+      }
     }
 
 

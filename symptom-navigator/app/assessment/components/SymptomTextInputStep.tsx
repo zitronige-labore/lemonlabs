@@ -3,6 +3,9 @@
 */
 import assessmentStyles from "../Assessment.module.css";
 
+// state fuer currentText
+import { useState } from "react";
+
 /*
   Import der benötigten Typdefinitionen.
 
@@ -51,9 +54,9 @@ import { getSymptomsForSubRegion } from "../utils/assessmentData";
 type SymptomTextInputStepProps = {
   selectedSubRegion: SubRegion | null;
 
-  symptomText: string;
+  symptomText: string[];
 
-  setSymptomText: (text: string) => void;
+  addSymptomText: (text: string) => void;
 
   onContinue: () => void;
 };
@@ -69,9 +72,12 @@ type SymptomTextInputStepProps = {
 export function SymptomTextInputStep({
   selectedSubRegion,
   symptomText,
-  setSymptomText,
+  addSymptomText,
   onContinue
 }: SymptomTextInputStepProps) {
+
+  const [currentText, setCurrentText] = useState("");
+
   return (
     <>
       {/* Anzeige der ausgewählten Unterregion */}
@@ -98,11 +104,11 @@ export function SymptomTextInputStep({
 
             <textarea
               className={assessmentStyles.input}
-              value={symptomText}
 
-              onChange={(event) =>
-                setSymptomText(event.target.value)
-              }
+              onChange={(event) => {
+                addSymptomText(event.target.value)
+                setCurrentText(event.target.value)
+              }}
 
               placeholder="Beschreiben Sie Ihre Symptome..."
 
@@ -113,7 +119,7 @@ export function SymptomTextInputStep({
             <span
               className={assessmentStyles.characterCounter}
             >
-              {symptomText.length}/1000 Zeichen
+              {currentText.length}/1000 Zeichen
             </span>
           </label>
 
@@ -129,7 +135,7 @@ export function SymptomTextInputStep({
           solange keine Beschwerden angegeben wurden.
         */
         disabled={
-            symptomText.trim().length === 0
+            currentText.length === 0
         }
       >
         Weiter

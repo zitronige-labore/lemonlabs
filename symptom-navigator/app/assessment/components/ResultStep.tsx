@@ -20,7 +20,7 @@ type ResultStepProps = {
 
   inputMode: InputMode;
 
-  symptomText: string;
+  symptomText: string[];
   selectedSymptoms: string[];
   aiAnswer: any;
 

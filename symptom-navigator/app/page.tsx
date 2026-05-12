@@ -98,7 +98,7 @@ export default function Home() {
   /*
     Speichert die Freitextbeschreibung der Beschwerden.
   */
-  const [symptomText, setSymptomText] = useState("");
+  const [symptomText, setSymptomText] = useState<string[]>([]);
 
   /*
     Speichert die ausgewählten Symptome aus der Symptomauswahl.
@@ -188,7 +188,6 @@ const [additionalData, setAdditionalData] = useState<AdditionalData>({
     setSelectedMainRegion(region);
     setSelectedSubRegion(null);
     setInputMode(null);
-    setSymptomText("");
   }
 
   /*
@@ -212,6 +211,17 @@ const [additionalData, setAdditionalData] = useState<AdditionalData>({
     Fügt ein Symptom zur Auswahl hinzu oder entfernt es wieder.
   */
   function toggleSymptom(symptom: string) {
+    setSelectedSymptoms((previousSymptoms) =>
+      previousSymptoms.includes(symptom)
+        ? previousSymptoms.filter((item) => item !== symptom)
+        : [...previousSymptoms, symptom]
+    );
+  }
+
+   /*
+    Fügt ein Freitext Symptom zur Auswahl hinzu.
+  */
+  function addSymptomText(symptom: string) {
     setSelectedSymptoms((previousSymptoms) =>
       previousSymptoms.includes(symptom)
         ? previousSymptoms.filter((item) => item !== symptom)
@@ -325,7 +335,7 @@ const [additionalData, setAdditionalData] = useState<AdditionalData>({
             <SymptomTextInputStep
               selectedSubRegion={selectedSubRegion}
               symptomText={symptomText}
-              setSymptomText={setSymptomText}
+              addSymptomText={addSymptomText}
               onContinue={() => setStep("selectMoreSymptoms")}
             />
           )}
