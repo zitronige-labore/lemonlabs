@@ -229,6 +229,15 @@ const [additionalData, setAdditionalData] = useState<AdditionalData>({
     );
   }
 
+  // for reset on new start
+  function resetProcess() {
+  setSelectedMainRegion(null);
+  setSelectedSubRegion(null);
+  setInputMode(null);
+  setSymptomText([]);
+  setSelectedSymptoms([]);
+}
+
   /*
     Wird beim Abschließen des Formulars ausgeführt.
 
@@ -270,7 +279,10 @@ const [additionalData, setAdditionalData] = useState<AdditionalData>({
     >
       {/* Startseite */}
       {step === "start" && (
-        <StartScreen onStartAssessment={() => setStep("hinweise")} />
+        <StartScreen 
+        onStartAssessment={() => setStep("hinweise")} 
+        resetProcess={resetProcess}
+        />
       )}
 
       {/* Hinweis-Seite vor Beginn der Ersteinschätzung */}

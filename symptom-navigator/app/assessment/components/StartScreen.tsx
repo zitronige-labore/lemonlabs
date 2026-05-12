@@ -6,6 +6,13 @@
 */
 import homeStyles from "../../Home.module.css";
 
+import type {
+  InputMode,
+  SubRegion,
+  MainRegion,
+  AdditionalData
+} from "../../types/assessment";
+
 /*
   Eigenschaften der StartScreen-Komponente.
 
@@ -15,6 +22,7 @@ import homeStyles from "../../Home.module.css";
 */
 type StartScreenProps = {
   onStartAssessment: () => void;
+  resetProcess:() => void;
 };
 
 /*
@@ -29,6 +37,7 @@ type StartScreenProps = {
 */
 export function StartScreen({
   onStartAssessment,
+  resetProcess
 }: StartScreenProps) {
   return (
     <>
@@ -64,7 +73,10 @@ export function StartScreen({
             <button
               type="button"
               className={homeStyles.primaryButton}
-              onClick={onStartAssessment}
+              onClick={() => {
+              onStartAssessment();
+              resetProcess();
+              }}
             >
               Ersteinschätzung von Symptomen
             </button>

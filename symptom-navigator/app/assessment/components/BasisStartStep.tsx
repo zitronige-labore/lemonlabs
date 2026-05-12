@@ -9,6 +9,7 @@ import assessmentStyles from "../Assessment.module.css";
 */
 import type { BasisData } from "../../types/assessment";
 
+
 /*
   Eigenschaften der BasisStartStep-Komponente.
 
