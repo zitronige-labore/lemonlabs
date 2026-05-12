@@ -40,6 +40,7 @@ CREATE TABLE drug_use (
 
 CREATE TABLE details_no_certain_count (
 	case_id INTEGER,
+	category VARCHAR(25),
 	detail VARCHAR(25),
 	value VARCHAR(50)
 );
