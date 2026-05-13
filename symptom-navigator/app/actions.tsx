@@ -86,6 +86,8 @@ export async function saveFormData(formData: FormData) {
     const symptomTextList = symptomText.split("|||");
 
     //test log
+    console.log("test RawSymptomList:", symptomList);
+    console.log("test SymptomList:", symptomTextList);
     console.log("test:", formData.toString());
 
     // create timestamp
@@ -242,8 +244,9 @@ export async function sendDataToAi() {
   // DB query
   // to be replaced later
   const DatenAusDB = await connectionPool.query(`
-    SELECT weight, height, temperature, duration, worsening, breastfeeding, extrainfo raw_symptoms, case_symptoms.name_de
-    FROM cases LEFT JOIN case_symptoms ON cases.case_id = case_symptoms.case_id
+    SELECT weight, height, temperature, duration, worsening, breastfeeding, extrainfo, raw_symptoms, 
+    case_symptoms.name_de FROM cases 
+    LEFT JOIN case_symptoms ON cases.case_id = case_symptoms.case_id
     LEFT JOIN details_no_certain_count ON details_no_certain_count.case_id = cases.case_id
     LEFT JOIN additional_information ON additional_information.case_id = cases.case_id
     LEFT JOIN raw_text_symptoms ON raw_text_symptoms.raw_id = case_symptoms.raw_id
