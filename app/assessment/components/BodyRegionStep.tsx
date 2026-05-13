@@ -1,16 +1,38 @@
 "use client";
 
+/*
+  Import der CSS-Module für den Assessment-Bereich.
+*/
 import assessmentStyles from "../Assessment.module.css";
+
+/*
+  React-State für Vorder- und Rückansicht der Körperkarte.
+*/
 import { useState } from "react";
+
+/*
+  Icon für den Wechsel zwischen Vorder- und Rückseite.
+*/
 import { ArrowsLeftRight } from "@phosphor-icons/react";
+
+/*
+  Import der Typdefinitionen für Haupt- und Unterregionen.
+*/
 import type { Step, MainRegion, SubRegion } from "../../types/assessment";
+
+/*
+  Import der Hilfsfunktion,
+  die passende Unterregionen zu einer Hauptregion liefert.
+*/
 import { getSubRegions } from "../utils/assessmentData";
 
 type BodyRegionStepProps = {
   selectedMainRegion: MainRegion | null;
   selectedSubRegion: SubRegion | null;
+
   selectMainRegion: (region: MainRegion) => void;
   selectSubRegion: (region: SubRegion) => void;
+
   onContinue: () => void;
   setStep: (step: Step) => void;
 };
@@ -25,7 +47,13 @@ export function BodyRegionStep({
   const [isBackView, setIsBackView] = useState(false);
   const [hoveredPart, setHoveredPart] = useState<MainRegion | null>(null);
 
-  const BodyPath = ({ d, region }: { d: string; region: MainRegion }) => (
+  const BodyPath = ({
+    d,
+    region,
+  }: {
+    d: string;
+    region: MainRegion;
+  }) => (
     <path
       d={d}
       className={`${assessmentStyles.bodyPart} ${
@@ -118,7 +146,7 @@ export function BodyRegionStep({
         </p>
 
         <svg
-          viewBox="0 0 220 520"
+          viewBox="0 0 220 480"
           className={assessmentStyles.bodyMap}
           role="img"
           aria-label="Interaktive Körperkarte zur Auswahl der Körperregion"
@@ -157,7 +185,7 @@ export function BodyRegionStep({
 
               <BodyPath
                 region="Beine & Füße"
-                d="M75,300 L105,300 L100,480 C98,500 78,500 75,480 Z M115,300 L145,300 L145,480 C142,500 122,500 120,480 Z"
+                d="M75,310 L105,310 L100,437 C98,460 78,460 75,437 Z M115,310 L145,310 L145,437 C142,460 122,460 120,437 Z"
               />
             </>
           ) : (
@@ -189,7 +217,7 @@ export function BodyRegionStep({
 
               <BodyPath
                 region="Beine & Füße"
-                d="M75,300 L105,300 L100,480 C98,500 78,500 75,480 Z M115,300 L145,300 L145,480 C142,500 122,500 120,480 Z"
+                d="M75,310 L105,310 L100,437 C98,460 78,460 75,437 Z M115,310 L145,310 L145,437 C142,460 122,460 120,437 Z"
               />
             </>
           )}
