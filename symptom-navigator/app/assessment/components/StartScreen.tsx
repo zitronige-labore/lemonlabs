@@ -13,6 +13,8 @@ import type {
   AdditionalData
 } from "../../types/assessment";
 
+import Link from "next/link";
+
 /*
   Eigenschaften der StartScreen-Komponente.
 
@@ -82,12 +84,13 @@ export function StartScreen({
             </button>
 
             {/* Platzhalter für weitere Funktionen */}
-            <button
-              type="button"
+            <Link
+              href="/other"
               className={homeStyles.secondaryButton}
+              style={{ display: "flex", justifyContent: "center", alignItems: "center", textDecoration: "none" }}
             >
               Anderes Anliegen
-            </button>
+            </Link>
           </div>
         </div>
       </div>
