@@ -86,8 +86,8 @@ export async function saveFormData(formData: FormData) {
     const symptomTextList = symptomText.split("|||");
 
     //test log
-    console.log("test RawSymptomList:", symptomList);
-    console.log("test SymptomList:", symptomTextList);
+    console.log("test RawSymptomList:", symptomTextList, "filled?", (symptomTextList[0]!=''));
+    console.log("test SymptomList:", symptomList, "filled?", (symptomList[0]!=''));
     console.log("test:", formData.toString());
 
     // create timestamp
@@ -154,7 +154,7 @@ export async function saveFormData(formData: FormData) {
     }
 
     let raw_id = null;
-    if(symptomTextList.length>0){
+    if(symptomTextList[0]!=''){
       // writing raw text symptoms in db
       for(let i=0; i<(symptomTextList.length); i++) {
         raw_id = await connectionPool.query(
@@ -176,7 +176,7 @@ export async function saveFormData(formData: FormData) {
       }
     }
 
-    if(symptomList.length>0){
+    if(symptomList[0]!=''){
       // writing prewritten symptoms into case_symptoms
       for(let i=0; i<symptomList.length; i++) {
         await connectionPool.query(
