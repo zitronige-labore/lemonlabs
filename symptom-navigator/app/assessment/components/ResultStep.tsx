@@ -44,6 +44,23 @@ export function ResultStep({
 
   return (
     <div className={assessmentStyles.resultBox}>
+
+      {aiAnswer?.assessment?.urgency && (
+        <>
+          <p>
+            Dringlichkeitsstufe: {aiAnswer.assessment.urgency}:{" "}
+            {aiAnswer.assessment.urgencyText}
+          </p>
+
+          <p>Handlungsempfehlung: {aiAnswer.assessment.nextSteps}</p>
+        </>
+      )}
+
+      {!aiAnswer?.assessment?.urgency && (
+        <p>Die Auswertung lädt noch...</p>
+      )}
+
+
       <p className={assessmentStyles.selectedText}>
         Ihre Angaben wurden erfasst.
       </p>
@@ -91,21 +108,6 @@ export function ResultStep({
         Stärke: <strong>{basisData.intensity}</strong>
       </p>
 
-      {aiAnswer?.assessment?.urgency && (
-        <>
-          <p>
-            Dringlichkeitsstufe: {aiAnswer.assessment.urgency}:{" "}
-            {aiAnswer.assessment.urgencyText}
-          </p>
-
-          <p>Handlungsempfehlung: {aiAnswer.assessment.nextSteps}</p>
-        </>
-      )}
-
-      {!aiAnswer?.assessment?.urgency && (
-        <p>Die Auswertung lädt noch...</p>
-      )}
-
       <hr />
 
       <p className={assessmentStyles.selectedText}>Zusatzangaben</p>
@@ -145,41 +147,7 @@ export function ResultStep({
       {/* Zurück zur Startseite */}
       <hr />
 
-      <p className={assessmentStyles.selectedText}>Zusatzangaben</p>
-
-      <p>
-        Medikamente:{" "}
-        <strong>{additionalData.medications || "Keine Angabe"}</strong>
-      </p>
-
-      <p>
-        Vorerkrankungen:{" "}
-        <strong>
-          {additionalData.conditions.length > 0
-            ? additionalData.conditions
-            : "Keine Angabe"}
-        </strong>
-      </p>
-
-      <p>
-        Allergien: <strong>{additionalData.allergies || "Keine Angabe"}</strong>
-      </p>
-
-      <p>
-        Fieber: <strong>{additionalData.temperature || "Keine Angabe"}</strong>
-      </p>
-
-      <p>
-        Beschwerden werden stärker:{" "}
-        <strong>{additionalData.worsening || "Keine Angabe"}</strong>
-      </p>
-
-      <p>
-        Weitere Informationen:{" "}
-        <strong>{additionalData.extraInfo || "Keine Angabe"}</strong>
-      </p>
-
-
+      
       <button
         type="button"
         className={assessmentStyles.continueButton}
