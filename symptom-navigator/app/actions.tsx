@@ -151,11 +151,10 @@ export async function saveFormData(formData: FormData) {
     );
     }
 
-
     let raw_id = null;
     if(symptomTextList.length>0){
       // writing raw text symptoms in db
-      for(let i=0; i<symptomTextList.length; i++) {
+      for(let i=0; i<(symptomTextList.length); i++) {
         raw_id = await connectionPool.query(
             `
             insert into raw_text_symptoms (raw_symptoms)
@@ -163,6 +162,14 @@ export async function saveFormData(formData: FormData) {
             returning raw_id;
             `,
             [symptomTextList[i]]
+        );
+
+        await connectionPool.query(
+            `
+            insert into case_symptoms (raw_id, case_id)
+            VALUES ($1, $2)
+            `,
+            [raw_id.rows[0].raw_id, dbReturn.rows[0].case_id]
         );
       }
     }
@@ -174,19 +181,6 @@ export async function saveFormData(formData: FormData) {
           `INSERT INTO case_symptoms (name_de, case_id) 
           VALUES ($1, $2)`,
           [symptomList[i], dbReturn.rows[0].case_id]
-        );
-      }
-    }
-
-    if(symptomText.length){
-      // writing raw text ids into case_symptoms
-      for(let i=0; i<symptomTextList.length; i++) {
-      await connectionPool.query(
-            `
-            insert into case_symptoms (raw_id, case_id)
-            VALUES ($1, $2)
-            `,
-            [raw_id.rows[i].raw_id, dbReturn.rows[0].case_id]
         );
       }
     }

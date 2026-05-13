@@ -222,7 +222,7 @@ const [additionalData, setAdditionalData] = useState<AdditionalData>({
     Fügt ein Freitext Symptom zur Auswahl hinzu.
   */
   function addSymptomText(symptom: string) {
-    setSelectedSymptoms((previousSymptoms) =>
+    setSymptomText((previousSymptoms) =>
       previousSymptoms.includes(symptom)
         ? previousSymptoms.filter((item) => item !== symptom)
         : [...previousSymptoms, symptom]
@@ -260,10 +260,11 @@ const [additionalData, setAdditionalData] = useState<AdditionalData>({
     };
 
     // calling function to save form data in db
-    handleSaveForm();
+    await handleSaveForm();
     // calling function to send data from db to ai and get the response
     const aiAnswer = await sendDataToAi();
     setAiAnswer(aiAnswer);
+
 
     console.log("Formulardaten:", formData);
     setStep("result");
