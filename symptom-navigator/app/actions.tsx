@@ -310,30 +310,30 @@ export async function sendDataToAi() {
   const prompt = masterPrompt + "\n" + data;
 
   console.log("Prompt:", prompt);
-
+ 
   try {
     // Make request to Ollama API
-    const response = await fetch('http://141.19.141.155:8501/api/generate?api_key=sk-rwai1swh1cJ0JOROAK8iLA', {
+    const response = await fetch('http://141.19.141.155:4000/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer sk-rwai1swh1cJ0JOROAK8iLA',
-        'x-api-key:': 'sk-rwai1swh1cJ0JOROAK8iLA'
+        'x-api-key': 'sk-rwai1swh1cJ0JOROAK8iLA'
       },
       body: JSON.stringify({
-        api_key: 'sk-rwai1swh1cJ0JOROAK8iLA',
         model: 'medgemma:27b',
-        prompt: prompt,
+        messages: [{ role: 'user', content: prompt }],
         stream: false,
       }),
     });
-  
+
+
     // data contains response from ai
     const dataUnproccesed = await response.json();
+    console.log('HTTP Status:', response.status);
     let xmlData: any;
-    console.log("AI Response original:", dataUnproccesed.response);
 
-    const xmlMatch = (dataUnproccesed.response as string).match(/<assessment[\s\S]*<\/assessment>/);
+    const xmlMatch = (dataUnproccesed.choices[0].message.content as string).match(/<assessment[\s\S]*<\/assessment>/);
     if (!xmlMatch) {
       throw new Error('falsches Antwortformat fuer XML');
     }
