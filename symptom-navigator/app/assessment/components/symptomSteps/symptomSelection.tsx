@@ -43,7 +43,6 @@ export default function SymptomSelection({
                 {/* one box for every symptom */}
                 {symptoms.map((element) => 
                     (
-                        <>
                         <label key={element.symptomName}>{element.symptomName}
                         <input
                         type="checkbox"
@@ -79,7 +78,6 @@ export default function SymptomSelection({
                         )
                       }
                       </label>
-                        </>
                 ))                               
                 }
 
