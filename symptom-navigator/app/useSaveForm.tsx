@@ -1,12 +1,11 @@
 "use client"
 
 import { saveFormData} from "./actions"; // form data is being importet here so it will be called in page when function is called
-import { useCallback } from "react";
 
-export function useSaveForm(basisData: any, additionalData:any, redFlags: any, selectedMainRegion: any, selectedSubRegion: any, selectedSymptoms: string[], symptomText: string[], ) {
+export function useSaveForm(basisData: any, additionalData:any, redFlags: any, selectedMainRegion: any, selectedSubRegion: any, selectedSymptoms: any, symptomText: any, ) {
 
     // actual function to be used in components
-    const handleSaveForm = useCallback(
+    const handleSaveForm =
     async () => {
         // manual calling of saveFormData on klick since the whole page is client side and saveFormData cannot be called with action attribute
         const formData = new FormData();
@@ -30,6 +29,6 @@ export function useSaveForm(basisData: any, additionalData:any, redFlags: any, s
         formData.set("extraInfo", additionalData.extraInfo);
         formData.set("redFlags", redFlags); 
         await saveFormData(formData); // call the server action to save the form data in the db and set the cookie
-        }, [basisData, additionalData, redFlags, selectedMainRegion, selectedSubRegion, selectedSymptoms, symptomText]);
+        }
     return handleSaveForm;
 }

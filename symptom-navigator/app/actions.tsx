@@ -201,6 +201,19 @@ export async function saveFormData(formData: FormData) {
       }
     }
 
+    if(symptomText.length){
+      // writing raw text ids into case_symptoms
+      for(let i=0; i<symptomTextList.length; i++) {
+      await connectionPool.query(
+            `
+            insert into case_symptoms (raw_id, case_id)
+            VALUES ($1, $2)
+            `,
+            [raw_id.rows[i].raw_id, dbReturn.rows[0].case_id]
+        );
+      }
+    }
+
 
     // test logs
     console.log("Formulardaten in DB gespeichert");
@@ -258,9 +271,8 @@ export async function sendDataToAi() {
   // DB query
   // to be replaced later
   const DatenAusDB = await connectionPool.query(`
-    SELECT weight, height, temperature, duration, worsening, breastfeeding, extrainfo, raw_symptoms, 
-    case_symptoms.name_de FROM cases 
-    LEFT JOIN case_symptoms ON cases.case_id = case_symptoms.case_id
+    SELECT weight, height, temperature, duration, worsening, breastfeeding, extrainfo raw_symptoms, case_symptoms.name_de
+    FROM cases LEFT JOIN case_symptoms ON cases.case_id = case_symptoms.case_id
     LEFT JOIN details_no_certain_count ON details_no_certain_count.case_id = cases.case_id
     LEFT JOIN additional_information ON additional_information.case_id = cases.case_id
     LEFT JOIN raw_text_symptoms ON raw_text_symptoms.raw_id = case_symptoms.raw_id
@@ -321,30 +333,30 @@ export async function sendDataToAi() {
   const prompt = masterPrompt + "\n" + data;
 
   console.log("Prompt:", prompt);
- 
+
   try {
     // Make request to Ollama API
-    const response = await fetch('http://141.19.141.155:4000/v1/chat/completions', {
+    const response = await fetch('http://141.19.141.155:8501/api/generate?api_key=sk-rwai1swh1cJ0JOROAK8iLA', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer sk-rwai1swh1cJ0JOROAK8iLA',
-        'x-api-key': 'sk-rwai1swh1cJ0JOROAK8iLA'
+        'x-api-key:': 'sk-rwai1swh1cJ0JOROAK8iLA'
       },
       body: JSON.stringify({
+        api_key: 'sk-rwai1swh1cJ0JOROAK8iLA',
         model: 'medgemma:27b',
-        messages: [{ role: 'user', content: prompt }],
+        prompt: prompt,
         stream: false,
       }),
     });
-
-
+  
     // data contains response from ai
     const dataUnproccesed = await response.json();
-    console.log('HTTP Status:', response.status);
     let xmlData: any;
+    console.log("AI Response original:", dataUnproccesed.response);
 
-    const xmlMatch = (dataUnproccesed.choices[0].message.content as string).match(/<assessment[\s\S]*<\/assessment>/);
+    const xmlMatch = (dataUnproccesed.response as string).match(/<assessment[\s\S]*<\/assessment>/);
     if (!xmlMatch) {
       throw new Error('falsches Antwortformat fuer XML');
     }

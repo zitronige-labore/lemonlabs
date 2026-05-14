@@ -44,7 +44,6 @@ export default function SymptomSelection({
     
     <>
     {inputMode === "select" && (
-
     <fieldset className={assessmentStyles.fieldset}>
                   <legend className={assessmentStyles.legend}>
                     Wählen Sie eine Symptome
@@ -53,8 +52,7 @@ export default function SymptomSelection({
                 {/* one box for every symptom */}
                 {symptoms.map((element) => 
                     (
-                        <div className={assessmentStyles.fieldset} key={element.symptomName}>
-                        <label className={assessmentStyles.formLabel}>{element.symptomName}
+                        <label key={element.symptomName}>{element.symptomName}
                         <input
                         type="checkbox"
                         id={element.symptomName}
