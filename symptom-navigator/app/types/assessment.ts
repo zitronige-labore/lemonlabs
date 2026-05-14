@@ -114,15 +114,15 @@ export type InputMode = "text" | "select" | null;
   die auf einen medizinischen Notfall
   hinweisen können.
 */
+
 export type RedFlags = {
   chestPain: boolean;
   breathingProblems: boolean;
   unconsciousness: boolean;
   severeBleeding: boolean;
   strokeSymptoms: boolean;
-  hightemperatureConfusion: boolean;
+  highFeverConfusion: boolean;
 };
-
 /*
   Speichert allgemeine Angaben der Nutzerin
   oder des Nutzers sowie zusätzliche Informationen

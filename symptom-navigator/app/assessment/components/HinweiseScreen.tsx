@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 /*
   Import der CSS-Module der Start- und Hinweisseiten.
 
@@ -5,6 +7,11 @@
   die Buttons und die Warnhinweise verwendet.
 */
 import homeStyles from "../../Home.module.css";
+
+/*
+  Import der SosModal-Komponente
+*/
+import { SosModal } from "./SosModal";
 
 /*
   Eigenschaften der HinweiseScreen-Komponente.
@@ -43,6 +50,8 @@ export function HinweiseScreen({
   onBack,
   onContinue,
 }: HinweiseScreenProps) {
+  const [showSos, setShowSos] = useState(false);
+
   return (
     <>
       {/* Hauptcontainer der Hinweis-Seite */}
@@ -123,9 +132,16 @@ export function HinweiseScreen({
       </div>
 
       {/* Schnellzugriff auf den Notruf */}
-      <a href="tel:112" className={homeStyles.sosButton}>
+      <button 
+        type="button" 
+        onClick={() => setShowSos(true)} 
+        className={homeStyles.sosButton}
+      >
         SOS
-      </a>
+      </button>
+
+      {/* Das Notruf-Modal (Zwischenschritt) */}
+      <SosModal isOpen={showSos} onClose={() => setShowSos(false)} />
 
       {/* Fußzeile der Seite */}
       <footer className={homeStyles.footer}>

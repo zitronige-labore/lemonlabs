@@ -35,6 +35,8 @@ import { RedFlagsStep } from "./assessment/components/RedFlagsStep";
 import { ResultStep } from "./assessment/components/ResultStep";
 import { StartScreen } from "./assessment/components/StartScreen";
 import { SymptomTextInputStep } from "./assessment/components/SymptomTextInputStep";
+import { TutorialModal } from "./assessment/components/TutorialModal";
+import { Question } from "@phosphor-icons/react";
 
 /*
   Import der TypeScript-Typen für Zustände und Auswahlwerte.
@@ -57,6 +59,11 @@ import SymptomTree from "./assessment/components/symptomSteps/symptomTree";
 import SymptomSelection from "./assessment/components/symptomSteps/symptomSelection";
 
 export default function Home() {
+  /*
+    Speichert, ob das globale Tutorial-Popup geöffnet ist.
+  */
+  const [isTutorialOpen, setIsTutorialOpen] = useState(false);
+
   /*
     Speichert, welcher Schritt im Ablauf aktuell angezeigt wird.
   */
@@ -120,23 +127,23 @@ export default function Home() {
     Speichert optionale Zusatzangaben.
     Diese Angaben sind nicht verpflichtend.
   */
-const [additionalData, setAdditionalData] = useState<AdditionalData>({
-  medications: "",
-  conditions: "",
-  duration: "",
+  const [additionalData, setAdditionalData] = useState<AdditionalData>({
+    medications: "",
+    conditions: "",
+    duration: "",
 
-  allergies: "",
+    allergies: "",
 
-  temperature: "",
-  worsening: "",
+    temperature: "",
+    worsening: "",
 
-  weight: "",
-  height: "",
+    weight: "",
+    height: "",
 
-  breastfeeding: "",
+    breastfeeding: "",
 
-  extraInfo: "",
-});
+    extraInfo: "",
+  });
 
   /*
     Prüft, ob mindestens ein Warnzeichen ausgewählt wurde.
@@ -218,11 +225,11 @@ const [additionalData, setAdditionalData] = useState<AdditionalData>({
     );
   }
 
-   /*
-    Fügt ein Freitext Symptom zur Auswahl hinzu.
-  */
+  /*
+   Fügt ein Freitext Symptom zur Auswahl hinzu.
+ */
   function addSymptomText(symptom: string) {
-    setSymptomText((previousSymptoms) =>
+    setSelectedSymptoms((previousSymptoms) =>
       previousSymptoms.includes(symptom)
         ? previousSymptoms.filter((item) => item !== symptom)
         : [...previousSymptoms, symptom]
@@ -231,12 +238,12 @@ const [additionalData, setAdditionalData] = useState<AdditionalData>({
 
   // for reset on new start
   function resetProcess() {
-  setSelectedMainRegion(null);
-  setSelectedSubRegion(null);
-  setInputMode(null);
-  setSymptomText([]);
-  setSelectedSymptoms([]);
-}
+    setSelectedMainRegion(null);
+    setSelectedSubRegion(null);
+    setInputMode(null);
+    setSymptomText([]);
+    setSelectedSymptoms([]);
+  }
 
   /*
     Wird beim Abschließen des Formulars ausgeführt.
@@ -259,12 +266,15 @@ const [additionalData, setAdditionalData] = useState<AdditionalData>({
       additionalData,
     };
 
-    // calling function to save form data in db
-    await handleSaveForm();
-    // calling function to send data from db to ai and get the response
-    const aiAnswer = await sendDataToAi();
-    setAiAnswer(aiAnswer);
-
+    try {
+      // calling function to save form data in db
+      await handleSaveForm();
+      // calling function to send data from db to ai and get the response
+      const aiAnswer = await sendDataToAi();
+      setAiAnswer(aiAnswer);
+    } catch (error) {
+      console.error("Error saving form or fetching AI response:", error);
+    }
 
     console.log("Formulardaten:", formData);
     setStep("result");
@@ -280,9 +290,9 @@ const [additionalData, setAdditionalData] = useState<AdditionalData>({
     >
       {/* Startseite */}
       {step === "start" && (
-        <StartScreen 
-        onStartAssessment={() => setStep("hinweise")} 
-        resetProcess={resetProcess}
+        <StartScreen
+          onStartAssessment={() => setStep("hinweise")}
+          resetProcess={resetProcess}
         />
       )}
 
@@ -356,9 +366,9 @@ const [additionalData, setAdditionalData] = useState<AdditionalData>({
           {/* Schritt 5,5: weitere Symptomangabe */}
           {step === "selectMoreSymptoms" && (
             <SelectMoreSymptoms
-            setSelectedMainRegion={setSelectedMainRegion}
-            setSelectedSubRegion={setSelectedSubRegion}
-            setStep={setStep}
+              setSelectedMainRegion={setSelectedMainRegion}
+              setSelectedSubRegion={setSelectedSubRegion}
+              setStep={setStep}
             />
           )}
 
@@ -387,6 +397,23 @@ const [additionalData, setAdditionalData] = useState<AdditionalData>({
           )}
         </AssessmentLayout>
       )}
+
+      {/* Globaler Tutorial Button (dauerhaft sichtbar) */}
+      <button
+        type="button"
+        className={homeStyles.tutorialButton}
+        onClick={() => setIsTutorialOpen(true)}
+        aria-label="Tutorial öffnen"
+      >
+        <Question size={28} weight="bold" />
+      </button>
+
+      {/* Globales Tutorial Modal */}
+      <TutorialModal
+        isOpen={isTutorialOpen}
+        onClose={() => setIsTutorialOpen(false)}
+        currentStep={step}
+      />
     </main>
   );
 }

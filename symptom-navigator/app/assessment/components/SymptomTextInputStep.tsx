@@ -106,6 +106,7 @@ export function SymptomTextInputStep({
               className={assessmentStyles.input}
 
               onChange={(event) => {
+                addSymptomText(event.target.value)
                 setCurrentText(event.target.value)
               }}
 
@@ -127,10 +128,7 @@ export function SymptomTextInputStep({
       <button
         type="button"
         className={assessmentStyles.primaryButton}
-        onClick={() => {
-          onContinue();
-          addSymptomText(currentText);
-        }}
+        onClick={onContinue}
 
         /*
           Der Button bleibt deaktiviert,
