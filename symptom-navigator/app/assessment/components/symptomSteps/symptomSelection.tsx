@@ -28,7 +28,6 @@ export default function SymptomSelection({
   }: SymptomSelectionProps) {
   
   const [painscale, setPainscale] = useState<string>("0");
-  const [showpainscale, setShowPainscale] = useState<boolean>(false);
   
   return (
     
@@ -53,14 +52,13 @@ export default function SymptomSelection({
                         className={assessmentStyles.regionButton}
                         onChange={() => {
                             toggleSymptom(element.symptomValue);
-                            setShowPainscale(!showpainscale);
                             }}
                             >
                             </input>
                         </label>
                 
 
-                      { showpainscale && selectedSymptoms.includes(element.symptomValue) && element.schmerzen && (
+                      {selectedSymptoms.includes(element.symptomValue) && element.schmerzen && (
                         <>
                         {/* Anzeige des aktuellen Wertes */}
                         <strong>{ painscale || "0"}/10</strong>
