@@ -159,7 +159,7 @@ export function SymptomTextInputStep({
         className={assessmentStyles.primaryButton}
         onClick={() => {
           onContinue();                  
-          addSymptomText(`{"text_symptom":"${currentText}","bodyregion":"${selectedSubRegion}","painscale":${painscale}}`);
+          addSymptomText(`{"text_symptom":"${currentText}","bodyregion":"${selectedSubRegion}","painscale":${painscale?? null}}`);
         }}
 
         /*
