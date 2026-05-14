@@ -49,6 +49,7 @@ export default function SymptomTree({step, selectedSubRegion, selectedSymptoms, 
                           setStep={setStep}
                           toggleSymptom={toggleSymptom}
                           selectedSymptoms={selectedSymptoms}
+                          selectedSubRegion={selectedSubRegion}
                       >
                       </SymptomSelection>
               )
@@ -63,6 +64,7 @@ export default function SymptomTree({step, selectedSubRegion, selectedSymptoms, 
                           setStep={setStep}
                           toggleSymptom={toggleSymptom}
                           selectedSymptoms={selectedSymptoms}
+                          selectedSubRegion={selectedSubRegion}
                       >
                       </SymptomSelection>
               )

@@ -7,7 +7,7 @@
 import assessmentStyles from "../../Assessment.module.css";
 
 // import needed types
-import { Step, InputMode } from "../../../types/assessment";
+import { Step, InputMode, SubRegion } from "../../../types/assessment";
 import { useState } from "react";
 
 // define props/ get everything needed from page
@@ -15,19 +15,21 @@ interface SymptomSelectionProps {
   symptoms: {symptomName: string, schmerzen: boolean, symptomValue: string}[];
   inputMode: InputMode;
   setStep: (step: Step) => void;
-  toggleSymptom: (symptom: string) => void;
+  toggleSymptom: (symptom: string, painscale?: string) => void;
   selectedSymptoms: string[];
+  selectedSubRegion: SubRegion | null;
 }
 
 export default function SymptomSelection({
   symptoms, 
   selectedSymptoms, 
   inputMode, 
+  selectedSubRegion,
   setStep, 
   toggleSymptom
   }: SymptomSelectionProps) {
   
-  const [painscale, setPainscale] = useState<string>("0");
+  const [painscales, setPainscales] = useState<Record<string, string>>({});
   
   return (
     
@@ -48,20 +50,21 @@ export default function SymptomSelection({
                         type="checkbox"
                         id={element.symptomName}
                         name= {element.symptomName}
-                        checked={selectedSymptoms.includes(element.symptomValue)}
+                        checked={selectedSymptoms.some((s) =>s.includes(`{"name": ${element.symptomValue}, "bodyRegion": ${selectedSubRegion}`))}
                         className={assessmentStyles.regionButton}
                         onChange={() => {
-                            toggleSymptom(element.symptomValue);
+                            toggleSymptom(`{"name": ${element.symptomValue}, "bodyRegion": ${selectedSubRegion}`,
+                            painscales[element.symptomValue])
                             }}
                             >
                             </input>
                         </label>
                 
 
-                      {selectedSymptoms.includes(element.symptomValue) && element.schmerzen && (
+                      {selectedSymptoms.some((s) =>s.includes(`{"name": ${element.symptomValue}`)) && element.schmerzen && (
                         <>
                         {/* Anzeige des aktuellen Wertes */}
-                        <strong>{ painscale || "0"}/10</strong>
+                        <strong>{painscales[element.symptomValue] || 0}/10</strong>
 
                         <input
                               className={assessmentStyles.slider}
@@ -69,16 +72,18 @@ export default function SymptomSelection({
                               min="0"
                               max="10"
                               step="1"
-                              //value={painscale}
                               onChange={(event) =>
-                              setPainscale(painscale)                      
+                              setPainscales((prev => ({
+                                ...prev,
+                                [element.symptomValue]: event.target.value
+                             })))                      
                               }
                         ></input>
                         </>
                         )
                       }
                       </div>
-                ))                               
+                  ))                               
                 }
 
                 </fieldset>
