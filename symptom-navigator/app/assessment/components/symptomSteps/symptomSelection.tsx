@@ -44,7 +44,7 @@ export default function SymptomSelection({
                 {symptoms.map((element) => 
                     (
                         <div className={assessmentStyles.fieldset} key={element.symptomName}>
-                        <label >{element.symptomName}
+                        <label className={assessmentStyles.formLabel}>{element.symptomName}
                         <input
                         type="checkbox"
                         id={element.symptomName}
