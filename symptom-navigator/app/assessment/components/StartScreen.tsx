@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 /*
   Import der CSS-Module der Startseite.
 
@@ -15,10 +13,7 @@ import type {
   AdditionalData
 } from "../../types/assessment";
 
-/*
-  Import der SosModal-Komponente
-*/
-import { SosModal } from "./SosModal";
+import Link from "next/link";
 
 /*
   Eigenschaften der StartScreen-Komponente.
@@ -46,8 +41,6 @@ export function StartScreen({
   onStartAssessment,
   resetProcess
 }: StartScreenProps) {
-  const [showSos, setShowSos] = useState(false);
-
   return (
     <>
       {/* Hauptcontainer der Startseite */}
@@ -91,27 +84,24 @@ export function StartScreen({
             </button>
 
             {/* Platzhalter für weitere Funktionen */}
-            <button
-              type="button"
+            <Link
+              href="/other"
               className={homeStyles.secondaryButton}
+              style={{ display: "flex", justifyContent: "center", alignItems: "center", textDecoration: "none" }}
             >
               Anderes Anliegen
-            </button>
+            </Link>
           </div>
         </div>
       </div>
 
       {/* Schnellzugriff auf den Notruf */}
-      <button
-        type="button"
-        onClick={() => setShowSos(true)}
+      <a
+        href="tel:112"
         className={homeStyles.sosButton}
       >
         SOS
-      </button>
-
-      {/* Das Notruf-Modal (Zwischenschritt) */}
-      <SosModal isOpen={showSos} onClose={() => setShowSos(false)} />
+      </a>
 
       {/* Fußzeile der Startseite */}
       <footer className={homeStyles.footer}>

@@ -1,14 +1,7 @@
-import { useState } from "react";
-
 /*
   Import der CSS-Module für den Assessment-Bereich.
 */
 import assessmentStyles from "../Assessment.module.css";
-
-/*
-  Import der SosModal-Komponente
-*/
-import { SosModal } from "./SosModal";
 
 /*
   Import des Typs für medizinische Warnzeichen.
@@ -68,8 +61,6 @@ export function RedFlagsStep({
   selectNoRedFlags,
   onContinue,
 }: RedFlagsStepProps) {
-  const [showSos, setShowSos] = useState(false);
-
   return (
     <>
       {/* Beschreibung des aktuellen Schritts */}
@@ -205,18 +196,14 @@ export function RedFlagsStep({
           </p>
 
           {/* Direktwahl des Notrufs */}
-          <button
-            type="button"
-            onClick={() => setShowSos(true)}
+          <a
+            href="tel:112"
             className={assessmentStyles.emergencyButton}
           >
             112 anrufen
-          </button>
+          </a>
         </div>
       )}
-
-      {/* Das Notruf-Modal (Zwischenschritt) */}
-      <SosModal isOpen={showSos} onClose={() => setShowSos(false)} />
 
       {/* Weiter-Button nur ohne Warnzeichen */}
       {!hasEmergency && (
