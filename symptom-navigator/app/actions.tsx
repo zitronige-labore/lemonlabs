@@ -169,7 +169,7 @@ export async function saveFormData(formData: FormData) {
 
     // writing raw text symptoms in db
     let raw_id = null;
-    if(symptomTextListJson[0]!=''){
+    if((symptomTextList[0]!='')){
       for(let i=0; i<(symptomTextList.length); i++) {
         raw_id = await connectionPool.query(
             `
