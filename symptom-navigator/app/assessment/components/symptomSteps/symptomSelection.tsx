@@ -43,7 +43,8 @@ export default function SymptomSelection({
                 {/* one box for every symptom */}
                 {symptoms.map((element) => 
                     (
-                        <label key={element.symptomName}>{element.symptomName}
+                        <div className={assessmentStyles.fieldset} key={element.symptomName}>
+                        <label >{element.symptomName}
                         <input
                         type="checkbox"
                         id={element.symptomName}
@@ -56,6 +57,7 @@ export default function SymptomSelection({
                             }}
                             >
                             </input>
+                        </label>
                 
 
                       { showpainscale && selectedSymptoms.includes(element.symptomValue) && element.schmerzen && (
@@ -77,7 +79,7 @@ export default function SymptomSelection({
                         </>
                         )
                       }
-                      </label>
+                      </div>
                 ))                               
                 }
 
