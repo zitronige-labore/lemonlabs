@@ -77,6 +77,8 @@ export function SymptomTextInputStep({
 }: SymptomTextInputStepProps) {
 
   const [currentText, setCurrentText] = useState("");
+  const [painscale, setPainscale] = useState<string|number>();
+  const [isPainSymptom, setIsPainSymptom] = useState(false);
 
   return (
     <>
@@ -122,14 +124,42 @@ export function SymptomTextInputStep({
             </span>
           </label>
 
+          <label> Handelt es sich beim angegebenen Symptom um Schmerzen?
+            <input 
+            className={assessmentStyles.regionButton}
+            type="checkbox" 
+            onClick={ () => {
+              setIsPainSymptom(!isPainSymptom)
+            }}
+            />
+          </label>
+
+          {isPainSymptom && (
+            <>
+              {/* Anzeige des aktuellen Wertes */}
+              <strong>{painscale || "nicht gewaehlt"}/10</strong>
+
+              <input
+                    className={assessmentStyles.slider}
+                    type="range"
+                    min="0"
+                    max="10"
+                    step="1"
+                    onChange={(event) =>
+                    setPainscale(event.target.value)                      
+                    }
+              ></input>
+            </>
+          )}
+
         
       {/* Button zum Wechseln zum nächsten Schritt */}
       <button
         type="button"
         className={assessmentStyles.primaryButton}
         onClick={() => {
-          onContinue();
-          addSymptomText(currentText);
+          onContinue();                  
+          addSymptomText(`{"text_symptom":"${currentText}","bodyregion":"${selectedSubRegion}","painscale":${painscale}}`);
         }}
 
         /*

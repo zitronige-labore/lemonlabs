@@ -83,15 +83,23 @@ export async function saveFormData(formData: FormData) {
     const symptomList = selectedSymptoms.split("|||");
     console.log(symptomList)
     let symptomListJson = [];
-    for(let i = 0; i<symptomList.length; i++) {
-      symptomListJson[i] = JSON.parse(symptomList[i])
+    if (symptomList[0]!="") {
+      for(let i = 0; i<symptomList.length; i++) {
+        symptomListJson[i] = JSON.parse(symptomList[i])
+      }
     }
 
     const symptomText = formData.get("symptomText") as string;
     const symptomTextList = symptomText.split("|||");
+    console.log("test RawSymptomList:", symptomTextList, "filled?", (symptomTextList[0]!=''));
+    let symptomTextListJson = [];
+    if (symptomTextList[0]!="") {
+      for(let i = 0; i<symptomTextList.length; i++) {
+        symptomTextListJson[i] = JSON.parse(symptomTextList[i])
+      }
+    }
 
     //test log
-    console.log("test RawSymptomList:", symptomTextList, "filled?", (symptomTextList[0]!=''));
     console.log("test SymptomList:", symptomList, "filled?", (symptomListJson[0]!=''));
     console.log("test:", formData.toString());
 
@@ -161,7 +169,7 @@ export async function saveFormData(formData: FormData) {
 
     // writing raw text symptoms in db
     let raw_id = null;
-    if(symptomTextList[0]!=''){
+    if(symptomTextListJson[0]!=''){
       for(let i=0; i<(symptomTextList.length); i++) {
         raw_id = await connectionPool.query(
             `
@@ -169,15 +177,15 @@ export async function saveFormData(formData: FormData) {
             VALUES ($1)
             returning raw_id;
             `,
-            [symptomTextList[i]]
+            [symptomTextListJson[i].text_symptom]
         );
 
         await connectionPool.query(
             `
-            insert into case_symptoms (raw_id, case_id)
-            VALUES ($1, $2)
+            insert into case_symptoms (raw_id, case_id, painscale, bodyregion)
+            VALUES ($1, $2, $3, $4)
             `,
-            [raw_id.rows[0].raw_id, dbReturn.rows[0].case_id]
+            [raw_id.rows[0].raw_id, dbReturn.rows[0].case_id, symptomTextListJson[i].painscale, symptomTextListJson[i].bodyregion || null]
         );
       }
     }
