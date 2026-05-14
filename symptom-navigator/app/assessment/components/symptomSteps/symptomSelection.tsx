@@ -8,6 +8,7 @@ import assessmentStyles from "../../Assessment.module.css";
 
 // import needed types
 import { Step, InputMode } from "../../../types/assessment";
+import { useState } from "react";
 
 // define props/ get everything needed from page
 interface SymptomSelectionProps {
@@ -18,11 +19,22 @@ interface SymptomSelectionProps {
   selectedSymptoms: string[];
 }
 
-export default function SymptomSelection({symptoms, selectedSymptoms, inputMode, setStep, toggleSymptom}: SymptomSelectionProps) {
+export default function SymptomSelection({
+  symptoms, 
+  selectedSymptoms, 
+  inputMode, 
+  setStep, 
+  toggleSymptom
+  }: SymptomSelectionProps) {
+  
+  const [painscale, setPainscale] = useState<string>("0");
+  const [showpainscale, setShowPainscale] = useState<boolean>(false);
+  
   return (
     
     <>
     {inputMode === "select" && (
+
     <fieldset className={assessmentStyles.fieldset}>
                   <legend className={assessmentStyles.legend}>
                     Wählen Sie eine Symptome
@@ -31,6 +43,7 @@ export default function SymptomSelection({symptoms, selectedSymptoms, inputMode,
                 {/* one box for every symptom */}
                 {symptoms.map((element) => 
                     (
+                        <>
                         <label key={element.symptomName}>{element.symptomName}
                         <input
                         type="checkbox"
@@ -40,12 +53,36 @@ export default function SymptomSelection({symptoms, selectedSymptoms, inputMode,
                         className={assessmentStyles.regionButton}
                         onChange={() => {
                             toggleSymptom(element.symptomValue);
+                            setShowPainscale(!showpainscale);
                             }}
                             >
                             </input>
-                            </label>
-                ))
-                }  
+                
+
+                      { showpainscale && selectedSymptoms.includes(element.symptomValue) && element.schmerzen && (
+                        <>
+                        {/* Anzeige des aktuellen Wertes */}
+                        <strong>{ painscale || "0"}/10</strong>
+
+                        <input
+                              className={assessmentStyles.slider}
+                              type="range"
+                              min="0"
+                              max="10"
+                              step="1"
+                              //value={painscale}
+                              onChange={(event) =>
+                              setPainscale(painscale)                      
+                              }
+                        ></input>
+                        </>
+                        )
+                      }
+                      </label>
+                        </>
+                ))                               
+                }
+
                 </fieldset>
     )}
 
