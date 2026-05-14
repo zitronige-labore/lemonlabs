@@ -50,10 +50,10 @@ export default function SymptomSelection({
                         type="checkbox"
                         id={element.symptomName}
                         name= {element.symptomName}
-                        checked={selectedSymptoms.some((s) =>s.includes(`{"name": ${element.symptomValue}, "bodyRegion": ${selectedSubRegion}`))}
+                        checked={selectedSymptoms.some((s) =>s.includes(`{"name": "${element.symptomValue}", "bodyRegion": "${selectedSubRegion}"`))}
                         className={assessmentStyles.regionButton}
                         onChange={() => {
-                            toggleSymptom(`{"name": ${element.symptomValue}, "bodyRegion": ${selectedSubRegion}`,
+                            toggleSymptom(`{"name": "${element.symptomValue}", "bodyRegion": "${selectedSubRegion}"`,
                             painscales[element.symptomValue])
                             }}
                             >
@@ -61,7 +61,7 @@ export default function SymptomSelection({
                         </label>
                 
 
-                      {selectedSymptoms.some((s) =>s.includes(`{"name": ${element.symptomValue}`)) && element.schmerzen && (
+                      {selectedSymptoms.some((s) =>s.includes(`{"name": "${element.symptomValue}", "bodyRegion": "${selectedSubRegion}"`)) && element.schmerzen && (
                         <>
                         {/* Anzeige des aktuellen Wertes */}
                         <strong>{painscales[element.symptomValue] || 0}/10</strong>

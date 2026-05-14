@@ -80,14 +80,19 @@ export async function saveFormData(formData: FormData) {
 
     // symptoms (prewritten, raw Text)
     const selectedSymptoms = formData.get("selectedSymptoms") as string;
-    const symptomList = selectedSymptoms.split(",");
+    const symptomList = selectedSymptoms.split("|||");
+    console.log(symptomList)
+    let symptomListJson = [];
+    for(let i = 0; i<symptomList.length; i++) {
+      symptomListJson[i] = JSON.parse(symptomList[i])
+    }
 
     const symptomText = formData.get("symptomText") as string;
     const symptomTextList = symptomText.split("|||");
 
     //test log
     console.log("test RawSymptomList:", symptomTextList, "filled?", (symptomTextList[0]!=''));
-    console.log("test SymptomList:", symptomList, "filled?", (symptomList[0]!=''));
+    console.log("test SymptomList:", symptomList, "filled?", (symptomListJson[0]!=''));
     console.log("test:", formData.toString());
 
     // create timestamp
@@ -153,9 +158,10 @@ export async function saveFormData(formData: FormData) {
     );
     }
 
+
+    // writing raw text symptoms in db
     let raw_id = null;
     if(symptomTextList[0]!=''){
-      // writing raw text symptoms in db
       for(let i=0; i<(symptomTextList.length); i++) {
         raw_id = await connectionPool.query(
             `
@@ -176,13 +182,13 @@ export async function saveFormData(formData: FormData) {
       }
     }
 
+    // writing prewritten symptoms into case_symptoms
     if(symptomList[0]!=''){
-      // writing prewritten symptoms into case_symptoms
       for(let i=0; i<symptomList.length; i++) {
         await connectionPool.query(
-          `INSERT INTO case_symptoms (name_de, case_id) 
-          VALUES ($1, $2)`,
-          [symptomList[i], dbReturn.rows[0].case_id]
+          `INSERT INTO case_symptoms (name_de, case_id, bodyregion, painscale) 
+          VALUES ($1, $2, $3, $4)`,
+          [symptomListJson[i].name, dbReturn.rows[0].case_id, symptomListJson[i].bodyRegion, symptomListJson[i].painscale]
         );
       }
     }

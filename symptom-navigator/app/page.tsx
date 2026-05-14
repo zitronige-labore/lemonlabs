@@ -211,10 +211,11 @@ const [additionalData, setAdditionalData] = useState<AdditionalData>({
     Fügt ein Symptom zur Auswahl hinzu oder entfernt es wieder.
   */
   function toggleSymptom(symptom: string, painscale?: string) {
+    console.log( "togglelog: ", symptom, painscale);
     setSelectedSymptoms((previousSymptoms) =>
       previousSymptoms.some((s) => s.includes(symptom))
         ? previousSymptoms.filter((s) => !s.includes(symptom))
-        : [...previousSymptoms, `${symptom}, "painscale": ${painscale}}`]
+        : [...previousSymptoms, `${symptom}, "painscale": ${painscale ?? null}}`]
     );
   }
 
