@@ -150,6 +150,35 @@ textarea.input {
   transform: none;
 }
 
+.secondaryButton {
+  background: #2563eb !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-radius: 12px;
+  padding: 14px 18px;
+  margin: 0 auto 18px auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  width: 100%;
+  max-width: 260px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+  transition: all 0.2s ease;
+}
+
+.secondaryButton:hover {
+  background: #1d4ed8 !important;
+  color: #ffffff !important;
+  transform: translateY(-1px);
+}
+
 .emergencyBox {
   background: #ffe4e4;
   color: #7f1d1d;
@@ -354,34 +383,6 @@ textarea.input {
   text-decoration: underline;
 }
 
-.secondaryButton {
-  background: #2563eb !important;
-  color: #ffffff !important;
-  border: none !important;
-  border-radius: 12px;
-  padding: 14px 18px;
-  margin-bottom: 18px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-
-  width: 100%;
-  font-size: 1rem;
-  font-weight: 700;
-  cursor: pointer;
-
-  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
-  transition: all 0.2s ease;
-}
-
-.secondaryButton:hover {
-  background: #1d4ed8 !important;
-  transform: translateY(-1px);
-}
-
-
 /* ================= Mobile Ansicht ================= */
 
 @media (max-width: 600px) {
@@ -432,5 +433,4 @@ textarea.input {
     background: #2563eb !important;
     color: #ffffff !important;
   }
-
 }
