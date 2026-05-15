@@ -114,7 +114,7 @@ export function ResultStep({
 
       <p>
         Medikamente:{" "}
-        <strong>{additionalData.medications || "Keine Angabe"}</strong>
+        <strong>{additionalData.medication || "Keine Angabe"}</strong>
       </p>
 
       <p>

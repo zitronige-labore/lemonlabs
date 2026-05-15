@@ -75,13 +75,15 @@ export function AdditionalInfoStep({
 
           <input
             className={assessmentStyles.input}
-            value={additionalData.medications}
-            onChange={(event) =>
+            value={additionalData.medication}
+            onChange={(event) => {
+              const value = event.target.value;
+
               setAdditionalData({
                 ...additionalData,
-                medications: event.target.value,
-              })
-            }
+                medication: value,
+              });
+            }}
 
             onBlur={(event) => {
               const value = event.target.value.trim();

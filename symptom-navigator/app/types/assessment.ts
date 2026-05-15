@@ -33,7 +33,7 @@ export type Step =
   | symptomChoiceStep;
 
 export type AdditionalData = {
-  medications: string;
+  medication: string;
   conditions: string;
 
   allergies: string;
@@ -120,7 +120,7 @@ export type RedFlags = {
   unconsciousness: boolean;
   severeBleeding: boolean;
   strokeSymptoms: boolean;
-  hightemperatureConfusion: boolean;
+  highFeverConfusion: boolean;
 };
 
 /*
