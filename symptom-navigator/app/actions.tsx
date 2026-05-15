@@ -7,9 +7,11 @@ import { cookies } from 'next/headers' // for cookies
 import { parseString } from 'xml2js'; // for xml
 
 // function to save form data in variables and query to write to the db
+// formData is used instead of passing different data types to stay as close as possible to the default behaviour of a form action
 export async function saveFormData(formData: FormData) {
 
     // form data is saved in variables and converted to the correct type
+
 
     // age
     const age = parseInt(formData.get("age") as string);
