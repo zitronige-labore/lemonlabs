@@ -40,6 +40,7 @@ export async function saveFormData(formData: FormData) {
     // medication
     const medication = formData.get("medication") as string;
     const medicationList = medication.split(",").map(s => s.trim()).filter(s => s !== "");;
+    console.log("medicationList: ", medicationList)
 
     // conditions
     const conditions = formData.get("conditions") as string;

@@ -124,7 +124,7 @@ export default function Home() {
     Diese Angaben sind nicht verpflichtend.
   */
 const [additionalData, setAdditionalData] = useState<AdditionalData>({
-  medications: "",
+  medication: "",
   conditions: "",
   duration: "",
 
