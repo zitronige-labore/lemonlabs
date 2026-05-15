@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 /*
   Import der CSS-Module der Startseite.
 
@@ -16,6 +18,11 @@ import type {
 import Link from "next/link";
 
 /*
+  Import der SosModal-Komponente
+*/
+import { SosModal } from "./SosModal";
+
+/*
   Eigenschaften der StartScreen-Komponente.
 
   onStartAssessment:
@@ -24,7 +31,7 @@ import Link from "next/link";
 */
 type StartScreenProps = {
   onStartAssessment: () => void;
-  resetProcess:() => void;
+  resetProcess: () => void;
 };
 
 /*
@@ -41,6 +48,9 @@ export function StartScreen({
   onStartAssessment,
   resetProcess
 }: StartScreenProps) {
+
+  const [showSos, setShowSos] = useState(false);
+
   return (
     <>
       {/* Hauptcontainer der Startseite */}
@@ -76,8 +86,8 @@ export function StartScreen({
               type="button"
               className={homeStyles.primaryButton}
               onClick={() => {
-              onStartAssessment();
-              resetProcess();
+                onStartAssessment();
+                resetProcess();
               }}
             >
               Ersteinschätzung von Symptomen
@@ -87,7 +97,12 @@ export function StartScreen({
             <Link
               href="/other"
               className={homeStyles.secondaryButton}
-              style={{ display: "flex", justifyContent: "center", alignItems: "center", textDecoration: "none" }}
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                textDecoration: "none"
+              }}
             >
               Anderes Anliegen
             </Link>
@@ -96,12 +111,19 @@ export function StartScreen({
       </div>
 
       {/* Schnellzugriff auf den Notruf */}
-      <a
-        href="tel:112"
+      <button
+        type="button"
+        onClick={() => setShowSos(true)}
         className={homeStyles.sosButton}
       >
         SOS
-      </a>
+      </button>
+
+      {/* Das Notruf-Modal */}
+      <SosModal
+        isOpen={showSos}
+        onClose={() => setShowSos(false)}
+      />
 
       {/* Fußzeile der Startseite */}
       <footer className={homeStyles.footer}>
