@@ -239,6 +239,7 @@ const DatenAusDB = await connectionPool.query(`
 
 
 
+
 // function to get case data
 export async function getUserDataFromDB() {
 
@@ -305,9 +306,12 @@ export async function getUserDataFromDB() {
   textSymptomData: textSymptomData.rows,
   additionalInfoData: additionalInfoData.rows,
   nonCountableInfoData: nonCountableInfoData.rows,
-}
+  }
 
 }
+
+
+
 
 
 // function to send and recieve promt/response from ollama, same concept for the argument as getDBData above
