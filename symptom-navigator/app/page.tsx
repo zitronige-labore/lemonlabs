@@ -12,22 +12,12 @@ import { useState } from "react";
 import homeStyles from "./Home.module.css";
 import assessmentStyles from "./assessment/Assessment.module.css";
 
-
-
-// import the useSaveForm to call the saveFormData function
 import { useSaveForm } from "./useSaveForm";
-
-// import the sendDataToAi function to use AI connection
 import { sendDataToAi } from "./actions";
 
-/*
-  Import der ausgelagerten Komponenten.
-  Jede Komponente stellt einen bestimmten Schritt oder Layout-Bereich dar.
-*/
 import SelectMoreSymptoms from "./assessment/components/SelectMoreSymptomsStep";
 import { AdditionalInfoStep } from "./assessment/components/AdditionalInfoStep";
 import { AssessmentLayout } from "./assessment/components/AssessmentLayout";
-import { BasisDetailsStep } from "./assessment/components/BasisDetailsStep";
 import { BasisStartStep } from "./assessment/components/BasisStartStep";
 import { BodyRegionStep } from "./assessment/components/BodyRegionStep";
 import { HinweiseScreen } from "./assessment/components/HinweiseScreen";
@@ -35,10 +25,12 @@ import { RedFlagsStep } from "./assessment/components/RedFlagsStep";
 import { ResultStep } from "./assessment/components/ResultStep";
 import { StartScreen } from "./assessment/components/StartScreen";
 import { SymptomTextInputStep } from "./assessment/components/SymptomTextInputStep";
+import { TutorialModal } from "./assessment/components/TutorialModal";
 
-/*
-  Import der TypeScript-Typen für Zustände und Auswahlwerte.
-*/
+import { Question } from "@phosphor-icons/react";
+
+import SymptomTree from "./assessment/components/symptomSteps/symptomTree";
+
 import type {
   AdditionalData,
   BasisData,
@@ -49,14 +41,14 @@ import type {
   SubRegion,
 } from "./types/assessment";
 
-/*
-  Anfangszustand für die Warnzeichen.
-*/
 import { emptyRedFlags } from "./assessment/utils/assessmentData";
-import SymptomTree from "./assessment/components/symptomSteps/symptomTree";
-import SymptomSelection from "./assessment/components/symptomSteps/symptomSelection";
 
 export default function Home() {
+  /*
+    Speichert, ob das globale Tutorial-Popup geöffnet ist.
+  */
+  const [isTutorialOpen, setIsTutorialOpen] = useState(false);
+
   /*
     Speichert, welcher Schritt im Ablauf aktuell angezeigt wird.
   */
@@ -105,7 +97,9 @@ export default function Home() {
   */
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
 
-  // copy of painscale for persistance of state
+  /*
+    Speichert die PainScale-Werte, damit sie beim Zurückgehen erhalten bleiben.
+  */
   const [copyPainScale, setCopyPainScale] = useState<Record<string, string>>({});
 
   /*
@@ -123,36 +117,46 @@ export default function Home() {
     Speichert optionale Zusatzangaben.
     Diese Angaben sind nicht verpflichtend.
   */
-const [additionalData, setAdditionalData] = useState<AdditionalData>({
-  medication: "",
-  conditions: "",
-  duration: "",
+  const [additionalData, setAdditionalData] = useState<AdditionalData>({
+    medication: "",
+    conditions: "",
+    duration: "",
 
-  allergies: "",
+    allergies: "",
 
-  temperature: "",
-  worsening: "",
+    temperature: "",
+    worsening: "",
 
-  weight: "",
-  height: "",
+    weight: "",
+    height: "",
 
-  breastfeeding: "",
+    breastfeeding: "",
 
-  extraInfo: "",
-});
+    extraInfo: "",
+  });
 
   /*
     Prüft, ob mindestens ein Warnzeichen ausgewählt wurde.
   */
   const hasEmergency = Object.values(redFlags).some(Boolean);
 
+  /*
+    Speichert die Formulardaten.
+  */
+  const handleSaveForm = useSaveForm(
+    basisData,
+    additionalData,
+    redFlags,
+    selectedMainRegion,
+    selectedSubRegion,
+    selectedSymptoms,
+    symptomText
+  );
 
-  // page.tsx – korrigiert
-  const handleSaveForm = useSaveForm(basisData, additionalData, redFlags, selectedMainRegion, selectedSubRegion, selectedSymptoms, symptomText);
-
-  // assessment speichern, um es strukturiert auszugeben
+  /*
+    Speichert die Antwort der KI.
+  */
   const [aiAnswer, setAiAnswer] = useState<any>(null);
-
 
   /*
     Aktualisiert ein einzelnes Warnzeichen.
@@ -212,18 +216,23 @@ const [additionalData, setAdditionalData] = useState<AdditionalData>({
 
   /*
     Fügt ein Symptom zur Auswahl hinzu oder entfernt es wieder.
+    Optional kann zusätzlich ein PainScale-Wert gespeichert werden.
   */
   function toggleSymptom(symptom: string, painscale?: string) {
-    console.log( "togglelog: ", symptom, painscale);
+    console.log("togglelog: ", symptom, painscale);
+
     setSelectedSymptoms((previousSymptoms) =>
       previousSymptoms.some((s) => s.includes(symptom))
         ? previousSymptoms.filter((s) => !s.includes(symptom))
-        : [...previousSymptoms, `${symptom}, "painscale": ${painscale ?? null}}`]
+        : [
+          ...previousSymptoms,
+          `${symptom}, "painscale": ${painscale ?? null}`,
+        ]
     );
   }
 
-   /*
-    Fügt ein Freitext Symptom zur Auswahl hinzu.
+  /*
+    Fügt ein Freitext-Symptom zur Freitextliste hinzu oder entfernt es wieder.
   */
   function addSymptomText(symptom: string) {
     setSymptomText((previousSymptoms) =>
@@ -233,20 +242,20 @@ const [additionalData, setAdditionalData] = useState<AdditionalData>({
     );
   }
 
-  // for reset on new start
+  /*
+    Setzt beim Neustart die wichtigsten Auswahlen zurück.
+  */
   function resetProcess() {
-  setSelectedMainRegion(null);
-  setSelectedSubRegion(null);
-  setInputMode(null);
-  setSymptomText([]);
-  setSelectedSymptoms([]);
-}
+    setSelectedMainRegion(null);
+    setSelectedSubRegion(null);
+    setInputMode(null);
+    setSymptomText([]);
+    setSelectedSymptoms([]);
+    setCopyPainScale({});
+  }
 
   /*
     Wird beim Abschließen des Formulars ausgeführt.
-
-    Die gesammelten Angaben werden aktuell in der Konsole ausgegeben
-    und danach wird die Ergebnisansicht angezeigt.
   */
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -263,12 +272,14 @@ const [additionalData, setAdditionalData] = useState<AdditionalData>({
       additionalData,
     };
 
-    // calling function to save form data in db
-    await handleSaveForm();
-    // calling function to send data from db to ai and get the response
-    const aiAnswer = await sendDataToAi();
-    setAiAnswer(aiAnswer);
+    try {
+      await handleSaveForm();
 
+      const aiAnswer = await sendDataToAi();
+      setAiAnswer(aiAnswer);
+    } catch (error) {
+      console.error("Error saving form or fetching AI response:", error);
+    }
 
     console.log("Formulardaten:", formData);
     setStep("result");
@@ -284,9 +295,9 @@ const [additionalData, setAdditionalData] = useState<AdditionalData>({
     >
       {/* Startseite */}
       {step === "start" && (
-        <StartScreen 
-        onStartAssessment={() => setStep("hinweise")} 
-        resetProcess={resetProcess}
+        <StartScreen
+          onStartAssessment={() => setStep("hinweise")}
+          resetProcess={resetProcess}
         />
       )}
 
@@ -348,9 +359,9 @@ const [additionalData, setAdditionalData] = useState<AdditionalData>({
             setCopyPainScale={setCopyPainScale}
             copyPainScale={copyPainScale}
             setSelectedSymptoms={setSelectedSymptoms}
-          ></SymptomTree>
+          />
 
-          {/* Schritt 5: Texinput, falls in Symptombaum aufgerufen */}
+          {/* Schritt 5: Textinput, falls im Symptombaum aufgerufen */}
           {step === "textInput" && (
             <SymptomTextInputStep
               selectedSubRegion={selectedSubRegion}
@@ -363,9 +374,9 @@ const [additionalData, setAdditionalData] = useState<AdditionalData>({
           {/* Schritt 5,5: weitere Symptomangabe */}
           {step === "selectMoreSymptoms" && (
             <SelectMoreSymptoms
-            setSelectedMainRegion={setSelectedMainRegion}
-            setSelectedSubRegion={setSelectedSubRegion}
-            setStep={setStep}
+              setSelectedMainRegion={setSelectedMainRegion}
+              setSelectedSubRegion={setSelectedSubRegion}
+              setStep={setStep}
             />
           )}
 
@@ -394,6 +405,23 @@ const [additionalData, setAdditionalData] = useState<AdditionalData>({
           )}
         </AssessmentLayout>
       )}
+
+      {/* Globaler Tutorial Button */}
+      <button
+        type="button"
+        className={homeStyles.tutorialButton}
+        onClick={() => setIsTutorialOpen(true)}
+        aria-label="Tutorial öffnen"
+      >
+        <Question size={28} weight="bold" />
+      </button>
+
+      {/* Globales Tutorial Modal */}
+      <TutorialModal
+        isOpen={isTutorialOpen}
+        onClose={() => setIsTutorialOpen(false)}
+        currentStep={step}
+      />
     </main>
   );
 }
