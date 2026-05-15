@@ -261,7 +261,7 @@ export async function getUserDataFromDB() {
   );
 
   const symptomData = await connectionPool.query(`
-    SELECT name_de
+    SELECT name_de, painscale, bodyregion
     FROM case_symptoms
     WHERE case_id = $1
     ;
@@ -270,10 +270,10 @@ export async function getUserDataFromDB() {
   );
 
   const textSymptomData = await connectionPool.query(`
-    SELECT raw_symptoms
+    SELECT raw_symptoms, painscale, bodyregion
     FROM raw_text_symptoms
     INNER JOIN case_symptoms
-    ON raw_text_symptoms.case_id = case_symptoms.case_id
+    ON raw_text_symptoms.raw_id = case_symptoms.raw_id
     WHERE case_id = $1
     ;
     `,
@@ -289,7 +289,7 @@ export async function getUserDataFromDB() {
     [caseId]
   );
 
-  const nonCountableInfo = await connectionPool.query(`
+  const nonCountableInfoData = await connectionPool.query(`
     SELECT category, detail
     FROM details_no_certain_count
     WHERE case_id = $1
@@ -297,6 +297,15 @@ export async function getUserDataFromDB() {
     `,
     [caseId]
   );
+
+  // return rows
+  return {
+  caseData: caseData.rows,
+  symptomData: symptomData.rows,
+  textSymptomData: textSymptomData.rows,
+  additionalInfoData: additionalInfoData.rows,
+  nonCountableInfoData: nonCountableInfoData.rows,
+}
 
 }
 
@@ -315,35 +324,30 @@ export async function sendDataToAi() {
   // get data from db
   // DB query
   // to be replaced later
-  const DatenAusDB = await connectionPool.query(`
-    SELECT weight, height, temperature, duration, worsening, breastfeeding, extrainfo, raw_symptoms, 
-    case_symptoms.name_de FROM cases 
-    LEFT JOIN case_symptoms ON cases.case_id = case_symptoms.case_id
-    LEFT JOIN details_no_certain_count ON details_no_certain_count.case_id = cases.case_id
-    LEFT JOIN additional_information ON additional_information.case_id = cases.case_id
-    LEFT JOIN raw_text_symptoms ON raw_text_symptoms.raw_id = case_symptoms.raw_id
-    LEFT JOIN symptom_catalog ON symptom_catalog.name_de = case_symptoms.name_de
-    WHERE cases.case_id = $1
-    ;
-    `,
-    [caseId]
-  );
+  const DatenAusDB = await getUserDataFromDB();
 
   // db data as string
-  const data = JSON.stringify(DatenAusDB.rows, null, 2);
+  const data = JSON.stringify(DatenAusDB, null, 2);
 
   // define master prompt
   const masterPrompt = `
-  du bekommst gleich daten ueber einen Fall, bestehend aus Alter, Geschlecht, Schwangerschaft, Gewicht, Größe, Temperatur in Grad Celsius
-  wie lange die Symptome schon anhalten(duration), ob die symptome schlimmer werden(worsening), ob eine Stillzeit vorleigt, 
+  du bekommst gleich daten ueber einen Fall, 
+  bestehend aus Alter, Geschlecht, Schwangerschaft,
+  sowie optional angegeben: Gewicht in kg, Größe in cm, gemessene  Koerpertemperatur in Grad Celsius
+  wie lange die Symptome schon anhalten(duration) in Tagen, ob die symptome schlimmer werden(worsening), 
+  ob eine Stillzeit vorleigt(breastfeeding), Allergien, Vorerkrankungen, Medikamente die eigenommen werden. 
   sonstige Informationen(extrainfo), und Symptomen.
   Die Symptome findest du entweder in "raw_symptoms" als freitext oder als "name_de" als name fuer ein bestimmtes symptom. 
+  Zu den Symptomen gehoert jeweils eine Schmerzskala angabe, falls es sich um ein Schmerzsymptom(painscale) handelt, sowie eine Koerperregion(bodyregion).
+  Falls die Koerperregion nicht zur Symptombeschreibung passt, hat ein user eine Fehlerhafte Eingabe gemacht, in diesem Fall die Koerperregion ignorieren.
   Erstelle basierend auf diesen Daten eine Einschaetzung der Dringlchkeit 
   (auf einer Skala von 1: keine Aerztliche Abklaerung noetig, 2: ärztliche Abklärung empfohlen, 3: ärztliche Abklärung zeitnah erforderlich, 4: gang in die notaufnahme erforderlich, 5: Notruf taetigen),
   eine Liste von 5 möglichen vermutungen was der Grund ist, und dazu die Wahrscheinlichkeit der vermutung. 
-  Erkläre kurz die Gründe für jede Vermutung und nenne mögliche nächste Schritte fuer den patienten zur weiteren Abklärung. 
+  Erkläre kurz die Gründe für jede Vermutung.
+  Gebe den Patienten in einfacher Sprache eine kurze Handlungsempfehlung, was evtl. vom Patienten selbst getan werden sollte, 
+  und falls ein Arzt aufgesucht werden soll auch die Versorgungsebene. 
   Alles laienverständlich und in kurzen Sätzen. 
-  Desweiteren bitte NUR in diesem XML Format antworten, keinen Text ausserhalb des XMLs, 
+  NUR in diesem XML Format antworten, keinen Text ausserhalb des XMLs, 
   NUR die vorgegebenen xml tags nutzen, keine weiteren ausdenken, in next steps: nur eine handlungsempfehlung in einfacher sprache im tag <nextSteps> ausgeben:
   <assessment>
   <urgency></urgency>
