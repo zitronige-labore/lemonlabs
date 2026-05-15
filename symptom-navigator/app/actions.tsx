@@ -136,39 +136,17 @@ export async function saveFormData(formData: FormData) {
         worseningBool, breastfeedingBool, extraInfo|| null]
     );
 
+
     // insert for multiple values
-    for(const element of allergyList) {
-      await connectionPool.query(
-        `
-        Insert into details_no_certain_count 
-        (case_id, category, detail)
-        VALUES ($1, $2, $3);
-        `,
-        [dbReturn.rows[0].case_id, "allergy", element|| null]
-    );
-    }
 
-    for(const element of conditionList) {
-      await connectionPool.query(
-        `
-        Insert into details_no_certain_count 
-        (case_id, category, detail)
-        VALUES ($1, $2, $3);
-        `,
-        [dbReturn.rows[0].case_id, "condition", element || null]
-    );
-    }
+    // allergies
+    insertListIntoSymptomsNoCertainCount(allergyList, "allergy", dbReturn.rows[0].case_id);
 
-    for(const element of medicationList) {
-      await connectionPool.query(
-        `
-        Insert into details_no_certain_count 
-        (case_id, category, detail)
-        VALUES ($1, $2, $3);
-        `,
-        [dbReturn.rows[0].case_id, "medication", element || null]
-    );
-    }
+    // medication
+    insertListIntoSymptomsNoCertainCount(medicationList, "medication", dbReturn.rows[0].case_id);
+
+    // conditions
+    insertListIntoSymptomsNoCertainCount(conditionList, "condition", dbReturn.rows[0].case_id);
 
 
     // writing raw text symptoms in db
@@ -217,14 +195,29 @@ export async function saveFormData(formData: FormData) {
 
 
 
+// function to write information into db if there is no certain length of the list
+export async function insertListIntoSymptomsNoCertainCount(list: string[], nameOfCategory: string, case_id: BigInteger) {
+
+  for(const element of list) {
+      await connectionPool.query(
+        `
+        Insert into details_no_certain_count 
+        (case_id, category, detail)
+        VALUES ($1, $2, $3);
+        `,
+        [case_id, nameOfCategory, element || null]
+    );
+    }
+
+}
+
+
 
 
 // function to get the data from the db and use it in frontend
 // save data in a variable, prevState is to be able to use the data when outputting, accessCode is passed via formData
-export async function getDBData(prevState: any, formData: FormData) {
+export async function getDBData(accessCode: string) {
 
-  // get access code from form
-const accessCode = parseInt(formData.get("accessCode") as string); 
 
 // DB query
 const DatenAusDB = await connectionPool.query(`
@@ -245,6 +238,67 @@ const DatenAusDB = await connectionPool.query(`
 }
 
 
+
+// function to get case data
+export async function getUserDataFromDB() {
+
+  // reading cookies to get case id
+  const cookieStore = await cookies();
+  const caseId = cookieStore.get('caseId')?.value;
+
+  if (!caseId) {
+  throw new Error('Keine aktive Session gefunden');
+  }
+
+  // DB queries
+  const caseData = await connectionPool.query(`
+    SELECT sex, age, pregnancy
+    FROM cases
+    WHERE case_id = $1
+    ;
+    `,
+    [caseId]
+  );
+
+  const symptomData = await connectionPool.query(`
+    SELECT name_de
+    FROM case_symptoms
+    WHERE case_id = $1
+    ;
+    `,
+    [caseId]
+  );
+
+  const textSymptomData = await connectionPool.query(`
+    SELECT raw_symptoms
+    FROM raw_text_symptoms
+    INNER JOIN case_symptoms
+    ON raw_text_symptoms.case_id = case_symptoms.case_id
+    WHERE case_id = $1
+    ;
+    `,
+    [caseId]
+  );
+
+  const additionalInfoData = await connectionPool.query(`
+    SELECT weight, height, temperature, duration, worsening, breastfeeding, extraInfo
+    FROM additional_information
+    WHERE case_id = $1
+    ;
+    `,
+    [caseId]
+  );
+
+  const nonCountableInfo = await connectionPool.query(`
+    SELECT category, detail
+    FROM details_no_certain_count
+    WHERE case_id = $1
+    ;
+    `,
+    [caseId]
+  );
+
+}
 
 
 // function to send and recieve promt/response from ollama, same concept for the argument as getDBData above
