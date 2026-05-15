@@ -23,7 +23,6 @@ export type Step =
   | "symptomChoice"
   | "symptomInput"
   | "basisDetails"
-  | "basisDetails"
   | "additionalInfo"
   | "result"
   | "textInput"
@@ -32,8 +31,16 @@ export type Step =
   | categoryAfterCategoryIfNeeded
   | symptomChoiceStep;
 
+/*
+  Zusatzangaben der Nutzerin oder des Nutzers.
+
+  medication   = neuere Schreibweise
+  medications  = ältere Schreibweise zur Kompatibilität
+*/
 export type AdditionalData = {
-  medication: string;
+  medication?: string;
+  medications?: string;
+
   conditions: string;
 
   allergies: string;
@@ -49,6 +56,7 @@ export type AdditionalData = {
 
   extraInfo: string;
 };
+
 /*
   Hauptregionen der interaktiven Körperkarte.
 
