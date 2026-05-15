@@ -13,7 +13,7 @@ export function useSaveForm(basisData: any, additionalData:any, redFlags: any, s
         formData.set("age", basisData.age);
         formData.set("gender", basisData.gender);
         formData.set("pregnancy", basisData.pregnancy);
-        formData.set("selectedSymptoms", selectedSymptoms);
+        formData.set("selectedSymptoms", selectedSymptoms.join("|||"));
         formData.set("symptomText", symptomText.join("|||"));
         formData.set("selectedMainRegion", selectedMainRegion);
         formData.set("selectedSubRegion", selectedSubRegion);
