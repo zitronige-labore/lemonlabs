@@ -60,12 +60,13 @@ export async function saveFormData(formData: FormData) {
     // worsening
     const worsening = formData.get("worsening") as string;
     let worseningBool = null;
-    if(worsening === "ja") {
+    if(worsening == "ja") {
       worseningBool = true; 
     }
-    else if(worsening === "nein") {
+    else if(worsening == "nein") {
       worseningBool = false;
     }
+    console.log("worsening: ", worseningBool)
 
     // breastfeeding
     const breastfeeding = formData.get("breastfeeding") as string;
@@ -76,8 +77,10 @@ export async function saveFormData(formData: FormData) {
     else if(breastfeeding === "nein") {
       breastfeedingBool = false;
     }
+    console.log("breastfeeding: ", breastfeedingBool)
 
     const extraInfo = formData.get("extraInfo") as string;
+    console.log("extrainfo: ", extraInfo)
 
     // symptoms (prewritten, raw Text)
     const selectedSymptoms = formData.get("selectedSymptoms") as string;
@@ -130,7 +133,7 @@ export async function saveFormData(formData: FormData) {
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8);
         `,
         [dbReturn.rows[0].case_id, weight || null, height || null, temperatureFloat|| null, duration|| null, 
-        worseningBool|| null, breastfeedingBool|| null, extraInfo|| null]
+        worseningBool, breastfeedingBool, extraInfo|| null]
     );
 
     // insert for multiple values
