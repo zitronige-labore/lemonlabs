@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 /*
   Import der CSS-Module der Start- und Hinweisseiten.
 
@@ -7,20 +9,10 @@
 import homeStyles from "../../Home.module.css";
 
 /*
-  Eigenschaften der HinweiseScreen-Komponente.
-
-  hinweiseBestaetigt:
-  Speichert, ob die Hinweise bestätigt wurden
-
-  setHinweiseBestaetigt:
-  Funktion zum Aktualisieren der Checkbox
-
-  onBack:
-  Funktion zum Zurückkehren zur Startseite
-
-  onContinue:
-  Funktion zum Wechseln zum nächsten Schritt
+  Import der SosModal-Komponente
 */
+import { SosModal } from "./SosModal";
+
 type HinweiseScreenProps = {
   hinweiseBestaetigt: boolean;
 
@@ -30,19 +22,14 @@ type HinweiseScreenProps = {
   onContinue: () => void;
 };
 
-/*
-  Diese Komponente zeigt wichtige Hinweise
-  vor Beginn der medizinischen Ersteinschätzung an.
-
-  Die Nutzerin oder der Nutzer muss die Hinweise
-  zuerst bestätigen, bevor fortgefahren werden kann.
-*/
 export function HinweiseScreen({
   hinweiseBestaetigt,
   setHinweiseBestaetigt,
   onBack,
   onContinue,
 }: HinweiseScreenProps) {
+  const [showSos, setShowSos] = useState(false);
+
   return (
     <>
       {/* Hauptcontainer der Hinweis-Seite */}
@@ -95,7 +82,6 @@ export function HinweiseScreen({
 
           {/* Navigationsbuttons */}
           <div className={homeStyles.buttonBox}>
-            {/* Zurück zur Startseite */}
             <button
               type="button"
               className={homeStyles.secondaryButton}
@@ -104,15 +90,9 @@ export function HinweiseScreen({
               Zurück
             </button>
 
-            {/* Weiter zur Ersteinschätzung */}
             <button
               type="button"
               className={homeStyles.primaryButton}
-
-              /*
-                Der Button bleibt deaktiviert,
-                solange die Hinweise nicht bestätigt wurden.
-              */
               disabled={!hinweiseBestaetigt}
               onClick={onContinue}
             >
@@ -123,9 +103,19 @@ export function HinweiseScreen({
       </div>
 
       {/* Schnellzugriff auf den Notruf */}
-      <a href="tel:112" className={homeStyles.sosButton}>
+      <button
+        type="button"
+        onClick={() => setShowSos(true)}
+        className={homeStyles.sosButton}
+      >
         SOS
-      </a>
+      </button>
+
+      {/* Das Notruf-Modal */}
+      <SosModal
+        isOpen={showSos}
+        onClose={() => setShowSos(false)}
+      />
 
       {/* Fußzeile der Seite */}
       <footer className={homeStyles.footer}>
