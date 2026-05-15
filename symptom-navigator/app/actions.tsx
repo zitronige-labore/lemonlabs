@@ -292,14 +292,12 @@ export async function getUserDataFromDB() {
     [caseId]
   );
 
-  const nonCountableInfoData = await connectionPool.query(`
-    SELECT category, detail
-    FROM details_no_certain_count
-    WHERE case_id = $1
-    ;
-    `,
-    [caseId]
-  );
+  const allergyData = await getDetailsNoCertainCount("allergy", "allergies", caseId)
+
+  const medicationData = await getDetailsNoCertainCount("medication", "medication", caseId)
+
+  const conditionsData = await getDetailsNoCertainCount("conditions", "conditions", caseId)
+
 
   // return rows
   return {
@@ -307,9 +305,29 @@ export async function getUserDataFromDB() {
   symptomData: symptomData.rows,
   textSymptomData: textSymptomData.rows,
   additionalInfoData: additionalInfoData.rows,
-  nonCountableInfoData: nonCountableInfoData.rows,
+  allergyData,
+  medicationData,
+  conditionsData
   }
 
+}
+
+
+
+// helper function to get details without count as proper format
+export async function getDetailsNoCertainCount(category: string, listName: string, case_id: string) {
+  
+  const DataList = await connectionPool.query(`
+    SELECT detail
+    FROM details_no_certain_count
+    WHERE case_id = $1
+    AND category = $2
+    ;
+    `,
+    [case_id, category]
+  );
+
+  return {[listName]: DataList.rows.map((row: any) => row.detail)};
 }
 
 
@@ -350,7 +368,7 @@ export async function sendDataToAi() {
   Erstelle basierend auf diesen Daten eine Einschaetzung der Dringlichkeit.
   (auf einer Skala von 1: keine Aerztliche Abklaerung noetig, 2: ärztliche Abklärung empfohlen, 3: ärztliche Abklärung zeitnah erforderlich, 4: gang in die notaufnahme erforderlich, 5: Notruf taetigen),
   eine Liste von 5 möglichen vermutungen was der Grund ist, und dazu die Wahrscheinlichkeit der vermutung. 
-  Erkläre kurz die Gründe für jede Vermutung.
+  Erkläre kurz die Gründea für jede Vermutung.
   Gebe den Patienten in einfacher Sprache eine kurze Handlungsempfehlung, was evtl. vom Patienten selbst getan werden sollte, 
   und falls ein Arzt aufgesucht werden soll auch die Versorgungsebene. 
   Alles laienverständlich und in kurzen Sätzen. 
