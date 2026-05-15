@@ -105,6 +105,9 @@ export default function Home() {
   */
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
 
+  // copy of painscale for persistance of state
+  const [copyPainScale, setCopyPainScale] = useState<Record<string, string>>({});
+
   /*
     Speichert allgemeine Angaben und Detailangaben zu den Beschwerden.
   */
@@ -121,7 +124,7 @@ export default function Home() {
     Diese Angaben sind nicht verpflichtend.
   */
 const [additionalData, setAdditionalData] = useState<AdditionalData>({
-  medications: "",
+  medication: "",
   conditions: "",
   duration: "",
 
@@ -210,11 +213,12 @@ const [additionalData, setAdditionalData] = useState<AdditionalData>({
   /*
     Fügt ein Symptom zur Auswahl hinzu oder entfernt es wieder.
   */
-  function toggleSymptom(symptom: string) {
+  function toggleSymptom(symptom: string, painscale?: string) {
+    console.log( "togglelog: ", symptom, painscale);
     setSelectedSymptoms((previousSymptoms) =>
-      previousSymptoms.includes(symptom)
-        ? previousSymptoms.filter((item) => item !== symptom)
-        : [...previousSymptoms, symptom]
+      previousSymptoms.some((s) => s.includes(symptom))
+        ? previousSymptoms.filter((s) => !s.includes(symptom))
+        : [...previousSymptoms, `${symptom}, "painscale": ${painscale ?? null}}`]
     );
   }
 
@@ -341,6 +345,9 @@ const [additionalData, setAdditionalData] = useState<AdditionalData>({
             selectedSubRegion={selectedSubRegion}
             toggleSymptom={toggleSymptom}
             selectedSymptoms={selectedSymptoms}
+            setCopyPainScale={setCopyPainScale}
+            copyPainScale={copyPainScale}
+            setSelectedSymptoms={setSelectedSymptoms}
           ></SymptomTree>
 
           {/* Schritt 5: Texinput, falls in Symptombaum aufgerufen */}

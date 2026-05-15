@@ -33,7 +33,7 @@ export type Step =
   | symptomChoiceStep;
 
 export type AdditionalData = {
-  medications: string;
+  medication: string;
   conditions: string;
 
   allergies: string;

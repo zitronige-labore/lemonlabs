@@ -10,6 +10,9 @@ import assessmentStyles from "../../Assessment.module.css";
 import SymptomSelection from "./symptomSelection";
 import SymptomCategory from "./symptomCategory";
 
+// imports to access setter functions from page
+import type { Dispatch, SetStateAction } from "react";
+
 // import needed types
 import { Step, InputMode, SubRegion  } from "../../../types/assessment";
 
@@ -19,12 +22,26 @@ interface SymptomTreeProps {
   setStep: (step: Step) => void;
   toggleSymptom: (symptom: string) => void;
   setInputMode: (inputMode: InputMode) => void;
+  setSelectedSymptoms: Dispatch<SetStateAction<string[]>>;
   selectedSymptoms: string[];
   step: Step;
   selectedSubRegion: SubRegion | null;
+  setCopyPainScale:(copyPainScale:Record<string, string>) => void;
+  copyPainScale: Record<string, string>;
 }
 
-export default function SymptomTree({step, selectedSubRegion, selectedSymptoms, inputMode, setStep, toggleSymptom, setInputMode}: SymptomTreeProps) {
+export default function SymptomTree({
+  step, 
+  selectedSubRegion, 
+  selectedSymptoms, 
+  inputMode, 
+  copyPainScale,
+  setSelectedSymptoms,
+  setStep, 
+  toggleSymptom, 
+  setInputMode,
+  setCopyPainScale
+}: SymptomTreeProps) {
   return (
     
     <>
@@ -49,6 +66,10 @@ export default function SymptomTree({step, selectedSubRegion, selectedSymptoms, 
                           setStep={setStep}
                           toggleSymptom={toggleSymptom}
                           selectedSymptoms={selectedSymptoms}
+                          selectedSubRegion={selectedSubRegion}
+                          setCopyPainScale={setCopyPainScale}
+                          copyPainScale={copyPainScale}
+                          setSelectedSymptoms={setSelectedSymptoms}
                       >
                       </SymptomSelection>
               )
@@ -63,6 +84,10 @@ export default function SymptomTree({step, selectedSubRegion, selectedSymptoms, 
                           setStep={setStep}
                           toggleSymptom={toggleSymptom}
                           selectedSymptoms={selectedSymptoms}
+                          selectedSubRegion={selectedSubRegion}
+                          setCopyPainScale={setCopyPainScale}
+                          copyPainScale={copyPainScale}
+                          setSelectedSymptoms={setSelectedSymptoms}
                       >
                       </SymptomSelection>
               )
