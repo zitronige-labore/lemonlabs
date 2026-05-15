@@ -340,7 +340,8 @@ export async function sendDataToAi() {
   Die Symptome findest du entweder in "raw_symptoms" als freitext oder als "name_de" als name fuer ein bestimmtes symptom. 
   Zu den Symptomen gehoert jeweils eine Schmerzskala angabe, falls es sich um ein Schmerzsymptom(painscale) handelt, sowie eine Koerperregion(bodyregion).
   Falls die Koerperregion nicht zur Symptombeschreibung passt, hat ein user eine Fehlerhafte Eingabe gemacht, in diesem Fall die Koerperregion ignorieren.
-  Erstelle basierend auf diesen Daten eine Einschaetzung der Dringlchkeit 
+  null Eintraege ebenfalls irgnorieren.
+  Erstelle basierend auf diesen Daten eine Einschaetzung der Dringlichkeit.
   (auf einer Skala von 1: keine Aerztliche Abklaerung noetig, 2: ärztliche Abklärung empfohlen, 3: ärztliche Abklärung zeitnah erforderlich, 4: gang in die notaufnahme erforderlich, 5: Notruf taetigen),
   eine Liste von 5 möglichen vermutungen was der Grund ist, und dazu die Wahrscheinlichkeit der vermutung. 
   Erkläre kurz die Gründe für jede Vermutung.
