@@ -13,92 +13,66 @@ import assessmentStyles from "../Assessment.module.css";
 */
 import type { AdditionalData } from "../../types/assessment";
 
-/*
-  Eigenschaften der AdditionalInfoStep-Komponente.
-
-  additionalData:
-  Enthält alle optionalen Zusatzangaben
-
-  setAdditionalData:
-  Funktion zum Aktualisieren der Zusatzangaben
-
-  toggleCondition:
-  Fügt Vorerkrankungen hinzu oder entfernt sie
-
-  onSkip:
-  Überspringt den Schritt
-*/
 type AdditionalInfoStepProps = {
   additionalData: AdditionalData;
   setAdditionalData: (data: AdditionalData) => void;
   onSkip: () => void;
 };
 
-/*
-  Dieser Schritt sammelt optionale Zusatzinformationen,
-  die bei der späteren Einschätzung hilfreich sein können.
-*/
 export function AdditionalInfoStep({
   additionalData,
   setAdditionalData,
   onSkip,
 }: AdditionalInfoStepProps) {
-  /*
-    Speichert mögliche Fehlermeldungen
-    für das Allergie-Feld.
-  */
   const [inputError, setInputError] = useState("");
 
-  /*
-    Erlaubt Buchstaben, Leerzeichen,
-    Kommas und Bindestriche.
-  */
   const Pattern = /^[^,]+(,[^,]+)*$/;
+
+  const medicationValue =
+    additionalData.medications || additionalData.medication || "";
 
   return (
     <>
-      {/* Beschreibung des optionalen Schritts */}
       <p className={assessmentStyles.text}>
         Optional: Diese Angaben können helfen, die Beschwerden besser
         einzuordnen. Sie können diesen Schritt auch überspringen.
       </p>
 
-      {/* Formularbereich für Zusatzangaben */}
       <fieldset className={assessmentStyles.fieldset}>
         <legend className={assessmentStyles.legend}>
           Zusatzangaben
         </legend>
 
-        {/* Medikamente */}
         <label className={assessmentStyles.formLabel}>
           Nehmen Sie aktuell Medikamente ein?
 
           <input
             className={assessmentStyles.input}
-            value={additionalData.medication}
+            value={medicationValue}
             onChange={(event) => {
               const value = event.target.value;
 
               setAdditionalData({
                 ...additionalData,
                 medication: value,
+                medications: value,
               });
             }}
-
             onBlur={(event) => {
               const value = event.target.value.trim();
+
               if (value === "" || Pattern.test(value)) {
                 setInputError("");
               } else {
-                setInputError("Bitte schreiben als: Medikament1, Medikament2, ...");
+                setInputError(
+                  "Bitte schreiben als: Medikament1, Medikament2, ..."
+                );
               }
             }}
-
             placeholder="Zum Beispiel: Ibuprofen, Blutdruckmedikamente..."
           />
         </label>
 
-        {/* Gewicht */}
         <label className={assessmentStyles.formLabel}>
           Gewicht in kg
 
@@ -116,7 +90,6 @@ export function AdditionalInfoStep({
           />
         </label>
 
-        {/* Größe */}
         <label className={assessmentStyles.formLabel}>
           Größe in cm
 
@@ -134,7 +107,6 @@ export function AdditionalInfoStep({
           />
         </label>
 
-        {/* Stillzeit */}
         <label className={assessmentStyles.formLabel}>
           Stillzeit
 
@@ -155,7 +127,6 @@ export function AdditionalInfoStep({
           </select>
         </label>
 
-        {/* Vorerkrankungen */}
         <div className={assessmentStyles.formLabel}>
           Sind Vorerkrankungen bekannt?
 
@@ -166,17 +137,18 @@ export function AdditionalInfoStep({
             "Asthma",
             "Keine bekannt",
           ].map((condition) => (
-            <label
-              key={condition}
-              className={assessmentStyles.label}
-            >
+            <label key={condition} className={assessmentStyles.label}>
               <input
                 type="checkbox"
                 checked={additionalData.conditions.includes(condition)}
-                onChange={() => setAdditionalData({
-                  ...additionalData,
-                  conditions: additionalData.conditions + condition + ",",
-                })}
+                onChange={() =>
+                  setAdditionalData({
+                    ...additionalData,
+                    conditions: additionalData.conditions.includes(condition)
+                      ? additionalData.conditions.replace(`${condition},`, "")
+                      : additionalData.conditions + condition + ",",
+                  })
+                }
               />
 
               {condition}
@@ -184,7 +156,6 @@ export function AdditionalInfoStep({
           ))}
         </div>
 
-        {/* Allergien */}
         <label className={assessmentStyles.formLabel}>
           Sind Allergien bekannt?
 
@@ -201,20 +172,20 @@ export function AdditionalInfoStep({
                 allergies: value,
               });
             }}
-
             onBlur={(event) => {
               const value = event.target.value.trim();
+
               if (value === "" || Pattern.test(value)) {
                 setInputError("");
               } else {
-                setInputError("Bitte schreiben als: Allergie1, Allergie2, ...");
+                setInputError(
+                  "Bitte schreiben als: Allergie1, Allergie2, ..."
+                );
               }
             }}
-            
             placeholder="Zum Beispiel: Medikamente, Lebensmittel, Pollen..."
           />
 
-          {/* Fehlermeldung bei ungültiger Eingabe */}
           {inputError && (
             <p className={assessmentStyles.errorText}>
               {inputError}
@@ -222,7 +193,6 @@ export function AdditionalInfoStep({
           )}
         </label>
 
-        {/* Fieber */}
         <label className={assessmentStyles.formLabel}>
           Haben Sie Ihre Temperatur gemessen?
 
@@ -241,7 +211,6 @@ export function AdditionalInfoStep({
           />
         </label>
 
-        {/* Dauer */}
         <label className={assessmentStyles.formLabel}>
           Seit wie vielen Tagen haben Sie die Beschwerden?
 
@@ -259,7 +228,6 @@ export function AdditionalInfoStep({
           />
         </label>
 
-        {/* Verschlechterung */}
         <label className={assessmentStyles.formLabel}>
           Werden die Beschwerden stärker?
 
@@ -280,7 +248,6 @@ export function AdditionalInfoStep({
           </select>
         </label>
 
-        {/* Weitere Informationen */}
         <label className={assessmentStyles.formLabel}>
           Gibt es weitere wichtige Informationen?
 
@@ -298,7 +265,6 @@ export function AdditionalInfoStep({
         </label>
       </fieldset>
 
-      {/* Buttons */}
       <div className={assessmentStyles.quickSelect}>
         <button
           type="submit"
