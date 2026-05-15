@@ -52,6 +52,7 @@ export default function SymptomSelection({
                 {/* one box for every symptom */}
                 {symptoms.map((element) => 
                     (
+                        <div className={assessmentStyles.fieldset} key={element.symptomName}>
                         <label key={element.symptomName}>{element.symptomName}
                         <input
                         type="checkbox"
@@ -66,6 +67,7 @@ export default function SymptomSelection({
                             >
                             </input>
                         </label>
+                      
                 
 
                       {selectedSymptoms.some((s) =>s.includes(`{"name": "${element.symptomValue}", "bodyRegion": "${selectedSubRegion}"`)) && element.schmerzen && (
