@@ -7,9 +7,11 @@ import { cookies } from 'next/headers' // for cookies
 import { parseString } from 'xml2js'; // for xml
 
 // function to save form data in variables and query to write to the db
+// formData is used instead of passing different data types to stay as close as possible to the default behaviour of a form action
 export async function saveFormData(formData: FormData) {
 
     // form data is saved in variables and converted to the correct type
+
 
     // age
     const age = parseInt(formData.get("age") as string);
@@ -136,39 +138,17 @@ export async function saveFormData(formData: FormData) {
         worseningBool, breastfeedingBool, extraInfo|| null]
     );
 
+
     // insert for multiple values
-    for(const element of allergyList) {
-      await connectionPool.query(
-        `
-        Insert into details_no_certain_count 
-        (case_id, category, detail)
-        VALUES ($1, $2, $3);
-        `,
-        [dbReturn.rows[0].case_id, "allergy", element|| null]
-    );
-    }
 
-    for(const element of conditionList) {
-      await connectionPool.query(
-        `
-        Insert into details_no_certain_count 
-        (case_id, category, detail)
-        VALUES ($1, $2, $3);
-        `,
-        [dbReturn.rows[0].case_id, "condition", element || null]
-    );
-    }
+    // allergies
+    insertListIntoSymptomsNoCertainCount(allergyList, "allergy", dbReturn.rows[0].case_id);
 
-    for(const element of medicationList) {
-      await connectionPool.query(
-        `
-        Insert into details_no_certain_count 
-        (case_id, category, detail)
-        VALUES ($1, $2, $3);
-        `,
-        [dbReturn.rows[0].case_id, "medication", element || null]
-    );
-    }
+    // medication
+    insertListIntoSymptomsNoCertainCount(medicationList, "medication", dbReturn.rows[0].case_id);
+
+    // conditions
+    insertListIntoSymptomsNoCertainCount(conditionList, "condition", dbReturn.rows[0].case_id);
 
 
     // writing raw text symptoms in db
@@ -217,14 +197,29 @@ export async function saveFormData(formData: FormData) {
 
 
 
+// function to write information into db if there is no certain length of the list
+export async function insertListIntoSymptomsNoCertainCount(list: string[], nameOfCategory: string, case_id: BigInteger) {
+
+  for(const element of list) {
+      await connectionPool.query(
+        `
+        Insert into details_no_certain_count 
+        (case_id, category, detail)
+        VALUES ($1, $2, $3);
+        `,
+        [case_id, nameOfCategory, element || null]
+    );
+    }
+
+}
+
+
 
 
 // function to get the data from the db and use it in frontend
 // save data in a variable, prevState is to be able to use the data when outputting, accessCode is passed via formData
-export async function getDBData(prevState: any, formData: FormData) {
+export async function getDBData(accessCode: string) {
 
-  // get access code from form
-const accessCode = parseInt(formData.get("accessCode") as string); 
 
 // DB query
 const DatenAusDB = await connectionPool.query(`
@@ -247,6 +242,98 @@ const DatenAusDB = await connectionPool.query(`
 
 
 
+// function to get case data
+export async function getUserDataFromDB() {
+
+  // reading cookies to get case id
+  const cookieStore = await cookies();
+  const caseId = cookieStore.get('caseId')?.value;
+
+  if (!caseId) {
+  throw new Error('Keine aktive Session gefunden');
+  }
+
+  // DB queries
+  const caseData = await connectionPool.query(`
+    SELECT sex, age, pregnancy
+    FROM cases
+    WHERE case_id = $1
+    ;
+    `,
+    [caseId]
+  );
+
+  const symptomData = await connectionPool.query(`
+    SELECT name_de, painscale, bodyregion
+    FROM case_symptoms
+    WHERE case_id = $1
+    ;
+    `,
+    [caseId]
+  );
+
+  const textSymptomData = await connectionPool.query(`
+    SELECT raw_symptoms, painscale, bodyregion
+    FROM raw_text_symptoms
+    INNER JOIN case_symptoms
+    ON raw_text_symptoms.raw_id = case_symptoms.raw_id
+    WHERE case_id = $1
+    ;
+    `,
+    [caseId]
+  );
+
+  const additionalInfoData = await connectionPool.query(`
+    SELECT weight, height, temperature, duration, worsening, breastfeeding, extraInfo
+    FROM additional_information
+    WHERE case_id = $1
+    ;
+    `,
+    [caseId]
+  );
+
+  const allergyData = await getDetailsNoCertainCount("allergy", "allergies", caseId)
+
+  const medicationData = await getDetailsNoCertainCount("medication", "medication", caseId)
+
+  const conditionsData = await getDetailsNoCertainCount("conditions", "conditions", caseId)
+
+
+  // return rows
+  return {
+  caseData: caseData.rows,
+  symptomData: symptomData.rows,
+  textSymptomData: textSymptomData.rows,
+  additionalInfoData: additionalInfoData.rows,
+  allergyData,
+  medicationData,
+  conditionsData
+  }
+
+}
+
+
+
+// helper function to get details without count as proper format
+export async function getDetailsNoCertainCount(category: string, listName: string, case_id: string) {
+  
+  const DataList = await connectionPool.query(`
+    SELECT detail
+    FROM details_no_certain_count
+    WHERE case_id = $1
+    AND category = $2
+    ;
+    `,
+    [case_id, category]
+  );
+
+  return {[listName]: DataList.rows.map((row: any) => row.detail)};
+}
+
+
+
+
+
 // function to send and recieve promt/response from ollama, same concept for the argument as getDBData above
 export async function sendDataToAi() {
 
@@ -261,35 +348,31 @@ export async function sendDataToAi() {
   // get data from db
   // DB query
   // to be replaced later
-  const DatenAusDB = await connectionPool.query(`
-    SELECT weight, height, temperature, duration, worsening, breastfeeding, extrainfo, raw_symptoms, 
-    case_symptoms.name_de FROM cases 
-    LEFT JOIN case_symptoms ON cases.case_id = case_symptoms.case_id
-    LEFT JOIN details_no_certain_count ON details_no_certain_count.case_id = cases.case_id
-    LEFT JOIN additional_information ON additional_information.case_id = cases.case_id
-    LEFT JOIN raw_text_symptoms ON raw_text_symptoms.raw_id = case_symptoms.raw_id
-    LEFT JOIN symptom_catalog ON symptom_catalog.name_de = case_symptoms.name_de
-    WHERE cases.case_id = $1
-    ;
-    `,
-    [caseId]
-  );
+  const DatenAusDB = await getUserDataFromDB();
 
   // db data as string
-  const data = JSON.stringify(DatenAusDB.rows, null, 2);
+  const data = JSON.stringify(DatenAusDB, null, 2);
 
   // define master prompt
   const masterPrompt = `
-  du bekommst gleich daten ueber einen Fall, bestehend aus Alter, Geschlecht, Schwangerschaft, Gewicht, Größe, Temperatur in Grad Celsius
-  wie lange die Symptome schon anhalten(duration), ob die symptome schlimmer werden(worsening), ob eine Stillzeit vorleigt, 
+  du bekommst gleich daten ueber einen Fall, 
+  bestehend aus Alter, Geschlecht, Schwangerschaft,
+  sowie optional angegeben: Gewicht in kg, Größe in cm, gemessene  Koerpertemperatur in Grad Celsius
+  wie lange die Symptome schon anhalten(duration) in Tagen, ob die symptome schlimmer werden(worsening), 
+  ob eine Stillzeit vorleigt(breastfeeding), Allergien, Vorerkrankungen, Medikamente die eigenommen werden. 
   sonstige Informationen(extrainfo), und Symptomen.
   Die Symptome findest du entweder in "raw_symptoms" als freitext oder als "name_de" als name fuer ein bestimmtes symptom. 
-  Erstelle basierend auf diesen Daten eine Einschaetzung der Dringlchkeit 
+  Zu den Symptomen gehoert jeweils eine Schmerzskala angabe, falls es sich um ein Schmerzsymptom(painscale) handelt, sowie eine Koerperregion(bodyregion).
+  Falls die Koerperregion nicht zur Symptombeschreibung passt, hat ein user eine Fehlerhafte Eingabe gemacht, in diesem Fall die Koerperregion ignorieren.
+  null Eintraege ebenfalls irgnorieren.
+  Erstelle basierend auf diesen Daten eine Einschaetzung der Dringlichkeit.
   (auf einer Skala von 1: keine Aerztliche Abklaerung noetig, 2: ärztliche Abklärung empfohlen, 3: ärztliche Abklärung zeitnah erforderlich, 4: gang in die notaufnahme erforderlich, 5: Notruf taetigen),
   eine Liste von 5 möglichen vermutungen was der Grund ist, und dazu die Wahrscheinlichkeit der vermutung. 
-  Erkläre kurz die Gründe für jede Vermutung und nenne mögliche nächste Schritte fuer den patienten zur weiteren Abklärung. 
+  Erkläre kurz die Gründea für jede Vermutung.
+  Gebe den Patienten in einfacher Sprache eine kurze Handlungsempfehlung, was evtl. vom Patienten selbst getan werden sollte, 
+  und falls ein Arzt aufgesucht werden soll auch die Versorgungsebene. 
   Alles laienverständlich und in kurzen Sätzen. 
-  Desweiteren bitte NUR in diesem XML Format antworten, keinen Text ausserhalb des XMLs, 
+  NUR in diesem XML Format antworten, keinen Text ausserhalb des XMLs, 
   NUR die vorgegebenen xml tags nutzen, keine weiteren ausdenken, in next steps: nur eine handlungsempfehlung in einfacher sprache im tag <nextSteps> ausgeben:
   <assessment>
   <urgency></urgency>
