@@ -7,7 +7,7 @@
   Die Zustände und die zentrale Ablaufsteuerung bleiben hier in page.tsx.
 */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import homeStyles from "./Home.module.css";
 import assessmentStyles from "./assessment/Assessment.module.css";
@@ -158,6 +158,34 @@ export default function Home() {
   */
   const [aiAnswer, setAiAnswer] = useState<any>(null);
 
+  // sets browser history at start (for navigation)
+  useEffect(function() {
+    history.replaceState({ step: step }, "", "#" + step);
+    return;
+    }, []);
+
+
+  // catch the back and forth button from browser
+  useEffect(function() {
+    function handlePopState(event: PopStateEvent) {
+      if (event.state && event.state.step) {
+        setStep(event.state.step as Step);
+      }
+    }
+      
+    window.addEventListener("popstate", handlePopState);
+
+    return function() {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, []);
+
+  // replaces setStep so the browser history gets update while setting the step
+  function goToStep(nextStep: Step) {
+    history.pushState({ step: nextStep }, "", "#" + nextStep);
+    setStep(nextStep);
+  }
+
   /*
     Aktualisiert ein einzelnes Warnzeichen.
     Sobald ein Warnzeichen ausgewählt wird, wird
@@ -210,7 +238,7 @@ export default function Home() {
   */
   function continueAfterRegionSelection() {
     if (selectedMainRegion && selectedSubRegion) {
-      setStep("symptomChoice");
+      goToStep("symptomChoice");
     }
   }
 
@@ -254,6 +282,7 @@ export default function Home() {
     setCopyPainScale({});
   }
 
+
   /*
     Wird beim Abschließen des Formulars ausgeführt.
   */
@@ -282,7 +311,7 @@ export default function Home() {
     }
 
     console.log("Formulardaten:", formData);
-    setStep("result");
+    goToStep("result");
   }
 
   return (
@@ -296,7 +325,7 @@ export default function Home() {
       {/* Startseite */}
       {step === "start" && (
         <StartScreen
-          onStartAssessment={() => setStep("hinweise")}
+          onStartAssessment={() => goToStep("hinweise")}
           resetProcess={resetProcess}
         />
       )}
@@ -306,8 +335,8 @@ export default function Home() {
         <HinweiseScreen
           hinweiseBestaetigt={hinweiseBestaetigt}
           setHinweiseBestaetigt={setHinweiseBestaetigt}
-          onBack={() => setStep("start")}
-          onContinue={() => setStep("redflags")}
+          onBack={() => goToStep("start")}
+          onContinue={() => goToStep("redflags")}
         />
       )}
 
@@ -322,7 +351,7 @@ export default function Home() {
               hasEmergency={hasEmergency}
               updateRedFlag={updateRedFlag}
               selectNoRedFlags={selectNoRedFlags}
-              onContinue={() => setStep("basisStart")}
+              onContinue={() => goToStep("basisStart")}
             />
           )}
 
@@ -331,7 +360,7 @@ export default function Home() {
             <BasisStartStep
               basisData={basisData}
               setBasisData={setBasisData}
-              onContinue={() => setStep("bodyRegion")}
+              onContinue={() => goToStep("bodyRegion")}
             />
           )}
 
@@ -343,14 +372,14 @@ export default function Home() {
               selectMainRegion={selectMainRegion}
               selectSubRegion={selectSubRegion}
               onContinue={continueAfterRegionSelection}
-              setStep={setStep}
+              setStep={goToStep}
             />
           )}
 
           {/* Schritt 4: Symptombaum navigieren */}
           <SymptomTree
             step={step}
-            setStep={setStep}
+            setStep={goToStep}
             inputMode={inputMode}
             setInputMode={setInputMode}
             selectedSubRegion={selectedSubRegion}
@@ -367,7 +396,7 @@ export default function Home() {
               selectedSubRegion={selectedSubRegion}
               symptomText={symptomText}
               addSymptomText={addSymptomText}
-              onContinue={() => setStep("selectMoreSymptoms")}
+              onContinue={() => goToStep("selectMoreSymptoms")}
             />
           )}
 
@@ -376,7 +405,7 @@ export default function Home() {
             <SelectMoreSymptoms
               setSelectedMainRegion={setSelectedMainRegion}
               setSelectedSubRegion={setSelectedSubRegion}
-              setStep={setStep}
+              setStep={goToStep}
             />
           )}
 
@@ -385,7 +414,7 @@ export default function Home() {
             <AdditionalInfoStep
               additionalData={additionalData}
               setAdditionalData={setAdditionalData}
-              onSkip={() => setStep("result")}
+              onSkip={() => goToStep("result")}
             />
           )}
 
@@ -399,7 +428,7 @@ export default function Home() {
               symptomText={symptomText}
               selectedSymptoms={selectedSymptoms}
               additionalData={additionalData}
-              onGoHome={() => setStep("start")}
+              onGoHome={() => goToStep("start")}
               aiAnswer={aiAnswer}
             />
           )}
