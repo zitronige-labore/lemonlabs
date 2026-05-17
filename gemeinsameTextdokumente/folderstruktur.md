@@ -4,12 +4,11 @@
 project-root/
 ├── app/
 │   ├── page.tsx
-│   │   # Enthält die State-Logik zur Anzeige der richtigen Komponenten.
-│   │   # Dies ist die einzige Page der Web-App (Single Page Application).
+│   │   # State-Logik zur Anzeige der richtigen Komponenten
+│   │   # einzige Page der Web-App (Single Page Application)
 │   │
 │   ├── actions.tsx
-│   │   # Enthält Server Actions.
-│   │   # Entspricht am ehesten dem traditionellen Backend.
+│   │   # Server Actions (entsprechen etwa dem traditionellen Backend)
 │   │
 │   ├── assessment/
 │   │   ├── components/
@@ -19,7 +18,7 @@ project-root/
 │   │
 │   ├── otherFeatures/
 │   │   ├── components/
-│   │   │   # Komponenten weiterer Hauptfunktionen
+│   │   │   # Komponenten weiterer Funktionen
 │   │   └── utils/
 │   │       # Client-seitige Hilfsfunktionen
 │   │
