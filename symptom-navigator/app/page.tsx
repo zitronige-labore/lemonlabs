@@ -189,20 +189,13 @@ export default function Home() {
         if (zielStep === "hinweise" && stepRef.current === "redflags") {
           const bestaetigt = window.confirm("Wenn du zurückgehst, gehen deine eingegebenen Daten verloren. Trotzdem zurück?");
           if (!bestaetigt) {
-            history.pushState({ step: step }, "", "#" + step);
-            stepRef.current = zielStep;
-            setStep(zielStep);
+            history.pushState({ step: stepRef.current }, "", "#" + stepRef.current);
             return;
           }
-          else {
-            return;
-          }
-        }
-        else{
-          stepRef.current = zielStep;
-          setStep(zielStep);
         }
 
+        stepRef.current = zielStep;
+          setStep(zielStep);
       }
     }
       
