@@ -1,3 +1,6 @@
+# Projektstruktur
+
+```text
 project-root/
 ├── app/
 │   ├── page.tsx
@@ -36,8 +39,5 @@ project-root/
 ├── README.md
 │   # Projektdokumentation
 │
-├── package.json
-│   # Projektabhängigkeiten und Skripte
-│
-└── tsconfig.json
-    # TypeScript-Konfiguration
+├── configfiles
+    # z.b. tsconfig.json
