@@ -9,6 +9,8 @@ project-root/
 │   │
 │   ├── actions.tsx
 │   │   # Server Actions (entsprechen etwa dem traditionellen Backend)
+│   │   # API routes DB + AI
+│   │   # Promtaufbereitung
 │   │
 │   ├── assessment/
 │   │   ├── components/
