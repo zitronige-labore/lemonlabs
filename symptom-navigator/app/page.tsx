@@ -7,7 +7,7 @@
   Die Zustände und die zentrale Ablaufsteuerung bleiben hier in page.tsx.
 */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 import homeStyles from "./Home.module.css";
 import assessmentStyles from "./assessment/Assessment.module.css";
@@ -53,6 +53,9 @@ export default function Home() {
     Speichert, welcher Schritt im Ablauf aktuell angezeigt wird.
   */
   const [step, setStep] = useState<Step>("start");
+
+  // reference to current step
+  const stepRef = useRef<Step>("start");
 
   /*
     Speichert, ob die Hinweise auf der Hinweis-Seite bestätigt wurden.
@@ -158,6 +161,17 @@ export default function Home() {
   */
   const [aiAnswer, setAiAnswer] = useState<any>(null);
 
+  // defines all steps which are part of the form
+  const formularSteps: Step[] = [
+  "redflags",
+  "basisStart",
+  "bodyRegion",
+  "symptomChoice",
+  "textInput",
+  "selectMoreSymptoms",
+  "additionalInfo",
+];
+
   // sets browser history at start (for navigation)
   useEffect(function() {
     history.replaceState({ step: step }, "", "#" + step);
@@ -169,7 +183,26 @@ export default function Home() {
   useEffect(function() {
     function handlePopState(event: PopStateEvent) {
       if (event.state && event.state.step) {
-        setStep(event.state.step as Step);
+        
+        const zielStep = event.state.step as Step;
+
+        if (zielStep === "hinweise" && stepRef.current === "redflags") {
+          const bestaetigt = window.confirm("Wenn du zurückgehst, gehen deine eingegebenen Daten verloren. Trotzdem zurück?");
+          if (!bestaetigt) {
+            history.pushState({ step: step }, "", "#" + step);
+            stepRef.current = zielStep;
+            setStep(zielStep);
+            return;
+          }
+          else {
+            return;
+          }
+        }
+        else{
+          stepRef.current = zielStep;
+          setStep(zielStep);
+        }
+
       }
     }
       
@@ -180,8 +213,24 @@ export default function Home() {
     };
   }, []);
 
+  // warning of data loss when reload
+  useEffect(function() {
+    function handleBeforeUnload(event: BeforeUnloadEvent) {
+      if (formularSteps.includes(step)) {
+        event.preventDefault();
+      }
+    }
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return function() {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [step]);
+
   // replaces setStep so the browser history gets update while setting the step
   function goToStep(nextStep: Step) {
+    stepRef.current = nextStep;
     history.pushState({ step: nextStep }, "", "#" + nextStep);
     setStep(nextStep);
   }
