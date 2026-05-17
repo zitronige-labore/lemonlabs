@@ -10,12 +10,3 @@
 ---
 
 
-```bash
-# 1. Datei zum Staging hinzufügen
-git add LUNGE_ATMUNG_DETAIL.md
-
-# 2. Commit mit fachspezifischer Nachricht
-git commit -m "docs: expand respiratory symptoms with mechanical and acoustic details"
-
-# 3. Push zu GitHub
-git push origin main
