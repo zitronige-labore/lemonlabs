@@ -113,7 +113,7 @@ export function BasisStartStep({
         */}
         {basisData.gender === "weiblich" && (
           <label className={assessmentStyles.formLabel}>
-            Schwangerschaft oder Stillzeit
+            Schwangerschaft
 
             <select
               className={assessmentStyles.input}

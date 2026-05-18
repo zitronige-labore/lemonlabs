@@ -135,7 +135,6 @@ export function AdditionalInfoStep({
             "Bluthochdruck",
             "Herzkrankheit",
             "Asthma",
-            "Keine bekannt",
           ].map((condition) => (
             <label key={condition} className={assessmentStyles.label}>
               <input
