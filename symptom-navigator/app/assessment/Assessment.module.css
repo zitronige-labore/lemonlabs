@@ -240,6 +240,8 @@ textarea.input {
   stroke: #515151;
   stroke-width: 1.5;
   cursor: pointer;
+  text-align: center;
+  align-items: center;
   transition: fill 0.2s ease, stroke 0.2s ease, filter 0.2s ease;
 }
 
