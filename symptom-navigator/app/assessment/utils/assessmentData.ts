@@ -66,7 +66,7 @@ export function getSubRegions(
     case "Beine & Füße":
       return ["Oberschenkel", "Knie", "Unterschenkel", "Fuß"];
 
-    case "Haut (gesamt)":
+    case "Psyche":
       return ["Haut allgemein"];
 
     case "Allgemein (ganzer Körper)":
