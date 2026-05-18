@@ -252,6 +252,75 @@ export function ResultStep({
 
   return (
     <div className={assessmentStyles.resultBox}>
+
+      
+      {aiAnswer?.assessment?.urgency ? (
+        <div style={{ width: "100%", marginTop: "10px" }}>
+          <div
+            style={{
+              padding: "16px",
+              background: "#eff6ff",
+              borderRadius: "12px",
+              border: "1px solid #bfdbfe",
+              marginBottom: "16px",
+            }}
+          >
+            <p style={{ margin: "0 0 10px 0", fontSize: "1.1rem" }}>
+              Dringlichkeitsstufe:{" "}
+              <strong>{aiAnswer.assessment.urgency}</strong>:{" "}
+              {aiAnswer.assessment.urgencyText}
+            </p>
+
+            <p style={{ margin: 0, fontWeight: "bold" }}>
+              Handlungsempfehlung:{" "}
+              <span style={{ fontWeight: "normal" }}>
+                {aiAnswer.assessment.nextSteps}
+              </span>
+            </p>
+
+            {renderUrgencyAction()}
+          </div>
+        </div>
+      ) : (
+        <p>Die KI Auswertung ist fehlgeschlagen</p>
+      )}
+
+      <button
+        type="button"
+        className={assessmentStyles.secondaryButton}
+        onClick={() => setShowAiReasoning(!showAiReasoning)}
+        style={{ marginBottom: "16px" }}
+      >
+        {showAiReasoning
+          ? "KI-Begründung ausblenden"
+          : "KI-Begründung anzeigen"}
+      </button>
+      {showAiReasoning && (
+        <div style={{ width: "100%", marginBottom: "16px" }}>
+          {suspicions ? (
+            renderSuspicions()
+          ) : (
+            <div
+              style={{
+                marginBottom: "12px",
+                padding: "12px",
+                background: "#f1f5f9",
+                borderRadius: "8px",
+                fontSize: "0.95rem",
+                textAlign: "left",
+              }}
+            >
+              <strong style={{ color: "#1e3a8a" }}>
+                Platzhalter-Begründung:
+              </strong>
+              <br />
+              Da derzeit keine Verbindung zur KI besteht oder die Auswertung
+              noch lädt, sehen Sie hier diesen Platzhalter.
+            </div>
+          )}
+        </div>
+      )}
+
       <p className={assessmentStyles.selectedText}>
         Ihre Angaben wurden erfasst.
       </p>
@@ -363,73 +432,6 @@ export function ResultStep({
         </div>
       )}
 
-      <button
-        type="button"
-        className={assessmentStyles.secondaryButton}
-        onClick={() => setShowAiReasoning(!showAiReasoning)}
-        style={{ marginBottom: "16px" }}
-      >
-        {showAiReasoning
-          ? "KI-Begründung ausblenden"
-          : "KI-Begründung anzeigen"}
-      </button>
-
-      {showAiReasoning && (
-        <div style={{ width: "100%", marginBottom: "16px" }}>
-          {suspicions ? (
-            renderSuspicions()
-          ) : (
-            <div
-              style={{
-                marginBottom: "12px",
-                padding: "12px",
-                background: "#f1f5f9",
-                borderRadius: "8px",
-                fontSize: "0.95rem",
-                textAlign: "left",
-              }}
-            >
-              <strong style={{ color: "#1e3a8a" }}>
-                Platzhalter-Begründung:
-              </strong>
-              <br />
-              Da derzeit keine Verbindung zur KI besteht oder die Auswertung
-              noch lädt, sehen Sie hier diesen Platzhalter.
-            </div>
-          )}
-        </div>
-      )}
-
-      {aiAnswer?.assessment?.urgency ? (
-        <div style={{ width: "100%", marginTop: "10px" }}>
-          <div
-            style={{
-              padding: "16px",
-              background: "#eff6ff",
-              borderRadius: "12px",
-              border: "1px solid #bfdbfe",
-              marginBottom: "16px",
-            }}
-          >
-            <p style={{ margin: "0 0 10px 0", fontSize: "1.1rem" }}>
-              Dringlichkeitsstufe:{" "}
-              <strong>{aiAnswer.assessment.urgency}</strong>:{" "}
-              {aiAnswer.assessment.urgencyText}
-            </p>
-
-            <p style={{ margin: 0, fontWeight: "bold" }}>
-              Handlungsempfehlung:{" "}
-              <span style={{ fontWeight: "normal" }}>
-                {aiAnswer.assessment.nextSteps}
-              </span>
-            </p>
-
-            {renderUrgencyAction()}
-          </div>
-        </div>
-      ) : (
-        <p>Die Auswertung lädt noch...</p>
-      )}
 
       {showEmergencyPopup && (
         <div
