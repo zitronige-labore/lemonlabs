@@ -100,15 +100,14 @@ export function ResultStep({
     displayedSymptomText && displayedSymptomText.length > 0 ?
       (
         <ul>
-          <hr></hr>
           {displayedSymptomText.map((s, i) => {
             try {
               const parsed = JSON.parse(s);
               return (
-                <li key={i}>
+                <li key={i} className={assessmentStyles.fieldset}>
                   Bezeichnung: {parsed.text_symptom} <br></br>
                   {parsed.bodyregion && <> Körperregion: {parsed.bodyregion}</>}<br></br>
-                  {parsed.painscale != null && <> Schmerzstärke: {parsed.painscale}</>}<hr></hr>
+                  {parsed.painscale != null && <> Schmerzstärke: {parsed.painscale}</>}
                 </li>
               );
             } catch {
@@ -123,15 +122,14 @@ export function ResultStep({
     displayedSelectedSymptoms && displayedSelectedSymptoms.length > 0 ?
       (
         <ul>
-          <hr></hr>
           {displayedSymptomText.map((s, i) => {
             try {
               const parsed = JSON.parse(s);
               return (
-                <li key={i}>
+                <li key={i} className={assessmentStyles.fieldset}>
                   Bezeichnung: {parsed.text_symptom} <br></br>
                   {parsed.bodyregion && <> Körperregion: {parsed.bodyregion}</>}<br></br>
-                  {parsed.painscale != null && <> Schmerzstärke: {parsed.painscale}</>}<hr></hr>
+                  {parsed.painscale != null && <> Schmerzstärke: {parsed.painscale}</>}
                 </li>
               );
             } catch {
