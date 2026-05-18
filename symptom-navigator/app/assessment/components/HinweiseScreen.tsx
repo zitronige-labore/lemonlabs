@@ -43,7 +43,7 @@ export function HinweiseScreen({
               <span>by lemonlabs</span>
 
               <img
-                src="/images/lemonlabslogo_blue.png"
+                src="/images/logo778899.svg"
                 alt="Lemonlabs Logo"
                 className={homeStyles.logo}
               />
