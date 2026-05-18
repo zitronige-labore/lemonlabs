@@ -93,17 +93,33 @@ export function ResultStep({
   const conditionsValue =
     displayedAdditionalData.conditions &&
       displayedAdditionalData.conditions.length > 0
-      ? displayedAdditionalData.conditions.join(", ")
+      ? displayedAdditionalData.conditions
       : "Keine Angabe";
 
   const symptomTextValue =
     displayedSymptomText && displayedSymptomText.length > 0
-      ? displayedSymptomText.join(", ")
+      ? displayedSymptomText
+      .map((s) => {
+          try {
+            return JSON.parse(s).text_symptom ?? s;
+          } catch {
+            return s;
+          }
+        })
+        .join(", ")
       : "Keine Angabe";
 
   const selectedSymptomsValue =
     displayedSelectedSymptoms && displayedSelectedSymptoms.length > 0
-      ? displayedSelectedSymptoms.join(", ")
+      ? displayedSelectedSymptoms
+       .map((s) => {
+          try {
+            return JSON.parse(s).name ?? s;
+          } catch {
+            return s;
+          }
+        })
+        .join(", ")
       : "Keine Angabe";
 
   const doctorsSearchUrl =
@@ -263,6 +279,7 @@ export function ResultStep({
             </p>
           )}
 
+          {/*
           <p>
             Hauptregion:{" "}
             <strong>{displayedMainRegion || "Keine Angabe"}</strong>
@@ -272,28 +289,17 @@ export function ResultStep({
             Unterregion:{" "}
             <strong>{displayedSubRegion || "Keine Angabe"}</strong>
           </p>
+          */}
 
-          {displayedInputMode === "text" && (
-            <p>
-              Beschreibung: <strong>{symptomTextValue}</strong>
-            </p>
-          )}
-
-          {displayedInputMode === "select" && (
-            <p>
-              Symptome: <strong>{selectedSymptomsValue}</strong>
-            </p>
-          )}
 
           <p>
-            Dauer:{" "}
-            <strong>{displayedBasisData.duration || "Keine Angabe"}</strong>
+            Beschwerden selbst geschrieben: <strong>{symptomTextValue}</strong>
           </p>
 
           <p>
-            Stärke:{" "}
-            <strong>{displayedBasisData.intensity || "Keine Angabe"}</strong>
+            Symptome: <strong>{selectedSymptomsValue}</strong>
           </p>
+
 
           <hr style={{ margin: "16px 0", borderColor: "#e5e7eb" }} />
 
