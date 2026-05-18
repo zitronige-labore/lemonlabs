@@ -100,6 +100,7 @@ export function ResultStep({
     displayedSymptomText && displayedSymptomText.length > 0 ?
       (
         <ul>
+          <hr></hr>
           {displayedSymptomText.map((s, i) => {
             try {
               const parsed = JSON.parse(s);
@@ -122,6 +123,7 @@ export function ResultStep({
     displayedSelectedSymptoms && displayedSelectedSymptoms.length > 0 ?
       (
         <ul>
+          <hr></hr>
           {displayedSymptomText.map((s, i) => {
             try {
               const parsed = JSON.parse(s);
