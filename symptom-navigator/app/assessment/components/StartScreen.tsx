@@ -67,7 +67,7 @@ export function StartScreen({
 
               {/* Logo der Anwendung */}
               <img
-                src="/images/lemonlabslogo_blue.png"
+                src="/images/logo778899.svg"
                 alt="Lemonlabs Logo"
                 className={homeStyles.logo}
               />

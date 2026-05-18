@@ -72,7 +72,7 @@ export type MainRegion =
   | "Becken & Unterleib"
   | "Arme & Hände"
   | "Beine & Füße"
-  | "Haut (gesamt)"
+  | "Psyche"
   | "Allgemein (ganzer Körper)";
 
 /*

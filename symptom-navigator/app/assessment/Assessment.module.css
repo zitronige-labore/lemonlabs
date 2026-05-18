@@ -236,10 +236,12 @@ textarea.input {
 }
 
 .bodyPart {
-  fill: #f2c7a5;
-  stroke: #c89b7b;
-  stroke-width: 2.5;
+  fill: #e1f4f4;
+  stroke: #515151;
+  stroke-width: 1.5;
   cursor: pointer;
+  text-align: center;
+  align-items: center;
   transition: fill 0.2s ease, stroke 0.2s ease, filter 0.2s ease;
 }
 

@@ -225,8 +225,8 @@ export function BodyRegionStep({
             y={20}
             width={55}
             height={30}
-            region="Haut (gesamt)"
-            title="Haut"
+            region="Psyche"
+            title="Psyche"
           />
 
           <InfoBox

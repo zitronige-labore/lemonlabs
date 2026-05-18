@@ -13,6 +13,16 @@ import type {
   SubRegion,
 } from "../../types/assessment";
 
+type SavedAssessmentData = {
+  basisData?: BasisData;
+  additionalData?: AdditionalData;
+  selectedMainRegion?: MainRegion | null;
+  selectedSubRegion?: SubRegion | null;
+  inputMode?: InputMode;
+  symptomText?: string[];
+  selectedSymptoms?: string[];
+};
+
 type ResultStepProps = {
   basisData: BasisData;
   additionalData: AdditionalData;
@@ -26,6 +36,14 @@ type ResultStepProps = {
   selectedSymptoms: string[];
   aiAnswer: any;
 
+  /*
+    Optional:
+    Hier können später die strukturierten Werte aus der Datenbank übergeben werden,
+    z. B. aus der neuen Actions-Funktion von Franziska.
+    Wenn keine DB-Daten vorhanden sind, werden die bisherigen Props verwendet.
+  */
+  savedAssessmentData?: SavedAssessmentData;
+
   onGoHome: () => void;
 };
 
@@ -38,17 +56,61 @@ export function ResultStep({
   symptomText,
   selectedSymptoms,
   aiAnswer,
+  savedAssessmentData,
   onGoHome,
 }: ResultStepProps) {
   const [showSavedData, setShowSavedData] = useState(false);
   const [showAiReasoning, setShowAiReasoning] = useState(false);
+  const [showEmergencyPopup, setShowEmergencyPopup] = useState(false);
+
+  /*
+    Bevorzugt werden die strukturierten Daten aus der Datenbank.
+    Falls diese noch nicht vorhanden sind, nutzt die ResultPage weiterhin
+    die bisherigen Props aus dem lokalen State.
+  */
+  const displayedBasisData = savedAssessmentData?.basisData ?? basisData;
+  const displayedAdditionalData =
+    savedAssessmentData?.additionalData ?? additionalData;
+  const displayedMainRegion =
+    savedAssessmentData?.selectedMainRegion ?? selectedMainRegion;
+  const displayedSubRegion =
+    savedAssessmentData?.selectedSubRegion ?? selectedSubRegion;
+  const displayedInputMode = savedAssessmentData?.inputMode ?? inputMode;
+  const displayedSymptomText = savedAssessmentData?.symptomText ?? symptomText;
+  const displayedSelectedSymptoms =
+    savedAssessmentData?.selectedSymptoms ?? selectedSymptoms;
 
   console.log("aiAnswer in ResultStep:", aiAnswer);
 
   const suspicions = aiAnswer?.assessment?.suspicions;
+  const urgency = Number(aiAnswer?.assessment?.urgency);
 
   const medicationsValue =
-    additionalData.medications || additionalData.medication || "Keine Angabe";
+    displayedAdditionalData.medications ||
+    displayedAdditionalData.medication ||
+    "Keine Angabe";
+
+  const conditionsValue =
+    displayedAdditionalData.conditions &&
+      displayedAdditionalData.conditions.length > 0
+      ? displayedAdditionalData.conditions.join(", ")
+      : "Keine Angabe";
+
+  const symptomTextValue =
+    displayedSymptomText && displayedSymptomText.length > 0
+      ? displayedSymptomText.join(", ")
+      : "Keine Angabe";
+
+  const selectedSymptomsValue =
+    displayedSelectedSymptoms && displayedSelectedSymptoms.length > 0
+      ? displayedSelectedSymptoms.join(", ")
+      : "Keine Angabe";
+
+  const doctorsSearchUrl =
+    "https://www.google.com/maps/search/%C3%84rzte+in+der+Umgebung";
+
+  const emergencyRoomsSearchUrl =
+    "https://www.google.com/maps/search/Notaufnahme+in+der+Umgebung";
 
   const renderSuspicions = () => {
     if (!suspicions) return null;
@@ -99,6 +161,61 @@ export function ResultStep({
     });
   };
 
+  const renderUrgencyAction = () => {
+    if (!urgency) return null;
+
+    if (urgency === 2 || urgency === 3) {
+      return (
+        <a
+          href={doctorsSearchUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={assessmentStyles.continueButton}
+          style={{
+            display: "inline-block",
+            textDecoration: "none",
+            marginTop: "12px",
+          }}
+        >
+          Ärzte in der Umgebung finden
+        </a>
+      );
+    }
+
+    if (urgency === 4) {
+      return (
+        <a
+          href={emergencyRoomsSearchUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={assessmentStyles.continueButton}
+          style={{
+            display: "inline-block",
+            textDecoration: "none",
+            marginTop: "12px",
+          }}
+        >
+          Notaufnahmen finden
+        </a>
+      );
+    }
+
+    if (urgency >= 5) {
+      return (
+        <button
+          type="button"
+          className={assessmentStyles.continueButton}
+          onClick={() => setShowEmergencyPopup(true)}
+          style={{ marginTop: "12px" }}
+        >
+          Notfallhinweis anzeigen
+        </button>
+      );
+    }
+
+    return null;
+  };
+
   return (
     <div className={assessmentStyles.resultBox}>
       <p className={assessmentStyles.selectedText}>
@@ -129,46 +246,53 @@ export function ResultStep({
           }}
         >
           <p>
-            Alter: <strong>{basisData.age}</strong>
+            Alter: <strong>{displayedBasisData.age || "Keine Angabe"}</strong>
           </p>
 
           <p>
-            Geschlecht: <strong>{basisData.gender}</strong>
+            Geschlecht:{" "}
+            <strong>{displayedBasisData.gender || "Keine Angabe"}</strong>
           </p>
 
-          {basisData.gender === "weiblich" && (
+          {displayedBasisData.gender === "weiblich" && (
             <p>
               Schwangerschaft oder Stillzeit:{" "}
-              <strong>{basisData.pregnancy}</strong>
+              <strong>
+                {displayedBasisData.pregnancy || "Keine Angabe"}
+              </strong>
             </p>
           )}
 
           <p>
-            Hauptregion: <strong>{selectedMainRegion}</strong>
+            Hauptregion:{" "}
+            <strong>{displayedMainRegion || "Keine Angabe"}</strong>
           </p>
 
           <p>
-            Unterregion: <strong>{selectedSubRegion}</strong>
+            Unterregion:{" "}
+            <strong>{displayedSubRegion || "Keine Angabe"}</strong>
           </p>
 
-          {inputMode === "text" && (
+          {displayedInputMode === "text" && (
             <p>
-              Beschreibung: <strong>{symptomText}</strong>
+              Beschreibung: <strong>{symptomTextValue}</strong>
             </p>
           )}
 
-          {inputMode === "select" && (
+          {displayedInputMode === "select" && (
             <p>
-              Symptome: <strong>{selectedSymptoms.join(", ")}</strong>
+              Symptome: <strong>{selectedSymptomsValue}</strong>
             </p>
           )}
 
           <p>
-            Dauer: <strong>{basisData.duration}</strong>
+            Dauer:{" "}
+            <strong>{displayedBasisData.duration || "Keine Angabe"}</strong>
           </p>
 
           <p>
-            Stärke: <strong>{basisData.intensity}</strong>
+            Stärke:{" "}
+            <strong>{displayedBasisData.intensity || "Keine Angabe"}</strong>
           </p>
 
           <hr style={{ margin: "16px 0", borderColor: "#e5e7eb" }} />
@@ -180,32 +304,35 @@ export function ResultStep({
           </p>
 
           <p>
-            Vorerkrankungen:{" "}
-            <strong>
-              {additionalData.conditions.length > 0
-                ? additionalData.conditions
-                : "Keine Angabe"}
-            </strong>
+            Vorerkrankungen: <strong>{conditionsValue}</strong>
           </p>
 
           <p>
             Allergien:{" "}
-            <strong>{additionalData.allergies || "Keine Angabe"}</strong>
+            <strong>
+              {displayedAdditionalData.allergies || "Keine Angabe"}
+            </strong>
           </p>
 
           <p>
             Fieber:{" "}
-            <strong>{additionalData.temperature || "Keine Angabe"}</strong>
+            <strong>
+              {displayedAdditionalData.temperature || "Keine Angabe"}
+            </strong>
           </p>
 
           <p>
             Beschwerden werden stärker:{" "}
-            <strong>{additionalData.worsening || "Keine Angabe"}</strong>
+            <strong>
+              {displayedAdditionalData.worsening || "Keine Angabe"}
+            </strong>
           </p>
 
           <p>
             Weitere Informationen:{" "}
-            <strong>{additionalData.extraInfo || "Keine Angabe"}</strong>
+            <strong>
+              {displayedAdditionalData.extraInfo || "Keine Angabe"}
+            </strong>
           </p>
         </div>
       )}
@@ -270,10 +397,71 @@ export function ResultStep({
                 {aiAnswer.assessment.nextSteps}
               </span>
             </p>
+
+            {renderUrgencyAction()}
           </div>
         </div>
       ) : (
         <p>Die Auswertung lädt noch...</p>
+      )}
+
+      {showEmergencyPopup && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(15, 23, 42, 0.55)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1000,
+            padding: "16px",
+          }}
+        >
+          <div
+            style={{
+              width: "100%",
+              maxWidth: "440px",
+              background: "#ffffff",
+              borderRadius: "16px",
+              padding: "24px",
+              boxShadow: "0 20px 40px rgba(15, 23, 42, 0.25)",
+              textAlign: "left",
+            }}
+          >
+            <h2 style={{ marginTop: 0, color: "#b91c1c" }}>
+              Möglicher Notfall
+            </h2>
+
+            <p>
+              Die Angaben deuten auf eine sehr hohe Dringlichkeit hin. Bei
+              akuten oder lebensbedrohlichen Beschwerden sollte sofort der
+              Notruf kontaktiert werden.
+            </p>
+
+            <a
+              href="tel:112"
+              className={assessmentStyles.continueButton}
+              style={{
+                display: "block",
+                textAlign: "center",
+                textDecoration: "none",
+                marginTop: "16px",
+              }}
+            >
+              112 anrufen
+            </a>
+
+            <button
+              type="button"
+              className={assessmentStyles.secondaryButton}
+              onClick={() => setShowEmergencyPopup(false)}
+              style={{ width: "100%", marginTop: "12px" }}
+            >
+              Schließen
+            </button>
+          </div>
+        </div>
       )}
 
       <hr style={{ width: "100%", margin: "24px 0", borderColor: "#d1d5db" }} />
