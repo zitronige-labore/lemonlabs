@@ -97,29 +97,47 @@ export function ResultStep({
       : "Keine Angabe";
 
   const symptomTextValue =
-    displayedSymptomText && displayedSymptomText.length > 0
-      ? displayedSymptomText
-      .map((s) => {
-          try {
-            return JSON.parse(s).text_symptom ?? s;
-          } catch {
-            return s;
-          }
-        })
-        .join(", ")
+    displayedSymptomText && displayedSymptomText.length > 0 ?
+      (
+        <ul>
+          {displayedSymptomText.map((s, i) => {
+            try {
+              const parsed = JSON.parse(s);
+              return (
+                <li key={i}>
+                  Bezeichnung: {parsed.text_symptom} <br></br>
+                  {parsed.bodyregion && <> Körperregion: {parsed.bodyregion}</>}<br></br>
+                  {parsed.painscale != null && <> Schmerzstärke: {parsed.painscale}</>}<hr></hr>
+                </li>
+              );
+            } catch {
+              return <li key={i}>{s}</li>;
+            }
+          })}
+        </ul>
+      )
       : "Keine Angabe";
 
   const selectedSymptomsValue =
-    displayedSelectedSymptoms && displayedSelectedSymptoms.length > 0
-      ? displayedSelectedSymptoms
-       .map((s) => {
-          try {
-            return JSON.parse(s).name ?? s;
-          } catch {
-            return s;
-          }
-        })
-        .join(", ")
+    displayedSelectedSymptoms && displayedSelectedSymptoms.length > 0 ?
+      (
+        <ul>
+          {displayedSymptomText.map((s, i) => {
+            try {
+              const parsed = JSON.parse(s);
+              return (
+                <li key={i}>
+                  Bezeichnung: {parsed.text_symptom} <br></br>
+                  {parsed.bodyregion && <> Körperregion: {parsed.bodyregion}</>}<br></br>
+                  {parsed.painscale != null && <> Schmerzstärke: {parsed.painscale}</>}<hr></hr>
+                </li>
+              );
+            } catch {
+              return <li key={i}>{s}</li>;
+            }
+          })}
+        </ul>
+      )
       : "Keine Angabe";
 
   const doctorsSearchUrl =
@@ -293,12 +311,14 @@ export function ResultStep({
 
 
           <p>
-            Beschwerden selbst geschrieben: <strong>{symptomTextValue}</strong>
+            Beschwerden selbst geschrieben: 
           </p>
+          <strong>{symptomTextValue}</strong>
 
           <p>
-            Symptome: <strong>{selectedSymptomsValue}</strong>
+            Symptome:
           </p>
+          <strong>{selectedSymptomsValue}</strong>
 
 
           <hr style={{ margin: "16px 0", borderColor: "#e5e7eb" }} />

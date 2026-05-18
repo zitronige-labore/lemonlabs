@@ -459,11 +459,10 @@ export async function sendDataToAi() {
 
     return xmlData;
   
-  // throwing error if somethign goes wrong
+  // error if somethign goes wrong
   } catch (error) {
       console.error('Fehler details:', JSON.stringify(error, null, 2));
       console.error('Fehler message:', error instanceof Error ? error.message : error);
-      throw new Error('Failed to process the request');
   }
 } 
 
