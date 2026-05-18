@@ -76,21 +76,26 @@ export function SymptomTextInputStep({
           </span>
         </label>
 
-        <label>
-          Handelt es sich beim angegebenen Symptom um Schmerzen?
+        <label className={assessmentStyles.label}>
           <input
-            className={assessmentStyles.regionButton}
             type="checkbox"
-            onClick={() => {
+            checked={isPainSymptom}
+            onChange={() => {
               setIsPainSymptom(!isPainSymptom);
             }}
           />
+          Handelt es sich um Schmerzen?
         </label>
 
         {isPainSymptom && (
-          <>
-            {/* Anzeige des aktuellen Wertes */}
-            <strong>{painscale || "nicht gewaehlt"}/10</strong>
+           <fieldset className={assessmentStyles.fieldset}>
+            <legend className={assessmentStyles.legend}>
+              Schmerzstärke
+            </legend>
+            <p className={assessmentStyles.text}>
+              Wie stark sind Ihre Schmerzen?
+            </p>
+            <strong className={assessmentStyles.selectedText}>{painscale || "nicht gewählt"}/10</strong>
 
             <input
               className={assessmentStyles.slider}
@@ -102,7 +107,10 @@ export function SymptomTextInputStep({
                 setPainscale(event.target.value)
               }
             />
-          </>
+            <p className={assessmentStyles.sliderHint}>
+              0 = kein Schmerz · 10 = stärkster vorstellbarer Schmerz
+            </p>
+            </fieldset>
         )}
 
         {/* Button zum Wechseln zum nächsten Schritt */}

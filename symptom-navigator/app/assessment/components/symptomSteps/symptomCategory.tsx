@@ -20,44 +20,43 @@ interface SymptomCategoryProps {
 export default function SymptomCategory({categories, setStep, setInputMode, selectedSubRegion}: SymptomCategoryProps) {
   return (
     <>
-    <p className={assessmentStyles.text}>
+    <p className={assessmentStyles.selectedText}>
                   Ausgewählte Region: <strong>selectedSubRegion</strong>
     </p>
 
 
     <fieldset className={assessmentStyles.fieldset}>
-                  <legend className={assessmentStyles.legend}>
-                    Wählen Sie eine Symptomkategorie
-                  </legend>
-
-                {/* one button for every category, button text is element.category, stept is set to element.step */}
-                {categories.map((element) => 
-                    (<button
-                      key = {element.category}
-                      type="button"
-                      className={assessmentStyles.regionButton}
-                      onClick={() => {
-                        setStep(element.step);
-                        setInputMode("select");
-                      }}
-                    >
-                      {element.category}
-                    </button>
-                ))
-                }
-                <div className={assessmentStyles.quickSelect}>
-                    <button
-                      type="button"
-                      className={assessmentStyles.regionButton}
-                      onClick={() => {
-                        setInputMode("text");
-                        setStep("textInput");
-                      }}
-                    >
-                      Freitext eingeben
-                    </button>
-                  </div>   
-                </fieldset>
-      </>
+      <legend className={assessmentStyles.legend}>
+        Wählen Sie eine Symptomkategorie
+      </legend>
+        <div className={assessmentStyles.quickSelect}>
+          {/* one button for every category, button text is element.category, stept is set to element.step */}
+          {categories.map((element) => 
+              (<button
+                key = {element.category}
+                type="button"
+                className={assessmentStyles.regionButton}
+                onClick={() => {
+                  setStep(element.step);
+                  setInputMode("select");
+                }}
+              >
+                {element.category}
+              </button>
+          ))
+          }
+          <button
+            type="button"
+            className={assessmentStyles.regionButton}
+            onClick={() => {
+              setInputMode("text");
+              setStep("textInput");
+            }}
+          >
+            sonstiges
+          </button>
+        </div>
+      </fieldset>
+    </>
   );
 }

@@ -46,58 +46,60 @@ export default function SymptomSelection({
     {inputMode === "select" && (
 
     <fieldset className={assessmentStyles.fieldset}>
-                  <legend className={assessmentStyles.legend}>
-                    Wählen Sie eine Symptome
-                  </legend>
+      <legend className={assessmentStyles.legend}>
+        Wählen Sie Ihre Symptome
+      </legend>
 
-                {/* one box for every symptom */}
-                {symptoms.map((element) => 
-                    (
-                        <div className={assessmentStyles.fieldset} key={element.symptomName}>
-                        <label className={assessmentStyles.formLabel}>{element.symptomName}
-                        <input
-                        type="checkbox"
-                        id={element.symptomName}
-                        name= {element.symptomName}
-                        checked={selectedSymptoms.some((s) =>s.includes(`{"name": "${element.symptomValue}", "bodyRegion": "${selectedSubRegion}"`))}
-                        className={assessmentStyles.regionButton}
-                        onChange={() => {
-                            toggleSymptom(`{"name": "${element.symptomValue}", "bodyRegion": "${selectedSubRegion}"`,
-                            painscales[element.symptomValue])
-                            }}
-                            >
-                            </input>
-                        </label>
-                
+      {/* one box for every symptom */}
+      {symptoms.map((element) => 
+        (
+          <div className={assessmentStyles.fieldset} key={element.symptomName}>
+            <label className={assessmentStyles.label}>
+              <input
+                type="checkbox"
+                id={element.symptomName}
+                name= {element.symptomName}
+                checked={selectedSymptoms.some((s) =>s.includes(`{"name": "${element.symptomValue}", "bodyRegion": "${selectedSubRegion}"`))}
+                onChange={() => {
+                    toggleSymptom(`{"name": "${element.symptomValue}", "bodyRegion": "${selectedSubRegion}"`,
+                    painscales[element.symptomValue])
+                    }}
+                  >
+                  </input>
+                {element.symptomName}
+              </label>
+    
 
-                      {selectedSymptoms.some((s) =>s.includes(`{"name": "${element.symptomValue}", "bodyRegion": "${selectedSubRegion}"`)) && element.schmerzen && (
-                        <>
-                        {/* Anzeige des aktuellen Wertes */}
-                        <strong>{painscales[element.symptomValue] || "nicht ausgewaehlt"}/10</strong>
+              {selectedSymptoms.some((s) =>s.includes(`{"name": "${element.symptomValue}", "bodyRegion": "${selectedSubRegion}"`)) && element.schmerzen && (
+                <>
+                  <p className={assessmentStyles.text}>
+                    Wie stark sind Ihre Schmerzen?
+                  </p>
+                  {/* Anzeige des aktuellen Wertes */}
+                  <strong className={assessmentStyles.text}>{painscales[element.symptomValue] || "nicht ausgewählt"}/10</strong>
 
-                        <input
-                              className={assessmentStyles.slider}
-                              defaultValue={painscales[element.symptomValue]}
-                              type="range"
-                              min="0"
-                              max="10"
-                              step="1"
-                              onChange={(event) => {
-                              setPainscales((prev => ({
-                                ...prev,
-                                [element.symptomValue]: event.target.value
-                             })));
-                            }                     
-                          }
-                        ></input>
-                        </>
-                        )
-                      }
-                      </div>
-                  ))                               
-                }
+                  <input
+                    className={assessmentStyles.slider}
+                    defaultValue={painscales[element.symptomValue]}
+                    type="range"
+                    min="0"
+                    max="10"
+                    step="1"
+                    onChange={(event) => {
+                    setPainscales((prev => ({
+                      ...prev,
+                      [element.symptomValue]: event.target.value
+                    })));                  
+                    }}
+                  ></input>
+                </>
+                )
+              }
+          </div>
+      ))                               
+    }
 
-                </fieldset>
+    </fieldset>
     )}
 
     <button
@@ -113,14 +115,11 @@ export default function SymptomSelection({
               return s;
             })
           );
-  setCopyPainScale(painscales);
-
+          setCopyPainScale(painscales);
           setStep("selectMoreSymptoms"); 
-        }
-
-      }
-                >
-                  Weiter
+        }}
+      >
+      Weiter
     </button>
     </>
   );

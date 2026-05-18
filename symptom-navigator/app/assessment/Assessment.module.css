@@ -47,7 +47,7 @@
 }
 
 .selectedText {
-  margin: 18px 0 0;
+  margin: 18px 0 16px;
   font-weight: 700;
   font-size: 1.05rem;
   text-align: center;
@@ -74,7 +74,7 @@
 
 .label {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 10px;
   color: #000000;
   margin-bottom: 14px;
