@@ -122,12 +122,12 @@ export function ResultStep({
     displayedSelectedSymptoms && displayedSelectedSymptoms.length > 0 ?
       (
         <ul>
-          {displayedSymptomText.map((s, i) => {
+          {displayedSelectedSymptoms.map((s, i) => {
             try {
               const parsed = JSON.parse(s);
               return (
                 <li key={i} className={assessmentStyles.fieldset}>
-                  Bezeichnung: {parsed.text_symptom} <br></br>
+                  Bezeichnung: {parsed.name} <br></br>
                   {parsed.bodyregion && <> Körperregion: {parsed.bodyregion}</>}<br></br>
                   {parsed.painscale != null && <> Schmerzstärke: {parsed.painscale}</>}
                 </li>
