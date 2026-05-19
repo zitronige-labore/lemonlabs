@@ -11,8 +11,33 @@ export type categoryAfterCategoryIfNeeded =
   | "bsp";
 
 export type symptomChoiceStep =
-  | "innenOhr"
-  | "aussenOhr";
+  |"innenOhr"
+  | "aussenOhr"
+  | "Kopf"
+  | "kopfSpannung"
+  | "kopfMigraene"
+  | "kopfCluster"
+  | "kopfBegleitung"
+  | "kopfWarnsignale"
+  | "MagenDarm"
+  | "mdSpeiseroehre"
+  | "mdMagen"
+  | "mdDarm"
+  | "mdGalle"
+  | "mdEnddarm"
+  | "ArmeHaende"
+  | "armSchulter"
+  | "armEllbogen"
+  | "armHandFinger"
+  | "armGefaesse"
+  | "Hals"
+  | "halsMandeln"
+  | "halsRachen"
+  | "halsKehlkopf"
+  | "halsDruesen"
+  | "AllgemeinesBefinden";
+
+
 
 export type Step =
   | "start"
