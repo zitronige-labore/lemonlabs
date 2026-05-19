@@ -840,7 +840,7 @@ export default function SymptomTree({
               {(step === "Oberschenkel" || step === "Knie" || step === "Unterschenkel" || step === "Fuß") && (
                  <SymptomCategory
                           categories={[
-                            { category: "Gelenkschmerzen & Steifigkeit", step: "beineGelenke" },
+                            { category: "Gelenkschmerzen & Steifheit", step: "beineGelenke" },
                             { category: "Muskelbeschwerden & Krämpfe", step: "beineMuskeln" },
                             { category: "Nerven, Gefäße & Durchblutung", step: "beineNervenGefaese" },
                             { category: "Dringende Warnsignale (Beine)", step: "beineWarnsignale" }
