@@ -130,7 +130,7 @@ export type SubRegion =
   | "Knie"
   | "Unterschenkel"
   | "Fuß"
-  | "Haut allgemein"
+  | "Psyche"
   | "Keine bestimmte Region / mehrere Stellen";
 
 /*
