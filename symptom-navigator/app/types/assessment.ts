@@ -13,6 +13,8 @@ export type categoryAfterCategoryIfNeeded =
 export type symptomChoiceStep =
   | "innenOhr"
   | "aussenOhr"
+  | "nase"
+  | "augen"
   | "Kopf"
   | "kopfSpannung"
   | "kopfMigraene"

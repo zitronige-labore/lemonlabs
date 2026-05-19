@@ -14,7 +14,7 @@ import SymptomCategory from "./symptomCategory";
 import type { Dispatch, SetStateAction } from "react";
 
 // import needed types
-import { Step, InputMode, SubRegion  } from "../../../types/assessment";
+import { Step, InputMode, SubRegion, BasisData  } from "../../../types/assessment";
 
 // define props/ get everything needed from page
 interface SymptomTreeProps {
@@ -28,6 +28,7 @@ interface SymptomTreeProps {
   selectedSubRegion: SubRegion | null;
   setCopyPainScale:(copyPainScale:Record<string, string>) => void;
   copyPainScale: Record<string, string>;
+  basisdata: BasisData;
 }
 
 export default function SymptomTree({
@@ -40,21 +41,26 @@ export default function SymptomTree({
   setStep, 
   toggleSymptom, 
   setInputMode,
-  setCopyPainScale
+  setCopyPainScale,
+  basisdata
 }: SymptomTreeProps) {
+
+  const gender = basisdata.gender;
+
   return (
-    
+
     <>
-    {step === "Ohren" && (
+              {/* --- OHREN --- */}
+              {step === "Ohren" && (
                 <SymptomCategory
-                  categories={[{category: "innenohr", step: "innenOhr"},
-                               {category: "aussenohr", step: "aussenOhr"}
-                          ]}
-                          setStep={setStep}
-                          setInputMode={setInputMode}
-                          selectedSubRegion={selectedSubRegion}
-                >
-                </SymptomCategory>
+                  categories={[
+                    { category: "innenohr", step: "innenOhr" },
+                    { category: "aussenohr", step: "aussenOhr" }
+                  ]}
+                  setStep={setStep}
+                  setInputMode={setInputMode}
+                  selectedSubRegion={selectedSubRegion}
+                />
               )}
     
               {step === "aussenOhr" && (
@@ -76,10 +82,8 @@ export default function SymptomTree({
                           setCopyPainScale={setCopyPainScale}
                           copyPainScale={copyPainScale}
                           setSelectedSymptoms={setSelectedSymptoms}
-                      >
-                      </SymptomSelection>
-              )
-              }
+                 />
+              )}
     
               {step === "innenOhr" && (
                  <SymptomSelection
@@ -103,11 +107,60 @@ export default function SymptomTree({
                           setCopyPainScale={setCopyPainScale}
                           copyPainScale={copyPainScale}
                           setSelectedSymptoms={setSelectedSymptoms}
-                      >
-                      </SymptomSelection>
-              )
-        }
-  {step === "Kopf" && (
+                 />
+              )}
+
+              {/* --- AUGEN --- */}
+              {(step === "Augen" || step === "augen") && (
+                 <SymptomSelection
+                          symptoms={[
+                            { symptomName: "Plötzlicher Sehverlust / Erblindung (einseitig)", schmerzen: false, symptomValue: "Sehverlust: Akute, schmerzlose Erblindung oder massive Sehverschlechterung auf einem Auge innerhalb von Sekunden/Minuten (Verdacht auf Gefäßverschluss)." },
+                            { symptomName: "Sehen von Doppelbildern ", schmerzen: false, symptomValue: "Doppelbilder: Gleichzeitiges Sehen von zwei Bildern eines einzelnen Objekts (wichtiges neurologisches Warnsignal)." },
+                            { symptomName: "Heftiger Augenschmerz + Rötung + Sehfehlen", schmerzen: true, symptomValue: "Glaukom-Anfall: Extrem starker, akuter Augenschmerz, oft ausstrahlend in den Kopf, begleitet von einem geröteten, steinharten Auge und Sehverschlechterung (Sehen von Regenbogenhöfen)." },
+                            { symptomName: "Lichtblitze oder herabfallender Rußregen", schmerzen: false, symptomValue: "Netzhaut-Warnsignale: Wahrnehmung von plötzlichen Lichtblitzen (besonders bei Augenbewegung) oder massenhaft dunklen Punkten/Schleiern (\"Rußregen\")." },
+                            { symptomName: "Zunehmender Schatten / Vorhang im Gesichtsfeld", schmerzen: false, symptomValue: "Gesichtsfeldausfall: Von oben, unten oder der Seite heranziehender dunkler Schatten oder \"Vorhang\" (Verdacht auf Netzhautablösung)." },
+                            { symptomName: "Starke Fremdkörper- oder Hornhautschmerzen", schmerzen: true, symptomValue: "Hornhautverletzung: Stechender, kontinuierlicher Schmerz, extremes Fremdkörpergefühl, starker Tränenfluss und krampfhaftes Schließen der Augenlider." },
+                            { symptomName: "Eitriges Sekret und verklebte Lider", schmerzen: false, symptomValue: "Konjunktivitis (eitrig): Deutlich gelb-grünliches Sekret, besonders morgens stark verklebte Augenlider, gerötete Bindehaut." },
+                            { symptomName: "Wässriges Sekret, Juckreiz und Brennen", schmerzen: false, symptomValue: "Konjunktivitis (allergisch/viral): Klares, wässriges Sekret, oft begleitet von starkem Juckreiz, Brennen und geschwollenen Lidrändern." },
+                            { symptomName: "Extreme Lichtempfindlichkeit ", schmerzen: false, symptomValue: "Lichtempfindlichkeit: Schmerzhaftes oder unerträgliches Gefühl bei normalem Tages- oder Raumlicht, zwingt zum Zukneifen der Augen." },
+                            { symptomName: "Verzerrtsehen / Wellige Linien", schmerzen: false, symptomValue: "Verzerrtsehen: Gerade Linien (z. B. Fliesenbaufugen, Textzeilen) erscheinen verbogen, wellig oder verzerrt (Hinweis auf Makulaerkrankung)." }
+                          ]}
+                          inputMode={inputMode}
+                          setStep={setStep}
+                          toggleSymptom={toggleSymptom}
+                          selectedSymptoms={selectedSymptoms}
+                          selectedSubRegion={selectedSubRegion}
+                          setCopyPainScale={setCopyPainScale}
+                          copyPainScale={copyPainScale}
+                          setSelectedSymptoms={setSelectedSymptoms}
+                 />
+              )}
+
+              {/* --- NASE --- */}
+              {(step === "Nase" || step === "nase") && (
+                 <SymptomSelection
+                          symptoms={[
+                            { symptomName: "Starkes, unstillbares Nasenbluten", schmerzen: false, symptomValue: "Nasenbluten heftig: Ununterbrochener, starker Blutfluss (auch im Rachen spürbar), der sich durch normale Kompression (Nasenflügel zusammendrücken) nach 10-15 Minuten nicht stoppen lässt." },
+                            { symptomName: "Eitriger Schnupfen + drückender Gesichtsschmerz", schmerzen: true, symptomValue: "Akute Sinusitis: Gelb-grünes, zähflüssiges Nasensekret gepaart mit drückendem oder klopfendem Schmerz über den Stirn- oder Kieferhöhlen, der sich beim Bücken oder Auftreten massiv verstärkt." },
+                            { symptomName: "Völliger oder plötzlicher Verlust des Geruchssinns", schmerzen: false, symptomValue: "Anosmie: Akuter, vollständiger Verlust der Riechfähigkeit (und konsequent des Geschmackssinns) ohne oder mit Schnupfen." },
+                            { symptomName: "Einseitige Verstopfung mit üblem Geruch", schmerzen: false, symptomValue: "Einseitige nasale Obstruktion: Nur ein Nasenloch ist chronisch verstopft, oft begleitet von eitrig-blutigem, auffällig faulig oder übel riechendem Sekret (Verdacht auf Fremdkörper oder Gewebeveränderung)." },
+                            { symptomName: "Wässriges Dauerrinnen + Niesreiz", schmerzen: false, symptomValue: "Rhinitis (allergisch): Ständiges Fließsymptom mit glasklarem, wässrigem Sekret, Attacken von Serien-Niesen, oft juckende oder brennende Nasenschleimhaut." },
+                            { symptomName: "Austritt von glasklarer Flüssigkeit nach Kopfverletzung", schmerzen: false, symptomValue: "Rhinorrhö (Liquorverdacht): Unstillbares Laufen von spiegelklarer, wässriger Flüssigkeit aus der Nase nach einem Sturz oder Schlag auf den Kopf (Verdacht auf Schädelbasisbruch)." },
+                            { symptomName: "Trockene Schleimhäute mit schmerzhafter Borkenbildung", schmerzen: true, symptomValue: "Rhinitis sicca: Extrem trockenes Gefühl in der Nase, schmerzhafte Krusten- und Borkenbildung, die beim Lösen leicht blutet." }
+                          ]}
+                          inputMode={inputMode}
+                          setStep={setStep}
+                          toggleSymptom={toggleSymptom}
+                          selectedSymptoms={selectedSymptoms}
+                          selectedSubRegion={selectedSubRegion}
+                          setCopyPainScale={setCopyPainScale}
+                          copyPainScale={copyPainScale}
+                          setSelectedSymptoms={setSelectedSymptoms}
+                 />
+              )}
+
+              {/* --- KOPF --- */}
+              {step === "Kopf" && (
                  <SymptomCategory
                           categories={[
                             { category: "Spannung & Druck im Kopf", step: "kopfSpannung" },
@@ -119,10 +172,9 @@ export default function SymptomTree({
                           setStep={setStep}
                           setInputMode={setInputMode}
                           selectedSubRegion={selectedSubRegion}
-                      >
-                      </SymptomCategory>
-              )
-        }
+                 />
+              )}
+
               {step === "kopfSpannung" && (
                  <SymptomSelection
                           symptoms={[
@@ -138,10 +190,9 @@ export default function SymptomTree({
                           setCopyPainScale={setCopyPainScale}
                           copyPainScale={copyPainScale}
                           setSelectedSymptoms={setSelectedSymptoms}
-                      >
-                      </SymptomSelection>
-              )
-              }
+                 />
+              )}
+
               {step === "kopfMigraene" && (
                  <SymptomSelection
                           symptoms={[
@@ -156,10 +207,9 @@ export default function SymptomTree({
                           setCopyPainScale={setCopyPainScale}
                           copyPainScale={copyPainScale}
                           setSelectedSymptoms={setSelectedSymptoms}
-                      >
-                      </SymptomSelection>
-              )
-              }
+                 />
+              )}
+
               {step === "kopfCluster" && (
                  <SymptomSelection
                           symptoms={[
@@ -174,10 +224,9 @@ export default function SymptomTree({
                           setCopyPainScale={setCopyPainScale}
                           copyPainScale={copyPainScale}
                           setSelectedSymptoms={setSelectedSymptoms}
-                      >
-                      </SymptomSelection>
-              )
-              }
+                 />
+              )}
+
               {step === "kopfBegleitung" && (
                  <SymptomSelection
                           symptoms={[
@@ -193,10 +242,9 @@ export default function SymptomTree({
                           setCopyPainScale={setCopyPainScale}
                           copyPainScale={copyPainScale}
                           setSelectedSymptoms={setSelectedSymptoms}
-                      >
-                      </SymptomSelection>
-              )
-              }
+                 />
+              )}
+
               {step === "kopfWarnsignale" && (
                  <SymptomSelection
                           symptoms={[
@@ -212,26 +260,22 @@ export default function SymptomTree({
                           setCopyPainScale={setCopyPainScale}
                           copyPainScale={copyPainScale}
                           setSelectedSymptoms={setSelectedSymptoms}
-                      >
-                      </SymptomSelection>
-              )
-              }
-              {step === "MagenDarm" && (
+                 />
+              )}
+
+              {/* --- OBERBAUCH --- */}
+              {step === "Oberbauch" && (
                  <SymptomCategory
                           categories={[
                             { category: "Speiseröhre (Schluckbeschwerden)", step: "mdSpeiseroehre" },
                             { category: "Magen (Oberbauch)", step: "mdMagen" },
-                            { category: "Darm & Verdauung", step: "mdDarm" },
-                            { category: "Leber & Galle", step: "mdGalle" },
-                            { category: "Enddarm & Stuhlgang", step: "mdEnddarm" }
+                            { category: "Leber & Galle", step: "mdGalle" }
                           ]}
                           setStep={setStep}
                           setInputMode={setInputMode}
                           selectedSubRegion={selectedSubRegion}
-                      >
-                      </SymptomCategory>
-              )
-              }
+                 />
+              )}
 
               {step === "mdSpeiseroehre" && (
                  <SymptomSelection
@@ -250,10 +294,9 @@ export default function SymptomTree({
                           setCopyPainScale={setCopyPainScale}
                           copyPainScale={copyPainScale}
                           setSelectedSymptoms={setSelectedSymptoms}
-                      >
-                      </SymptomSelection>
-              )
-              }
+                 />
+              )}
+
               {step === "mdMagen" && (
                  <SymptomSelection
                           symptoms={[
@@ -271,10 +314,41 @@ export default function SymptomTree({
                           setCopyPainScale={setCopyPainScale}
                           copyPainScale={copyPainScale}
                           setSelectedSymptoms={setSelectedSymptoms}
-                      >
-                      </SymptomSelection>
-              )
-              }
+                 />
+              )}
+
+              {step === "mdGalle" && (
+                 <SymptomSelection
+                          symptoms={[
+                            { symptomName: "Gelbverfärbung der Haut / Augenweiß", schmerzen: false, symptomValue: "Gelbsucht: Gelbverfärbung des Augenweiß oder der Haut." },
+                            { symptomName: "Gallenkolik (Krämpfe im rechten Oberbauch)", schmerzen: true, symptomValue: "Gallenkolik: Heftige, krampfartige Schmerzen im rechten Oberbauch." },
+                            { symptomName: "Auffällig dunkler Urin (Cola-Farbe)", schmerzen: false, symptomValue: "Dunkler Urin: Urin ist auffällig dunkel (wie Cola oder dunkles Bier)." },
+                            { symptomName: "Sandfarbener, fast weißer Stuhlgang", schmerzen: false, symptomValue: "Heller Stuhl: Der Stuhlgang ist sandfarben oder fast weiß entfärbt." }
+                          ]}
+                          inputMode={inputMode}
+                          setStep={setStep}
+                          toggleSymptom={toggleSymptom}
+                          selectedSymptoms={selectedSymptoms}
+                          selectedSubRegion={selectedSubRegion}
+                          setCopyPainScale={setCopyPainScale}
+                          copyPainScale={copyPainScale}
+                          setSelectedSymptoms={setSelectedSymptoms}
+                 />
+              )}
+
+              {/* --- UNTERBAUCH --- */}
+              {step === "Unterbauch" && (
+                 <SymptomCategory
+                          categories={[
+                            { category: "Darm & Verdauung", step: "mdDarm" },
+                            { category: "Leber & Galle", step: "mdGalle" },
+                            { category: "Enddarm & Stuhlgang", step: "mdEnddarm" }
+                          ]}
+                          setStep={setStep}
+                          setInputMode={setInputMode}
+                          selectedSubRegion={selectedSubRegion}
+                 />
+              )}
 
               {step === "mdDarm" && (
                  <SymptomSelection
@@ -293,30 +367,9 @@ export default function SymptomTree({
                           setCopyPainScale={setCopyPainScale}
                           copyPainScale={copyPainScale}
                           setSelectedSymptoms={setSelectedSymptoms}
-                      >
-                      </SymptomSelection>
-              )
-              }
-              {step === "mdGalle" && (
-                 <SymptomSelection
-                          symptoms={[
-                            { symptomName: "Gelbverfärbung der Haut / Augenweiß", schmerzen: false, symptomValue: "Gelbsucht: Gelbverfärbung des Augenweiß oder der Haut." },
-                            { symptomName: "Gallenkolik (Krämpfe im rechten Oberbauch)", schmerzen: true, symptomValue: "Gallenkolik: Heftige, krampfartige Schmerzen im rechten Oberbauch." },
-                            { symptomName: "Auffällig dunkler Urin (Cola-Farbe)", schmerzen: false, symptomValue: "Dunkler Urin: Urin ist auffällig dunkel (wie Cola oder dunkles Bier)." },
-                            { symptomName: "Sandfarbener, fast weißer Stuhlgang", schmerzen: false, symptomValue: "Heller Stuhl: Der Stuhlgang ist sandfarben oder fast weiß entfärbt." }
-                          ]}
-                          inputMode={inputMode}
-                          setStep={setStep}
-                          toggleSymptom={toggleSymptom}
-                          selectedSymptoms={selectedSymptoms}
-                          selectedSubRegion={selectedSubRegion}
-                          setCopyPainScale={setCopyPainScale}
-                          copyPainScale={copyPainScale}
-                          setSelectedSymptoms={setSelectedSymptoms}
-                      >
-                      </SymptomSelection>
-              )
-              }
+                 />
+              )}
+              
               {step === "mdEnddarm" && (
                  <SymptomSelection
                           symptoms={[
@@ -332,10 +385,10 @@ export default function SymptomTree({
                           setCopyPainScale={setCopyPainScale}
                           copyPainScale={copyPainScale}
                           setSelectedSymptoms={setSelectedSymptoms}
-                      >
-                      </SymptomSelection>
-              )
-              }
+                 />
+              )}
+
+              {/* --- ARME / SCHULTER / HÄNDE --- */}
               {step === "ArmeHaende" && (
                  <SymptomCategory
                           categories={[
@@ -347,12 +400,11 @@ export default function SymptomTree({
                           setStep={setStep}
                           setInputMode={setInputMode}
                           selectedSubRegion={selectedSubRegion}
-                      >
-                      </SymptomCategory>
-              )
-              }
+                 />
+              )}
 
-              {step === "armSchulter" && (
+              {/* Erfüllt armSchulter ODER Oberarm */}
+              {(step === "armSchulter" || step === "Oberarm") && (
                  <SymptomSelection
                           symptoms={[
                             { symptomName: "Stechender Schmerz beim seitlichen Anheben", schmerzen: true, symptomValue: "Impingement-Syndrom: Stechender Schmerz beim seitlichen Anheben des Arms (zwischen 60° und 120°)." },
@@ -369,38 +421,22 @@ export default function SymptomTree({
                           setCopyPainScale={setCopyPainScale}
                           copyPainScale={copyPainScale}
                           setSelectedSymptoms={setSelectedSymptoms}
-                      >
-                      </SymptomSelection>
-              )
-              }
-              {step === "armEllbogen" && (
+                 />
+              )}
+
+              {/* Erfüllt armEllbogen / armHandFinger ODER Unterarm */}
+              {(step === "armEllbogen" || step === "armHandFinger" || step === "Unterarm" || step === "Hand") && (
                  <SymptomSelection
                           symptoms={[
                             { symptomName: "Elektrisierende Schläge bis in den Ringfinger", schmerzen: true, symptomValue: "Sulcus-Ulnaris-Syndrom: Elektrisierende Schläge bis in den Ringfinger bei Druck auf die Ellbogen-Innenseite." },
                             { symptomName: "Rote, heiße Schwellung auf der Ellbogenspitze", schmerzen: true, symptomValue: "Bursitis (Schleimbeutel): Prall-elastische, oft rote und heiße Schwellung direkt auf der Ellbogenspitze." },
-                            { symptomName: "Schmerz beim kräftigen Ausdrehen der Hand", schmerzen: true, symptomValue: "Suppinationsschmerz: Schmerz beim kräftigen Ausdrehen der Hand (z. B. Schraubbewegung)." }
-                          ]}
-                          inputMode={inputMode}
-                          setStep={setStep}
-                          toggleSymptom={toggleSymptom}
-                          selectedSymptoms={selectedSymptoms}
-                          selectedSubRegion={selectedSubRegion}
-                          setCopyPainScale={setCopyPainScale}
-                          copyPainScale={copyPainScale}
-                          setSelectedSymptoms={setSelectedSymptoms}
-                      >
-                      </SymptomSelection>
-              )
-              }
-              {step === "armHandFinger" && (
-                 <SymptomSelection
-                          symptoms={[
+                            { symptomName: "Schmerz beim kräftigen Ausdrehen der Hand", schmerzen: true, symptomValue: "Suppinationsschmerz: Schmerz beim kräftigen Ausdrehen der Hand (z. B. Schraubbewegung)." },
                             { symptomName: "Einschlafen der Hand nachts (Daumen/Mittelfinger)", schmerzen: false, symptomValue: "Karpaltunnelsyndrom: Einschlafen der Hand nachts (Daumen bis Mittelfinger), Schmerzlinderung durch Schütteln." },
                             { symptomName: "Sichtbares Loch / flacher Daumenballen", schmerzen: false, symptomValue: "Karpaltunnel-Atrophie: Sichtbares \"Loch\" oder flacher Daumenballen durch langjährigen Nervendruck." },
                             { symptomName: "Unfähigkeit die Hand nach oben zu strecken", schmerzen: false, symptomValue: "Fallhand: Unfähigkeit, die Hand im Handgelenk nach oben zu strecken (Radialis-Lähmung)." },
                             { symptomName: "Tastbare Knoten in Innenhand (Strecken unmöglich)", schmerzen: false, symptomValue: "Dupuytren-Kontraktur: Tastbare Knoten oder Stränge in der Innenhand; Finger lassen sich nicht mehr flach auflegen." },
                             { symptomName: "Finger bleibt in Beugung hängen und schnappt", schmerzen: true, symptomValue: "Trigger-Finger: Finger bleibt in Beugung hängen und \"schnappt\" erst bei Kraftaufwand auf." },
-                            { symptomName: "Harte, knöcherne Verdickungen an Fingergelenken", schmerzen: true, symptomValue: "Arthrose-Knoten: Harte, knöcherne Verdickungen an den Fingergelenken (Heberden- & Bouchard-Knoten)." }
+                            { symptomName: "Härte, knöcherne Verdickungen an Fingergelenken", schmerzen: true, symptomValue: "Arthrose-Knoten: Harte, knöcherne Verdickungen an den Fingergelenken (Heberden- & Bouchard-Knoten)." }
                           ]}
                           inputMode={inputMode}
                           setStep={setStep}
@@ -410,10 +446,9 @@ export default function SymptomTree({
                           setCopyPainScale={setCopyPainScale}
                           copyPainScale={copyPainScale}
                           setSelectedSymptoms={setSelectedSymptoms}
-                      >
-                      </SymptomSelection>
-              )
-              }
+                 />
+              )}
+          
               {step === "armGefaesse" && (
                  <SymptomSelection
                           symptoms={[
@@ -431,10 +466,10 @@ export default function SymptomTree({
                           setCopyPainScale={setCopyPainScale}
                           copyPainScale={copyPainScale}
                           setSelectedSymptoms={setSelectedSymptoms}
-                      >
-                      </SymptomSelection>
-              )
-              }
+                 />
+              )}
+
+              {/* --- HALS --- */}
               {step === "Hals" && (
                  <SymptomCategory
                           categories={[
@@ -446,10 +481,9 @@ export default function SymptomTree({
                           setStep={setStep}
                           setInputMode={setInputMode}
                           selectedSubRegion={selectedSubRegion}
-                      >
-                      </SymptomCategory>
-              )
-              }
+                 />
+              )}
+
               {step === "halsMandeln" && (
                  <SymptomSelection
                           symptoms={[
@@ -466,10 +500,9 @@ export default function SymptomTree({
                           setCopyPainScale={setCopyPainScale}
                           copyPainScale={copyPainScale}
                           setSelectedSymptoms={setSelectedSymptoms}
-                      >
-                      </SymptomSelection>
-              )
-              }
+                 />
+              )}
+
               {step === "halsRachen" && (
                  <SymptomSelection
                           symptoms={[
@@ -486,10 +519,9 @@ export default function SymptomTree({
                           setCopyPainScale={setCopyPainScale}
                           copyPainScale={copyPainScale}
                           setSelectedSymptoms={setSelectedSymptoms}
-                      >
-                      </SymptomSelection>
-              )
-              }
+                 />
+              )}
+
               {step === "halsKehlkopf" && (
                  <SymptomSelection
                           symptoms={[
@@ -508,10 +540,9 @@ export default function SymptomTree({
                           setCopyPainScale={setCopyPainScale}
                           copyPainScale={copyPainScale}
                           setSelectedSymptoms={setSelectedSymptoms}
-                      >
-                      </SymptomSelection>
-              )
-              }
+                 />
+              )}
+
               {step === "halsDruesen" && (
                  <SymptomSelection
                           symptoms={[
@@ -528,12 +559,32 @@ export default function SymptomTree({
                           setCopyPainScale={setCopyPainScale}
                           copyPainScale={copyPainScale}
                           setSelectedSymptoms={setSelectedSymptoms}
-                      >
-                      </SymptomSelection>
-              )
-              }
+                 />
+              )}
             
-             {(step === "RueckenOben" || step === "RueckenUnten") && (
+              {/* --- BRUST LINKS / RECHTS (Klick fängt hier direkt die neuen SubRegions ab) --- */}
+              {(step === "Brust links" || step === "Brust rechts") && (
+                 <SymptomSelection
+                          symptoms={[
+                            { symptomName: "Engegefühl, massiver Druck oder Brennen (Red Flag)", schmerzen: true, symptomValue: "Akuter Brustschmerz: Dumpfer, drückender oder brennender Schmerz („Elefant auf der Brust“), evtl. Ausstrahlung in Arm/Kiefer (Sofortiger Notfall!)." },
+                            { symptomName: "Atemnot / Luftnot schon im Ruhezustand (Red Flag)", schmerzen: false, symptomValue: "Ruhedyspnoe: Akut aufgetretene, schwere Atembeschwerden oder das Gefühl, nicht genug Sauerstoff zu bekommen." },
+                            { symptomName: "Stechender, atemabhängiger Brustschmerz", schmerzen: true, symptomValue: "Pleuritischer Schmerz: Schmerz verstärkt sich messerscharf beim tiefen Einatmen oder Husten." },
+                            { symptomName: "Herzrasen, Herzstolpern oder Aussetzer", schmerzen: false, symptomValue: "Palpitationen: Spürbar unregelmäßiger, stolpernder oder extrem beschleunigter Herzschlag im Brustkorb." },
+                            { symptomName: "Husten mit blutigem Schleim oder Auswurf", schmerzen: false, symptomValue: "Hämoptoe: Husten mit Beimengung von frischem Blut oder bräunlichem Auswurf." }
+                          ]}
+                          inputMode={inputMode}
+                          setStep={setStep}
+                          toggleSymptom={toggleSymptom}
+                          selectedSymptoms={selectedSymptoms}
+                          selectedSubRegion={selectedSubRegion}
+                          setCopyPainScale={setCopyPainScale}
+                          copyPainScale={copyPainScale}
+                          setSelectedSymptoms={setSelectedSymptoms}
+                 />
+              )}
+
+              {/* --- RÜCKEN OBEN / UNTEN --- */}
+              {(step === "RueckenOben" || step === "RueckenUnten") && (
                  <SymptomSelection
                           symptoms={[
                             { symptomName: "Hexenschuss (Akuter, einschießender Schmerz)", schmerzen: true, symptomValue: "Lumbago: Akut einschießender, blockierender Schmerz im Lendenwirbelbereich." },
@@ -549,18 +600,39 @@ export default function SymptomTree({
                           setCopyPainScale={setCopyPainScale}
                           copyPainScale={copyPainScale}
                           setSelectedSymptoms={setSelectedSymptoms}
-                      >
-                      </SymptomSelection>
-              )
-              }
+                 />
+              )}
+    
+              {/* --- BECKEN & GENITALBEREICH KATEGORIEN --- */}
+              {(step === "Genitalbereich" || step === "Becken") && (
+                 <SymptomCategory
+                          categories={[
+                            { category: "Harnwege & Wasserlassen", step: "genitalHarnwege" },
+                            // Nutzt die lokale Variable direkt für den Verzweigungsschritt:
+                            { 
+                              category: "Symptome im Genitalbereich", 
+                              step: gender === "weiblich" 
+                                      ? "genitalSymptomeWeiblich" 
+                                      : gender === "männlich" 
+                                      ? "genitalSymptomeMaennlich" 
+                                      : "genitalSymptomeDivers" 
+                            },
+                            { category: "Dringende Warnsignale (Genital)", step: "genitalWarnsignale" }
+                          ]}
+                          setStep={setStep}
+                          setInputMode={setInputMode}
+                          selectedSubRegion={selectedSubRegion}
+                 />
+              )}
 
-              {(step === "Becken" || step === "Genitalbereich") && (
+              {/* --- GEMEINSAME HARNWEGE --- */}
+              {step === "genitalHarnwege" && (
                  <SymptomSelection
                           symptoms={[
-                            { symptomName: "Brennen oder Schmerzen beim Wasserlassen", schmerzen: true, symptomValue: "Dysurie: Brennender Schmerz beim Urinieren, häufig kombiniert mit starkem Harndrang." },
-                            { symptomName: "Ziehender Schmerz im Unterleib / Beckenboden", schmerzen: true, symptomValue: "Beckenbodenschmerz: Diffuser, ziehender Druck im Tiefbecken." },
-                            { symptomName: "Rötung, starker Juckreiz oder Schwellung", schmerzen: false, symptomValue: "Lokale Irritation: Juckreiz, Rötung oder Schwellung der Schleimhäute." },
-                            { symptomName: "Auffälliger Ausfluss (Geruch / Farbe verändert)", schmerzen: false, symptomValue: "Veränderter Fluor: Ungewöhnlicher Ausfluss aus dem Genitalbereich." }
+                            { symptomName: "Brennen oder Schmerzen beim Wasserlassen (Dysurie)", schmerzen: true, symptomValue: "Dysurie: Brennender, stechender Schmerz in der Harnröhre während oder direkt nach dem Urinieren." },
+                            { symptomName: "Ständiger, starker Harndrang (Pollakisurie)", schmerzen: false, symptomValue: "Pollakisurie: Häufiges Aufsuchen der Toilette bei jeweils nur sehr geringen Urinmengen." },
+                            { symptomName: "Erschwertes Wasserlassen / Abgeschwächter Harnstrahl", schmerzen: false, symptomValue: "Harnretention-Anfang: Das Wasserlassen beginnt verzögert, der Harnstrahl ist auffällig schwach oder unterbrochen." },
+                            { symptomName: "Sichtbares Blut im Urin (Hämaturie)", schmerzen: false, symptomValue: "Makrohämaturie: Der Urin ist rötlich, fleischwasserfarben oder dunkelbraun verfärbt." }
                           ]}
                           inputMode={inputMode}
                           setStep={setStep}
@@ -570,11 +642,94 @@ export default function SymptomTree({
                           setCopyPainScale={setCopyPainScale}
                           copyPainScale={copyPainScale}
                           setSelectedSymptoms={setSelectedSymptoms}
-                      >
-                      </SymptomSelection>
-              )
-              }
+                 />
+              )}
 
+              {/* --- WEIBLICHE GENITALSYMPTOME --- */}
+              {step === "genitalSymptomeWeiblich" && (
+                 <SymptomSelection
+                          symptoms={[
+                            { symptomName: "Auffälliger Ausfluss (Farbe/Geruch verändert)", schmerzen: false, symptomValue: "Pathologischer Fluor: Vermehrter Ausfluss, der gelblich, grünlich oder krümelig-weiß ist, oder fischig/unangenehm riecht." },
+                            { symptomName: "Starker Juckreiz oder Brennen im Intimbereich", schmerzen: false, symptomValue: "Vaginaler Juckreiz: Quälendes Jucken oder Brennen an den Schamlippen oder am Scheideneingang (z.B. Verdacht auf Pilzinfektion)." },
+                            { symptomName: "Zwischenblutungen oder unregelmäßige Zyklen", schmerzen: false, symptomValue: "Metrorrhagie: Blutungen außerhalb der normalen Menstruation oder nach den Wechseljahren." },
+                            { symptomName: "Starke Schmerzen bei der Menstruation (Dysmenorrhö)", schmerzen: true, symptomValue: "Dysmenorrhö: Krampfartige, stark einschränkende Unterleibsschmerzen während der Periode." },
+                            { symptomName: "Schmerzen beim oder nach dem Geschlechtsverkehr", schmerzen: true, symptomValue: "Dyspareunie: Schmerzen im Bereich der Scheide oder tief im Unterleib bei sexueller Intimität." },
+                            { symptomName: "Tastbare Knoten oder Schwellung der Schamlippen", schmerzen: false, symptomValue: "Schwellung im Intimbereich: Tastbare Verhärtungen oder schmerzhafte Schwellungen (z.B. Bartholini-Zyste)." }
+                          ]}
+                          inputMode={inputMode}
+                          setStep={setStep}
+                          toggleSymptom={toggleSymptom}
+                          selectedSymptoms={selectedSymptoms}
+                          selectedSubRegion={selectedSubRegion}
+                          setCopyPainScale={setCopyPainScale}
+                          copyPainScale={copyPainScale}
+                          setSelectedSymptoms={setSelectedSymptoms}
+                 />
+              )}
+
+              {/* --- MÄNNLICHE GENITALSYMPTOME --- */}
+              {step === "genitalSymptomeMaennlich" && (
+                 <SymptomSelection
+                          symptoms={[
+                            { symptomName: "Schwellung oder Verhärtung des Hodens (schmerzlos)", schmerzen: false, symptomValue: "Hodenschwellung: Neu aufgetretene, schmerzlose Vergrößerung oder harter Knoten im Hoden (wichtiges Abklärungssignal!)." },
+                            { symptomName: "Ziehender Schmerz im Hoden oder Leistenbereich", schmerzen: true, symptomValue: "Hodenbeschwerden: Dumpfer, ziehender Schmerz im Hoden, der sich beim Stehen oder Gehen verstärken kann." },
+                            { symptomName: "Ausfluss aus der Harnröhre (Bonjour-Tropfen)", schmerzen: false, symptomValue: "Urethraler Ausfluss: Wässriger, schleimiger oder eitriger Ausfluss aus dem Penis außerhalb des Wasserlassens." },
+                            { symptomName: "Schmerzen oder Druckgefühl zwischen Anus und Genital", schmerzen: true, symptomValue: "Prostatitis-Verdacht: Schmerzen im Dammbereich, oft ausstrahlend in den unteren Rücken oder Hoden." },
+                            { symptomName: "Rötung, Juckreiz oder Belag auf Eichel/Vorhaut", schmerzen: false, symptomValue: "Balanitis: Entzündung der Eichel mit Juckreiz, Rötung oder weißen, trockenen Belägen." }
+                          ]}
+                          inputMode={inputMode}
+                          setStep={setStep}
+                          toggleSymptom={toggleSymptom}
+                          selectedSymptoms={selectedSymptoms}
+                          selectedSubRegion={selectedSubRegion}
+                          setCopyPainScale={setCopyPainScale}
+                          copyPainScale={copyPainScale}
+                          setSelectedSymptoms={setSelectedSymptoms}
+                 />
+              )}
+
+              {/* --- DIVERSE / ALLGEMEINE GENITALSYMPTOME --- */}
+              {step === "genitalSymptomeDivers" && (
+                 <SymptomSelection
+                          symptoms={[
+                            { symptomName: "Starker Juckreiz, Brennen oder Rötung", schmerzen: false, symptomValue: "Pruritus/Entzündung: Quälendes Jucken oder brennendes Gefühl an den äußeren Genitalien oder Schleimhäuten." },
+                            { symptomName: "Auffälliger Ausfluss (Menge, Farbe oder Geruch)", schmerzen: false, symptomValue: "Pathologischer Ausfluss: Ungewöhnliche Flüssigkeitsabgabe aus den Genitalien oder der Harnröhre." },
+                            { symptomName: "Bläschen, offene Stellen oder Geschwüre", schmerzen: true, symptomValue: "Ulzera/Bläschen: Kleine, schmerzhafte Flüssigkeitsbläschen, Verkrustungen oder wunde Hautstellen im Intimbereich." },
+                            { symptomName: "Schmerzen beim oder nach dem Geschlechtsverkehr", schmerzen: true, symptomValue: "Dyspareunie: Schmerzen im Genital- oder tiefen Beckenbereich während oder nach Intimität." },
+                            { symptomName: "Tastbare Knoten, Schwellungen oder Raumforderungen", schmerzen: false, symptomValue: "Genitale Gewebeveränderung: Neu aufgetretene Knoten oder Schwellungen im Intimbereich." }
+                          ]}
+                          inputMode={inputMode}
+                          setStep={setStep}
+                          toggleSymptom={toggleSymptom}
+                          selectedSymptoms={selectedSymptoms}
+                          selectedSubRegion={selectedSubRegion}
+                          setCopyPainScale={setCopyPainScale}
+                          copyPainScale={copyPainScale}
+                          setSelectedSymptoms={setSelectedSymptoms}
+                 />
+              )}
+
+              {/* --- RED FLAGS / WARNSIGNALE --- */}
+              {step === "genitalWarnsignale" && (
+                 <SymptomSelection
+                          symptoms={[
+                            { symptomName: "Plötzlicher, extremer Hodenschmerz (Notfall!)", schmerzen: true, symptomValue: "Hoden-Red-Flag: Akut einsetzender, unerträglicher Schmerz in einem Hoden (Verdacht auf Hodentorsion - sofortiger Notfall bei biologisch männlich)." },
+                            { symptomName: "Vollständige Harnsperre (Unfähigkeit zu urinieren)", schmerzen: true, symptomValue: "Akuter Harnverhalt: Trotz extremer, schmerzhafter Drangbeschwerden kann kein Urin abgegeben werden (Akuter Notfall!)." },
+                            { symptomName: "Schmerzhafte Dauererektion > 4 Std. (Priapismus)", schmerzen: true, symptomValue: "Priapismus: Schmerzhafte Erektion des Penises ohne sexuelle Stimulation (Gefahr von Gewebeschäden)." },
+                            { symptomName: "Akuter, heftigster Unterleibsschmerz (akutes Abdomen)", schmerzen: true, symptomValue: "Unterbauch-Katastrophe: Plötzlich einschießende, messerscharfe Unterleibsschmerzen mit harter Bauchdecke, Kreislaufschwäche oder Fieber (z.B. Verdacht auf Eileiterschwangerschaft/Zystenruptur bei biologisch weiblich)." }
+                          ]}
+                          inputMode={inputMode}
+                          setStep={setStep}
+                          toggleSymptom={toggleSymptom}
+                          selectedSymptoms={selectedSymptoms}
+                          selectedSubRegion={selectedSubRegion}
+                          setCopyPainScale={setCopyPainScale}
+                          copyPainScale={copyPainScale}
+                          setSelectedSymptoms={setSelectedSymptoms}
+                 />
+              )}
+
+              {/* --- BEINE & FÜSSE --- */}
               {(step === "Oberschenkel" || step === "Knie" || step === "Unterschenkel" || step === "Fuß") && (
                  <SymptomSelection
                           symptoms={[
@@ -592,11 +747,10 @@ export default function SymptomTree({
                           setCopyPainScale={setCopyPainScale}
                           copyPainScale={copyPainScale}
                           setSelectedSymptoms={setSelectedSymptoms}
-                      >
-                      </SymptomSelection>
-              )
-              }
+                 />
+              )}
 
+              {/* --- ALLGEMEINES BEFINDEN --- */}
               {step === "AllgemeinesBefinden" && (
                  <SymptomSelection
                           symptoms={[
@@ -610,7 +764,6 @@ export default function SymptomTree({
                             { symptomName: "Verwirrtheit, Schläfrigkeit & Atembeschwerden", schmerzen: false, symptomValue: "Plötzliche, schwere Verwirrtheit, extreme Schläfrigkeit, Atemnot und sehr schneller Herzschlag bei einer Infektion" },
                             { symptomName: "Rote/lila Hautpunkte (nicht verblassend)", schmerzen: false, symptomValue: "Auftreten von kleinen, stecknadelkopfgroßen, roten oder lila Hautpunkten, die bei Druck (z. B. mit einem Glas) nicht verblassen" },
                             { symptomName: "Plötzliche, große blaue Flecken ohne Stoßen", schmerzen: false, symptomValue: "Plötzliches Auftreten von großen, blauen Flecken am Körper, ohne dass man sich gestoßen oder verletzt hat" }
-          
                           ]}
                           inputMode={inputMode}
                           setStep={setStep}
@@ -620,11 +773,8 @@ export default function SymptomTree({
                           setCopyPainScale={setCopyPainScale}
                           copyPainScale={copyPainScale}
                           setSelectedSymptoms={setSelectedSymptoms}
-                      >
-                      </SymptomSelection>
-              )
-              }
-          
+                 />
+              )}
     </>
   );
 }

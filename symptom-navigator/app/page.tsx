@@ -430,6 +430,7 @@ export default function Home() {
             setCopyPainScale={setCopyPainScale}
             copyPainScale={copyPainScale}
             setSelectedSymptoms={setSelectedSymptoms}
+            basisdata={basisData}
           />
 
           {/* Schritt 5: Textinput, falls im Symptombaum aufgerufen */}
