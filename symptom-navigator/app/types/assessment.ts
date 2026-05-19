@@ -11,7 +11,7 @@ export type categoryAfterCategoryIfNeeded =
   | "bsp";
 
 export type symptomChoiceStep =
-  |"innenOhr"
+  | "innenOhr"
   | "aussenOhr"
   | "Kopf"
   | "kopfSpannung"
@@ -35,6 +35,14 @@ export type symptomChoiceStep =
   | "halsRachen"
   | "halsKehlkopf"
   | "halsDruesen"
+  | "RueckenOben"
+  | "RueckenUnten"
+  | "Becken"
+  | "Genitalbereich"
+  | "Oberschenkel"
+  | "Knie"
+  | "Unterschenkel"
+  | "Fuß"
   | "AllgemeinesBefinden";
 
 
