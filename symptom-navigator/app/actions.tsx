@@ -97,7 +97,7 @@ export async function saveFormData(formData: FormData) {
 
     const symptomText = formData.get("symptomText") as string;
     const symptomTextList = symptomText.split("|||");
-    console.log("test RawSymptomList:", symptomTextList, "filled?", (symptomTextList[0]!=''));
+    console.log("test RawSymptomList:", symptomTextList, "filled?", (symptomTextList[0]!='' && symptomTextList[0]!=null && symptomTextList[0]!=undefined));
     let symptomTextListJson = [];
     if (symptomTextList[0]!="") {
       for(let i = 0; i<symptomTextList.length; i++) {
@@ -106,7 +106,7 @@ export async function saveFormData(formData: FormData) {
     }
 
     //test log
-    console.log("test SymptomList:", symptomList, "filled?", (symptomListJson[0]!=''));
+    console.log("test SymptomList:", symptomList, "filled?", (symptomListJson[0]!='' && symptomListJson[0]!=null && symptomListJson[0]!=undefined));
     console.log("test:", formData.toString());
 
     // create timestamp
@@ -153,7 +153,7 @@ export async function saveFormData(formData: FormData) {
 
     // writing raw text symptoms in db
     let raw_id = null;
-    if((symptomTextList[0]!='')){
+    if(symptomTextList[0]!='' && symptomTextList[0]!=null && symptomTextList[0]!=undefined){
       for(let i=0; i<(symptomTextList.length); i++) {
         raw_id = await connectionPool.query(
             `
@@ -175,7 +175,7 @@ export async function saveFormData(formData: FormData) {
     }
 
     // writing prewritten symptoms into case_symptoms
-    if(symptomList[0]!=''){
+    if(symptomListJson[0]!='' && symptomListJson[0]!=null && symptomListJson[0]!=undefined){
       for(let i=0; i<symptomList.length; i++) {
         await connectionPool.query(
           `INSERT INTO case_symptoms (name_de, case_id, bodyregion, painscale) 
