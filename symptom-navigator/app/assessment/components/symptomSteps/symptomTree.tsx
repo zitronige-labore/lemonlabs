@@ -232,7 +232,7 @@ export default function SymptomTree({
                           symptoms={[
                             { symptomName: "Starke Übelkeit oder Drang zum Erbrechen", schmerzen: false, symptomValue: "Starke Übelkeit, flauer Magen oder Drang zum Erbrechen" },
                             { symptomName: "Extreme Licht- oder Lärmempfindlichkeit", schmerzen: false, symptomValue: "Extreme Empfindlichkeit gegen normales Licht, Fernseher oder laute Geräusche" },
-                            { symptomName: "Sehen von Flimmern, Zacken oder Mustern (Aura)", schmerzen: false, symptomValue: "Sehen von Flimmern, Zacken, Mustern oder hellen Punkten (bevor der Schmerz anfängt)" }
+                            { symptomName: "Sehen von Flimmern, Zacken oder Mustern ", schmerzen: false, symptomValue: "Sehen von Flimmern, Zacken, Mustern oder hellen Punkten (bevor der Schmerz anfängt)" }
                           ]}
                           inputMode={inputMode}
                           setStep={setStep}
@@ -251,6 +251,113 @@ export default function SymptomTree({
                             { symptomName: "Explosionsartiger Vernichtungsschmerz", schmerzen: true, symptomValue: "Explosionsartiger Schmerz von einer Sekunde auf die andere (so schlimm wie noch nie)" },
                             { symptomName: "Kopfschmerz mit Fieber und steifem Nacken", schmerzen: true, symptomValue: "Kopfschmerz kombiniert mit Fieber, Schüttelfrost und steifem Nacken" },
                             { symptomName: "Kopfschmerz mit Lähmung oder Sprachstörung", schmerzen: true, symptomValue: "Gleichzeitige Lähmungen im Gesicht/Arm, Sprachstörungen, Sehstörungen oder Verwirrtheit" }
+                          ]}
+                          inputMode={inputMode}
+                          setStep={setStep}
+                          toggleSymptom={toggleSymptom}
+                          selectedSymptoms={selectedSymptoms}
+                          selectedSubRegion={selectedSubRegion}
+                          setCopyPainScale={setCopyPainScale}
+                          copyPainScale={copyPainScale}
+                          setSelectedSymptoms={setSelectedSymptoms}
+                 />
+              )}
+              {/* --- NACKEN KATEGORIEN --- */}
+              {step === "Nacken" && (
+                 <SymptomCategory
+                          categories={[
+                            { category: "Verspannung & Bewegungsschmerz", step: "nackenBewegung" },
+                            { category: "Dringende Warnsignale (Nacken)", step: "nackenWarnsignale" }
+                          ]}
+                          setStep={setStep}
+                          setInputMode={setInputMode}
+                          selectedSubRegion={selectedSubRegion}
+                 />
+              )}
+
+              {/* --- NACKEN: BEWEGUNG & VERSPANNUNG --- */}
+              {step === "nackenBewegung" && (
+                 <SymptomSelection
+                          symptoms={[
+                            { symptomName: "Schmerzhafte Muskelverhärtung (Myogelose)", schmerzen: true, symptomValue: "Nackensteife muskulär: Deutlich tastbare, harte und schmerzhafte Knubbel oder Stränge in der Nacken- und Schultermuskulatur." },
+                            { symptomName: "Eingeschränkte Drehung / Steifer Hals", schmerzen: true, symptomValue: "Bewegungseinschränkung: Der Kopf lässt sich nur unter starken Schmerzen oder blockiert zu einer Seite drehen oder neigen." },
+                            { symptomName: "Knirschen bei Kopfbewegungen", schmerzen: false, symptomValue: "HWS-Krepitation: Hörbares oder spürbares Reiben und Knacken in der Halswirbelsäule beim Kreisen des Kopfes." },
+                            { symptomName: "Ziehender Schmerz strahlt in den Hinterkopf", schmerzen: true, symptomValue: "Zervikalgie: Schmerzen im Nacken, die bandförmig nach oben in den Hinterkopf ziehen und dort Kopfschmerzen auslösen." }
+                          ]}
+                          inputMode={inputMode}
+                          setStep={setStep}
+                          toggleSymptom={toggleSymptom}
+                          selectedSymptoms={selectedSymptoms}
+                          selectedSubRegion={selectedSubRegion}
+                          setCopyPainScale={setCopyPainScale}
+                          copyPainScale={copyPainScale}
+                          setSelectedSymptoms={setSelectedSymptoms}
+                 />
+              )}
+
+              {/* --- NACKEN: WARNSIGNALE --- */}
+              {step === "nackenWarnsignale" && (
+                 <SymptomSelection
+                          symptoms={[
+                            { symptomName: "Nackensteife: Kopf kann nicht auf die Brust gelegt werden", schmerzen: true, symptomValue: "Meningismus (Red Flag): Extreme, schmerzhafte Blockade beim Versuch, das Kinn passiv auf die Brust zu legen, oft mit Fieber oder Lichtempfindlichkeit (Verdacht auf Hirnhautentzündung)." },
+                            { symptomName: "Schmerz strahlt elektrisierend in den Arm aus", schmerzen: true, symptomValue: "Wurzelkompression HWS: Messerscharfer oder elektrisierender Schmerz, der über die Schulter bis in die Finger zieht, evtl. mit Taubheitsgefühl (Bandscheibenvorfall HWS)." },
+                            { symptomName: "Schwindel oder Sehstörungen bei Kopfdrehung", schmerzen: false, symptomValue: "Zervikaler Schwindel: Auftreten von Drehschwindel, Gangunsicherheit oder flimmernden Augen direkt bei schnellen Kopfbewegungen." },
+                            { symptomName: "Nackenschmerz nach Sturz oder Unfall (Peitschenhieb)", schmerzen: true, symptomValue: "HWS-Trauma: Akut einsetzende Schmerzen nach einem Auffahrunfall, Sturz oder heftigem Ruck (Verdacht auf Schleudertrauma/Fraktur)." }
+                          ]}
+                          inputMode={inputMode}
+                          setStep={setStep}
+                          toggleSymptom={toggleSymptom}
+                          selectedSymptoms={selectedSymptoms}
+                          selectedSubRegion={selectedSubRegion}
+                          setCopyPainScale={setCopyPainScale}
+                          copyPainScale={copyPainScale}
+                          setSelectedSymptoms={setSelectedSymptoms}
+                 />
+              )}
+
+              {/* --- MUND & ZÄHNE KATEGORIEN --- */}
+              {(step === "Mund" || step === "Zaehne" || step === "MundZaehne") && (
+                 <SymptomCategory
+                          categories={[
+                            { category: "Zahnschmerzen & Kieferbeschwerden", step: "mundZaehneSchmerz" },
+                            { category: "Zahnfleisch & Mundschleimhaut", step: "mundZaehneSchleimhaut" }
+                          ]}
+                          setStep={setStep}
+                          setInputMode={setInputMode}
+                          selectedSubRegion={selectedSubRegion}
+                 />
+              )}
+
+              {/* --- MUND & ZÄHNE: SCHMERZEN --- */}
+              {step === "mundZaehneSchmerz" && (
+                 <SymptomSelection
+                          symptoms={[
+                            { symptomName: "Pulsierender, klopfender Zahnschmerz", schmerzen: true, symptomValue: "Pulpitis-Verdacht: Anhaltender, heftiger und rhythmisch klopfender Schmerz im Zahn, der sich im Liegen oder bei Wärme massiv verstärkt." },
+                            { symptomName: "Empfindlichkeit bei Kälte, Wärme oder Süßem", schmerzen: true, symptomValue: "Überempfindliche Zahnhälse: Kurz einschießender, stechender Schmerz bei Kontakt mit kalten, heißen oder süßen Speisen/Getränken." },
+                            { symptomName: "Aufbissschmerz / Schmerz beim Kauen", schmerzen: true, symptomValue: "Parodontitis/Wurzelspitze: Der Zahn schmerzt intensiv, sobald Druck von oben auf ihn ausgeübt wird oder beim Zusammenbeißen." },
+                            { symptomName: "Nächtliches Zähneknirschen / Kieferschmerzen am Morgen", schmerzen: true, symptomValue: "Bruxismus/CMD: Dumpfer Druckschmerz im Kiefergelenk und den Schläfen direkt nach dem Aufwachen, oft mit Verspannungen." },
+                            { symptomName: "Schmerzhafte Schwellung der Wange (\"Dicke Backe\")", schmerzen: true, symptomValue: "Abszess (Red Flag): Rasch zunehmende, heiße Schwellung im Gesicht oder am Kiefer, teils mit Fieber oder Schluckbeschwerden (Sofortiger Behandlungsbedarf)." }
+                          ]}
+                          inputMode={inputMode}
+                          setStep={setStep}
+                          toggleSymptom={toggleSymptom}
+                          selectedSymptoms={selectedSymptoms}
+                          selectedSubRegion={selectedSubRegion}
+                          setCopyPainScale={setCopyPainScale}
+                          copyPainScale={copyPainScale}
+                          setSelectedSymptoms={setSelectedSymptoms}
+                 />
+              )}
+
+              {/* --- MUND & ZÄHNE: SCHLEIMHAUT --- */}
+              {step === "mundZaehneSchleimhaut" && (
+                 <SymptomSelection
+                          symptoms={[
+                            { symptomName: "Zahnfleischbluten beim Zähneputzen", schmerzen: false, symptomValue: "Gingivitis: Leicht auslösbare Blutungen am Zahnfleischrand, oft begleitet von Rötung und Schwellung." },
+                            { symptomName: "Schmerzhafte, kleine Bläschen/Geschwüre (Aphten)", schmerzen: true, symptomValue: "Aphten: Kleine, rundliche, weiß-gelblich belegte Schleimhautdefekte mit rotem Rand, die beim Essen und Sprechen stark brennen." },
+                            { symptomName: "Weißer, abwischbarer Belag (Mundsoor)", schmerzen: false, symptomValue: "Candidose: Trockenes Gefühl im Mund gepaart mit stippchenartigen, weißen Belägen auf der Zunge oder Wangeninnenseite, die sich abwischen lassen." },
+                            { symptomName: "Anhaltende Mundtrockenheit (Xerostomie)", schmerzen: false, symptomValue: "Mundtrockenheit: Zu geringer Speichelfluss, brennendes Gefühl auf der Zunge, Erschwerung beim Schlucken trockener Nahrung." },
+                            { symptomName: "Chronisch gerötete, brennende Zunge", schmerzen: true, symptomValue: "Zungenbrennen: Missempfindungen oder brennender Schmerz auf der Zungenoberfläche ohne sichtbare Verletzung (z.B. bei Vitaminmangel)." }
                           ]}
                           inputMode={inputMode}
                           setStep={setStep}
@@ -283,7 +390,7 @@ export default function SymptomTree({
                             { symptomName: "Sodbrennen (Brennen hinter Brustbein)", schmerzen: true, symptomValue: "Sodbrennen: Brennendes Gefühl hinter dem Brustbein, oft nach dem Essen oder im Liegen." },
                             { symptomName: "Saures Aufstoßen von Magensaft", schmerzen: false, symptomValue: "Saures Aufstoßen: Rückfluss von Magensaft oder Speiseresten bis in den Mundraum." },
                             { symptomName: "Schluckstörung (Nahrung bleibt stecken)", schmerzen: true, symptomValue: "Schluckstörung: Das Gefühl, dass Nahrung im Hals oder in der Brust „stecken bleibt“." },
-                            { symptomName: "Kloßgefühl im Hals (Globusgefühl)", schmerzen: false, symptomValue: "Kloßgefühl: Ein ständiges Druck- oder Fremdkörpergefühl im Halsbereich." },
+                            { symptomName: "Kloßgefühl im Hals", schmerzen: false, symptomValue: "Kloßgefühl: Ein ständiges Druck- oder Fremdkörpergefühl im Halsbereich." },
                             { symptomName: "Schmerz direkt beim Schluckvorgang", schmerzen: true, symptomValue: "Schmerz beim Schlucken: Stechender Schmerz direkt beim Schluckvorgang." }
                           ]}
                           inputMode={inputMode}
@@ -487,7 +594,7 @@ export default function SymptomTree({
               {step === "halsMandeln" && (
                  <SymptomSelection
                           symptoms={[
-                            { symptomName: "Kloßige Sprache (heiße Kartoffel im Mund)", schmerzen: false, symptomValue: "Kloßige Sprache: „Klingt, als hätte man eine heiße Kartoffel im Mund\"" },
+                            { symptomName: "Kloßige Sprache ", schmerzen: false, symptomValue: "Kloßige Sprache: „Klingt, als hätte man eine heiße Kartoffel im Mund\"" },
                             { symptomName: "Kiefersperre (Mund geht nicht weit auf)", schmerzen: true, symptomValue: "Kiefersperre (Mund lässt sich nicht weit öffnen)" },
                             { symptomName: "Extremer, auffälliger Mundgeruch", schmerzen: false, symptomValue: "Extremer Mundgeruch" },
                             { symptomName: "Eine Mandel drückt das Gaumensegel zur Seite", schmerzen: true, symptomValue: "Einseitige Vorwölbung: Eine Mandel drückt das Gaumensegel zur Seite" }
@@ -527,8 +634,8 @@ export default function SymptomTree({
                           symptoms={[
                             { symptomName: "Heiserkeit / Wegbrechen der Stimme", schmerzen: false, symptomValue: "Heiserkeit: Rauigkeit, behauchte Stimme, Wegbrechen der Stimme" },
                             { symptomName: "Kompletter Stimmenverlust (nur noch Flüstern)", schmerzen: false, symptomValue: "Kompletter Stimmenverlust (man kann nur noch flüstern)" },
-                            { symptomName: "Pfeifendes Geräusch beim Einatmen (Stridor)", schmerzen: false, symptomValue: "Inspirations-Stridor: Pfeifendes Geräusch beim Einatmen (Engstelle oben)" },
-                            { symptomName: "Pfeifendes Geräusch beim Ausatmen (Stridor)", schmerzen: false, symptomValue: "Exspirations-Stridor: Pfeifendes Geräusch beim Ausatmen (Engstelle tiefer)" },
+                            { symptomName: "Pfeifendes Geräusch beim Einatmen ", schmerzen: false, symptomValue: "Inspirations-Stridor: Pfeifendes Geräusch beim Einatmen (Engstelle oben)" },
+                            { symptomName: "Pfeifendes Geräusch beim Ausatmen", schmerzen: false, symptomValue: "Exspirations-Stridor: Pfeifendes Geräusch beim Ausatmen (Engstelle tiefer)" },
                             { symptomName: "Bellender, trockener, metallischer Husten", schmerzen: false, symptomValue: "Bellender Husten: Hart, trocken, metallisch klingend" },
                             { symptomName: "Stechender Schmerz beim Sprechen strahlt zum Ohr", schmerzen: true, symptomValue: "Stechender Schmerz beim Sprechen: Schmerz strahlt oft zum Ohr aus" }
                           ]}
@@ -546,8 +653,8 @@ export default function SymptomTree({
               {step === "halsDruesen" && (
                  <SymptomSelection
                           symptoms={[
-                            { symptomName: "Lymphknoten druckschmerzhaft (Entzündung)", schmerzen: true, symptomValue: "Druckschmerzhaft: Meist Zeichen einer Entzündung." },
-                            { symptomName: "Lymphknoten schmerzlos & hart (Warnsignal)", schmerzen: false, symptomValue: "Schmerzlos & Hart: Warnsignal (muss abgeklärt werden)" },
+                            { symptomName: "Lymphknoten druckschmerzhaft", schmerzen: true, symptomValue: "Druckschmerzhaft: Meist Zeichen einer Entzündung." },
+                            { symptomName: "Lymphknoten schmerzlos & hart", schmerzen: false, symptomValue: "Schmerzlos & Hart: Warnsignal (muss abgeklärt werden)" },
                             { symptomName: "Lymphknoten unter der Haut verschieblich", schmerzen: false, symptomValue: "Verschieblich: „Kugel“ lässt sich unter der Haut bewegen" },
                             { symptomName: "Lymphknoten fest mit Untergrund verbacken", schmerzen: false, symptomValue: "Verbacken: Gewebe fühlt sich fest mit dem Untergrund verbunden an" }
                           ]}
@@ -562,7 +669,7 @@ export default function SymptomTree({
                  />
               )}
             
-              {/* --- BRUST LINKS / RECHTS (Klick fängt hier direkt die neuen SubRegions ab) --- */}
+              {/* --- BRUST LINKS / RECHTS --- */}
               {(step === "Brust links" || step === "Brust rechts") && (
                  <SymptomSelection
                           symptoms={[
@@ -729,15 +836,97 @@ export default function SymptomTree({
                  />
               )}
 
-              {/* --- BEINE & FÜSSE --- */}
+              {/* --- BEINE & FÜSSE KATEGORIEN --- */}
               {(step === "Oberschenkel" || step === "Knie" || step === "Unterschenkel" || step === "Fuß") && (
+                 <SymptomCategory
+                          categories={[
+                            { category: "Gelenkschmerzen & Steifigkeit", step: "beineGelenke" },
+                            { category: "Muskelbeschwerden & Krämpfe", step: "beineMuskeln" },
+                            { category: "Nerven, Gefäße & Durchblutung", step: "beineNervenGefaese" },
+                            { category: "Dringende Warnsignale (Beine)", step: "beineWarnsignale" }
+                          ]}
+                          setStep={setStep}
+                          setInputMode={setInputMode}
+                          selectedSubRegion={selectedSubRegion}
+                 />
+              )}
+
+              {/* --- GELENKE (HÜFTE, KNIE, FUSSGELENK) --- */}
+              {step === "beineGelenke" && (
                  <SymptomSelection
                           symptoms={[
-                            { symptomName: "Einseitig geschwollene, heiße, rote Wade", schmerzen: true, symptomValue: "Thrombose-Verdacht: Einseitige Schwellung der Wade, dumpfer Ziehschmerz (Notfall!)." },
-                            { symptomName: "Belastungsabhängiger Knieschmerz (Anlaufschmerz)", schmerzen: true, symptomValue: "Arthrose-Verdacht: Schmerz besonders bei den ersten Schritten am Morgen oder nach Pausen." },
-                            { symptomName: "Schaufensterkrankheit (Wadenkrampf beim Gehen)", schmerzen: true, symptomValue: "pAVK: Zwingende Gehpausen nach kurzen Strecken wegen massiver Krampfschmerzen." },
-                            { symptomName: "Umknicktrauma mit sofortiger Schwellung", schmerzen: true, symptomValue: "Distorsion: Akuter Schmerz nach Umknicken, sichtbares Hämatom am Knöchel." },
-                            { symptomName: "Stechender Fersenschmerz am Morgen (Auftreten)", schmerzen: true, symptomValue: "Fersensporn: Messerscharfer Schmerz an der Fußsohle beim ersten Auftreten." }
+                            { symptomName: "Anlaufschmerz am Morgen / nach Pausen", schmerzen: true, symptomValue: "Anlaufschmerz: Gelenkschmerz (oft Knie oder Hüfte) bei den ersten Schritten nach Ruhephasen, der nach einigen Minuten Bewegung nachlässt (typisch für Arthrose)." },
+                            { symptomName: "Belastungsabhängiger Gelenkschmerz", schmerzen: true, symptomValue: "Belastungsschmerz: Schmerzen, die erst bei längerer Gehstrecke, Sport oder beim Treppenabsteigen auftreten und in Ruhe wieder verschwinden." },
+                            { symptomName: "Ruheschmerz / Nächtlicher Gelenkschmerz", schmerzen: true, symptomValue: "Gelenk-Ruheschmerz: Schmerzen im Gelenk auch ohne Belastung, besonders stark in der Nacht oder im Liegen (Hinweis auf Entzündung oder fortgeschrittenen Verschleiß)." },
+                            { symptomName: "Überwärmtes, rotes und geschwollenes Gelenk", schmerzen: true, symptomValue: "Arthritis-Verdacht: Ein einzelnes Gelenk ist stark geschwollen, deutlich überwärmt, gerötet und extrem druckschmerzhaft (Verdacht auf Gichtanfall oder bakterielle Entzündung)." },
+                            { symptomName: "Morgensteifigkeit der Gelenke (> 30 Min.)", schmerzen: false, symptomValue: "Morgensteifigkeit Bein: Die Gelenke fühlen sich nach dem Aufwachen für längere Zeit wie eingerostet und unbeweglich an." },
+                            { symptomName: "Hörbares Knirschen oder Reiben im Gelenk", schmerzen: false, symptomValue: "Krepitation: Spürbares oder hörbares Reiben („Schneeballknirschen“) im Gelenk bei Bewegung." },
+                            { symptomName: "Gefühl der Instabilität / Wegknicken des Knies", schmerzen: false, symptomValue: "Instabilitätsgefühl: Das Gefühl, das Gelenk hält nicht stand, oder das Knie knickt bei Belastung unwillkürlich weg (Verdacht auf Bänderriss / Meniskusschaden)." },
+                            { symptomName: "Blockierung des Gelenks / Bewegungseinschränkung", schmerzen: true, symptomValue: "Gelenkblockade: Das Gelenk lässt sich plötzlich ab einem bestimmten Winkel nicht mehr weiter strecken oder beugen." }
+                          ]}
+                          inputMode={inputMode}
+                          setStep={setStep}
+                          toggleSymptom={toggleSymptom}
+                          selectedSymptoms={selectedSymptoms}
+                          selectedSubRegion={selectedSubRegion}
+                          setCopyPainScale={setCopyPainScale}
+                          copyPainScale={copyPainScale}
+                          setSelectedSymptoms={setSelectedSymptoms}
+                 />
+              )}
+
+              {/* --- MUSKELN & SEHNEN --- */}
+              {step === "beineMuskeln" && (
+                 <SymptomSelection
+                          symptoms={[
+                            { symptomName: "Nächtliche Wadenkrämpfe", schmerzen: true, symptomValue: "Wadenkrampf: Plötzlich einschießende, schmerzhafte Muskelverhärtung der Wade, meistens im Schlaf." },
+                            { symptomName: "Anhaltender Muskelkater / Diffuser Muskelschmerz", schmerzen: true, symptomValue: "Myalgie: Großflächiger, ziehender Druckschmerz in den Muskeln (z. B. nach Überlastung oder bei viralen Infekten)." },
+                            { symptomName: "Punktueller, messerscharfer Schmerz nach Belastung", schmerzen: true, symptomValue: "Muskelfaserriss: Plötzlich einschießender, stechender Schmerz bei einer Bewegung, Gehen oder Laufen danach kaum noch möglich." },
+                            { symptomName: "Schmerzen an der Achillessehne bei Druck/Belastung", schmerzen: true, symptomValue: "Achillodynie: Schmerzhafter, oft verdickter Bereich an der Sehne über der Ferse, besonders beim Abstoßen des Fußes." },
+                            { symptomName: "Schienbeinkantenschmerz (Shin Splints)", schmerzen: true, symptomValue: "Periostitis: Belastungsschmerz an der Vorderseite des Unterschenkels entlang des Schienbeinknochens (häufig bei Läufern)." }
+                          ]}
+                          inputMode={inputMode}
+                          setStep={setStep}
+                          toggleSymptom={toggleSymptom}
+                          selectedSymptoms={selectedSymptoms}
+                          selectedSubRegion={selectedSubRegion}
+                          setCopyPainScale={setCopyPainScale}
+                          copyPainScale={copyPainScale}
+                          setSelectedSymptoms={setSelectedSymptoms}
+                 />
+              )}
+
+              {/* --- NERVEN & GEFÄSSE (DURCHBLUTUNG) --- */}
+              {step === "beineNervenGefaese" && (
+                 <SymptomSelection
+                          symptoms={[
+                            { symptomName: "Krampfartige Wadenschmerzen beim Gehen (Gehpausen nötig)", schmerzen: true, symptomValue: "pAVK / Schaufensterkrankheit: Schmerzen in der Wade, die nach einer bestimmten Gehstrecke auftreten und zum Stehenbleiben zwingen; bessern sich rasch im Stehen." },
+                            { symptomName: "Einschießen von Schmerzen vom Rücken ins Bein", schmerzen: true, symptomValue: "Ischialgie: Elektrisierender oder ziehender Schmerz, der vom Gesäß über die Rückseite des Beins bis in den Fuß ausstrahlt." },
+                            { symptomName: "Kribbeln, Taubheitsgefühl oder „Ameisenlaufen“", schmerzen: false, symptomValue: "Parästhesien: Missempfindungen, pelziges Gefühl oder Taubheit (häufig an den Füßen oder Zehen, z. B. bei Polyneuropathie)." },
+                            { symptomName: "Schwere, müde Beine und geschwollene Knöchel am Abend", schmerzen: false, symptomValue: "Venöse Insuffizienz: Spannungsgefühl und Schwellung der Beine, die sich im Laufe des Tages verschlimmern und bei Hochlagern besser werden." },
+                            { symptomName: "Unruhige Beine am Abend / im Liegen (Bewegungsdrang)", schmerzen: false, symptomValue: "Restless-Legs-Syndrom: Quälender Unruhezustand oder Missempfindungen in den Beinen, die nur durch Aufstehen und Umhergehen kurzzeitig besser werden." },
+                            { symptomName: "Chronisch kalte Füße oder bläuliche Verfärbung", schmerzen: false, symptomValue: "Durchblutungsstörung peripher: Füße sind dauerhaft kalt, schlecht durchblutet, Zehen verfärben sich bei Kälte blass oder bläulich." }
+                          ]}
+                          inputMode={inputMode}
+                          setStep={setStep}
+                          toggleSymptom={toggleSymptom}
+                          selectedSymptoms={selectedSymptoms}
+                          selectedSubRegion={selectedSubRegion}
+                          setCopyPainScale={setCopyPainScale}
+                          copyPainScale={copyPainScale}
+                          setSelectedSymptoms={setSelectedSymptoms}
+                 />
+              )}
+
+              {/* --- RED FLAGS / WARNSIGNALE --- */}
+              {step === "beineWarnsignale" && (
+                 <SymptomSelection
+                          symptoms={[
+                            { symptomName: "Einseitig stark geschwollene, heiße, rote Wade (Notfall!)", schmerzen: true, symptomValue: "Thrombose-Red-Flag: Einseitige Umfangszunahme des Unterschenkels, die Haut glänzt, ist überwärmt, gerötet und schmerzt wie ein Muskelkater (Akuter Notfall!)." },
+                            { symptomName: "Plötzlicher, unerträglicher Beinschmerz + Blässe + Kälte", schmerzen: true, symptomValue: "Akuter Arterienverschluss: Schlagartig einsetzender, heftigster Schmerz, der Fuß/das Bein wird eiskalt, blass und der Puls am Fuß ist nicht mehr tastbar (Sofortiger Notfall!)." },
+                            { symptomName: "Lähmung / Fuß kann nicht mehr angehoben werden", schmerzen: false, symptomValue: "Peroneuslähmung / Fußheberparese: Plötzliche Unfähigkeit, die Fußspitze beim Gehen anzuheben (Schlurfender Gang / neurologisches Warnsignal)." },
+                            { symptomName: "Schlecht heilende Wunden oder Geschwüre am Fuß", schmerzen: false, symptomValue: "Ulkus / Diabetischer Fuß: Offene, nicht abheilende Hautstellen, Gewebeveränderungen oder dunkle Flecken an den Zehen oder Fersen (besonders riskant bei Diabetes)." },
+                            { symptomName: "Umknicktrauma mit sofortiger massiver Schwellung", schmerzen: true, symptomValue: "Schwere Distorsion / Fraktur: Nach einem Unfall oder Umknicken schwillt das Gelenk sofort massiv an, Auftreten oder Belastung ist völlig unmöglich." }
                           ]}
                           inputMode={inputMode}
                           setStep={setStep}
