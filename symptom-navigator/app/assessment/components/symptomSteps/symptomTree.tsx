@@ -182,7 +182,7 @@ export default function SymptomTree({
                  <SymptomSelection
                           symptoms={[
                             { symptomName: "Starke Übelkeit oder Drang zum Erbrechen", schmerzen: false, symptomValue: "Starke Übelkeit, flauer Magen oder Drang zum Erbrechen" },
-                            { symptomName: "Extreme Licht- oder Lärmempfindlichkeit", schmerzen: true, symptomValue: "Extreme Empfindlichkeit gegen normales Licht, Fernseher oder laute Geräusche" },
+                            { symptomName: "Extreme Licht- oder Lärmempfindlichkeit", schmerzen: false, symptomValue: "Extreme Empfindlichkeit gegen normales Licht, Fernseher oder laute Geräusche" },
                             { symptomName: "Sehen von Flimmern, Zacken oder Mustern (Aura)", schmerzen: false, symptomValue: "Sehen von Flimmern, Zacken, Mustern oder hellen Punkten (bevor der Schmerz anfängt)" }
                           ]}
                           inputMode={inputMode}
@@ -532,16 +532,85 @@ export default function SymptomTree({
                       </SymptomSelection>
               )
               }
+            
+             {(step === "RueckenOben" || step === "RueckenUnten") && (
+                 <SymptomSelection
+                          symptoms={[
+                            { symptomName: "Hexenschuss (Akuter, einschießender Schmerz)", schmerzen: true, symptomValue: "Lumbago: Akut einschießender, blockierender Schmerz im Lendenwirbelbereich." },
+                            { symptomName: "Ausstrahlender Schmerz ins Bein mit Kribbeln", schmerzen: true, symptomValue: "Ischialgie: Schmerz strahlt über das Gesäß bis in den Fuß aus, teils mit Taubheitsgefühl." },
+                            { symptomName: "Morgensteifigkeit der Wirbelsäule (> 30 Min.)", schmerzen: true, symptomValue: "Morgensteifigkeit: Wirbelsäule ist nach dem Aufstehen spürbar steif, Besserung durch Bewegung." },
+                            { symptomName: "Schmerz verstärkt sich beim tiefen Einatmen", schmerzen: true, symptomValue: "Interkostal-Schmerz: Schmerz zieht gürtelförmig um den Brustkorb, atemabhängig." }
+                          ]}
+                          inputMode={inputMode}
+                          setStep={setStep}
+                          toggleSymptom={toggleSymptom}
+                          selectedSymptoms={selectedSymptoms}
+                          selectedSubRegion={selectedSubRegion}
+                          setCopyPainScale={setCopyPainScale}
+                          copyPainScale={copyPainScale}
+                          setSelectedSymptoms={setSelectedSymptoms}
+                      >
+                      </SymptomSelection>
+              )
+              }
+
+              {(step === "Becken" || step === "Genitalbereich") && (
+                 <SymptomSelection
+                          symptoms={[
+                            { symptomName: "Brennen oder Schmerzen beim Wasserlassen", schmerzen: true, symptomValue: "Dysurie: Brennender Schmerz beim Urinieren, häufig kombiniert mit starkem Harndrang." },
+                            { symptomName: "Ziehender Schmerz im Unterleib / Beckenboden", schmerzen: true, symptomValue: "Beckenbodenschmerz: Diffuser, ziehender Druck im Tiefbecken." },
+                            { symptomName: "Rötung, starker Juckreiz oder Schwellung", schmerzen: false, symptomValue: "Lokale Irritation: Juckreiz, Rötung oder Schwellung der Schleimhäute." },
+                            { symptomName: "Auffälliger Ausfluss (Geruch / Farbe verändert)", schmerzen: false, symptomValue: "Veränderter Fluor: Ungewöhnlicher Ausfluss aus dem Genitalbereich." }
+                          ]}
+                          inputMode={inputMode}
+                          setStep={setStep}
+                          toggleSymptom={toggleSymptom}
+                          selectedSymptoms={selectedSymptoms}
+                          selectedSubRegion={selectedSubRegion}
+                          setCopyPainScale={setCopyPainScale}
+                          copyPainScale={copyPainScale}
+                          setSelectedSymptoms={setSelectedSymptoms}
+                      >
+                      </SymptomSelection>
+              )
+              }
+
+              {(step === "Oberschenkel" || step === "Knie" || step === "Unterschenkel" || step === "Fuß") && (
+                 <SymptomSelection
+                          symptoms={[
+                            { symptomName: "Einseitig geschwollene, heiße, rote Wade", schmerzen: true, symptomValue: "Thrombose-Verdacht: Einseitige Schwellung der Wade, dumpfer Ziehschmerz (Notfall!)." },
+                            { symptomName: "Belastungsabhängiger Knieschmerz (Anlaufschmerz)", schmerzen: true, symptomValue: "Arthrose-Verdacht: Schmerz besonders bei den ersten Schritten am Morgen oder nach Pausen." },
+                            { symptomName: "Schaufensterkrankheit (Wadenkrampf beim Gehen)", schmerzen: true, symptomValue: "pAVK: Zwingende Gehpausen nach kurzen Strecken wegen massiver Krampfschmerzen." },
+                            { symptomName: "Umknicktrauma mit sofortiger Schwellung", schmerzen: true, symptomValue: "Distorsion: Akuter Schmerz nach Umknicken, sichtbares Hämatom am Knöchel." },
+                            { symptomName: "Stechender Fersenschmerz am Morgen (Auftreten)", schmerzen: true, symptomValue: "Fersensporn: Messerscharfer Schmerz an der Fußsohle beim ersten Auftreten." }
+                          ]}
+                          inputMode={inputMode}
+                          setStep={setStep}
+                          toggleSymptom={toggleSymptom}
+                          selectedSymptoms={selectedSymptoms}
+                          selectedSubRegion={selectedSubRegion}
+                          setCopyPainScale={setCopyPainScale}
+                          copyPainScale={copyPainScale}
+                          setSelectedSymptoms={setSelectedSymptoms}
+                      >
+                      </SymptomSelection>
+              )
+              }
+
               {step === "AllgemeinesBefinden" && (
                  <SymptomSelection
                           symptoms={[
-                            { symptomName: "Schüttelfrost / Unkontrollierbares Zittern", schmerzen: false, symptomValue: "Schüttelfrost (unkontrollierbares Zittern am ganzen Körper bei rasant steigendem Fieber)" },
+                            { symptomName: "Schüttelfrost / Unkontrollierbares Zittern", schmerzen: false, symptomValue: "Schüttelfrost: Unkontrollierbares Zittern am ganzen Körper bei rasant steigendem Fieber." },
+                            { symptomName: "Unerklärlicher, schneller Gewichtsverlust", schmerzen: false, symptomValue: "Gewichtsverlust: Ungewollte Gewichtsabnahme ohne Diät oder Ernährungsumstellung." },
+                            { symptomName: "Anhaltende Nachtschweiße (Kleidungswechsel nötig)", schmerzen: false, symptomValue: "B-Symptomatik: Massives Schwitzen in der Nacht, sodass Schlafkleidung gewechselt werden muss." },
+                            { symptomName: "Ausgeprägte, bleierne Müdigkeit und Abgeschlagenheit", schmerzen: false, symptomValue: "Fatigue/Schwäche: Extreme Antriebslosigkeit, die den Alltag massiv einschränkt." },
                             { symptomName: "Extreme Kältegefühle trotz warmem Raum", schmerzen: false, symptomValue: "Extreme Kältegefühle, obwohl es im Raum warm ist" },
                             { symptomName: "Diffuse Gliederschmerzen (wie bei echter Grippe)", schmerzen: true, symptomValue: "Diffuse Gliederschmerzen (die Muskeln, Gelenke und Knochen tun am ganzen Körper weh, wie bei einer echten Grippe)" },
                             { symptomName: "Tastbare, schmerzhafte Lymphknotenschwellung", schmerzen: true, symptomValue: "Deutlich tastbare, schmerzhafte oder geschwollene Knubbel am Hals, unter den Achseln oder in der Leiste (Lymphknoten)" },
                             { symptomName: "Verwirrtheit, Schläfrigkeit & Atembeschwerden", schmerzen: false, symptomValue: "Plötzliche, schwere Verwirrtheit, extreme Schläfrigkeit, Atemnot und sehr schneller Herzschlag bei einer Infektion" },
                             { symptomName: "Rote/lila Hautpunkte (nicht verblassend)", schmerzen: false, symptomValue: "Auftreten von kleinen, stecknadelkopfgroßen, roten oder lila Hautpunkten, die bei Druck (z. B. mit einem Glas) nicht verblassen" },
                             { symptomName: "Plötzliche, große blaue Flecken ohne Stoßen", schmerzen: false, symptomValue: "Plötzliches Auftreten von großen, blauen Flecken am Körper, ohne dass man sich gestoßen oder verletzt hat" }
+          
                           ]}
                           inputMode={inputMode}
                           setStep={setStep}
