@@ -73,7 +73,7 @@ Als Nutzer möchte ich Zusatzangaben überspringen können, falls ich diese nich
 **Akzeptanzkriterium:** Zusatzangaben sind als optional gekennzeichnet, Schritt kann übersprungen werden  
 **Priorität:** mittel  
 
-## Epic: Symptomeinschätzung / Triage (hohe Priorität)
+## Epic: Symptomeinschätzung (hohe Priorität)
 Ziel: Bewertung der eingegebenen Daten zur Bestimmung der Dringlichkeit und Ableitung konkreter Maßnahmen.
 
 ### FA 015 – Einschätzung starten
@@ -345,7 +345,7 @@ Als Nutzer möchte ich Inhalte durch Icons unterstützt sehen, damit ich Informa
 **Akzeptanzkriterium:** wichtige Funktionen (bis jetzt bekannt: Benutzeranleitungsbutton, Angaben zu Geschlecht, Navigationsbuttons auf der Homepage) werden durch verständliche Icons ergänzt  
 **Priorität:** niedrig  
  
-## Epic: Interoperabilität (mittlere Priorität) 
+## Epic: Interoperabilität (hohe Priorität) 
 
 ### FA 058 – FHIR-Kompatibilität
 Als Nutzer möchte ich meine Daten an Krankenhäuser weitergeben können, damit medizinische Einrichtungen diese ohne Probleme weiterverarbeiten können.    
