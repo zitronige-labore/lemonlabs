@@ -67,7 +67,7 @@ export function getSubRegions(
       return ["Oberschenkel", "Knie", "Unterschenkel", "Fuß"];
 
     case "Psyche":
-      return ["Haut allgemein"];
+      return ["Psyche"];
 
     case "Allgemein (ganzer Körper)":
       return ["Keine bestimmte Region / mehrere Stellen"];
@@ -233,7 +233,7 @@ export function getSymptomsForSubRegion(
         "Probleme beim Gehen",
       ];
 
-    case "Haut allgemein":
+    case "Psyche":
       return [
         "Ausschlag",
         "Juckreiz",
