@@ -603,7 +603,14 @@ export default function SymptomTree({
                             { symptomName: "Schüttelfrost / Unkontrollierbares Zittern", schmerzen: false, symptomValue: "Schüttelfrost: Unkontrollierbares Zittern am ganzen Körper bei rasant steigendem Fieber." },
                             { symptomName: "Unerklärlicher, schneller Gewichtsverlust", schmerzen: false, symptomValue: "Gewichtsverlust: Ungewollte Gewichtsabnahme ohne Diät oder Ernährungsumstellung." },
                             { symptomName: "Anhaltende Nachtschweiße (Kleidungswechsel nötig)", schmerzen: false, symptomValue: "B-Symptomatik: Massives Schwitzen in der Nacht, sodass Schlafkleidung gewechselt werden muss." },
-                            { symptomName: "Ausgeprägte, bleierne Müdigkeit und Abgeschlagenheit", schmerzen: false, symptomValue: "Fatigue/Schwäche: Extreme Antriebslosigkeit, die den Alltag massiv einschränkt." }
+                            { symptomName: "Ausgeprägte, bleierne Müdigkeit und Abgeschlagenheit", schmerzen: false, symptomValue: "Fatigue/Schwäche: Extreme Antriebslosigkeit, die den Alltag massiv einschränkt." },
+                            { symptomName: "Extreme Kältegefühle trotz warmem Raum", schmerzen: false, symptomValue: "Extreme Kältegefühle, obwohl es im Raum warm ist" },
+                            { symptomName: "Diffuse Gliederschmerzen (wie bei echter Grippe)", schmerzen: true, symptomValue: "Diffuse Gliederschmerzen (die Muskeln, Gelenke und Knochen tun am ganzen Körper weh, wie bei einer echten Grippe)" },
+                            { symptomName: "Tastbare, schmerzhafte Lymphknotenschwellung", schmerzen: true, symptomValue: "Deutlich tastbare, schmerzhafte oder geschwollene Knubbel am Hals, unter den Achseln oder in der Leiste (Lymphknoten)" },
+                            { symptomName: "Verwirrtheit, Schläfrigkeit & Atembeschwerden", schmerzen: false, symptomValue: "Plötzliche, schwere Verwirrtheit, extreme Schläfrigkeit, Atemnot und sehr schneller Herzschlag bei einer Infektion" },
+                            { symptomName: "Rote/lila Hautpunkte (nicht verblassend)", schmerzen: false, symptomValue: "Auftreten von kleinen, stecknadelkopfgroßen, roten oder lila Hautpunkten, die bei Druck (z. B. mit einem Glas) nicht verblassen" },
+                            { symptomName: "Plötzliche, große blaue Flecken ohne Stoßen", schmerzen: false, symptomValue: "Plötzliches Auftreten von großen, blauen Flecken am Körper, ohne dass man sich gestoßen oder verletzt hat" }
+          
                           ]}
                           inputMode={inputMode}
                           setStep={setStep}
