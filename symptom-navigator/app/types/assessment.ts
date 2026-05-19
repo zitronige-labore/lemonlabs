@@ -13,6 +13,8 @@ export type categoryAfterCategoryIfNeeded =
 export type symptomChoiceStep =
   | "innenOhr"
   | "aussenOhr"
+  | "nase"
+  | "augen"
   | "Kopf"
   | "kopfSpannung"
   | "kopfMigraene"
@@ -43,7 +45,23 @@ export type symptomChoiceStep =
   | "Knie"
   | "Unterschenkel"
   | "Fuß"
-  | "AllgemeinesBefinden";
+  | "AllgemeinesBefinden"
+  | "genitalHarnwege"
+  | "genitalSymptomeWeiblich"
+  | "genitalSymptomeMaennlich"
+  | "genitalSymptomeDivers"
+  | "genitalWarnsignale"
+  | "beineGelenke"     
+  | "beineMuskeln"      
+  | "beineNervenGefaese" 
+  | "beineWarnsignale"
+  | "nackenBewegung"     
+  | "nackenWarnsignale"    
+  | "mundZaehneSchmerz"    
+  | "mundZaehneSchleimhaut"
+  | "Mund"
+  | "Zaehne"
+  | "MundZaehne"; 
 
 
 
