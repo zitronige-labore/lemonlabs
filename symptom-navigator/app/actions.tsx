@@ -373,7 +373,8 @@ export async function sendDataToAi() {
   und falls ein Arzt aufgesucht werden soll auch die Versorgungsebene. 
   Alles laienverständlich und in kurzen Sätzen. 
   NUR in diesem XML Format antworten, keinen Text ausserhalb des XMLs, 
-  NUR die vorgegebenen xml tags nutzen, keine weiteren ausdenken, in next steps: nur eine handlungsempfehlung in einfacher sprache im tag <nextSteps> ausgeben:
+  <nextSteps></nextSteps> DARF NUR 1 mal vorkommen und DARF NUR freitext enthalten. 
+  NUR die vorgegebenen xml tags nutzen, nur diese xml tags sind erlaubt, keine weiteren ausdenken, in next steps: nur eine handlungsempfehlung in einfacher sprache ausgeben:
   <assessment>
   <urgency></urgency>
   <urgencyText></urgencyText>
@@ -419,7 +420,7 @@ export async function sendDataToAi() {
         'x-api-key': 'sk-rwai1swh1cJ0JOROAK8iLA'
       },
       body: JSON.stringify({
-        model: 'medgemma:27b',
+        model: 'medgemma:4b',
         messages: [{ role: 'user', content: prompt }],
         stream: false,
       }),
@@ -436,6 +437,8 @@ export async function sendDataToAi() {
       throw new Error('falsches Antwortformat fuer XML');
     }
     const xmlProperFormat = xmlMatch[0];
+
+    console.log(xmlProperFormat)
 
     parseString(xmlProperFormat, { explicitArray: false }, (err, result) => {
     if (err) {

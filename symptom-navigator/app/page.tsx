@@ -26,6 +26,7 @@ import { ResultStep } from "./assessment/components/ResultStep";
 import { StartScreen } from "./assessment/components/StartScreen";
 import { SymptomTextInputStep } from "./assessment/components/SymptomTextInputStep";
 import { TutorialModal } from "./assessment/components/TutorialModal";
+import { LoadingPopup } from "./assessment/components/LoadingPopup";
 
 import { Question } from "@phosphor-icons/react";
 
@@ -48,6 +49,11 @@ export default function Home() {
     Speichert, ob das globale Tutorial-Popup geöffnet ist.
   */
   const [isTutorialOpen, setIsTutorialOpen] = useState(false);
+
+  /*
+    state for loading
+  */
+  const [isLoading, setIsLoading] = useState(false);
 
   /*
     Speichert, welcher Schritt im Ablauf aktuell angezeigt wird.
@@ -343,6 +349,8 @@ export default function Home() {
       additionalData,
     };
 
+    setIsLoading(true);
+
     try {
       await handleSaveForm();
 
@@ -351,6 +359,8 @@ export default function Home() {
     } catch (error) {
       console.error("Error saving form or fetching AI response:", error);
     }
+
+    setIsLoading(false);
 
     console.log("Formulardaten:", formData);
     goToStep("result");
@@ -458,6 +468,12 @@ export default function Home() {
               additionalData={additionalData}
               setAdditionalData={setAdditionalData}
               onSkip={() => goToStep("result")}
+            />
+          )}
+
+          {/* Schritt 6.5: Ladeanzeige */}
+          {isLoading === true && (
+            <LoadingPopup
             />
           )}
 
