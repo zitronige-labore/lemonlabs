@@ -7,7 +7,7 @@
 import assessmentStyles from "../../Assessment.module.css";
 
 // import needed types
-import { Step, InputMode, SubRegion } from "../../../types/assessment";
+import { Step, SubRegion } from "../../../types/assessment";
 import { useState } from "react";
 
 // imports to access setter functions from page
@@ -16,7 +16,6 @@ import type { Dispatch, SetStateAction } from "react";
 // define props/ get everything needed from page
 interface SymptomSelectionProps {
   symptoms: {symptomName: string, schmerzen: boolean, symptomValue: string}[];
-  inputMode: InputMode;
   setStep: (step: Step) => void;
   setSelectedSymptoms: Dispatch<SetStateAction<string[]>>;
   toggleSymptom: (symptom: string, painscale?: string) => void;
@@ -29,7 +28,6 @@ interface SymptomSelectionProps {
 export default function SymptomSelection({
   symptoms, 
   selectedSymptoms, 
-  inputMode, 
   selectedSubRegion,
   copyPainScale,
   setSelectedSymptoms,
@@ -43,8 +41,6 @@ export default function SymptomSelection({
   return (
     
     <>
-    {inputMode === "select" && (
-
     <fieldset className={assessmentStyles.fieldset}>
       <legend className={assessmentStyles.legend}>
         Wählen Sie Ihre Symptome
@@ -92,6 +88,9 @@ export default function SymptomSelection({
                     })));                  
                     }}
                   ></input>
+                  <p className={assessmentStyles.sliderHint}>
+                    0 = kein Schmerz · 10 = stärkster vorstellbarer Schmerz
+                  </p>
                 </>
                 )
               }
@@ -100,7 +99,6 @@ export default function SymptomSelection({
     }
 
     </fieldset>
-    )}
 
     <button
         type="button"

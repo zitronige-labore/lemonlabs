@@ -7,17 +7,19 @@
 import assessmentStyles from "../../Assessment.module.css";
 
 // import needed types
-import { Step, InputMode, SubRegion } from "../../../types/assessment";
+import { Step, SubRegion } from "../../../types/assessment";
 
 // define props/ get everything needed from page
 interface SymptomCategoryProps {
   categories: { category: string; step: Step }[];
   setStep: (step: Step) => void;
-  setInputMode: (inputMode: InputMode) => void;
   selectedSubRegion: SubRegion | null;
 }
 
-export default function SymptomCategory({categories, setStep, setInputMode, selectedSubRegion}: SymptomCategoryProps) {
+export default function SymptomCategory({categories, 
+  setStep, 
+  selectedSubRegion
+}: SymptomCategoryProps) {
   return (
     <>
     <p className={assessmentStyles.selectedText}>
@@ -38,7 +40,6 @@ export default function SymptomCategory({categories, setStep, setInputMode, sele
                 className={assessmentStyles.regionButton}
                 onClick={() => {
                   setStep(element.step);
-                  setInputMode("select");
                 }}
               >
                 {element.category}
@@ -49,7 +50,6 @@ export default function SymptomCategory({categories, setStep, setInputMode, sele
             type="button"
             className={assessmentStyles.regionButton}
             onClick={() => {
-              setInputMode("text");
               setStep("textInput");
             }}
           >

@@ -35,7 +35,6 @@ import SymptomTree from "./assessment/components/symptomSteps/symptomTree";
 import type {
   AdditionalData,
   BasisData,
-  InputMode,
   MainRegion,
   RedFlags,
   Step,
@@ -90,11 +89,6 @@ export default function Home() {
   */
   const [selectedSubRegion, setSelectedSubRegion] =
     useState<SubRegion | null>(null);
-
-  /*
-    Speichert, ob die Symptome per Freitext oder per Auswahl angegeben werden.
-  */
-  const [inputMode, setInputMode] = useState<InputMode>(null);
 
   /*
     Speichert die Freitextbeschreibung der Beschwerden.
@@ -270,7 +264,6 @@ export default function Home() {
   function selectMainRegion(region: MainRegion) {
     setSelectedMainRegion(region);
     setSelectedSubRegion(null);
-    setInputMode(null);
   }
 
   /*
@@ -324,7 +317,6 @@ export default function Home() {
   function resetProcess() {
     setSelectedMainRegion(null);
     setSelectedSubRegion(null);
-    setInputMode(null);
     setSymptomText([]);
     setSelectedSymptoms([]);
     setCopyPainScale({});
@@ -342,7 +334,6 @@ export default function Home() {
       noRedFlags,
       selectedMainRegion,
       selectedSubRegion,
-      inputMode,
       symptomText,
       selectedSymptoms,
       basisData,
@@ -432,8 +423,6 @@ export default function Home() {
           <SymptomTree
             step={step}
             setStep={goToStep}
-            inputMode={inputMode}
-            setInputMode={setInputMode}
             selectedSubRegion={selectedSubRegion}
             toggleSymptom={toggleSymptom}
             selectedSymptoms={selectedSymptoms}
@@ -483,7 +472,6 @@ export default function Home() {
               basisData={basisData}
               selectedMainRegion={selectedMainRegion}
               selectedSubRegion={selectedSubRegion}
-              inputMode={inputMode}
               symptomText={symptomText}
               selectedSymptoms={selectedSymptoms}
               additionalData={additionalData}

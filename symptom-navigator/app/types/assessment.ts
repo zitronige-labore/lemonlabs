@@ -84,13 +84,9 @@ export type Step =
 
 /*
   Zusatzangaben der Nutzerin oder des Nutzers.
-
-  medication   = neuere Schreibweise
-  medications  = ältere Schreibweise zur Kompatibilität
 */
 export type AdditionalData = {
   medication?: string;
-  medications?: string;
 
   conditions: string;
 
@@ -159,14 +155,6 @@ export type SubRegion =
   | "Psyche"
   | "Keine bestimmte Region / mehrere Stellen";
 
-/*
-  Gibt an, wie Beschwerden eingegeben werden.
-
-  "text"   = Freitextbeschreibung
-  "select" = Auswahl aus vorgegebenen Symptomen
-  null     = Noch keine Auswahl getroffen
-*/
-export type InputMode = "text" | "select" | null;
 
 /*
   Enthält alle möglichen Warnzeichen,

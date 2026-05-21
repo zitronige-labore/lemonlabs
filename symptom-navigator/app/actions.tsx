@@ -420,7 +420,7 @@ export async function sendDataToAi() {
         'x-api-key': 'sk-rwai1swh1cJ0JOROAK8iLA'
       },
       body: JSON.stringify({
-        model: 'medgemma:4b',
+        model: 'medgemma:27b',
         messages: [{ role: 'user', content: prompt }],
         stream: false,
       }),

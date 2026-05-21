@@ -9,7 +9,6 @@ import { useState } from "react";
 import homeStyles from "../../Home.module.css";
 
 import type {
-  InputMode,
   SubRegion,
   MainRegion,
   AdditionalData
