@@ -88,6 +88,9 @@ export default function SymptomSelection({
                     })));                  
                     }}
                   ></input>
+                  <p className={assessmentStyles.sliderHint}>
+                    0 = kein Schmerz · 10 = stärkster vorstellbarer Schmerz
+                  </p>
                 </>
                 )
               }
