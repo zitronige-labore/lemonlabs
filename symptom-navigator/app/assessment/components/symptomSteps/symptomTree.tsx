@@ -41,10 +41,15 @@ export default function SymptomTree({
   basisdata
 }: SymptomTreeProps) {
 
+  // importing gender to show correct symptoms
   const gender = basisdata.gender;
- const categoryProps = {setStep,  selectedSubRegion};
+
+  // props for category and symptom steps
+  const categoryProps = {setStep,  selectedSubRegion};
   const selectionProps = {setStep,  selectedSubRegion, toggleSymptom, selectedSymptoms, setCopyPainScale, copyPainScale, setSelectedSymptoms};
 
+
+  // list for category pages
   const categoryList: {
   step: Step;
   categories: {
@@ -187,6 +192,7 @@ export default function SymptomTree({
   ] 
 
 
+  // list for symptom pages
   const symptomList: {
   step: Step;
   symptoms: {
@@ -616,6 +622,7 @@ export default function SymptomTree({
 
     <>
 
+      {/* iterating through objects above for category steps */}
       {categoryList.map((element) =>
           (step as Step) == element.step ? (
             <SymptomCategory
@@ -626,6 +633,7 @@ export default function SymptomTree({
         ) : null
       )}
 
+      {/* iterating through objects above for symptom steps */}
       {symptomList.map((element) =>
           (step as Step) == element.step ? (
             <SymptomSelection
