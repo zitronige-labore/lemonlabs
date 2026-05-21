@@ -14,14 +14,12 @@ import SymptomCategory from "./symptomCategory";
 import type { Dispatch, SetStateAction } from "react";
 
 // import needed types
-import { Step, InputMode, SubRegion, BasisData  } from "../../../types/assessment";
+import { Step, SubRegion, BasisData  } from "../../../types/assessment";
 
 // define props/ get everything needed from page
 interface SymptomTreeProps {
-  inputMode: InputMode;
   setStep: (step: Step) => void;
   toggleSymptom: (symptom: string) => void;
-  setInputMode: (inputMode: InputMode) => void;
   setSelectedSymptoms: Dispatch<SetStateAction<string[]>>;
   selectedSymptoms: string[];
   step: Step;
@@ -35,12 +33,10 @@ export default function SymptomTree({
   step, 
   selectedSubRegion, 
   selectedSymptoms, 
-  inputMode, 
   copyPainScale,
   setSelectedSymptoms,
   setStep, 
   toggleSymptom, 
-  setInputMode,
   setCopyPainScale,
   basisdata
 }: SymptomTreeProps) {
@@ -58,7 +54,7 @@ export default function SymptomTree({
                     { category: "aussenohr", step: "aussenOhr" }
                   ]}
                   setStep={setStep}
-                  setInputMode={setInputMode}
+                  
                   selectedSubRegion={selectedSubRegion}
                 />
               )}
@@ -74,7 +70,7 @@ export default function SymptomTree({
                             { symptomName: "Rötung und Überwärmung der Muschel", schmerzen: true, symptomValue: "Rötung/Überwärmung: Die Muschel ist rot und heiß" },
                             { symptomName: "Kleine Bläschen an der Ohrmuschel", schmerzen: true, symptomValue: "Bläschenbildung: Kleine Bläschen an der Muschel" }
                           ]}
-                          inputMode={inputMode}
+                          
                           setStep={setStep}
                           toggleSymptom={toggleSymptom}
                           selectedSymptoms={selectedSymptoms}
@@ -99,7 +95,7 @@ export default function SymptomTree({
                             { symptomName: "Hörsturz (Plötzliche Taubheit)", schmerzen: false, symptomValue: "Hörsturz: Plötzliche, meist einseitige Taubheit ohne erkennbare Ursache" },
                             { symptomName: "Ton wird auf Ohren unterschiedlich hoch gehört", schmerzen: false, symptomValue: "Ein Ton wird auf beiden Ohren unterschiedlich hoch wahrgenommen" }
                           ]}
-                          inputMode={inputMode}
+                          
                           setStep={setStep}
                           toggleSymptom={toggleSymptom}
                           selectedSymptoms={selectedSymptoms}
@@ -125,7 +121,7 @@ export default function SymptomTree({
                             { symptomName: "Extreme Lichtempfindlichkeit ", schmerzen: false, symptomValue: "Lichtempfindlichkeit: Schmerzhaftes oder unerträgliches Gefühl bei normalem Tages- oder Raumlicht, zwingt zum Zukneifen der Augen." },
                             { symptomName: "Verzerrtsehen / Wellige Linien", schmerzen: false, symptomValue: "Verzerrtsehen: Gerade Linien (z. B. Fliesenbaufugen, Textzeilen) erscheinen verbogen, wellig oder verzerrt (Hinweis auf Makulaerkrankung)." }
                           ]}
-                          inputMode={inputMode}
+                          
                           setStep={setStep}
                           toggleSymptom={toggleSymptom}
                           selectedSymptoms={selectedSymptoms}
@@ -148,7 +144,7 @@ export default function SymptomTree({
                             { symptomName: "Austritt von glasklarer Flüssigkeit nach Kopfverletzung", schmerzen: false, symptomValue: "Rhinorrhö (Liquorverdacht): Unstillbares Laufen von spiegelklarer, wässriger Flüssigkeit aus der Nase nach einem Sturz oder Schlag auf den Kopf (Verdacht auf Schädelbasisbruch)." },
                             { symptomName: "Trockene Schleimhäute mit schmerzhafter Borkenbildung", schmerzen: true, symptomValue: "Rhinitis sicca: Extrem trockenes Gefühl in der Nase, schmerzhafte Krusten- und Borkenbildung, die beim Lösen leicht blutet." }
                           ]}
-                          inputMode={inputMode}
+                          
                           setStep={setStep}
                           toggleSymptom={toggleSymptom}
                           selectedSymptoms={selectedSymptoms}
@@ -170,7 +166,7 @@ export default function SymptomTree({
                             { category: "Dringende Warnsignale (Kopf)", step: "kopfWarnsignale" }
                           ]}
                           setStep={setStep}
-                          setInputMode={setInputMode}
+                          
                           selectedSubRegion={selectedSubRegion}
                  />
               )}
@@ -182,7 +178,7 @@ export default function SymptomTree({
                             { symptomName: "Schmerz zieht vom Hinterkopf zur Stirn", schmerzen: true, symptomValue: "Schmerz zieht vom Hinterkopf hoch bis in die Stirn" },
                             { symptomName: "Schwerer Druck auf dem gesamten Schädel", schmerzen: true, symptomValue: "Gefühl von schwerem Druck auf dem gesamten Schädel, ohne Pulsieren" }
                           ]}
-                          inputMode={inputMode}
+                          
                           setStep={setStep}
                           toggleSymptom={toggleSymptom}
                           selectedSymptoms={selectedSymptoms}
@@ -199,7 +195,7 @@ export default function SymptomTree({
                             { symptomName: "Einseitiger, hämmernder/pulsierender Schmerz", schmerzen: true, symptomValue: "Einseitiger, hämmernder oder heftig pulsierender Schmerz" },
                             { symptomName: "Schmerz wird bei Bewegung schlimmer", schmerzen: true, symptomValue: "Schmerz verschlimmert sich bei alltäglicher Bewegung (z. B. Treppensteigen, Bücken)" }
                           ]}
-                          inputMode={inputMode}
+                          
                           setStep={setStep}
                           toggleSymptom={toggleSymptom}
                           selectedSymptoms={selectedSymptoms}
@@ -216,7 +212,7 @@ export default function SymptomTree({
                             { symptomName: "Extremer, bohrender Schmerz hinter einem Auge", schmerzen: true, symptomValue: "Extrem starker, unerträglicher, bohrender oder brennender Schmerz streng hinter einem Auge" },
                             { symptomName: "Schmerzattacken nachts oder zur selben Uhrzeit", schmerzen: true, symptomValue: "Schmerz tritt in heftigen Attacken auf, meistens nachts oder zur gleichen Uhrzeit" }
                           ]}
-                          inputMode={inputMode}
+                          
                           setStep={setStep}
                           toggleSymptom={toggleSymptom}
                           selectedSymptoms={selectedSymptoms}
@@ -234,7 +230,7 @@ export default function SymptomTree({
                             { symptomName: "Extreme Licht- oder Lärmempfindlichkeit", schmerzen: false, symptomValue: "Extreme Empfindlichkeit gegen normales Licht, Fernseher oder laute Geräusche" },
                             { symptomName: "Sehen von Flimmern, Zacken oder Mustern ", schmerzen: false, symptomValue: "Sehen von Flimmern, Zacken, Mustern oder hellen Punkten (bevor der Schmerz anfängt)" }
                           ]}
-                          inputMode={inputMode}
+                          
                           setStep={setStep}
                           toggleSymptom={toggleSymptom}
                           selectedSymptoms={selectedSymptoms}
@@ -252,7 +248,7 @@ export default function SymptomTree({
                             { symptomName: "Kopfschmerz mit Fieber und steifem Nacken", schmerzen: true, symptomValue: "Kopfschmerz kombiniert mit Fieber, Schüttelfrost und steifem Nacken" },
                             { symptomName: "Kopfschmerz mit Lähmung oder Sprachstörung", schmerzen: true, symptomValue: "Gleichzeitige Lähmungen im Gesicht/Arm, Sprachstörungen, Sehstörungen oder Verwirrtheit" }
                           ]}
-                          inputMode={inputMode}
+                          
                           setStep={setStep}
                           toggleSymptom={toggleSymptom}
                           selectedSymptoms={selectedSymptoms}
@@ -270,7 +266,7 @@ export default function SymptomTree({
                             { category: "Dringende Warnsignale (Nacken)", step: "nackenWarnsignale" }
                           ]}
                           setStep={setStep}
-                          setInputMode={setInputMode}
+                          
                           selectedSubRegion={selectedSubRegion}
                  />
               )}
@@ -284,7 +280,7 @@ export default function SymptomTree({
                             { symptomName: "Knirschen bei Kopfbewegungen", schmerzen: false, symptomValue: "HWS-Krepitation: Hörbares oder spürbares Reiben und Knacken in der Halswirbelsäule beim Kreisen des Kopfes." },
                             { symptomName: "Ziehender Schmerz strahlt in den Hinterkopf", schmerzen: true, symptomValue: "Zervikalgie: Schmerzen im Nacken, die bandförmig nach oben in den Hinterkopf ziehen und dort Kopfschmerzen auslösen." }
                           ]}
-                          inputMode={inputMode}
+                          
                           setStep={setStep}
                           toggleSymptom={toggleSymptom}
                           selectedSymptoms={selectedSymptoms}
@@ -304,7 +300,7 @@ export default function SymptomTree({
                             { symptomName: "Schwindel oder Sehstörungen bei Kopfdrehung", schmerzen: false, symptomValue: "Zervikaler Schwindel: Auftreten von Drehschwindel, Gangunsicherheit oder flimmernden Augen direkt bei schnellen Kopfbewegungen." },
                             { symptomName: "Nackenschmerz nach Sturz oder Unfall (Peitschenhieb)", schmerzen: true, symptomValue: "HWS-Trauma: Akut einsetzende Schmerzen nach einem Auffahrunfall, Sturz oder heftigem Ruck (Verdacht auf Schleudertrauma/Fraktur)." }
                           ]}
-                          inputMode={inputMode}
+                          
                           setStep={setStep}
                           toggleSymptom={toggleSymptom}
                           selectedSymptoms={selectedSymptoms}
@@ -323,7 +319,7 @@ export default function SymptomTree({
                             { category: "Zahnfleisch & Mundschleimhaut", step: "mundZaehneSchleimhaut" }
                           ]}
                           setStep={setStep}
-                          setInputMode={setInputMode}
+                          
                           selectedSubRegion={selectedSubRegion}
                  />
               )}
@@ -338,7 +334,7 @@ export default function SymptomTree({
                             { symptomName: "Nächtliches Zähneknirschen / Kieferschmerzen am Morgen", schmerzen: true, symptomValue: "Bruxismus/CMD: Dumpfer Druckschmerz im Kiefergelenk und den Schläfen direkt nach dem Aufwachen, oft mit Verspannungen." },
                             { symptomName: "Schmerzhafte Schwellung der Wange (\"Dicke Backe\")", schmerzen: true, symptomValue: "Abszess (Red Flag): Rasch zunehmende, heiße Schwellung im Gesicht oder am Kiefer, teils mit Fieber oder Schluckbeschwerden (Sofortiger Behandlungsbedarf)." }
                           ]}
-                          inputMode={inputMode}
+                          
                           setStep={setStep}
                           toggleSymptom={toggleSymptom}
                           selectedSymptoms={selectedSymptoms}
@@ -359,7 +355,7 @@ export default function SymptomTree({
                             { symptomName: "Anhaltende Mundtrockenheit (Xerostomie)", schmerzen: false, symptomValue: "Mundtrockenheit: Zu geringer Speichelfluss, brennendes Gefühl auf der Zunge, Erschwerung beim Schlucken trockener Nahrung." },
                             { symptomName: "Chronisch gerötete, brennende Zunge", schmerzen: true, symptomValue: "Zungenbrennen: Missempfindungen oder brennender Schmerz auf der Zungenoberfläche ohne sichtbare Verletzung (z.B. bei Vitaminmangel)." }
                           ]}
-                          inputMode={inputMode}
+                          
                           setStep={setStep}
                           toggleSymptom={toggleSymptom}
                           selectedSymptoms={selectedSymptoms}
@@ -379,7 +375,7 @@ export default function SymptomTree({
                             { category: "Leber & Galle", step: "mdGalle" }
                           ]}
                           setStep={setStep}
-                          setInputMode={setInputMode}
+                          
                           selectedSubRegion={selectedSubRegion}
                  />
               )}
@@ -393,7 +389,7 @@ export default function SymptomTree({
                             { symptomName: "Kloßgefühl im Hals", schmerzen: false, symptomValue: "Kloßgefühl: Ein ständiges Druck- oder Fremdkörpergefühl im Halsbereich." },
                             { symptomName: "Schmerz direkt beim Schluckvorgang", schmerzen: true, symptomValue: "Schmerz beim Schlucken: Stechender Schmerz direkt beim Schluckvorgang." }
                           ]}
-                          inputMode={inputMode}
+                          
                           setStep={setStep}
                           toggleSymptom={toggleSymptom}
                           selectedSymptoms={selectedSymptoms}
@@ -413,7 +409,7 @@ export default function SymptomTree({
                             { symptomName: "Übelkeit & Erbrechen von Mageninhalt", schmerzen: false, symptomValue: "Übelkeit & Erbrechen: Flaues Gefühl im Magen bis hin zum Erbrechen von Mageninhalt." },
                             { symptomName: "Kaffeesatz-Erbrechen (Dunkel & krümelig)", schmerzen: true, symptomValue: "Kaffeesatz-Erbrechen: Dunkles, krümeliges Erbrochenes (Sofortiger Notfall!)." }
                           ]}
-                          inputMode={inputMode}
+                          
                           setStep={setStep}
                           toggleSymptom={toggleSymptom}
                           selectedSymptoms={selectedSymptoms}
@@ -432,7 +428,7 @@ export default function SymptomTree({
                             { symptomName: "Auffällig dunkler Urin (Cola-Farbe)", schmerzen: false, symptomValue: "Dunkler Urin: Urin ist auffällig dunkel (wie Cola oder dunkles Bier)." },
                             { symptomName: "Sandfarbener, fast weißer Stuhlgang", schmerzen: false, symptomValue: "Heller Stuhl: Der Stuhlgang ist sandfarben oder fast weiß entfärbt." }
                           ]}
-                          inputMode={inputMode}
+                          
                           setStep={setStep}
                           toggleSymptom={toggleSymptom}
                           selectedSymptoms={selectedSymptoms}
@@ -452,7 +448,7 @@ export default function SymptomTree({
                             { category: "Enddarm & Stuhlgang", step: "mdEnddarm" }
                           ]}
                           setStep={setStep}
-                          setInputMode={setInputMode}
+                          
                           selectedSubRegion={selectedSubRegion}
                  />
               )}
@@ -466,7 +462,7 @@ export default function SymptomTree({
                             { symptomName: "Verstopfung / Sehr harter Stuhlgang", schmerzen: true, symptomValue: "Verstopfung: Seltener Stuhlgang (weniger als 3-mal pro Woche) oder sehr harter Stuhl." },
                             { symptomName: "Fettstuhl (glänzend, schwimmt oben)", schmerzen: false, symptomValue: "Fettstuhl: Glänzender, klebriger Stuhl, der in der Toilette oben schwimmt." }
                           ]}
-                          inputMode={inputMode}
+                          
                           setStep={setStep}
                           toggleSymptom={toggleSymptom}
                           selectedSymptoms={selectedSymptoms}
@@ -484,7 +480,7 @@ export default function SymptomTree({
                             { symptomName: "Frisches, hellrotes Blut auf dem Stuhl", schmerzen: false, symptomValue: "Frisches Blut: Hellrote Blutspuren auf dem Stuhl oder am Toilettenpapier." },
                             { symptomName: "Bleistiftstuhl (Auffällig dünner Stuhl)", schmerzen: false, symptomValue: "Bleistiftstuhl: Auffällig dünn geformter Stuhl." }
                           ]}
-                          inputMode={inputMode}
+                          
                           setStep={setStep}
                           toggleSymptom={toggleSymptom}
                           selectedSymptoms={selectedSymptoms}
@@ -505,7 +501,7 @@ export default function SymptomTree({
                             { category: "Neurologie, Gefäße & Warnsignale", step: "armGefaesse" }
                           ]}
                           setStep={setStep}
-                          setInputMode={setInputMode}
+                          
                           selectedSubRegion={selectedSubRegion}
                  />
               )}
@@ -520,7 +516,7 @@ export default function SymptomTree({
                             { symptomName: "Plötzlicher Knall mit Muskelvorwölbung", schmerzen: true, symptomValue: "Bizepssehnen-Ruptur: Plötzlicher \"Knall\" mit anschließender Vorwölbung des Muskelbauchs (\"Popeye-Syndrom\")." },
                             { symptomName: "Punktueller, messerscharfer Schmerz bei Bewegung", schmerzen: true, symptomValue: "Muskelkater vs. Riss: Diffuser Druckschmerz nach Sport vs. punktueller, messerscharfer Schmerz bei Bewegung." }
                           ]}
-                          inputMode={inputMode}
+                          
                           setStep={setStep}
                           toggleSymptom={toggleSymptom}
                           selectedSymptoms={selectedSymptoms}
@@ -545,7 +541,7 @@ export default function SymptomTree({
                             { symptomName: "Finger bleibt in Beugung hängen und schnappt", schmerzen: true, symptomValue: "Trigger-Finger: Finger bleibt in Beugung hängen und \"schnappt\" erst bei Kraftaufwand auf." },
                             { symptomName: "Härte, knöcherne Verdickungen an Fingergelenken", schmerzen: true, symptomValue: "Arthrose-Knoten: Harte, knöcherne Verdickungen an den Fingergelenken (Heberden- & Bouchard-Knoten)." }
                           ]}
-                          inputMode={inputMode}
+                          
                           setStep={setStep}
                           toggleSymptom={toggleSymptom}
                           selectedSymptoms={selectedSymptoms}
@@ -565,7 +561,7 @@ export default function SymptomTree({
                             { symptomName: "Fingernagel braucht > 2 Sek. um rosa zu werden", schmerzen: false, symptomValue: "Kapillarfüllzeit: Nach Druck auf den Nagel dauert es länger als 2 Sek., bis er wieder rosa wird." },
                             { symptomName: "Unerträglicher Schmerz, Haut blass & kalt", schmerzen: true, symptomValue: "Ischämieschmerz: Unerträglicher Schmerz bei blasser, kalter Haut (Gefäßverschluss - Notfall!)." }
                           ]}
-                          inputMode={inputMode}
+                          
                           setStep={setStep}
                           toggleSymptom={toggleSymptom}
                           selectedSymptoms={selectedSymptoms}
@@ -586,7 +582,7 @@ export default function SymptomTree({
                             { category: "Lymphknoten & Drüsen", step: "halsDruesen" }
                           ]}
                           setStep={setStep}
-                          setInputMode={setInputMode}
+                          
                           selectedSubRegion={selectedSubRegion}
                  />
               )}
@@ -599,7 +595,7 @@ export default function SymptomTree({
                             { symptomName: "Extremer, auffälliger Mundgeruch", schmerzen: false, symptomValue: "Extremer Mundgeruch" },
                             { symptomName: "Eine Mandel drückt das Gaumensegel zur Seite", schmerzen: true, symptomValue: "Einseitige Vorwölbung: Eine Mandel drückt das Gaumensegel zur Seite" }
                           ]}
-                          inputMode={inputMode}
+                          
                           setStep={setStep}
                           toggleSymptom={toggleSymptom}
                           selectedSymptoms={selectedSymptoms}
@@ -618,7 +614,7 @@ export default function SymptomTree({
                             { symptomName: "Räusperzwang (Ständiger Drang frei zu machen)", schmerzen: false, symptomValue: "Räusperzwang: Ständiger Drang, den Hals freizumachen" },
                             { symptomName: "Trockenes Kratzen im Hals (morgens)", schmerzen: false, symptomValue: "Trockenes Kratzen: Besonders morgens nach dem Aufstehen" }
                           ]}
-                          inputMode={inputMode}
+                          
                           setStep={setStep}
                           toggleSymptom={toggleSymptom}
                           selectedSymptoms={selectedSymptoms}
@@ -639,7 +635,7 @@ export default function SymptomTree({
                             { symptomName: "Bellender, trockener, metallischer Husten", schmerzen: false, symptomValue: "Bellender Husten: Hart, trocken, metallisch klingend" },
                             { symptomName: "Stechender Schmerz beim Sprechen strahlt zum Ohr", schmerzen: true, symptomValue: "Stechender Schmerz beim Sprechen: Schmerz strahlt oft zum Ohr aus" }
                           ]}
-                          inputMode={inputMode}
+                          
                           setStep={setStep}
                           toggleSymptom={toggleSymptom}
                           selectedSymptoms={selectedSymptoms}
@@ -658,7 +654,7 @@ export default function SymptomTree({
                             { symptomName: "Lymphknoten unter der Haut verschieblich", schmerzen: false, symptomValue: "Verschieblich: „Kugel“ lässt sich unter der Haut bewegen" },
                             { symptomName: "Lymphknoten fest mit Untergrund verbacken", schmerzen: false, symptomValue: "Verbacken: Gewebe fühlt sich fest mit dem Untergrund verbunden an" }
                           ]}
-                          inputMode={inputMode}
+                          
                           setStep={setStep}
                           toggleSymptom={toggleSymptom}
                           selectedSymptoms={selectedSymptoms}
@@ -679,7 +675,7 @@ export default function SymptomTree({
                             { symptomName: "Herzrasen, Herzstolpern oder Aussetzer", schmerzen: false, symptomValue: "Palpitationen: Spürbar unregelmäßiger, stolpernder oder extrem beschleunigter Herzschlag im Brustkorb." },
                             { symptomName: "Husten mit blutigem Schleim oder Auswurf", schmerzen: false, symptomValue: "Hämoptoe: Husten mit Beimengung von frischem Blut oder bräunlichem Auswurf." }
                           ]}
-                          inputMode={inputMode}
+                          
                           setStep={setStep}
                           toggleSymptom={toggleSymptom}
                           selectedSymptoms={selectedSymptoms}
@@ -699,7 +695,7 @@ export default function SymptomTree({
                             { symptomName: "Morgensteifigkeit der Wirbelsäule (> 30 Min.)", schmerzen: true, symptomValue: "Morgensteifigkeit: Wirbelsäule ist nach dem Aufstehen spürbar steif, Besserung durch Bewegung." },
                             { symptomName: "Schmerz verstärkt sich beim tiefen Einatmen", schmerzen: true, symptomValue: "Interkostal-Schmerz: Schmerz zieht gürtelförmig um den Brustkorb, atemabhängig." }
                           ]}
-                          inputMode={inputMode}
+                          
                           setStep={setStep}
                           toggleSymptom={toggleSymptom}
                           selectedSymptoms={selectedSymptoms}
@@ -727,7 +723,7 @@ export default function SymptomTree({
                             { category: "Dringende Warnsignale (Genital)", step: "genitalWarnsignale" }
                           ]}
                           setStep={setStep}
-                          setInputMode={setInputMode}
+                          
                           selectedSubRegion={selectedSubRegion}
                  />
               )}
@@ -741,7 +737,7 @@ export default function SymptomTree({
                             { symptomName: "Erschwertes Wasserlassen / Abgeschwächter Harnstrahl", schmerzen: false, symptomValue: "Harnretention-Anfang: Das Wasserlassen beginnt verzögert, der Harnstrahl ist auffällig schwach oder unterbrochen." },
                             { symptomName: "Sichtbares Blut im Urin (Hämaturie)", schmerzen: false, symptomValue: "Makrohämaturie: Der Urin ist rötlich, fleischwasserfarben oder dunkelbraun verfärbt." }
                           ]}
-                          inputMode={inputMode}
+                          
                           setStep={setStep}
                           toggleSymptom={toggleSymptom}
                           selectedSymptoms={selectedSymptoms}
@@ -763,7 +759,7 @@ export default function SymptomTree({
                             { symptomName: "Schmerzen beim oder nach dem Geschlechtsverkehr", schmerzen: true, symptomValue: "Dyspareunie: Schmerzen im Bereich der Scheide oder tief im Unterleib bei sexueller Intimität." },
                             { symptomName: "Tastbare Knoten oder Schwellung der Schamlippen", schmerzen: false, symptomValue: "Schwellung im Intimbereich: Tastbare Verhärtungen oder schmerzhafte Schwellungen (z.B. Bartholini-Zyste)." }
                           ]}
-                          inputMode={inputMode}
+                          
                           setStep={setStep}
                           toggleSymptom={toggleSymptom}
                           selectedSymptoms={selectedSymptoms}
@@ -784,7 +780,7 @@ export default function SymptomTree({
                             { symptomName: "Schmerzen oder Druckgefühl zwischen Anus und Genital", schmerzen: true, symptomValue: "Prostatitis-Verdacht: Schmerzen im Dammbereich, oft ausstrahlend in den unteren Rücken oder Hoden." },
                             { symptomName: "Rötung, Juckreiz oder Belag auf Eichel/Vorhaut", schmerzen: false, symptomValue: "Balanitis: Entzündung der Eichel mit Juckreiz, Rötung oder weißen, trockenen Belägen." }
                           ]}
-                          inputMode={inputMode}
+                          
                           setStep={setStep}
                           toggleSymptom={toggleSymptom}
                           selectedSymptoms={selectedSymptoms}
@@ -805,7 +801,7 @@ export default function SymptomTree({
                             { symptomName: "Schmerzen beim oder nach dem Geschlechtsverkehr", schmerzen: true, symptomValue: "Dyspareunie: Schmerzen im Genital- oder tiefen Beckenbereich während oder nach Intimität." },
                             { symptomName: "Tastbare Knoten, Schwellungen oder Raumforderungen", schmerzen: false, symptomValue: "Genitale Gewebeveränderung: Neu aufgetretene Knoten oder Schwellungen im Intimbereich." }
                           ]}
-                          inputMode={inputMode}
+                          
                           setStep={setStep}
                           toggleSymptom={toggleSymptom}
                           selectedSymptoms={selectedSymptoms}
@@ -825,7 +821,7 @@ export default function SymptomTree({
                             { symptomName: "Schmerzhafte Dauererektion > 4 Std. (Priapismus)", schmerzen: true, symptomValue: "Priapismus: Schmerzhafte Erektion des Penises ohne sexuelle Stimulation (Gefahr von Gewebeschäden)." },
                             { symptomName: "Akuter, heftigster Unterleibsschmerz (akutes Abdomen)", schmerzen: true, symptomValue: "Unterbauch-Katastrophe: Plötzlich einschießende, messerscharfe Unterleibsschmerzen mit harter Bauchdecke, Kreislaufschwäche oder Fieber (z.B. Verdacht auf Eileiterschwangerschaft/Zystenruptur bei biologisch weiblich)." }
                           ]}
-                          inputMode={inputMode}
+                          
                           setStep={setStep}
                           toggleSymptom={toggleSymptom}
                           selectedSymptoms={selectedSymptoms}
@@ -846,7 +842,7 @@ export default function SymptomTree({
                             { category: "Dringende Warnsignale (Beine)", step: "beineWarnsignale" }
                           ]}
                           setStep={setStep}
-                          setInputMode={setInputMode}
+                          
                           selectedSubRegion={selectedSubRegion}
                  />
               )}
@@ -864,7 +860,7 @@ export default function SymptomTree({
                             { symptomName: "Gefühl der Instabilität / Wegknicken des Knies", schmerzen: false, symptomValue: "Instabilitätsgefühl: Das Gefühl, das Gelenk hält nicht stand, oder das Knie knickt bei Belastung unwillkürlich weg (Verdacht auf Bänderriss / Meniskusschaden)." },
                             { symptomName: "Blockierung des Gelenks / Bewegungseinschränkung", schmerzen: true, symptomValue: "Gelenkblockade: Das Gelenk lässt sich plötzlich ab einem bestimmten Winkel nicht mehr weiter strecken oder beugen." }
                           ]}
-                          inputMode={inputMode}
+                          
                           setStep={setStep}
                           toggleSymptom={toggleSymptom}
                           selectedSymptoms={selectedSymptoms}
@@ -885,7 +881,7 @@ export default function SymptomTree({
                             { symptomName: "Schmerzen an der Achillessehne bei Druck/Belastung", schmerzen: true, symptomValue: "Achillodynie: Schmerzhafter, oft verdickter Bereich an der Sehne über der Ferse, besonders beim Abstoßen des Fußes." },
                             { symptomName: "Schienbeinkantenschmerz (Shin Splints)", schmerzen: true, symptomValue: "Periostitis: Belastungsschmerz an der Vorderseite des Unterschenkels entlang des Schienbeinknochens (häufig bei Läufern)." }
                           ]}
-                          inputMode={inputMode}
+                          
                           setStep={setStep}
                           toggleSymptom={toggleSymptom}
                           selectedSymptoms={selectedSymptoms}
@@ -907,7 +903,7 @@ export default function SymptomTree({
                             { symptomName: "Unruhige Beine am Abend / im Liegen (Bewegungsdrang)", schmerzen: false, symptomValue: "Restless-Legs-Syndrom: Quälender Unruhezustand oder Missempfindungen in den Beinen, die nur durch Aufstehen und Umhergehen kurzzeitig besser werden." },
                             { symptomName: "Chronisch kalte Füße oder bläuliche Verfärbung", schmerzen: false, symptomValue: "Durchblutungsstörung peripher: Füße sind dauerhaft kalt, schlecht durchblutet, Zehen verfärben sich bei Kälte blass oder bläulich." }
                           ]}
-                          inputMode={inputMode}
+                          
                           setStep={setStep}
                           toggleSymptom={toggleSymptom}
                           selectedSymptoms={selectedSymptoms}
@@ -928,7 +924,7 @@ export default function SymptomTree({
                             { symptomName: "Schlecht heilende Wunden oder Geschwüre am Fuß", schmerzen: false, symptomValue: "Ulkus / Diabetischer Fuß: Offene, nicht abheilende Hautstellen, Gewebeveränderungen oder dunkle Flecken an den Zehen oder Fersen (besonders riskant bei Diabetes)." },
                             { symptomName: "Umknicktrauma mit sofortiger massiver Schwellung", schmerzen: true, symptomValue: "Schwere Distorsion / Fraktur: Nach einem Unfall oder Umknicken schwillt das Gelenk sofort massiv an, Auftreten oder Belastung ist völlig unmöglich." }
                           ]}
-                          inputMode={inputMode}
+                          
                           setStep={setStep}
                           toggleSymptom={toggleSymptom}
                           selectedSymptoms={selectedSymptoms}
@@ -954,7 +950,7 @@ export default function SymptomTree({
                             { symptomName: "Rote/lila Hautpunkte (nicht verblassend)", schmerzen: false, symptomValue: "Auftreten von kleinen, stecknadelkopfgroßen, roten oder lila Hautpunkten, die bei Druck (z. B. mit einem Glas) nicht verblassen" },
                             { symptomName: "Plötzliche, große blaue Flecken ohne Stoßen", schmerzen: false, symptomValue: "Plötzliches Auftreten von großen, blauen Flecken am Körper, ohne dass man sich gestoßen oder verletzt hat" }
                           ]}
-                          inputMode={inputMode}
+                          
                           setStep={setStep}
                           toggleSymptom={toggleSymptom}
                           selectedSymptoms={selectedSymptoms}

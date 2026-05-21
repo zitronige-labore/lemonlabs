@@ -8,7 +8,6 @@ import assessmentStyles from "../Assessment.module.css";
 import type {
   AdditionalData,
   BasisData,
-  InputMode,
   MainRegion,
   SubRegion,
 } from "../../types/assessment";
@@ -18,7 +17,6 @@ type SavedAssessmentData = {
   additionalData?: AdditionalData;
   selectedMainRegion?: MainRegion | null;
   selectedSubRegion?: SubRegion | null;
-  inputMode?: InputMode;
   symptomText?: string[];
   selectedSymptoms?: string[];
 };
@@ -30,7 +28,6 @@ type ResultStepProps = {
   selectedMainRegion: MainRegion | null;
   selectedSubRegion: SubRegion | null;
 
-  inputMode: InputMode;
 
   symptomText: string[];
   selectedSymptoms: string[];
@@ -52,7 +49,6 @@ export function ResultStep({
   additionalData,
   selectedMainRegion,
   selectedSubRegion,
-  inputMode,
   symptomText,
   selectedSymptoms,
   aiAnswer,
@@ -75,7 +71,6 @@ export function ResultStep({
     savedAssessmentData?.selectedMainRegion ?? selectedMainRegion;
   const displayedSubRegion =
     savedAssessmentData?.selectedSubRegion ?? selectedSubRegion;
-  const displayedInputMode = savedAssessmentData?.inputMode ?? inputMode;
   const displayedSymptomText = savedAssessmentData?.symptomText ?? symptomText;
   const displayedSelectedSymptoms =
     savedAssessmentData?.selectedSymptoms ?? selectedSymptoms;
@@ -85,8 +80,7 @@ export function ResultStep({
   const suspicions = aiAnswer?.assessment?.suspicions;
   const urgency = Number(aiAnswer?.assessment?.urgency);
 
-  const medicationsValue =
-    displayedAdditionalData.medications ||
+  const medicationValue =
     displayedAdditionalData.medication ||
     "Keine Angabe";
 
@@ -395,7 +389,7 @@ export function ResultStep({
           <p className={assessmentStyles.selectedText}>Zusatzangaben</p>
 
           <p>
-            Medikamente: <strong>{medicationsValue}</strong>
+            Medikamente: <strong>{medicationValue}</strong>
           </p>
 
           <p>

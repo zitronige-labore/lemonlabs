@@ -29,7 +29,7 @@ export function AdditionalInfoStep({
   const Pattern = /^[^,]+(,[^,]+)*$/;
 
   const medicationValue =
-    additionalData.medications || additionalData.medication || "";
+    additionalData.medication || "";
 
   return (
     <>
@@ -54,8 +54,7 @@ export function AdditionalInfoStep({
 
               setAdditionalData({
                 ...additionalData,
-                medication: value,
-                medications: value,
+                medication: value
               });
             }}
             onBlur={(event) => {
