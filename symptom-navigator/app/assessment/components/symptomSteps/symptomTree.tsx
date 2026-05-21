@@ -147,6 +147,42 @@ export default function SymptomTree({
         },
         { category: "Dringende Warnsignale (Genital)", step: "genitalWarnsignale" }
       ]
+    },
+    {step: "Oberschenkel",
+      categories:
+      [
+        { category: "Gelenkschmerzen & Steifheit", step: "beineGelenke" },
+        { category: "Muskelbeschwerden & Krämpfe", step: "beineMuskeln" },
+        { category: "Nerven, Gefäße & Durchblutung", step: "beineNervenGefaese" },
+        { category: "Dringende Warnsignale (Beine)", step: "beineWarnsignale" }             
+      ]
+    },
+    {step: "Knie",
+      categories:
+      [
+        { category: "Gelenkschmerzen & Steifheit", step: "beineGelenke" },
+        { category: "Muskelbeschwerden & Krämpfe", step: "beineMuskeln" },
+        { category: "Nerven, Gefäße & Durchblutung", step: "beineNervenGefaese" },
+        { category: "Dringende Warnsignale (Beine)", step: "beineWarnsignale" }             
+      ]
+    },
+    {step: "Unterschenkel",
+      categories:
+      [
+        { category: "Gelenkschmerzen & Steifheit", step: "beineGelenke" },
+        { category: "Muskelbeschwerden & Krämpfe", step: "beineMuskeln" },
+        { category: "Nerven, Gefäße & Durchblutung", step: "beineNervenGefaese" },
+        { category: "Dringende Warnsignale (Beine)", step: "beineWarnsignale" }             
+      ]
+    },
+    {step: "Fuß",
+      categories:
+      [
+        { category: "Gelenkschmerzen & Steifheit", step: "beineGelenke" },
+        { category: "Muskelbeschwerden & Krämpfe", step: "beineMuskeln" },
+        { category: "Nerven, Gefäße & Durchblutung", step: "beineNervenGefaese" },
+        { category: "Dringende Warnsignale (Beine)", step: "beineWarnsignale" }             
+      ]
     }
   ] 
 
@@ -513,6 +549,65 @@ export default function SymptomTree({
           { symptomName: "Schmerzhafte Dauererektion > 4 Std. (Priapismus)", schmerzen: true, symptomValue: "Priapismus: Schmerzhafte Erektion des Penises ohne sexuelle Stimulation (Gefahr von Gewebeschäden)." },
           { symptomName: "Akuter, heftigster Unterleibsschmerz (akutes Abdomen)", schmerzen: true, symptomValue: "Unterbauch-Katastrophe: Plötzlich einschießende, messerscharfe Unterleibsschmerzen mit harter Bauchdecke, Kreislaufschwäche oder Fieber (z.B. Verdacht auf Eileiterschwangerschaft/Zystenruptur bei biologisch weiblich)." }
         ]
+      },
+      {step: "beineGelenke",
+        symptoms:
+        [
+          { symptomName: "Anlaufschmerz am Morgen / nach Pausen", schmerzen: true, symptomValue: "Anlaufschmerz: Gelenkschmerz (oft Knie oder Hüfte) bei den ersten Schritten nach Ruhephasen, der nach einigen Minuten Bewegung nachlässt (typisch für Arthrose)." },
+          { symptomName: "Belastungsabhängiger Gelenkschmerz", schmerzen: true, symptomValue: "Belastungsschmerz: Schmerzen, die erst bei längerer Gehstrecke, Sport oder beim Treppenabsteigen auftreten und in Ruhe wieder verschwinden." },
+          { symptomName: "Ruheschmerz / Nächtlicher Gelenkschmerz", schmerzen: true, symptomValue: "Gelenk-Ruheschmerz: Schmerzen im Gelenk auch ohne Belastung, besonders stark in der Nacht oder im Liegen (Hinweis auf Entzündung oder fortgeschrittenen Verschleiß)." },
+          { symptomName: "Überwärmtes, rotes und geschwollenes Gelenk", schmerzen: true, symptomValue: "Arthritis-Verdacht: Ein einzelnes Gelenk ist stark geschwollen, deutlich überwärmt, gerötet und extrem druckschmerzhaft (Verdacht auf Gichtanfall oder bakterielle Entzündung)." },
+          { symptomName: "Morgensteifigkeit der Gelenke (> 30 Min.)", schmerzen: false, symptomValue: "Morgensteifigkeit Bein: Die Gelenke fühlen sich nach dem Aufwachen für längere Zeit wie eingerostet und unbeweglich an." },
+          { symptomName: "Hörbares Knirschen oder Reiben im Gelenk", schmerzen: false, symptomValue: "Krepitation: Spürbares oder hörbares Reiben („Schneeballknirschen“) im Gelenk bei Bewegung." },
+          { symptomName: "Gefühl der Instabilität / Wegknicken des Knies", schmerzen: false, symptomValue: "Instabilitätsgefühl: Das Gefühl, das Gelenk hält nicht stand, oder das Knie knickt bei Belastung unwillkürlich weg (Verdacht auf Bänderriss / Meniskusschaden)." },
+          { symptomName: "Blockierung des Gelenks / Bewegungseinschränkung", schmerzen: true, symptomValue: "Gelenkblockade: Das Gelenk lässt sich plötzlich ab einem bestimmten Winkel nicht mehr weiter strecken oder beugen." }
+        ]
+      },
+      {step: "beineMuskeln",
+        symptoms:
+        [
+          { symptomName: "Nächtliche Wadenkrämpfe", schmerzen: true, symptomValue: "Wadenkrampf: Plötzlich einschießende, schmerzhafte Muskelverhärtung der Wade, meistens im Schlaf." },
+          { symptomName: "Anhaltender Muskelkater / Diffuser Muskelschmerz", schmerzen: true, symptomValue: "Myalgie: Großflächiger, ziehender Druckschmerz in den Muskeln (z. B. nach Überlastung oder bei viralen Infekten)." },
+          { symptomName: "Punktueller, messerscharfer Schmerz nach Belastung", schmerzen: true, symptomValue: "Muskelfaserriss: Plötzlich einschießender, stechender Schmerz bei einer Bewegung, Gehen oder Laufen danach kaum noch möglich." },
+          { symptomName: "Schmerzen an der Achillessehne bei Druck/Belastung", schmerzen: true, symptomValue: "Achillodynie: Schmerzhafter, oft verdickter Bereich an der Sehne über der Ferse, besonders beim Abstoßen des Fußes." },
+          { symptomName: "Schienbeinkantenschmerz (Shin Splints)", schmerzen: true, symptomValue: "Periostitis: Belastungsschmerz an der Vorderseite des Unterschenkels entlang des Schienbeinknochens (häufig bei Läufern)." }
+        ]
+      },
+      {step: "beineNervenGefaese",
+        symptoms:
+        [
+          { symptomName: "Krampfartige Wadenschmerzen beim Gehen (Gehpausen nötig)", schmerzen: true, symptomValue: "pAVK / Schaufensterkrankheit: Schmerzen in der Wade, die nach einer bestimmten Gehstrecke auftreten und zum Stehenbleiben zwingen; bessern sich rasch im Stehen." },
+          { symptomName: "Einschießen von Schmerzen vom Rücken ins Bein", schmerzen: true, symptomValue: "Ischialgie: Elektrisierender oder ziehender Schmerz, der vom Gesäß über die Rückseite des Beins bis in den Fuß ausstrahlt." },
+          { symptomName: "Kribbeln, Taubheitsgefühl oder „Ameisenlaufen“", schmerzen: false, symptomValue: "Parästhesien: Missempfindungen, pelziges Gefühl oder Taubheit (häufig an den Füßen oder Zehen, z. B. bei Polyneuropathie)." },
+          { symptomName: "Schwere, müde Beine und geschwollene Knöchel am Abend", schmerzen: false, symptomValue: "Venöse Insuffizienz: Spannungsgefühl und Schwellung der Beine, die sich im Laufe des Tages verschlimmern und bei Hochlagern besser werden." },
+          { symptomName: "Unruhige Beine am Abend / im Liegen (Bewegungsdrang)", schmerzen: false, symptomValue: "Restless-Legs-Syndrom: Quälender Unruhezustand oder Missempfindungen in den Beinen, die nur durch Aufstehen und Umhergehen kurzzeitig besser werden." },
+          { symptomName: "Chronisch kalte Füße oder bläuliche Verfärbung", schmerzen: false, symptomValue: "Durchblutungsstörung peripher: Füße sind dauerhaft kalt, schlecht durchblutet, Zehen verfärben sich bei Kälte blass oder bläulich." }
+        ]
+      },
+      {step: "beineWarnsignale",
+        symptoms:
+        [
+          { symptomName: "Einseitig stark geschwollene, heiße, rote Wade (Notfall!)", schmerzen: true, symptomValue: "Thrombose-Red-Flag: Einseitige Umfangszunahme des Unterschenkels, die Haut glänzt, ist überwärmt, gerötet und schmerzt wie ein Muskelkater (Akuter Notfall!)." },
+          { symptomName: "Plötzlicher, unerträglicher Beinschmerz + Blässe + Kälte", schmerzen: true, symptomValue: "Akuter Arterienverschluss: Schlagartig einsetzender, heftigster Schmerz, der Fuß/das Bein wird eiskalt, blass und der Puls am Fuß ist nicht mehr tastbar (Sofortiger Notfall!)." },
+          { symptomName: "Lähmung / Fuß kann nicht mehr angehoben werden", schmerzen: false, symptomValue: "Peroneuslähmung / Fußheberparese: Plötzliche Unfähigkeit, die Fußspitze beim Gehen anzuheben (Schlurfender Gang / neurologisches Warnsignal)." },
+          { symptomName: "Schlecht heilende Wunden oder Geschwüre am Fuß", schmerzen: false, symptomValue: "Ulkus / Diabetischer Fuß: Offene, nicht abheilende Hautstellen, Gewebeveränderungen oder dunkle Flecken an den Zehen oder Fersen (besonders riskant bei Diabetes)." },
+          { symptomName: "Umknicktrauma mit sofortiger massiver Schwellung", schmerzen: true, symptomValue: "Schwere Distorsion / Fraktur: Nach einem Unfall oder Umknicken schwillt das Gelenk sofort massiv an, Auftreten oder Belastung ist völlig unmöglich." }
+        ]
+      },
+      {step: "AllgemeinesBefinden",
+        symptoms:
+        [
+          { symptomName: "Schüttelfrost / Unkontrollierbares Zittern", schmerzen: false, symptomValue: "Schüttelfrost: Unkontrollierbares Zittern am ganzen Körper bei rasant steigendem Fieber." },
+          { symptomName: "Unerklärlicher, schneller Gewichtsverlust", schmerzen: false, symptomValue: "Gewichtsverlust: Ungewollte Gewichtsabnahme ohne Diät oder Ernährungsumstellung." },
+          { symptomName: "Anhaltende Nachtschweiße (Kleidungswechsel nötig)", schmerzen: false, symptomValue: "B-Symptomatik: Massives Schwitzen in der Nacht, sodass Schlafkleidung gewechselt werden muss." },
+          { symptomName: "Ausgeprägte, bleierne Müdigkeit und Abgeschlagenheit", schmerzen: false, symptomValue: "Fatigue/Schwäche: Extreme Antriebslosigkeit, die den Alltag massiv einschränkt." },
+          { symptomName: "Extreme Kältegefühle trotz warmem Raum", schmerzen: false, symptomValue: "Extreme Kältegefühle, obwohl es im Raum warm ist" },
+          { symptomName: "Diffuse Gliederschmerzen (wie bei echter Grippe)", schmerzen: true, symptomValue: "Diffuse Gliederschmerzen (die Muskeln, Gelenke und Knochen tun am ganzen Körper weh, wie bei einer echten Grippe)" },
+          { symptomName: "Tastbare, schmerzhafte Lymphknotenschwellung", schmerzen: true, symptomValue: "Deutlich tastbare, schmerzhafte oder geschwollene Knubbel am Hals, unter den Achseln oder in der Leiste (Lymphknoten)" },
+          { symptomName: "Verwirrtheit, Schläfrigkeit & Atembeschwerden", schmerzen: false, symptomValue: "Plötzliche, schwere Verwirrtheit, extreme Schläfrigkeit, Atemnot und sehr schneller Herzschlag bei einer Infektion" },
+          { symptomName: "Rote/lila Hautpunkte (nicht verblassend)", schmerzen: false, symptomValue: "Auftreten von kleinen, stecknadelkopfgroßen, roten oder lila Hautpunkten, die bei Druck (z. B. mit einem Glas) nicht verblassen" },
+          { symptomName: "Plötzliche, große blaue Flecken ohne Stoßen", schmerzen: false, symptomValue: "Plötzliches Auftreten von großen, blauen Flecken am Körper, ohne dass man sich gestoßen oder verletzt hat" }
+        ]
       }
     ]
 
@@ -541,136 +636,6 @@ export default function SymptomTree({
         ) : null
       )}
 
-
-
-              {/* --- BEINE & FÜSSE KATEGORIEN --- */}
-              {(step === "Oberschenkel" || step === "Knie" || step === "Unterschenkel" || step === "Fuß") && (
-                 <SymptomCategory
-                          categories={[
-                            { category: "Gelenkschmerzen & Steifheit", step: "beineGelenke" },
-                            { category: "Muskelbeschwerden & Krämpfe", step: "beineMuskeln" },
-                            { category: "Nerven, Gefäße & Durchblutung", step: "beineNervenGefaese" },
-                            { category: "Dringende Warnsignale (Beine)", step: "beineWarnsignale" }
-                          ]}
-                          setStep={setStep}
-                          
-                          selectedSubRegion={selectedSubRegion}
-                 />
-              )}
-
-              {/* --- GELENKE (HÜFTE, KNIE, FUSSGELENK) --- */}
-              {step === "beineGelenke" && (
-                 <SymptomSelection
-                          symptoms={[
-                            { symptomName: "Anlaufschmerz am Morgen / nach Pausen", schmerzen: true, symptomValue: "Anlaufschmerz: Gelenkschmerz (oft Knie oder Hüfte) bei den ersten Schritten nach Ruhephasen, der nach einigen Minuten Bewegung nachlässt (typisch für Arthrose)." },
-                            { symptomName: "Belastungsabhängiger Gelenkschmerz", schmerzen: true, symptomValue: "Belastungsschmerz: Schmerzen, die erst bei längerer Gehstrecke, Sport oder beim Treppenabsteigen auftreten und in Ruhe wieder verschwinden." },
-                            { symptomName: "Ruheschmerz / Nächtlicher Gelenkschmerz", schmerzen: true, symptomValue: "Gelenk-Ruheschmerz: Schmerzen im Gelenk auch ohne Belastung, besonders stark in der Nacht oder im Liegen (Hinweis auf Entzündung oder fortgeschrittenen Verschleiß)." },
-                            { symptomName: "Überwärmtes, rotes und geschwollenes Gelenk", schmerzen: true, symptomValue: "Arthritis-Verdacht: Ein einzelnes Gelenk ist stark geschwollen, deutlich überwärmt, gerötet und extrem druckschmerzhaft (Verdacht auf Gichtanfall oder bakterielle Entzündung)." },
-                            { symptomName: "Morgensteifigkeit der Gelenke (> 30 Min.)", schmerzen: false, symptomValue: "Morgensteifigkeit Bein: Die Gelenke fühlen sich nach dem Aufwachen für längere Zeit wie eingerostet und unbeweglich an." },
-                            { symptomName: "Hörbares Knirschen oder Reiben im Gelenk", schmerzen: false, symptomValue: "Krepitation: Spürbares oder hörbares Reiben („Schneeballknirschen“) im Gelenk bei Bewegung." },
-                            { symptomName: "Gefühl der Instabilität / Wegknicken des Knies", schmerzen: false, symptomValue: "Instabilitätsgefühl: Das Gefühl, das Gelenk hält nicht stand, oder das Knie knickt bei Belastung unwillkürlich weg (Verdacht auf Bänderriss / Meniskusschaden)." },
-                            { symptomName: "Blockierung des Gelenks / Bewegungseinschränkung", schmerzen: true, symptomValue: "Gelenkblockade: Das Gelenk lässt sich plötzlich ab einem bestimmten Winkel nicht mehr weiter strecken oder beugen." }
-                          ]}
-                          
-                          setStep={setStep}
-                          toggleSymptom={toggleSymptom}
-                          selectedSymptoms={selectedSymptoms}
-                          selectedSubRegion={selectedSubRegion}
-                          setCopyPainScale={setCopyPainScale}
-                          copyPainScale={copyPainScale}
-                          setSelectedSymptoms={setSelectedSymptoms}
-                 />
-              )}
-
-              {/* --- MUSKELN & SEHNEN --- */}
-              {step === "beineMuskeln" && (
-                 <SymptomSelection
-                          symptoms={[
-                            { symptomName: "Nächtliche Wadenkrämpfe", schmerzen: true, symptomValue: "Wadenkrampf: Plötzlich einschießende, schmerzhafte Muskelverhärtung der Wade, meistens im Schlaf." },
-                            { symptomName: "Anhaltender Muskelkater / Diffuser Muskelschmerz", schmerzen: true, symptomValue: "Myalgie: Großflächiger, ziehender Druckschmerz in den Muskeln (z. B. nach Überlastung oder bei viralen Infekten)." },
-                            { symptomName: "Punktueller, messerscharfer Schmerz nach Belastung", schmerzen: true, symptomValue: "Muskelfaserriss: Plötzlich einschießender, stechender Schmerz bei einer Bewegung, Gehen oder Laufen danach kaum noch möglich." },
-                            { symptomName: "Schmerzen an der Achillessehne bei Druck/Belastung", schmerzen: true, symptomValue: "Achillodynie: Schmerzhafter, oft verdickter Bereich an der Sehne über der Ferse, besonders beim Abstoßen des Fußes." },
-                            { symptomName: "Schienbeinkantenschmerz (Shin Splints)", schmerzen: true, symptomValue: "Periostitis: Belastungsschmerz an der Vorderseite des Unterschenkels entlang des Schienbeinknochens (häufig bei Läufern)." }
-                          ]}
-                          
-                          setStep={setStep}
-                          toggleSymptom={toggleSymptom}
-                          selectedSymptoms={selectedSymptoms}
-                          selectedSubRegion={selectedSubRegion}
-                          setCopyPainScale={setCopyPainScale}
-                          copyPainScale={copyPainScale}
-                          setSelectedSymptoms={setSelectedSymptoms}
-                 />
-              )}
-
-              {/* --- NERVEN & GEFÄSSE (DURCHBLUTUNG) --- */}
-              {step === "beineNervenGefaese" && (
-                 <SymptomSelection
-                          symptoms={[
-                            { symptomName: "Krampfartige Wadenschmerzen beim Gehen (Gehpausen nötig)", schmerzen: true, symptomValue: "pAVK / Schaufensterkrankheit: Schmerzen in der Wade, die nach einer bestimmten Gehstrecke auftreten und zum Stehenbleiben zwingen; bessern sich rasch im Stehen." },
-                            { symptomName: "Einschießen von Schmerzen vom Rücken ins Bein", schmerzen: true, symptomValue: "Ischialgie: Elektrisierender oder ziehender Schmerz, der vom Gesäß über die Rückseite des Beins bis in den Fuß ausstrahlt." },
-                            { symptomName: "Kribbeln, Taubheitsgefühl oder „Ameisenlaufen“", schmerzen: false, symptomValue: "Parästhesien: Missempfindungen, pelziges Gefühl oder Taubheit (häufig an den Füßen oder Zehen, z. B. bei Polyneuropathie)." },
-                            { symptomName: "Schwere, müde Beine und geschwollene Knöchel am Abend", schmerzen: false, symptomValue: "Venöse Insuffizienz: Spannungsgefühl und Schwellung der Beine, die sich im Laufe des Tages verschlimmern und bei Hochlagern besser werden." },
-                            { symptomName: "Unruhige Beine am Abend / im Liegen (Bewegungsdrang)", schmerzen: false, symptomValue: "Restless-Legs-Syndrom: Quälender Unruhezustand oder Missempfindungen in den Beinen, die nur durch Aufstehen und Umhergehen kurzzeitig besser werden." },
-                            { symptomName: "Chronisch kalte Füße oder bläuliche Verfärbung", schmerzen: false, symptomValue: "Durchblutungsstörung peripher: Füße sind dauerhaft kalt, schlecht durchblutet, Zehen verfärben sich bei Kälte blass oder bläulich." }
-                          ]}
-                          
-                          setStep={setStep}
-                          toggleSymptom={toggleSymptom}
-                          selectedSymptoms={selectedSymptoms}
-                          selectedSubRegion={selectedSubRegion}
-                          setCopyPainScale={setCopyPainScale}
-                          copyPainScale={copyPainScale}
-                          setSelectedSymptoms={setSelectedSymptoms}
-                 />
-              )}
-
-              {/* --- RED FLAGS / WARNSIGNALE --- */}
-              {step === "beineWarnsignale" && (
-                 <SymptomSelection
-                          symptoms={[
-                            { symptomName: "Einseitig stark geschwollene, heiße, rote Wade (Notfall!)", schmerzen: true, symptomValue: "Thrombose-Red-Flag: Einseitige Umfangszunahme des Unterschenkels, die Haut glänzt, ist überwärmt, gerötet und schmerzt wie ein Muskelkater (Akuter Notfall!)." },
-                            { symptomName: "Plötzlicher, unerträglicher Beinschmerz + Blässe + Kälte", schmerzen: true, symptomValue: "Akuter Arterienverschluss: Schlagartig einsetzender, heftigster Schmerz, der Fuß/das Bein wird eiskalt, blass und der Puls am Fuß ist nicht mehr tastbar (Sofortiger Notfall!)." },
-                            { symptomName: "Lähmung / Fuß kann nicht mehr angehoben werden", schmerzen: false, symptomValue: "Peroneuslähmung / Fußheberparese: Plötzliche Unfähigkeit, die Fußspitze beim Gehen anzuheben (Schlurfender Gang / neurologisches Warnsignal)." },
-                            { symptomName: "Schlecht heilende Wunden oder Geschwüre am Fuß", schmerzen: false, symptomValue: "Ulkus / Diabetischer Fuß: Offene, nicht abheilende Hautstellen, Gewebeveränderungen oder dunkle Flecken an den Zehen oder Fersen (besonders riskant bei Diabetes)." },
-                            { symptomName: "Umknicktrauma mit sofortiger massiver Schwellung", schmerzen: true, symptomValue: "Schwere Distorsion / Fraktur: Nach einem Unfall oder Umknicken schwillt das Gelenk sofort massiv an, Auftreten oder Belastung ist völlig unmöglich." }
-                          ]}
-                          
-                          setStep={setStep}
-                          toggleSymptom={toggleSymptom}
-                          selectedSymptoms={selectedSymptoms}
-                          selectedSubRegion={selectedSubRegion}
-                          setCopyPainScale={setCopyPainScale}
-                          copyPainScale={copyPainScale}
-                          setSelectedSymptoms={setSelectedSymptoms}
-                 />
-              )}
-
-              {/* --- ALLGEMEINES BEFINDEN --- */}
-              {step === "AllgemeinesBefinden" && (
-                 <SymptomSelection
-                          symptoms={[
-                            { symptomName: "Schüttelfrost / Unkontrollierbares Zittern", schmerzen: false, symptomValue: "Schüttelfrost: Unkontrollierbares Zittern am ganzen Körper bei rasant steigendem Fieber." },
-                            { symptomName: "Unerklärlicher, schneller Gewichtsverlust", schmerzen: false, symptomValue: "Gewichtsverlust: Ungewollte Gewichtsabnahme ohne Diät oder Ernährungsumstellung." },
-                            { symptomName: "Anhaltende Nachtschweiße (Kleidungswechsel nötig)", schmerzen: false, symptomValue: "B-Symptomatik: Massives Schwitzen in der Nacht, sodass Schlafkleidung gewechselt werden muss." },
-                            { symptomName: "Ausgeprägte, bleierne Müdigkeit und Abgeschlagenheit", schmerzen: false, symptomValue: "Fatigue/Schwäche: Extreme Antriebslosigkeit, die den Alltag massiv einschränkt." },
-                            { symptomName: "Extreme Kältegefühle trotz warmem Raum", schmerzen: false, symptomValue: "Extreme Kältegefühle, obwohl es im Raum warm ist" },
-                            { symptomName: "Diffuse Gliederschmerzen (wie bei echter Grippe)", schmerzen: true, symptomValue: "Diffuse Gliederschmerzen (die Muskeln, Gelenke und Knochen tun am ganzen Körper weh, wie bei einer echten Grippe)" },
-                            { symptomName: "Tastbare, schmerzhafte Lymphknotenschwellung", schmerzen: true, symptomValue: "Deutlich tastbare, schmerzhafte oder geschwollene Knubbel am Hals, unter den Achseln oder in der Leiste (Lymphknoten)" },
-                            { symptomName: "Verwirrtheit, Schläfrigkeit & Atembeschwerden", schmerzen: false, symptomValue: "Plötzliche, schwere Verwirrtheit, extreme Schläfrigkeit, Atemnot und sehr schneller Herzschlag bei einer Infektion" },
-                            { symptomName: "Rote/lila Hautpunkte (nicht verblassend)", schmerzen: false, symptomValue: "Auftreten von kleinen, stecknadelkopfgroßen, roten oder lila Hautpunkten, die bei Druck (z. B. mit einem Glas) nicht verblassen" },
-                            { symptomName: "Plötzliche, große blaue Flecken ohne Stoßen", schmerzen: false, symptomValue: "Plötzliches Auftreten von großen, blauen Flecken am Körper, ohne dass man sich gestoßen oder verletzt hat" }
-                          ]}
-                          
-                          setStep={setStep}
-                          toggleSymptom={toggleSymptom}
-                          selectedSymptoms={selectedSymptoms}
-                          selectedSubRegion={selectedSubRegion}
-                          setCopyPainScale={setCopyPainScale}
-                          copyPainScale={copyPainScale}
-                          setSelectedSymptoms={setSelectedSymptoms}
-                 />
-              )}
     </>
   );
 }
