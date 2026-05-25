@@ -391,6 +391,29 @@ export async function deleteDataOnAccessCode(accessCode: string) {
 }
 
 
+// accessing data via access code
+export async function accessDataWithAccessCode(accessCode: string) {
+
+  // DB query to get case id from access code
+  const caseId = await connectionPool.query(`
+    SELECT case_id FROM cases
+    WHERE access_code = $1
+    `,
+    [accessCode]
+  );
+
+  // returning data if case exists
+  if (caseId.rows.length > 0) {
+    const data = await getUserDataFromDB();
+    console.log("Daten für Fall mit access code " + accessCode + " wurden abgerufen.");
+    return data;
+  } else {
+    console.log("Kein Fall mit access code " + accessCode + " gefunden.");
+    return null;
+  }
+}
+
+
 
 
 // deleting after certain time (7 days in case of product backlog specification)
