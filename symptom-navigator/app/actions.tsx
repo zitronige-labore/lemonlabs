@@ -382,8 +382,10 @@ export async function deleteDataOnAccessCode(accessCode: string) {
   if (caseId.rows.length > 0) {
     await deleteCaseData(caseId.rows[0].case_id);
     console.log("Daten für Fall mit access code " + accessCode + " wurden gelöscht.");
+    return true;
   } else {
     console.log("Kein Fall mit access code " + accessCode + " gefunden.");
+    return false;
   }
 
 }
