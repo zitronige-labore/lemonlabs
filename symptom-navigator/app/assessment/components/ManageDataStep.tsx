@@ -14,39 +14,48 @@ export function ManageDataStep({
     }: ManageDataStepProps) {
 
     const [data, setData] = useState<any | null>(null);
+    const [code, setCode] = useState<string>("");
 
     return (
-        <>
+        <div style={{ marginTop: "20px", color: "black" }}>
 
             {data && (
                 <div>
                     <h3>Abgerufene Daten:</h3>
-                    <pre>{JSON.stringify(data, null, 2)}</pre>
+                    <p>{data.caseData?.[0]?.sex}</p>
+                    <p>{data.caseData?.[0]?.age}</p>
+                    <p>{data.caseData?.[0]?.pregnancy?.toString()}</p>
                 </div>
             )}
 
             <label className={homeStyles.label} htmlFor="dataInput">
-            Daten abrufen:
+            code zum Abrufen oder Löschen der Daten eingeben:
             
             <input
             type="text"
             placeholder="code hier eingeben"
             onChange={(event) => {
-                const value = event.target.value.trim();
-                setData(accessDataWithAccessCode(value));
+                setCode(event.target.value.trim());
                 }        
             }
             />
-            </label>
 
-            <label className={homeStyles.label} htmlFor="dataInput">
-            Daten loeschen:
-            
             <input
-            type="text"
-            placeholder="code hier eingeben"
+            type="submit"
+            value="Abrufen"
+            onClick={async () => {
+                setData(await accessDataWithAccessCode(code));
+            }}
+            />
+
+            <input
+            type="submit"
+            value="Löschen"
+            onClick={async () => {
+                await deleteDataOnAccessCode(code);
+            }}
             />
             </label>
-        </>
+        </div>
     );
 }

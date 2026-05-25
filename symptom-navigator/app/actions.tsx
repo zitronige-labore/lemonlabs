@@ -243,15 +243,8 @@ const DatenAusDB = await connectionPool.query(`
 
 
 // function to get case data
-export async function getUserDataFromDB() {
+export async function getUserDataFromDB(caseId: string) {
 
-  // reading cookies to get case id
-  const cookieStore = await cookies();
-  const caseId = cookieStore.get('caseId')?.value;
-
-  if (!caseId) {
-  throw new Error('Keine aktive Session gefunden');
-  }
 
   // DB queries
   const caseData = await connectionPool.query(`
@@ -328,10 +321,10 @@ export async function deleteCaseData(caseId: string) {
   );
 
   await connectionPool.query(`
-    DELETE FROM case_symptoms
-    INNER JOIN raw_text_symptoms
-    ON case_symptoms.raw_id = raw_text_symptoms.raw_id
-    WHERE case_id = $1
+    DELETE FROM raw_text_symptoms
+    USING case_symptoms
+    WHERE case_symptoms.raw_id = raw_text_symptoms.raw_id
+    AND case_id = $1
   `,
   [caseId]
   );
@@ -404,8 +397,9 @@ export async function accessDataWithAccessCode(accessCode: string) {
 
   // returning data if case exists
   if (caseId.rows.length > 0) {
-    const data = await getUserDataFromDB();
+    const data = await getUserDataFromDB(caseId.rows[0].case_id);
     console.log("Daten für Fall mit access code " + accessCode + " wurden abgerufen.");
+    console.log("Abgerufene Daten:", data);
     return data;
   } else {
     console.log("Kein Fall mit access code " + accessCode + " gefunden.");
@@ -473,7 +467,7 @@ export async function sendDataToAi() {
   // get data from db
   // DB query
   // to be replaced later
-  const DatenAusDB = await getUserDataFromDB();
+  const DatenAusDB = await getUserDataFromDB(caseId);
 
   // db data as string
   const data = JSON.stringify(DatenAusDB, null, 2);
