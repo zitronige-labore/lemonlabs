@@ -314,6 +314,106 @@ export async function getUserDataFromDB() {
 
 
 
+// function to delete all data relating to a case
+export async function deleteCaseData(caseId: string) {
+
+
+  // deleting all data from tables containing case specific data
+
+  await connectionPool.query(`
+    DELETE FROM cases
+    WHERE case_id = $1
+  `,
+  [caseId]
+  );
+
+  await connectionPool.query(`
+    DELETE FROM case_symptoms
+    INNER JOIN raw_text_symptoms
+    ON case_symptoms.raw_id = raw_text_symptoms.raw_id
+    WHERE case_id = $1
+  `,
+  [caseId]
+  );
+
+  await connectionPool.query(`
+    DELETE FROM case_symptoms
+    WHERE case_id = $1
+  `,
+  [caseId]
+  );
+
+  await connectionPool.query(`
+    DELETE FROM details_no_certain_count
+    WHERE case_id = $1
+  `,
+  [caseId]
+  );
+
+  await connectionPool.query(`
+    DELETE FROM additional_information
+    WHERE case_id = $1
+  `,
+  [caseId]
+  );
+
+  await connectionPool.query(`
+    DELETE FROM recommendations
+    WHERE case_id = $1
+  `,
+  [caseId]
+  );
+}
+
+
+
+// deleting data when recieving access code
+export async function deleteDataOnAccessCode(accessCode: string) {
+
+  // DB query to get case id from access code
+  const caseId = await connectionPool.query(`
+    SELECT case_id FROM cases
+    WHERE access_code = $1
+    `,
+    [accessCode]
+  );
+
+  // deleting if case exists
+  if (caseId.rows.length > 0) {
+    await deleteCaseData(caseId.rows[0].case_id);
+    console.log("Daten für Fall mit access code " + accessCode + " wurden gelöscht.");
+  } else {
+    console.log("Kein Fall mit access code " + accessCode + " gefunden.");
+  }
+
+}
+
+
+
+
+// deleting after certain time (7 days in case of product backlog specification)
+export async function deleteOldCases() {
+
+  const current = new Date();
+
+  // query to get cases older than 7 days
+  const oldCases = await connectionPool.query(`
+    SELECT case_id FROM cases
+    WHERE date < $1
+    `,
+    [current.setDate(current.getDate() - 7)]
+  );
+
+  // delete each old cases
+  for (const row of oldCases.rows) {
+    await deleteCaseData(row.case_id);
+  }
+
+}
+
+
+
+
 // helper function to get details without count as proper format
 export async function getDetailsNoCertainCount(category: string, listName: string, case_id: string) {
   
