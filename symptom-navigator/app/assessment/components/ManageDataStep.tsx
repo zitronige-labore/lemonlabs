@@ -1,5 +1,5 @@
 import type { Step } from "../../types/assessment";
-import homeStyles from "../../Home.module.css";
+import assessmentStyles from "../Assessment.module.css";
 import { accessDataWithAccessCode, deleteDataOnAccessCode } from "../../actions";
 import { useState } from "react";
 
@@ -8,13 +8,14 @@ type ManageDataStepProps = {
     setStep: (step: Step) => void;
 };
 
-export function ManageDataStep({
-        step,
-        setStep     
-    }: ManageDataStepProps) {
+export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
 
+    // state to store retrieved data and access code
     const [data, setData] = useState<any | null>(null);
     const [code, setCode] = useState<string>("");
+
+
+    // convert coded values to be read by users if necessary
 
     let geschlecht = data?.caseData?.[0]?.sex;
     if (geschlecht === "m") {
@@ -22,96 +23,137 @@ export function ManageDataStep({
     } else if (geschlecht === "w") {
         geschlecht = "weiblich";
     }
-    const alter = data?.caseData?.[0]?.age;
+
     let schwangerschaft = "nicht angegeben";
-    if (data?.caseData?.[0]?.pregnancy === true) {
-        schwangerschaft = "ja";
-    } else if (data?.caseData?.[0]?.pregnancy === false) {
-        schwangerschaft = "nein";
-    }
+    if (data?.caseData?.[0]?.pregnancy === true) schwangerschaft = "ja";
+    else if (data?.caseData?.[0]?.pregnancy === false) schwangerschaft = "nein";
 
     let stillzeit = "nicht angegeben";
-    if (data?.caseData?.[0]?.lactation === true) {
-        stillzeit = "ja";
-    } else if (data?.caseData?.[0]?.lactation === false) {
-        stillzeit = "nein";
-    }
-    let worsening;
-    if (data?.additionalInfoData?.[0]?.worsening === true) {
-        worsening = "ja";
-    } else if (data?.additionalInfoData?.[0]?.worsening === false) {
-        worsening = "nein";
-    }
+    if (data?.caseData?.[0]?.lactation === true) stillzeit = "ja";
+    else if (data?.caseData?.[0]?.lactation === false) stillzeit = "nein";
+
+    let worsening: string | undefined;
+    if (data?.additionalInfoData?.[0]?.worsening === true) worsening = "ja";
+    else if (data?.additionalInfoData?.[0]?.worsening === false) worsening = "nein";
 
     return (
-        <div style={{ marginTop: "20px", color: "black" }}>
+        <div className={assessmentStyles.resultBox}>
+
+            <p className={assessmentStyles.selectedText}>Datenverwaltung</p>
+
+            <div className={assessmentStyles.fieldset}>
+                <p className={assessmentStyles.formLabel}>
+                    Code zum Abrufen oder Löschen der Daten eingeben:
+                </p>
+                <input
+                    type="text"
+                    placeholder="Code hier eingeben"
+                    className={assessmentStyles.input}
+                    onChange={(e) => setCode(e.target.value.trim())}
+                />
+                <div className={assessmentStyles.label}>
+                    <button
+                        type="button"
+                        className={assessmentStyles.continueButton}
+                        onClick={async () => setData(await accessDataWithAccessCode(code))}
+                    >
+                        Abrufen
+                    </button>
+                    <button
+                        type="button"
+                        className={assessmentStyles.continueButton}
+                        onClick={async () => await deleteDataOnAccessCode(code)}
+                    >
+                        Löschen
+                    </button>
+                </div>
+        </div>
 
             {data && (
-                <div>
-                    <h3>Abgerufene Daten:</h3>
-                    <p>{"Geschlecht: " + geschlecht}</p>
-                    <p>{"Alter: " + alter}</p>
-                    <p>{"Groesse: " + data?.additionalInfoData?.[0]?.height + " cm"}</p>
-                    <p>{"Gewicht: " + data?.additionalInfoData?.[0]?.weight + " kg"}</p>
-                    {data?.additionalInfoData?.[0]?.temperature !== '' && data?.additionalInfoData?.[0]?.temperature !== null && (
-                        <p>{"Temperatur: " + data?.additionalInfoData?.[0]?.temperature + " °C"}</p>
+                <>
+                    <p className={assessmentStyles.selectedText}>Abgerufene Daten</p>
+
+                    <div className={assessmentStyles.fieldset}>
+                        <p>Geschlecht: <strong>{geschlecht || "Keine Angabe"}</strong></p>
+                        <p>Alter: <strong>{data?.caseData?.[0]?.age || "Keine Angabe"}</strong></p>
+                        {geschlecht === "weiblich" && (
+                            <p>Schwanger: <strong>{schwangerschaft}</strong></p>
+                        )}
+                        {geschlecht === "weiblich" && (
+                            <p>Stillzeit: <strong>{stillzeit}</strong></p>
+                        )}
+                    </div>
+
+                    {data.symptomData?.[0]?.name_de != null && data.symptomData?.[0]?.name_de != '' && (
+                        <div className={assessmentStyles.fieldset}>
+                            <p className={assessmentStyles.selectedText}>Symptome</p>
+                            <ul>
+                                {data.symptomData.map((symptom: { name_de: string; bodyregion: string; painscale?: string }, i: number) => (
+                                    <div key={i} className={assessmentStyles.fieldset}>
+                                        Bezeichnung: <strong>{symptom.name_de}</strong><br />
+                                        Körperregion: <strong>{symptom.bodyregion}</strong><br />
+                                        {symptom.painscale !== null && (
+                                            <p>Schmerzskala: <strong>{symptom.painscale || "nicht angegeben"}</strong></p>
+                                        )}
+                                    </div>
+                                ))}
+                            </ul>
+                        </div>
                     )}
-                    <p>{data?.additionalInfoData?.[0]?.duration && "Dauer der Symptome: " + data?.additionalInfoData?.[0]?.duration + " Tage"}</p>
-                    <p>{data?.additionalInfoData?.[0]?.worsening && "Symptome werden schlimmer: " + worsening}</p>
-                    {geschlecht === "weiblich" && 
-                    <p>{"schwanger: " + schwangerschaft}</p>
-                    }
-                    {geschlecht === "weiblich" && 
-                    <p>{"Stillzeit: " + stillzeit}</p>
-                    }
-                    {data.symptomData != '' && data.symptomData != null && data.symptomData[0] != '' && (
-                        <p>{"Symptome: " + data?.symptomData?.map((symptom: { name_de: string; bodyRegion: string, painscale?: string }) => 
-                            ("Bezeichnung: " + symptom.name_de + ", Region: " + symptom.bodyRegion + ", Schmerzskala: " + (symptom.painscale || "nicht angegeben"))).join("\n, ")}</p>
+
+                    {data.textSymptomData?.[0]?.raw_symptoms != null && data.textSymptomData?.[0]?.raw_symptoms != '' && (
+                        <div className={assessmentStyles.fieldset}>
+                            <p className={assessmentStyles.selectedText}>Selbst beschriebene Symptome</p>
+                            <ul>
+                                {data.textSymptomData.map((symptom: { raw_symptoms: string; bodyregion: string; painscale?: string }, i: number) => (
+                                    <div key={i} className={assessmentStyles.fieldset}>
+                                        Bezeichnung: <strong>{symptom.raw_symptoms}</strong><br />
+                                        Körperregion: <strong>{symptom.bodyregion}</strong><br />
+                                        {symptom.painscale !== null && (
+                                            <p>Schmerzskala: <strong>{symptom.painscale || "nicht angegeben"}</strong></p>
+                                        )}
+                                    </div>
+                                ))}
+                            </ul>
+                        </div>
                     )}
-                    {data.textSymptomData != '' && data.textSymptomData != null && data.textSymptomData[0] != '' && (
-                        <p>{"Symptome: " + data?.textSymptomData?.map((symptom: { raw_symptoms: string; bodyRegion: string, painscale?: string }) => 
-                            ("Bezeichnung: " + symptom.raw_symptoms + ", Region: " + symptom.bodyRegion + ", Schmerzskala: " + (symptom.painscale || "nicht angegeben"))).join("\n, ")}</p>
+
+                    {(data?.medicationData || data?.allergyData || data?.conditionsData) && (
+                        <div className={assessmentStyles.fieldset}>
+                            <p className={assessmentStyles.selectedText}>Zusatzangaben</p>
+                            {data?.medicationData?.medication[0] && (
+                                <p>Medikation: <strong>{data.medicationData.medication?.join(", ")}</strong></p>
+                            )}
+                            {data?.allergyData?.allergies[0] && (
+                                <p>Allergien: <strong>{data.allergyData.allergies?.join(", ")}</strong></p>
+                            )}
+                            {data?.conditionsData?.conditions[0] && (
+                                <p>Vorerkrankungen: <strong>{data.conditionsData.conditions?.join(", ")}</strong></p>
+                            )}
+                            {data?.additionalInfoData?.[0]?.height && (
+                                <p>Größe: <strong>{data.additionalInfoData[0].height} cm</strong></p>
+                            )}
+                            {data?.additionalInfoData?.[0]?.weight && (
+                                <p>Gewicht: <strong>{data.additionalInfoData[0].weight} kg</strong></p>
+                            )}
+                            {data?.additionalInfoData?.[0]?.temperature !== '' && data?.additionalInfoData?.[0]?.temperature !== null && (
+                                <p>Temperatur: <strong>{data.additionalInfoData[0].temperature} °C</strong></p>
+                            )}
+                            {data?.additionalInfoData?.[0]?.duration && (
+                                <p>Dauer der Symptome: <strong>{data.additionalInfoData[0].duration} Tage</strong></p>
+                            )}
+                            {worsening && (
+                                <p>Symptome werden schlimmer: <strong>{worsening}</strong></p>
+                            )}
+                            {data?.additionalInfoData?.[0]?.other_info && (
+                                <p>Sonstige Angaben: <strong>{data.additionalInfoData[0].other_info}</strong></p>
+                            )}
+
+                            {data?.additionalInfoData?.[0]?.other_info == null && data?.additionalInfoData?.[0]?.height == null && data?.additionalInfoData?.[0]?.weight == null && data?.additionalInfoData?.[0]?.temperature == null && data?.additionalInfoData?.[0]?.duration == null && worsening === undefined && (<p>Keine Zusatzangaben vorhanden</p>)}
+                        </div>
                     )}
-                    {data?.medicationData && (
-                        <p>{"Medikation: " + data?.medicationData?.medication?.join(", ")}</p>
-                    )}
-                    {data?.allergyData && (
-                        <p>{"Allergien: " + data?.allergyData?.allergies?.join(", ")}</p>
-                    )}
-                    {data?.conditionsData && (
-                        <p>{"Vorerkrankungen: " + data?.conditionsData?.conditions?.join(", ")}</p>
-                    )}
-                </div>
+                </>
             )}
-
-            <label className={homeStyles.label} htmlFor="dataInput">
-            code zum Abrufen oder Löschen der Daten eingeben:
-            
-            <input
-            type="text"
-            placeholder="code hier eingeben"
-            onChange={(event) => {
-                setCode(event.target.value.trim());
-                }        
-            }
-            />
-
-            <input
-            type="submit"
-            value="Abrufen"
-            onClick={async () => {
-                setData(await accessDataWithAccessCode(code));
-            }}
-            />
-
-            <input
-            type="submit"
-            value="Löschen"
-            onClick={async () => {
-                await deleteDataOnAccessCode(code);
-            }}
-            />
-            </label>
         </div>
     );
 }

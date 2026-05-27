@@ -289,7 +289,7 @@ export async function getUserDataFromDB(caseId: string) {
 
   const medicationData = await getDetailsNoCertainCount("medication", "medication", caseId)
 
-  const conditionsData = await getDetailsNoCertainCount("conditions", "conditions", caseId)
+  const conditionsData = await getDetailsNoCertainCount("condition", "conditions", caseId)
 
 
   // return rows
