@@ -91,6 +91,7 @@ export function StartScreen({
             >
               Ersteinschätzung von Symptomen
             </button>
+            
 
             {/* Platzhalter für weitere Funktionen */}
             <Link

@@ -243,15 +243,8 @@ const DatenAusDB = await connectionPool.query(`
 
 
 // function to get case data
-export async function getUserDataFromDB() {
+export async function getUserDataFromDB(caseId: string) {
 
-  // reading cookies to get case id
-  const cookieStore = await cookies();
-  const caseId = cookieStore.get('caseId')?.value;
-
-  if (!caseId) {
-  throw new Error('Keine aktive Session gefunden');
-  }
 
   // DB queries
   const caseData = await connectionPool.query(`
@@ -296,7 +289,7 @@ export async function getUserDataFromDB() {
 
   const medicationData = await getDetailsNoCertainCount("medication", "medication", caseId)
 
-  const conditionsData = await getDetailsNoCertainCount("conditions", "conditions", caseId)
+  const conditionsData = await getDetailsNoCertainCount("condition", "conditions", caseId)
 
 
   // return rows
@@ -311,6 +304,132 @@ export async function getUserDataFromDB() {
   }
 
 }
+
+
+
+// function to delete all data relating to a case
+export async function deleteCaseData(caseId: string) {
+
+
+  // deleting all data from tables containing case specific data
+
+  await connectionPool.query(`
+    DELETE FROM cases
+    WHERE case_id = $1
+  `,
+  [caseId]
+  );
+
+  await connectionPool.query(`
+    DELETE FROM raw_text_symptoms
+    USING case_symptoms
+    WHERE case_symptoms.raw_id = raw_text_symptoms.raw_id
+    AND case_id = $1
+  `,
+  [caseId]
+  );
+
+  await connectionPool.query(`
+    DELETE FROM case_symptoms
+    WHERE case_id = $1
+  `,
+  [caseId]
+  );
+
+  await connectionPool.query(`
+    DELETE FROM details_no_certain_count
+    WHERE case_id = $1
+  `,
+  [caseId]
+  );
+
+  await connectionPool.query(`
+    DELETE FROM additional_information
+    WHERE case_id = $1
+  `,
+  [caseId]
+  );
+
+  await connectionPool.query(`
+    DELETE FROM recommendations
+    WHERE case_id = $1
+  `,
+  [caseId]
+  );
+}
+
+
+
+// deleting data when recieving access code
+export async function deleteDataOnAccessCode(accessCode: string) {
+
+  // DB query to get case id from access code
+  const caseId = await connectionPool.query(`
+    SELECT case_id FROM cases
+    WHERE access_code = $1
+    `,
+    [accessCode]
+  );
+
+  // deleting if case exists
+  if (caseId.rows.length > 0) {
+    await deleteCaseData(caseId.rows[0].case_id);
+    console.log("Daten für Fall mit access code " + accessCode + " wurden gelöscht.");
+    return true;
+  } else {
+    console.log("Kein Fall mit access code " + accessCode + " gefunden.");
+    return false;
+  }
+
+}
+
+
+// accessing data via access code
+export async function accessDataWithAccessCode(accessCode: string) {
+
+  // DB query to get case id from access code
+  const caseId = await connectionPool.query(`
+    SELECT case_id FROM cases
+    WHERE access_code = $1
+    `,
+    [accessCode]
+  );
+
+  // returning data if case exists
+  if (caseId.rows.length > 0) {
+    const data = await getUserDataFromDB(caseId.rows[0].case_id);
+    console.log("Daten für Fall mit access code " + accessCode + " wurden abgerufen.");
+    console.log("Abgerufene Daten:", data);
+    return data;
+  } else {
+    console.log("Kein Fall mit access code " + accessCode + " gefunden.");
+    return null;
+  }
+}
+
+
+
+
+// deleting after certain time (7 days in case of product backlog specification)
+export async function deleteOldCases() {
+
+  const current = new Date();
+
+  // query to get cases older than 7 days
+  const oldCases = await connectionPool.query(`
+    SELECT case_id FROM cases
+    WHERE date < $1
+    `,
+    [current.setDate(current.getDate() - 7)]
+  );
+
+  // delete each old cases
+  for (const row of oldCases.rows) {
+    await deleteCaseData(row.case_id);
+  }
+
+}
+
 
 
 
@@ -348,7 +467,7 @@ export async function sendDataToAi() {
   // get data from db
   // DB query
   // to be replaced later
-  const DatenAusDB = await getUserDataFromDB();
+  const DatenAusDB = await getUserDataFromDB(caseId);
 
   // db data as string
   const data = JSON.stringify(DatenAusDB, null, 2);
