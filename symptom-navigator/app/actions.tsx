@@ -479,6 +479,7 @@ export async function getAccessCode() {
 // function to send and recieve promt/response from ollama, same concept for the argument as getDBData above
 export async function sendDataToAi() {
 
+  // reading cookies to get case id
   const cookieStore = await cookies();
   const caseId = cookieStore.get('caseId')?.value;
 
@@ -486,9 +487,15 @@ export async function sendDataToAi() {
     throw new Error('Keine aktive Session gefunden');
   }
 
+  // get data from db
+  // DB query
+  // to be replaced later
   const DatenAusDB = await getUserDataFromDB(caseId);
+
+  // db data as string
   const data = JSON.stringify(DatenAusDB, null, 2);
 
+  // define promt
   const prompt = `
   EINGABEDATEN:
   - Alter, Geschlecht, Schwangerschaft
@@ -512,7 +519,7 @@ export async function sendDataToAi() {
   5. eine kurze Handlungsempfehlung in einfacher Sprache fuer den Patienten.
   Hier sind die Daten: ${data}`;
 
-  // JSON schema
+  // JSON schema (looks weird because it used to be xml (yes there was a reason for that too, it was not just because I felt like it))
   const format = {
   type: "object",
   properties: {
@@ -576,6 +583,7 @@ export async function sendDataToAi() {
 };
 
   try {
+    // Make request to Ollama API
     const response = await fetch(process.env.MEDGEMMA_API_URL!, {
       method: 'POST',
       headers: {
@@ -591,12 +599,14 @@ export async function sendDataToAi() {
       }),
     });
 
+    // data contains response from ai
     const dataUnprocessed = await response.json();
     console.log('HTTP Status:', response.status);
 
-    // response as json
+    // response as json as for some reason it is apparently not json enough yet
     const result = JSON.parse(dataUnprocessed.choices[0].message.content);
 
+    // printing response
     console.log('medgemma response as object:', result);
 
     await connectionPool.query(
