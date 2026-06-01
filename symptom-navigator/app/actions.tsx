@@ -576,15 +576,15 @@ export async function sendDataToAi() {
 };
 
   try {
-    const response = await fetch('http://141.19.140.104:4000/v1/chat/completions', {
+    const response = await fetch(process.env.MEDGEMMA_API_URL!, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer sk-s87RnNMaz4LhtjNMsl5HHg',
-        'x-api-key': 'sk-s87RnNMaz4LhtjNMsl5HHg'
+        'Authorization': `Bearer ${process.env.MEDGEMMA_API_KEY}`,
+        'x-api-key': process.env.MEDGEMMA_API_KEY!
       },
       body: JSON.stringify({
-        model: 'medgemma:27b',
+        model: `${process.env.MEDGEMMA_API_MODEL}`,
         messages: [{ role: 'user', content: prompt }],
         stream: false,
         format: format
