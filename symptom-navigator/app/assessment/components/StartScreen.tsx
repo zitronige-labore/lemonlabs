@@ -31,6 +31,7 @@ import { SosModal } from "./SosModal";
 type StartScreenProps = {
   onStartAssessment: () => void;
   resetProcess: () => void;
+  setStep: (step: string) => void;
 };
 
 /*
@@ -45,7 +46,8 @@ type StartScreenProps = {
 */
 export function StartScreen({
   onStartAssessment,
-  resetProcess
+  resetProcess,
+  setStep
 }: StartScreenProps) {
 
   const [showSos, setShowSos] = useState(false);
@@ -104,8 +106,22 @@ export function StartScreen({
                 textDecoration: "none"
               }}
             >
-              Anderes Anliegen
+              Termine
             </Link>
+
+            {/* Datenverwaltungs-Buttons */}
+            <button
+              type="button"
+              className={homeStyles.secondaryButton}
+              onClick={() => setStep("manageData")}
+              style={{
+                backgroundColor: "#f0f9ff",
+                color: "#0369a1",
+                borderColor: "#0369a1"
+              }}
+            >
+              Gespeicherte Daten ansehen
+            </button>
           </div>
         </div>
       </div>

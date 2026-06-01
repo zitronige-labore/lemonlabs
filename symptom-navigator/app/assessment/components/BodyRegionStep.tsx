@@ -129,6 +129,13 @@ export function BodyRegionStep({
         Unterregion aus.
       </p>
 
+      {selectedMainRegion && !selectedSubRegion && (
+        <div className={assessmentStyles.selectionHint}>
+          <span className={assessmentStyles.hintArrow}>↓</span>
+          Wähle unten jetzt die spezifischere Region aus.
+        </div>
+      )}
+
       <div className={assessmentStyles.bodyWrapper}>
         <button
           type="button"
@@ -184,6 +191,16 @@ export function BodyRegionStep({
               <BodyPath
                 region="Beine & Füße"
                 d="M75,310 L105,310 L100,438 C98,460 78,460 75,438 Z M115,310 L145,310 L145,438 C142,460 122,460 120,438 Z"
+              />
+              <circle cx="100" cy="38" r="3.5" fill="#1f2937" pointerEvents="none" />
+              <circle cx="120" cy="38" r="3.5" fill="#1f2937" pointerEvents="none" />
+              <path
+                d="M98 52 C104 60 116 60 122 52"
+                fill="none"
+                stroke="#1f2937"
+                strokeWidth="2"
+                strokeLinecap="round"
+                pointerEvents="none"
               />
             </>
           ) : (

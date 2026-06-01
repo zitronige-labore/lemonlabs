@@ -2,51 +2,54 @@
 
 .main {
   min-height: 100vh;
-  background: #ffffff;
+  background: var(--background);
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  font-family: Arial, sans-serif;
+  font-family: var(--font-base);
   padding: 20px;
+  box-sizing: border-box;
 }
 
 /* Begrenzter Inhaltsbereich */
 .hauptbox {
   max-width: 800px;
   width: 100%;
-  text-align: center;
   flex: 1;
   display: flex;
-  justify-content: center;
   align-items: center;
+  box-sizing: border-box;
 }
 
 /* Zentrale Karte mit Hintergrund und Schatten */
 .kopfbox {
   width: 100%;
-  background: #f2f8fc;
+  background: var(--surface);
   border-radius: 16px;
   padding: 32px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
 }
 
 /* ================= Header mit Titel und Logo ================= */
 
 .header {
+  color: var(--text-primary);
   margin-bottom: 4vh;
 }
 
 .title {
-  color: #000000;
-  font-family: "Arial Black", Arial, sans-serif;
+  color: var(--text-primary);
+  font-family: var(--font-base);
   font-size: 4rem;
   font-weight: 700;
   margin-bottom: 0;
+  text-align: center;
 }
 
 .subtitle {
-  color: #778899;
+  color: var(--danger);
   font-size: 2rem;
   font-weight: 350;
   margin-top: -1vh;
@@ -59,7 +62,6 @@
 .logo {
   width: 40px;
   height: 40px;
-  border-radius: 50%;
   object-fit: cover;
 }
 
@@ -68,28 +70,26 @@
 .intro {
   margin-bottom: 20px;
   line-height: 1.4;
-  color: #000000;
+  color: var(--text-primary);
   font-size: 2.3rem;
   font-weight: 800;
+  text-align: center;
 }
 
 .warningText {
-  color: #000000;
+  color: var(--primary);
   font-size: 1rem;
-  margin-bottom: 14px;
-  font-weight: 700;
-  line-height: 1.6;
 }
 
 .notrufBox {
-  background: #fff4e5;
-  color: #92400e;
-  padding: 14px;
+  background: var(--danger-soft);
+  color: var(--danger);
   border-radius: 10px;
   margin-bottom: 24px;
   line-height: 1.6;
   font-size: 0.98rem;
   font-weight: 700;
+  padding: 16px;
 }
 
 .checkboxLabel {
@@ -97,10 +97,9 @@
   justify-content: center;
   align-items: center;
   gap: 10px;
-  color: #000000;
+  color: var(--text-primary);
   font-size: 0.98rem;
   font-weight: 700;
-  margin: 20px 0;
   line-height: 1.4;
 }
 
@@ -116,31 +115,31 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  align-items: center;
   margin-top: 28px;
+  align-items: center;
 }
 
 .emergencyButton,
 .primaryButton,
 .secondaryButton {
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
   border: none;
-  padding: 12px 20px;
-  border-radius: 10px;
+  padding: 14px 22px;
+  border-radius: 14px;
   cursor: pointer;
   font-size: 1rem;
-  font-weight: 600;
   width: 100%;
   max-width: 320px;
   text-decoration: none;
   display: block;
   box-sizing: border-box;
   text-align: center;
-  font-family: Arial, sans-serif;
+  font-weight: 700;
 }
 
 .primaryButton {
-  background: #2563eb;
-  color: #ffffff;
+  background: var(--primary);
+  color: var(--foreground);
 }
 
 .secondaryButton {
@@ -150,7 +149,8 @@
 }
 
 .primaryButton:disabled {
-  background: #93c5fd;
+  color: var(--text-muted);
+  background: var(--border);
   cursor: not-allowed;
 }
 
@@ -163,14 +163,14 @@
   position: fixed;
   right: 24px;
   bottom: 72px;
-  background: #dc2626;
-  color: #ffffff;
+  background: var(--danger);
+  color: var(--foreground);
   text-decoration: none;
-  font-weight: 900;
+  font-weight: 700;
   font-size: 1rem;
-  border-radius: 999px;
-  padding: 16px 20px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  border-radius: 18px;
+  padding: 16px 22px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
   z-index: 20;
   border: none;
   cursor: pointer;
@@ -178,7 +178,7 @@
 
 /* ================= SOS Modal ================= */
 
-.sosOverlay {
+.sosModalOverlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -188,27 +188,28 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 100;
-  padding: 20px;
+  z-index: 200;
   box-sizing: border-box;
+  padding: 20px;
 }
 
 .sosModalBox {
-  background: #ffffff;
-  padding: 30px;
-  border-radius: 16px;
+  background: var(--surface);
+  border-radius: 20px;
+  padding: 32px 28px;
   max-width: 400px;
   width: 100%;
   text-align: center;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
 }
 
 .emergencyTitleModal {
-  color: #b91c1c;
+  color: var(--danger);
   font-size: 1.8rem;
   margin-top: 0;
   margin-bottom: 12px;
-  font-family: "Arial Black", Arial, sans-serif;
+  font-family: var(--font-base);
 }
 
 .sosInstruction {
@@ -224,8 +225,8 @@
   position: fixed;
   left: 24px;
   bottom: 72px;
-  background: #3b82f6;
-  color: #ffffff;
+  background: var(--primary);
+  color: var(--foreground);
   border: none;
   width: 50px;
   height: 50px;
@@ -236,41 +237,73 @@
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
   cursor: pointer;
   z-index: 20;
-  transition: transform 0.2s ease, background 0.2s ease;
-}
-
-.tutorialButton:hover {
-  background: #2563eb;
-  transform: scale(1.05);
 }
 
 .tutorialOverlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.7);
+  inset: 0;
+  background: rgba(15, 23, 42, 0.7);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 200;
-  padding: 20px;
   box-sizing: border-box;
+  padding: 20px;
 }
 
 .tutorialModalBox {
   position: relative;
-  background: #ffffff;
+  background: var(--surface);
   padding: 40px 30px 30px;
   border-radius: 20px;
   max-width: 600px;
   width: 100%;
   text-align: center;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
   display: flex;
   flex-direction: column;
   align-items: center;
+  box-sizing: border-box;
+}
+
+.loadingPopup {
+  background: var(--surface);
+  border-radius: 20px;
+  padding: 32px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+}
+
+.loadingSpinner {
+  width: 62px;
+  height: 62px;
+  border: 6px solid rgba(59, 130, 246, 0.18);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loadingText {
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ================= Dark Mode Styling ================= */
+@media (prefers-color-scheme: dark) {
+  .main {
+    padding: 40px 20px;
+    background: var(--background);
+  }
 }
 
 .closeTutorialButton {
@@ -289,19 +322,19 @@
 }
 
 .closeTutorialButton:hover {
-  color: #111827;
+  color: var(--text-primary);
 }
 
 .tutorialTitle {
-  color: #1e3a8a;
+  color: var(--primary-strong);
   font-size: 2.2rem;
   margin-top: 0;
   margin-bottom: 20px;
-  font-family: "Arial Black", Arial, sans-serif;
+  font-family: var(--font-base);
 }
 
 .tutorialContent {
-  color: #374151;
+  color: var(--text-muted);
   font-size: 1.1rem;
   line-height: 1.6;
   margin-bottom: 10px;
@@ -309,9 +342,9 @@
 
 .tutorialStepHighlight {
   font-weight: 800;
-  color: #2563eb;
+  color: var(--primary-strong);
   font-size: 1.3rem;
-  background: #eff6ff;
+  background: var(--primary-soft);
   padding: 8px 16px;
   border-radius: 8px;
   display: inline-block;
@@ -322,7 +355,7 @@
 
 .footer {
   width: 100%;
-  border-top: 1px solid #d1d5db;
+  border-top: 1px solid var(--border);
   padding: 18px 0 6px;
   display: flex;
   justify-content: center;
@@ -334,16 +367,16 @@
 .footerLink {
   background: none;
   border: none;
-  color: #374151;
+  color: var(--text-muted);
   cursor: pointer;
-  font-family: Arial, sans-serif;
+  font-family: var(--font-base);
   font-size: 1rem;
   font-weight: 700;
   padding: 4px 8px;
 }
 
 .footerLink:hover {
-  color: #000000;
+  color: var(--text-primary);
   text-decoration: underline;
 }
 

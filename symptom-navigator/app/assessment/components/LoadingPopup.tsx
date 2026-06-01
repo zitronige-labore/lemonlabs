@@ -7,7 +7,10 @@ export function LoadingPopup() {
 
   return (
     <div className={homeStyles.tutorialOverlay}>
-      Daten werden verarbeitet...
+      <div className={homeStyles.loadingPopup}>
+        <div className={homeStyles.loadingSpinner} aria-hidden="true" />
+        <p className={homeStyles.loadingText}>KI-Antwort wird geladen...</p>
+      </div>
     </div>
   );
 }

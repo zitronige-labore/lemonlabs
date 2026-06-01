@@ -2,14 +2,14 @@
 
 .main {
   min-height: 100vh;
-  background: #ffffff;
+  background: var(--background);
 
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
 
-  font-family: Arial, sans-serif;
+  font-family: var(--font-base);
   padding: 24px 12px 12px;
   box-sizing: border-box;
 }
@@ -18,10 +18,10 @@
 .card {
   width: 100%;
   max-width: 560px;
-  background: #f2f8fc;
-  border-radius: 16px;
+  background: var(--surface);
+  border-radius: 20px;
   padding: clamp(18px, 4vw, 32px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
   text-align: center;
   box-sizing: border-box;
 
@@ -29,18 +29,40 @@
   margin-bottom: auto;
 }
 
+.progressContainer {
+  width: 100%;
+  margin-bottom: 24px;
+}
+
+.progressTrack {
+  width: 100%;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--border);
+  overflow: hidden;
+}
+
+.progressFill {
+  width: 0;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--primary-soft) 0%, var(--primary) 100%);
+  transition: width 0.3s ease;
+}
+
 /* ================= Typografie ================= */
 
 .title {
-  color: #000000;
-  font-family: "Arial Black", Arial, sans-serif;
+  color: var(--text-primary);
+  font-family: var(--font-base);
   font-size: clamp(1.8rem, 7vw, 2.6rem);
   line-height: 1.1;
   margin-bottom: 16px;
+  text-align: center;
 }
 
 .text {
-  color: #000000;
+  color: var(--text-primary);
   font-size: 1rem;
   line-height: 1.6;
   margin-bottom: 20px;
@@ -51,24 +73,24 @@
   font-weight: 700;
   font-size: 1.05rem;
   text-align: center;
-  color: #000000;
+  color: var(--text-primary);
 }
 
 /* ================= Formularbereiche ================= */
 
 .fieldset {
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border);
   border-radius: 12px;
   padding: clamp(14px, 4vw, 20px);
   margin-bottom: 24px;
   text-align: left;
-  background: #ffffff;
+  background: var(--surface-alt);
   box-sizing: border-box;
 }
 
 .legend {
   font-weight: 700;
-  color: #000000;
+  color: var(--text-primary);
   padding: 0 8px;
 }
 
@@ -76,7 +98,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #000000;
+  color: var(--text-primary);
   margin-bottom: 14px;
   cursor: pointer;
   line-height: 1.5;
@@ -87,7 +109,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  color: #000000;
+  color: var(--text-primary);
   font-weight: 700;
   margin-bottom: 16px;
   font-size: 0.98rem;
@@ -97,17 +119,17 @@
   width: 100%;
   padding: 12px;
   border-radius: 10px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border);
   font-size: 1rem;
   box-sizing: border-box;
-  background: #ffffff;
-  color: #000000;
+  background: var(--background);
+  color: var(--text-primary);
 }
 
 .input:focus {
   outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
 }
 
 textarea.input {
@@ -116,7 +138,7 @@ textarea.input {
 }
 
 .characterCounter {
-  color: #4b5563;
+  color: var(--text-muted);
   font-size: 0.85rem;
   font-weight: 400;
   text-align: right;
@@ -125,11 +147,11 @@ textarea.input {
 /* ================= Buttons ================= */
 
 .primaryButton {
-  background: #2563eb;
+  background: var(--primary);
   color: white;
   border: none;
-  padding: 12px 20px;
-  border-radius: 10px;
+  padding: 14px 20px;
+  border-radius: 14px;
   cursor: pointer;
   font-size: 1rem;
   font-weight: 600;
@@ -140,21 +162,21 @@ textarea.input {
 }
 
 .primaryButton:hover {
-  background: #1e4fd1;
+  background: var(--primary-strong);
   transform: translateY(-1px);
 }
 
 .primaryButton:disabled {
-  background: #9ca3af;
+  background: var(--border);
   cursor: not-allowed;
   transform: none;
 }
 
 .secondaryButton {
-  background: #2563eb !important;
-  color: #ffffff !important;
-  border: none !important;
-  border-radius: 12px;
+  background: var(--background) !important;
+  color: var(--primary) !important;
+  border: 1px solid var(--primary) !important;
+  border-radius: 14px;
   padding: 14px 18px;
   margin: 0 auto 18px auto;
 
@@ -169,37 +191,37 @@ textarea.input {
   font-weight: 700;
   cursor: pointer;
 
-  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+  box-shadow: 0 10px 30px rgba(37, 99, 235, 0.11);
   transition: all 0.2s ease;
 }
 
 .secondaryButton:hover {
-  background: #1d4ed8 !important;
-  color: #ffffff !important;
+  background: var(--primary-soft) !important;
+  color: var(--text-primary) !important;
   transform: translateY(-1px);
 }
 
 .emergencyBox {
-  background: #ffe4e4;
-  color: #7f1d1d;
+  background: var(--danger-soft);
+  color: var(--danger);
   padding: 18px;
   border-radius: 12px;
   margin-bottom: 20px;
   line-height: 1.6;
-  border: 1px solid #fecaca;
+  border: 1px solid var(--danger-soft);
 }
 
 .emergencyTitle {
-  color: #b91c1c;
+  color: var(--danger);
   font-size: clamp(1.3rem, 5vw, 1.6rem);
   margin-bottom: 8px;
 }
 
 .emergencyButton {
-  background: #dc2626;
+  background: var(--danger);
   color: white;
-  padding: 12px 20px;
-  border-radius: 10px;
+  padding: 14px 20px;
+  border-radius: 14px;
   text-decoration: none;
   display: inline-block;
   margin-top: 10px;
@@ -221,10 +243,10 @@ textarea.input {
   width: 100%;
   max-width: 340px;
   margin: 24px auto;
-  background: #ffffff;
+  background: var(--surface-alt);
   border-radius: 18px;
   padding: 16px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border);
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
   box-sizing: border-box;
 }
@@ -236,8 +258,8 @@ textarea.input {
 }
 
 .bodyPart {
-  fill: #e1f4f4;
-  stroke: #515151;
+  fill: rgba(59, 130, 246, 0.18);
+  stroke: var(--text-muted);
   stroke-width: 1.5;
   cursor: pointer;
   text-align: center;
@@ -246,14 +268,14 @@ textarea.input {
 }
 
 .bodyPart:hover {
-  fill: #fb923c;
-  stroke: #ea580c;
+  fill: rgba(59, 130, 246, 0.33);
+  stroke: var(--primary-strong);
   filter: drop-shadow(0 0 6px rgba(249, 115, 22, 0.45));
 }
 
 .selectedBodyPart {
-  fill: #f97316;
-  stroke: #c2410c;
+  fill: var(--primary-soft);
+  stroke: var(--primary-strong);
   filter: drop-shadow(0 0 7px rgba(249, 115, 22, 0.55));
 }
 
@@ -272,11 +294,11 @@ textarea.input {
 }
 
 .regionButton {
-  background: #ffffff;
-  color: #000000;
-  border: 1px solid #d1d5db;
+  background: var(--surface-alt);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
   padding: 14px 16px;
-  border-radius: 12px;
+  border-radius: 14px;
   cursor: pointer;
   font-size: 1rem;
   font-weight: 600;
@@ -287,15 +309,15 @@ textarea.input {
 }
 
 .regionButton:hover {
-  background: #e6f2fb;
-  border-color: #0078bf;
+  background: var(--primary-soft);
+  border-color: var(--primary);
   transform: translateY(-1px);
 }
 
 .selectedRegion {
-  background: #f97316;
+  background: var(--primary);
   color: #ffffff;
-  border-color: #f97316;
+  border-color: var(--primary);
 }
 
 /* ================= Slider ================= */
@@ -315,11 +337,11 @@ textarea.input {
 
 .resultBox {
   margin-top: 24px;
-  background: #ffffff;
+  background: var(--surface-alt);
   border-radius: 14px;
   padding: 20px;
   color: #000000;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
   display: flex;
   flex-direction: column;
@@ -333,11 +355,11 @@ textarea.input {
 }
 
 .continueButton {
-  background: #2563eb;
+  background: var(--primary);
   color: white;
   border: none;
   padding: 14px 18px;
-  border-radius: 12px;
+  border-radius: 14px;
   cursor: pointer;
   font-size: 1rem;
   font-weight: 600;
@@ -348,7 +370,7 @@ textarea.input {
 }
 
 .continueButton:hover {
-  background: #1e4fd1;
+  background: var(--primary-strong);
   transform: translateY(-1px);
 }
 
@@ -356,7 +378,7 @@ textarea.input {
 
 .footer {
   width: 100%;
-  border-top: 1px solid #d1d5db;
+  border-top: 1px solid var(--border);
   padding: 18px 0 6px;
   margin-top: 40px;
 
@@ -372,9 +394,9 @@ textarea.input {
 .footerLink {
   background: none;
   border: none;
-  color: #374151;
+  color: var(--text-muted);
   cursor: pointer;
-  font-family: Arial, sans-serif;
+  font-family: var(--font-base);
   font-size: 1rem;
   font-weight: 700;
   padding: 4px 8px;
@@ -383,6 +405,34 @@ textarea.input {
 .footerLink:hover {
   color: #000000;
   text-decoration: underline;
+}
+
+.selectionHint {
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin: 0 auto 18px auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  justify-content: center;
+  max-width: 420px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}
+
+.hintArrow {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: var(--primary-soft);
+  color: var(--primary-strong);
+  font-weight: 700;
 }
 
 /* ================= Mobile Ansicht ================= */

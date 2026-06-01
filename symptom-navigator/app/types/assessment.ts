@@ -78,6 +78,7 @@ export type Step =
   | "result"
   | "textInput"
   | "selectMoreSymptoms"
+  | "manageData"
   | subregionCategory
   | categoryAfterCategoryIfNeeded
   | symptomChoiceStep;
