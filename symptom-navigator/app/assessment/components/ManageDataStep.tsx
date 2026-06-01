@@ -1,6 +1,6 @@
 import type { Step } from "../../types/assessment";
 import assessmentStyles from "../Assessment.module.css";
-import { accessDataWithAccessCode, deleteDataOnAccessCode } from "../../actions";
+import { accessDataWithAccessCode, deleteDataOnAccessCode, accessAiDataWithAccessCode } from "../../actions";
 import { useState } from "react";
 
 type ManageDataStepProps = {
@@ -12,6 +12,7 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
 
     // state to store retrieved data and access code
     const [data, setData] = useState<any | null>(null);
+    const [aiData, setAiData] = useState<any | null>(null);
     const [code, setCode] = useState<string>("");
 
 
@@ -55,7 +56,10 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
                     <button
                         type="button"
                         className={assessmentStyles.continueButton}
-                        onClick={async () => setData(await accessDataWithAccessCode(code))}
+                        onClick={async () => {
+                            setData(await accessDataWithAccessCode(code));
+                            setAiData(await accessAiDataWithAccessCode(code));
+                        }}
                     >
                         Abrufen
                     </button>
@@ -151,6 +155,38 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
 
                             {data?.additionalInfoData?.[0]?.other_info == null && data?.additionalInfoData?.[0]?.height == null && data?.additionalInfoData?.[0]?.weight == null && data?.additionalInfoData?.[0]?.temperature == null && data?.additionalInfoData?.[0]?.duration == null && worsening === undefined && (<p>Keine Zusatzangaben vorhanden</p>)}
                         </div>
+                    )}
+
+                    {aiData && aiData[0] && (
+                    <>
+                        <div className={assessmentStyles.fieldset}>
+                            <p className={assessmentStyles.selectedText}>KI-Einschätzung</p>
+                            {aiData[0].urgency_level && (
+                                <p>Dringlichkeitsstufe: <strong>{aiData[0].urgency_level}</strong></p>
+                            )}
+                            {aiData[0].advice_text && (
+                                <p>Handlungsempfehlung: <strong>{aiData[0].advice_text}</strong></p>
+                            )}
+                        </div>
+
+
+                        <div className={assessmentStyles.fieldset}>
+                            <p className={assessmentStyles.selectedText}>Vermutungen</p>
+                            {[1, 2, 3, 4, 5].map((n) => {
+                                const suspicion = aiData[0][`suspicion${n}`];
+                                const probability = aiData[0][`probability${n}`];
+                                if (!suspicion) return null;
+                                return (
+                                    <div key={n} className={assessmentStyles.fieldset}>
+                                        Vermutung {n}: <strong>{suspicion}</strong><br />
+                                        {probability != null && (
+                                            <p>Wahrscheinlichkeit: <strong>{probability}%</strong></p>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </>
                     )}
                 </>
             )}
