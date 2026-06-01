@@ -453,6 +453,29 @@ export async function getDetailsNoCertainCount(category: string, listName: strin
 
 
 
+// function to get access code
+export async function getAccessCode() {
+  
+  // reading cookies to get case id
+  const cookieStore = await cookies();
+  const caseId = cookieStore.get('caseId')?.value;
+
+  const accessCode = await connectionPool.query(`
+    SELECT access_code
+    FROM cases
+    WHERE case_id = $1
+    ;
+    `,
+    [caseId]
+  );
+
+  return accessCode.rows[0].access_code;
+}
+
+
+
+
+
 // function to send and recieve promt/response from ollama, same concept for the argument as getDBData above
 export async function sendDataToAi() {
 
