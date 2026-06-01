@@ -307,6 +307,21 @@ export async function getUserDataFromDB(caseId: string) {
 
 
 
+// function to get ai data from db
+export async function getAiDataFromDB(caseId: string) {
+  const aiData = await connectionPool.query(`
+    SELECT urgency_level, advice_text, suspicion1, suspicion2, suspicion3, suspicion4, suspicion5, probability1, probability2, probability3, probability4, probability5
+    FROM recommendations
+    WHERE case_id = $1
+    `,
+    [caseId]
+  );
+
+  return aiData.rows;
+}
+
+
+
 // function to delete all data relating to a case
 export async function deleteCaseData(caseId: string) {
 
@@ -405,6 +420,29 @@ export async function accessDataWithAccessCode(accessCode: string) {
     console.log("Kein Fall mit access code " + accessCode + " gefunden.");
     return null;
   }
+}
+
+export async function accessAiDataWithAccessCode(accessCode: string) {
+
+    // DB query to get case id from access code
+  const caseId = await connectionPool.query(`
+    SELECT case_id FROM cases
+    WHERE access_code = $1
+    `,
+    [accessCode]
+  );
+
+  // returning data if case exists
+  if (caseId.rows.length > 0) {
+    const data = await getAiDataFromDB(caseId.rows[0].case_id);
+    console.log("Ai Daten für Fall mit access code " + accessCode + " wurden abgerufen.");
+    console.log("Abgerufene Daten:", data);
+    return data;
+  } else {
+    console.log("Kein Fall mit access code " + accessCode + " gefunden.");
+    return null;
+  }
+
 }
 
 
@@ -596,10 +634,24 @@ export async function sendDataToAi() {
 
     await connectionPool.query(
       `
-      INSERT INTO recommendations (case_id, urgency_level, advice_text)
-      VALUES ($1, $2, $3)
+      INSERT INTO recommendations (case_id, urgency_level, advice_text, suspicion1, suspicion2, suspicion3, suspicion4, suspicion5, probability1, probability2, probability3, probability4, probability5)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
       `,
-      [caseId, xmlData.assessment.urgency, xmlData.assessment.nextSteps]
+      [
+        caseId,
+        xmlData.assessment.urgency,
+        xmlData.assessment.nextSteps,
+        xmlData.assessment.suspicions.suspicion1.reasonForSuspicion1,
+        xmlData.assessment.suspicions.suspicion2.reasonForSuspicion2,
+        xmlData.assessment.suspicions.suspicion3.reasonForSuspicion3,
+        xmlData.assessment.suspicions.suspicion4.reasonForSuspicion4,
+        xmlData.assessment.suspicions.suspicion5.reasonForSuspicion5,
+        xmlData.assessment.suspicions.suspicion1.probability1*100,
+        xmlData.assessment.suspicions.suspicion2.probability2*100,
+        xmlData.assessment.suspicions.suspicion3.probability3*100,
+        xmlData.assessment.suspicions.suspicion4.probability4*100,
+        xmlData.assessment.suspicions.suspicion5.probability5*100
+      ]
     );
 
     return xmlData;
