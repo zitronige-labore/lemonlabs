@@ -23,6 +23,7 @@ import assessmentStyles from "../Assessment.module.css";
 type AssessmentLayoutProps = {
   children: ReactNode;
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+  progress: number;
 };
 
 /*
@@ -38,6 +39,7 @@ type AssessmentLayoutProps = {
 export function AssessmentLayout({
   children,
   onSubmit,
+  progress,
 }: AssessmentLayoutProps) {
   return (
     <>
@@ -49,6 +51,15 @@ export function AssessmentLayout({
       */}
       <form className={assessmentStyles.card} onSubmit={onSubmit}>
         <h1 className={assessmentStyles.title}>Ersteinschätzung</h1>
+
+        <div className={assessmentStyles.progressContainer}>
+          <div className={assessmentStyles.progressTrack}>
+            <div
+              className={assessmentStyles.progressFill}
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+        </div>
 
         {children}
       </form>

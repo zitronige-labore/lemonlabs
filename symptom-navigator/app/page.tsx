@@ -27,6 +27,7 @@ import { StartScreen } from "./assessment/components/StartScreen";
 import { SymptomTextInputStep } from "./assessment/components/SymptomTextInputStep";
 import { TutorialModal } from "./assessment/components/TutorialModal";
 import { LoadingPopup } from "./assessment/components/LoadingPopup";
+import { ManageDataStep } from "./assessment/components/ManageDataStep";
 
 import { Question } from "@phosphor-icons/react";
 
@@ -227,7 +228,57 @@ export default function Home() {
     history.pushState({ step: nextStep }, "", "#" + nextStep);
     setStep(nextStep);
   }
-
+  function getStepProgress(step: Step): number {
+    switch (step) {
+      case "redflags":
+        return 15;
+      case "basisStart":
+        return 30;
+      case "bodyRegion":
+        return 45;
+      case "symptomChoice":
+        return 60;
+      case "manageData":
+        return 0;
+      // Alle Symptom-Kategorie-Steps
+      case "innenOhr":
+      case "aussenOhr":
+      case "kopfSpannung":
+      case "kopfMigraene":
+      case "kopfCluster":
+      case "kopfBegleitung":
+      case "kopfWarnsignale":
+      case "nackenBewegung":
+      case "nackenWarnsignale":
+      case "mundZaehneSchmerz":
+      case "mundZaehneSchleimhaut":
+      case "mdSpeiseroehre":
+      case "mdMagen":
+      case "mdGalle":
+      case "unterbauchDuendarm":
+      case "unterbauchDickdarm":
+      case "unterbauchOvarien":
+      case "brustHerz":
+      case "brustLunge":
+      case "brustRippen":
+      case "brustraumWarnsignale":
+      case "rueckenHalswirbel":
+      case "rueckenBrustwirbel":
+      case "rueckenLendenwirbel":
+      case "rueckenMuskulatur":
+        return 60;
+      case "textInput":
+        return 70;
+      case "selectMoreSymptoms":
+        return 80;
+      case "additionalInfo":
+        return 90;
+      case "result":
+        return 100;
+      default:
+        return 0;
+    }
+  }
   /*
     Aktualisiert ein einzelnes Warnzeichen.
     Sobald ein Warnzeichen ausgewählt wird, wird
@@ -370,6 +421,7 @@ export default function Home() {
         <StartScreen
           onStartAssessment={() => goToStep("hinweise")}
           resetProcess={resetProcess}
+          setStep={goToStep}
         />
       )}
 
@@ -382,10 +434,24 @@ export default function Home() {
           onContinue={() => goToStep("redflags")}
         />
       )}
-
+      {/* Datenverwaltungs-Seite */}
+      {step === "manageData" && (
+        <form className={assessmentStyles.card} onSubmit={(e) => { e.preventDefault(); goToStep("start"); }}>
+          <ManageDataStep
+            step={step}
+            setStep={(newStep) => goToStep("start")}
+          />
+          <button
+            type="submit"
+            className={assessmentStyles.continueButton}
+          >
+            Zurück zur Startseite
+          </button>
+        </form>
+      )}
       {/* Alle Schritte der eigentlichen Ersteinschätzung */}
-      {step !== "start" && step !== "hinweise" && (
-        <AssessmentLayout onSubmit={handleSubmit}>
+      {step !== "start" && step !== "hinweise" && step !== "manageData" && (
+        <AssessmentLayout onSubmit={handleSubmit} progress={getStepProgress(step)}>
           {/* Schritt 1: Warnzeichen prüfen */}
           {step === "redflags" && (
             <RedFlagsStep
