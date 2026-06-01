@@ -49,7 +49,7 @@ export default function SymptomSelection({
       {/* one box for every symptom */}
       {symptoms.map((element) => 
         (
-          <div className={assessmentStyles.fieldset} key={element.symptomName}>
+          <div className={assessmentStyles.fieldset} key={`${element.symptomName}-${selectedSubRegion}`}>
             <label className={assessmentStyles.label}>
               <input
                 type="checkbox"
