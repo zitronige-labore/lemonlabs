@@ -531,12 +531,12 @@ export async function sendDataToAi() {
  
   try {
     // Make request to Ollama API
-    const response = await fetch('http://141.19.141.155:4000/v1/chat/completions', {
+    const response = await fetch('http://141.19.140.104:4000/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer sk-rwai1swh1cJ0JOROAK8iLA',
-        'x-api-key': 'sk-rwai1swh1cJ0JOROAK8iLA'
+        'Authorization': 'Bearer sk-s87RnNMaz4LhtjNMsl5HHg',
+        'x-api-key': 'sk-s87RnNMaz4LhtjNMsl5HHg'
       },
       body: JSON.stringify({
         model: 'medgemma:27b',
