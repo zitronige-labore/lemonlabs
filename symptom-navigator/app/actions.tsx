@@ -466,7 +466,7 @@ export async function getAccessCode() {
     WHERE case_id = $1
     ;
     `,
-    [case_id]
+    [caseId]
   );
 
   return accessCode.rows[0].access_code;
