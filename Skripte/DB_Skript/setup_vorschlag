@@ -25,18 +25,13 @@ CREATE TABLE additional_information (
 	height INTEGER,
 	temperature REAL,
 	duration INTEGER,
+	cigarettes INTEGER,
+	alcohol INTEGER,
 	worsening BOOLEAN,
 	breastfeeding BOOLEAN,
 	extraInfo VARCHAR
 );
 
-CREATE TABLE drug_use (
-	drug_use_id SERIAL PRIMARY KEY,
-	alcohol BOOLEAN,
-	cigarettes BOOLEAN,
-	drugs BOOLEAN,
-	drug_name VARCHAR(100)
-);
 
 CREATE TABLE details_no_certain_count (
 	case_id INTEGER,
@@ -79,6 +74,16 @@ CREATE TABLE recommendations (
 	case_id INTEGER UNIQUE REFERENCES cases(case_id) ON DELETE CASCADE,
 	urgency_level INTEGER,
 	advice_text TEXT,
+	suspicion1 TEXT,
+	suspicion2 TEXT,
+	suspicion3 TEXT,
+	suspicion4 TEXT,
+	suspicion5 TEXT,
+	probability1 INTEGER,
+	probability2 INTEGER,
+	probability3 INTEGER,
+	probability4 INTEGER,
+	probability5 INTEGER,
 	context_data JSONB,
 	fhir_json JSONB
 );
