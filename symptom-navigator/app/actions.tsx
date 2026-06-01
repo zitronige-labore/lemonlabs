@@ -422,7 +422,7 @@ export async function accessDataWithAccessCode(accessCode: string) {
   }
 }
 
-export async function getAiDataFromAccessCode(accessCode: string) {
+export async function accessAiDataWithAccessCode(accessCode: string) {
 
     // DB query to get case id from access code
   const caseId = await connectionPool.query(`

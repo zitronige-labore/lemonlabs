@@ -1,6 +1,6 @@
 import type { Step } from "../../types/assessment";
 import assessmentStyles from "../Assessment.module.css";
-import { accessDataWithAccessCode, deleteDataOnAccessCode } from "../../actions";
+import { accessDataWithAccessCode, deleteDataOnAccessCode, accessAiDataWithAccessCode } from "../../actions";
 import { useState } from "react";
 
 type ManageDataStepProps = {
@@ -12,6 +12,7 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
 
     // state to store retrieved data and access code
     const [data, setData] = useState<any | null>(null);
+    const [aiData, setAiData] = useState<any | null>(null);
     const [code, setCode] = useState<string>("");
 
 
@@ -55,7 +56,10 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
                     <button
                         type="button"
                         className={assessmentStyles.continueButton}
-                        onClick={async () => setData(await accessDataWithAccessCode(code))}
+                        onClick={async () => {
+                            setData(await accessDataWithAccessCode(code));
+                            setAiData(await accessAiDataWithAccessCode(code));
+                        }}
                     >
                         Abrufen
                     </button>
