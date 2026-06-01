@@ -310,7 +310,7 @@ export async function getUserDataFromDB(caseId: string) {
 // function to get ai data from db
 export async function getAiDataFromDB(caseId: string) {
   const aiData = await connectionPool.query(`
-    SELECT urgency_level, advice_text
+    SELECT urgency_level, advice_text, suspicion1, suspicion2, suspicion3, suspicion4, suspicion5, probability1, probability2, probability3, probability4, probability5
     FROM recommendations
     WHERE case_id = $1
     `,
@@ -611,10 +611,24 @@ export async function sendDataToAi() {
 
     await connectionPool.query(
       `
-      INSERT INTO recommendations (case_id, urgency_level, advice_text)
-      VALUES ($1, $2, $3)
+      INSERT INTO recommendations (case_id, urgency_level, advice_text, suspicion1, suspicion2, suspicion3, suspicion4, suspicion5, probability1, probability2, probability3, probability4, probability5)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
       `,
-      [caseId, xmlData.assessment.urgency, xmlData.assessment.nextSteps]
+      [
+        caseId,
+        xmlData.assessment.urgency,
+        xmlData.assessment.nextSteps,
+        xmlData.assessment.suspicions.suspicion1.reasonForSuspicion1,
+        xmlData.assessment.suspicions.suspicion2.reasonForSuspicion2,
+        xmlData.assessment.suspicions.suspicion3.reasonForSuspicion3,
+        xmlData.assessment.suspicions.suspicion4.reasonForSuspicion4,
+        xmlData.assessment.suspicions.suspicion5.reasonForSuspicion5,
+        xmlData.assessment.suspicions.suspicion1.probability1*100,
+        xmlData.assessment.suspicions.suspicion2.probability2*100,
+        xmlData.assessment.suspicions.suspicion3.probability3*100,
+        xmlData.assessment.suspicions.suspicion4.probability4*100,
+        xmlData.assessment.suspicions.suspicion5.probability5*100
+      ]
     );
 
     return xmlData;
