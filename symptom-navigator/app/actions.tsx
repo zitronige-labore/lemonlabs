@@ -307,6 +307,21 @@ export async function getUserDataFromDB(caseId: string) {
 
 
 
+// function to get ai data from db
+export async function getAiDataFromDB(caseId: string) {
+  const aiData = await connectionPool.query(`
+    SELECT urgency_level, advice_text
+    FROM recommendations
+    WHERE case_id = $1
+    `,
+    [caseId]
+  );
+
+  return aiData.rows;
+}
+
+
+
 // function to delete all data relating to a case
 export async function deleteCaseData(caseId: string) {
 
@@ -405,6 +420,29 @@ export async function accessDataWithAccessCode(accessCode: string) {
     console.log("Kein Fall mit access code " + accessCode + " gefunden.");
     return null;
   }
+}
+
+export async function getAiDataFromAccessCode(accessCode: string) {
+
+    // DB query to get case id from access code
+  const caseId = await connectionPool.query(`
+    SELECT case_id FROM cases
+    WHERE access_code = $1
+    `,
+    [accessCode]
+  );
+
+  // returning data if case exists
+  if (caseId.rows.length > 0) {
+    const data = await getAiDataFromDB(caseId.rows[0].case_id);
+    console.log("Ai Daten für Fall mit access code " + accessCode + " wurden abgerufen.");
+    console.log("Abgerufene Daten:", data);
+    return data;
+  } else {
+    console.log("Kein Fall mit access code " + accessCode + " gefunden.");
+    return null;
+  }
+
 }
 
 
