@@ -11,7 +11,8 @@ import homeStyles from "../../Home.module.css";
 import type {
   SubRegion,
   MainRegion,
-  AdditionalData
+  AdditionalData,
+  Step
 } from "../../types/assessment";
 
 import Link from "next/link";
@@ -31,7 +32,7 @@ import { SosModal } from "./SosModal";
 type StartScreenProps = {
   onStartAssessment: () => void;
   resetProcess: () => void;
-  setStep: (step: string) => void;
+  setStep: (step: Step) => void;
 };
 
 /*

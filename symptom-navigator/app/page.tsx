@@ -421,7 +421,7 @@ export default function Home() {
         <StartScreen
           onStartAssessment={() => goToStep("hinweise")}
           resetProcess={resetProcess}
-          setStep={setStep}
+          setStep={goToStep}
         />
       )}
 

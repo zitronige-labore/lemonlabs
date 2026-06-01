@@ -61,7 +61,18 @@ export type symptomChoiceStep =
   | "mundZaehneSchleimhaut"
   | "Mund"
   | "Zaehne"
-  | "MundZaehne"; 
+  | "MundZaehne"
+  | "unterbauchDuendarm"
+  | "unterbauchDickdarm"
+  | "unterbauchOvarien"
+  | "brustHerz"
+  | "brustLunge"
+  | "brustRippen"
+  | "brustraumWarnsignale"
+  | "rueckenHalswirbel"
+  | "rueckenBrustwirbel"
+  | "rueckenLendenwirbel"
+  | "rueckenMuskulatur"; 
 
 
 
