@@ -43,6 +43,7 @@ import type {
 } from "./types/assessment";
 
 import { emptyRedFlags } from "./assessment/utils/assessmentData";
+import { CheckInfo } from "./assessment/components/checkInfo";
 
 export default function Home() {
   /*
@@ -523,8 +524,20 @@ export default function Home() {
               additionalData={additionalData}
               setAdditionalData={setAdditionalData}
               onSkip={() => goToStep("result")}
+              setStep={goToStep}
             />
           )}
+
+          {/* Schritt 6.25: checking information */}
+          {step === "checkInfo" && (
+            <CheckInfo
+              additionalData={additionalData}
+              basisData={basisData}
+              symptomText={symptomText}
+              selectedSymptoms={selectedSymptoms}
+            />
+          )}
+
 
           {/* Schritt 6.5: Ladeanzeige */}
           {isLoading === true && (

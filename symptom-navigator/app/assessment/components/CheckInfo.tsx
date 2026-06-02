@@ -15,8 +15,6 @@ import type {
 type SavedAssessmentData = {
   basisData?: BasisData;
   additionalData?: AdditionalData;
-  selectedMainRegion?: MainRegion | null;
-  selectedSubRegion?: SubRegion | null;
   symptomText?: string[];
   selectedSymptoms?: string[];
 };
@@ -25,21 +23,13 @@ type CheckInfoProps = {
   basisData: BasisData;
   additionalData: AdditionalData;
 
-  selectedMainRegion: MainRegion | null;
-  selectedSubRegion: SubRegion | null;
-
-
   symptomText: string[];
   selectedSymptoms: string[];
-
-  onGoHome: () => void;
 };
 
 export function CheckInfo({
   basisData,
   additionalData,
-  selectedMainRegion,
-  selectedSubRegion,
   symptomText,
   selectedSymptoms,
 }: CheckInfoProps) {
@@ -65,6 +55,8 @@ export function CheckInfo({
       displayedAdditionalData.conditions.length > 0
       ? displayedAdditionalData.conditions
       : "Keine Angabe";
+
+  
 
   const symptomTextValue =
     displayedSymptomText && displayedSymptomText.length > 0 ?
@@ -110,6 +102,7 @@ export function CheckInfo({
       )
       : "Keine Angabe";
 
+      
 
       <button
         type="button"
