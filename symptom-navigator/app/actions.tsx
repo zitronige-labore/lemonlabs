@@ -522,7 +522,7 @@ export async function sendDataToAi() {
   const caseId = cookieStore.get('caseId')?.value;
 
   if (!caseId) {
-  throw new Error('Keine aktive Session gefunden');
+    throw new Error('Keine aktive Session gefunden');
   }
 
   // get data from db
@@ -533,104 +533,119 @@ export async function sendDataToAi() {
   // db data as string
   const data = JSON.stringify(DatenAusDB, null, 2);
 
-  // define master prompt
-  const masterPrompt = `
-  du bekommst gleich daten ueber einen Fall, 
-  bestehend aus Alter, Geschlecht, Schwangerschaft,
-  sowie optional angegeben: Gewicht in kg, Größe in cm, gemessene  Koerpertemperatur in Grad Celsius
-  wie lange die Symptome schon anhalten(duration) in Tagen, ob die symptome schlimmer werden(worsening), 
-  ob eine Stillzeit vorleigt(breastfeeding), Allergien, Vorerkrankungen, Medikamente die eigenommen werden. 
-  sonstige Informationen(extrainfo), und Symptomen.
-  Die Symptome findest du entweder in "raw_symptoms" als freitext oder als "name_de" als name fuer ein bestimmtes symptom. 
-  Zu den Symptomen gehoert jeweils eine Schmerzskala angabe, falls es sich um ein Schmerzsymptom(painscale) handelt, sowie eine Koerperregion(bodyregion).
-  Falls die Koerperregion nicht zur Symptombeschreibung passt, hat ein user eine Fehlerhafte Eingabe gemacht, in diesem Fall die Koerperregion ignorieren.
-  null Eintraege ebenfalls irgnorieren.
-  Erstelle basierend auf diesen Daten eine Einschaetzung der Dringlichkeit.
-  (auf einer Skala von 1: keine Aerztliche Abklaerung noetig, 2: ärztliche Abklärung empfohlen, 3: ärztliche Abklärung zeitnah erforderlich, 4: gang in die notaufnahme erforderlich, 5: Notruf taetigen),
-  eine Liste von 5 möglichen vermutungen was der Grund ist, und dazu die Wahrscheinlichkeit der vermutung. 
-  Erkläre kurz die Gründea für jede Vermutung.
-  Gebe den Patienten in einfacher Sprache eine kurze Handlungsempfehlung, was evtl. vom Patienten selbst getan werden sollte, 
-  und falls ein Arzt aufgesucht werden soll auch die Versorgungsebene. 
-  Alles laienverständlich und in kurzen Sätzen. 
-  NUR in diesem XML Format antworten, keinen Text ausserhalb des XMLs, 
-  <nextSteps></nextSteps> DARF NUR 1 mal vorkommen und DARF NUR freitext enthalten. 
-  NUR die vorgegebenen xml tags nutzen, nur diese xml tags sind erlaubt, keine weiteren ausdenken, in next steps: nur eine handlungsempfehlung in einfacher sprache ausgeben:
-  <assessment>
-  <urgency></urgency>
-  <urgencyText></urgencyText>
-  <suspicions>
-    <suspicion1>
-      <reasonForSuspicion1></reasonForSuspicion1>
-      <probability1></probability1>
-    </suspicion1>
-    <suspicion2>
-      <reasonForSuspicion2></reasonForSuspicion2>
-      <probability2></probability2>
-    </suspicion2>
-    <suspicion3>
-      <reasonForSuspicion3></reasonForSuspicion3>
-      <probability3></probability3>
-    </suspicion3>
-    <suspicion4>
-      <reasonForSuspicion4></reasonForSuspicion4>
-      <probability4></probability4>
-    </suspicion4>
-    <suspicion5>
-      <reasonForSuspicion5></reasonForSuspicion5>
-      <probability5></probability5>
-    </suspicion5>
-  </suspicions>
-  <nextSteps>
-  </nextSteps>
-  </assessment>
-  Hier sind die Daten:`;
+  // define promt
+  const prompt = `
+  EINGABEDATEN:
+  - Alter, Geschlecht, Schwangerschaft
+  - Optional: Gewicht (kg), Groesse (cm), Koerpertemperatur (°C)
+  - Optional: Symptomdauer (Tage), Verschlimmerung, Stillzeit, Allergien, Vorerkrankungen, Medikamente
+  - Symptome: entweder als "raw_symptoms" (Freitext) oder als "name_de" (vordefiniertes Symptom)
+  - Schmerzskala (painscale) und Koerperregion (bodyregion) pro Symptom
+  - Falls die Koerperregion nicht zur Symptombeschreibung passt, ignoriere sie
+  - null-Eintraege ignorieren
 
-  // add master prompt to user prompt
-  const prompt = masterPrompt + "\n" + data;
+  Erstelle basierend auf diesen Daten:
+  1. eine Einschaetzung der Dringlichkeit auf einer Skala von 1 bis 5
+  ( 1 - Beobachtung der Beschwerden
+    2 -  Arztbesuch erforderlich
+    3 -  Zeitnahe medizinische Abklärung erforderlich
+    4 - Möglicher medizinischer Notfall
+    5 - Akuter Notfall ),
+  2. eine Liste von 5 moeglichen Vermutungen
+  3. Wahrscheinlichkeiten fuer jede Vermutung
+  4. kurze Begruendung der Vermutungen
+  5. eine kurze Handlungsempfehlung in einfacher Sprache fuer den Patienten.
+  Hier sind die Daten: ${data}`;
 
-  console.log("Prompt:", prompt);
- 
+  // JSON schema (looks weird because it used to be xml (yes there was a reason for that too, it was not just because I felt like it))
+  const format = {
+  type: "object",
+  properties: {
+    assessment: {
+      type: "object",
+      properties: {
+        urgency: { type: "string" },
+        urgencyText: { type: "string" },
+        suspicions: {
+          type: "object",
+          properties: {
+            suspicion1: {
+              type: "object",
+              properties: {
+                reasonForSuspicion1: { type: "string" },
+                probability1: { type: "string" }
+              },
+              required: ["reasonForSuspicion1", "probability1"]
+            },
+            suspicion2: {
+              type: "object",
+              properties: {
+                reasonForSuspicion2: { type: "string" },
+                probability2: { type: "string" }
+              },
+              required: ["reasonForSuspicion2", "probability2"]
+            },
+            suspicion3: {
+              type: "object",
+              properties: {
+                reasonForSuspicion3: { type: "string" },
+                probability3: { type: "string" }
+              },
+              required: ["reasonForSuspicion3", "probability3"]
+            },
+            suspicion4: {
+              type: "object",
+              properties: {
+                reasonForSuspicion4: { type: "string" },
+                probability4: { type: "string" }
+              },
+              required: ["reasonForSuspicion4", "probability4"]
+            },
+            suspicion5: {
+              type: "object",
+              properties: {
+                reasonForSuspicion5: { type: "string" },
+                probability5: { type: "string" }
+              },
+              required: ["reasonForSuspicion5", "probability5"]
+            }
+          },
+          required: ["suspicion1", "suspicion2", "suspicion3", "suspicion4", "suspicion5"]
+        },
+        nextSteps: { type: "string" }
+      },
+      required: ["urgency", "urgencyText", "suspicions", "nextSteps"]
+    }
+  },
+  required: ["assessment"]
+};
+
   try {
     // Make request to Ollama API
-    const response = await fetch('http://141.19.140.104:4000/v1/chat/completions', {
+    const response = await fetch(process.env.MEDGEMMA_API_URL!, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer sk-s87RnNMaz4LhtjNMsl5HHg',
-        'x-api-key': 'sk-s87RnNMaz4LhtjNMsl5HHg'
+        'Authorization': `Bearer ${process.env.MEDGEMMA_API_KEY}`,
+        'x-api-key': process.env.MEDGEMMA_API_KEY!
       },
       body: JSON.stringify({
-        model: 'medgemma:27b',
+        model: `${process.env.MEDGEMMA_API_MODEL}`,
         messages: [{ role: 'user', content: prompt }],
         stream: false,
+        format: format
       }),
     });
 
-
     // data contains response from ai
-    const dataUnproccesed = await response.json();
+    const dataUnprocessed = await response.json();
     console.log('HTTP Status:', response.status);
-    let xmlData: any;
 
-    const xmlMatch = (dataUnproccesed.choices[0].message.content as string).match(/<assessment[\s\S]*<\/assessment>/);
-    if (!xmlMatch) {
-      throw new Error('falsches Antwortformat fuer XML');
-    }
-    const xmlProperFormat = xmlMatch[0];
+    // response as json as for some reason it is apparently not json enough yet
+    const result = JSON.parse(dataUnprocessed.choices[0].message.content);
 
-    console.log(xmlProperFormat)
-
-    parseString(xmlProperFormat, { explicitArray: false }, (err, result) => {
-    if (err) {
-      throw new Error('Failed parse response as xml');
-    }
-    xmlData = result;
-    });
-
-
-  
     // printing response
-    console.log('medgemma response as object:', xmlData);
+    console.log('medgemma response as object:', result);
 
     await connectionPool.query(
       `
@@ -639,29 +654,29 @@ export async function sendDataToAi() {
       `,
       [
         caseId,
-        xmlData.assessment.urgency,
-        xmlData.assessment.nextSteps,
-        xmlData.assessment.suspicions.suspicion1.reasonForSuspicion1,
-        xmlData.assessment.suspicions.suspicion2.reasonForSuspicion2,
-        xmlData.assessment.suspicions.suspicion3.reasonForSuspicion3,
-        xmlData.assessment.suspicions.suspicion4.reasonForSuspicion4,
-        xmlData.assessment.suspicions.suspicion5.reasonForSuspicion5,
-        xmlData.assessment.suspicions.suspicion1.probability1*100,
-        xmlData.assessment.suspicions.suspicion2.probability2*100,
-        xmlData.assessment.suspicions.suspicion3.probability3*100,
-        xmlData.assessment.suspicions.suspicion4.probability4*100,
-        xmlData.assessment.suspicions.suspicion5.probability5*100
+        result.assessment.urgency,
+        result.assessment.nextSteps,
+        result.assessment.suspicions.suspicion1.reasonForSuspicion1,
+        result.assessment.suspicions.suspicion2.reasonForSuspicion2,
+        result.assessment.suspicions.suspicion3.reasonForSuspicion3,
+        result.assessment.suspicions.suspicion4.reasonForSuspicion4,
+        result.assessment.suspicions.suspicion5.reasonForSuspicion5,
+        result.assessment.suspicions.suspicion1.probability1*100,
+        result.assessment.suspicions.suspicion2.probability2*100,
+        result.assessment.suspicions.suspicion3.probability3*100,
+        result.assessment.suspicions.suspicion4.probability4*100,
+        result.assessment.suspicions.suspicion5.probability5*100
       ]
     );
 
-    return xmlData;
-  
-  // error if somethign goes wrong
+    return result;
+
   } catch (error) {
-      console.error('Fehler details:', JSON.stringify(error, null, 2));
-      console.error('Fehler message:', error instanceof Error ? error.message : error);
+    console.error('Fehler details:', JSON.stringify(error, null, 2));
+    console.error('Fehler message:', error instanceof Error ? error.message : error);
   }
-} 
+}
+
 
 
 
