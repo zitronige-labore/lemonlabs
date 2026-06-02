@@ -11,18 +11,20 @@ import assessmentStyles from "../Assessment.module.css";
 /*
   Import des Typs für die optionalen Zusatzangaben.
 */
-import type { AdditionalData } from "../../types/assessment";
+import type { AdditionalData, Step } from "../../types/assessment";
 
 type AdditionalInfoStepProps = {
   additionalData: AdditionalData;
   setAdditionalData: (data: AdditionalData) => void;
   onSkip: () => void;
+  setStep: (step: Step) => void;
 };
 
 export function AdditionalInfoStep({
   additionalData,
   setAdditionalData,
   onSkip,
+  setStep
 }: AdditionalInfoStepProps) {
   const [inputError, setInputError] = useState("");
 
@@ -265,10 +267,13 @@ export function AdditionalInfoStep({
 
       <div className={assessmentStyles.quickSelect}>
         <button
-          type="submit"
+          type="button"
           className={assessmentStyles.primaryButton}
+          onClick={() => {
+            setStep("checkInfo");
+          }}
         >
-          Einschätzung abschließen
+          weiter
         </button>
       </div>
     </>
