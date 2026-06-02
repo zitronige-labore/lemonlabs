@@ -26,6 +26,10 @@ type CheckInfoProps = {
   selectedSymptoms: string[];
 
   setStep: (step: Step) => void;
+  setSelectedSymptoms: (symptoms: string[]) => void;
+  setSymptomText: (symptomText: string[]) => void;
+  removeSymptomText: (symptom: string) => void;
+  toggleSymptom: (symptom: string) => void;
 };
 
 export function CheckInfo({
@@ -34,6 +38,10 @@ export function CheckInfo({
   symptomText,
   selectedSymptoms,
   setStep,
+  setSelectedSymptoms,
+  setSymptomText,
+  removeSymptomText,
+  toggleSymptom
 }: CheckInfoProps) {
   const [showSavedData, setShowSavedData] = useState(false);
 
@@ -42,29 +50,25 @@ export function CheckInfo({
     Falls diese noch nicht vorhanden sind, nutzt die ResultPage weiterhin
     die bisherigen Props aus dem lokalen State.
   */
-  const displayedBasisData = basisData;
-  const displayedAdditionalData = additionalData;
-  const displayedSymptomText = symptomText;
-  const displayedSelectedSymptoms = selectedSymptoms;
 
 
   const medicationValue =
-    displayedAdditionalData.medication ||
+    additionalData.medication ||
     "Keine Angabe";
 
   const conditionsValue =
-    displayedAdditionalData.conditions &&
-      displayedAdditionalData.conditions.length > 0
-      ? displayedAdditionalData.conditions
+    additionalData.conditions &&
+      additionalData.conditions.length > 0
+      ? additionalData.conditions
       : "Keine Angabe";
 
   
 
   const symptomTextValue =
-    displayedSymptomText && displayedSymptomText.length > 0 ?
+    symptomText && symptomText.length > 0 ?
       (
         <ul>
-          {displayedSymptomText.map((s, i) => {
+          {symptomText.map((s, i) => {
             try {
               const parsed = JSON.parse(s);
               return (
@@ -72,6 +76,16 @@ export function CheckInfo({
                   Bezeichnung: {parsed.text_symptom} <br></br>
                   {parsed.bodyregion && <> Körperregion: {parsed.bodyregion}</>}<br></br>
                   {parsed.painscale != null && <> Schmerzstärke: {parsed.painscale}</>}
+                  <button
+                    type="button"
+                    className={assessmentStyles.secondaryButton}
+                    onClick={() => {
+                      removeSymptomText(s);
+
+                    }}
+                  >
+                    Eintrag entfernen
+                  </button>
                 </li>
               );
             } catch {
@@ -83,10 +97,10 @@ export function CheckInfo({
       : "Keine Angabe";
 
   const selectedSymptomsValue =
-    displayedSelectedSymptoms && displayedSelectedSymptoms.length > 0 ?
+    selectedSymptoms && selectedSymptoms.length > 0 ?
       (
         <ul>
-          {displayedSelectedSymptoms.map((s, i) => {
+          {selectedSymptoms.map((s, i) => {
             try {
               const parsed = JSON.parse(s);
               return (
@@ -94,6 +108,15 @@ export function CheckInfo({
                   Bezeichnung: {parsed.name} <br></br>
                   {parsed.bodyregion && <> Körperregion: {parsed.bodyregion}</>}<br></br>
                   {parsed.painscale != null && <> Schmerzstärke: {parsed.painscale}</>}
+                  <button
+                    type="button"
+                    className={assessmentStyles.secondaryButton}
+                    onClick={() => {
+                      toggleSymptom(s);
+                    }}
+                  >
+                    Symptom entfernen
+                  </button>
                 </li>
               );
             } catch {
@@ -131,20 +154,20 @@ export function CheckInfo({
           }}
         >
           <p>
-            Alter: <strong>{displayedBasisData.age || "Keine Angabe"}</strong>
+            Alter: <strong>{basisData.age || "Keine Angabe"}</strong>
           </p>
 
           <p>
             Geschlecht:{" "}
-            <strong>{displayedBasisData.gender || "Keine Angabe"}</strong>
+            <strong>{basisData.gender || "Keine Angabe"}</strong>
           </p>
 
-          {displayedBasisData.gender === "weiblich" && (
+          {basisData.gender === "weiblich" && (
           <>
             <p>
               Schwangerschaft oder Stillzeit:{" "}
               <strong>
-                {displayedBasisData.pregnancy || "Keine Angabe"}
+                {basisData.pregnancy || "Keine Angabe"}
               </strong>
             </p>
 
@@ -181,6 +204,14 @@ export function CheckInfo({
           </p>
           <strong>{selectedSymptomsValue}</strong>
 
+          <button
+              type="button"
+              className={assessmentStyles.secondaryButton}
+              onClick={() => setStep("basisStart")}
+            >
+              weitere Symptome angeben
+            </button>
+
 
           <hr style={{ margin: "16px 0", borderColor: "#e5e7eb" }} />
 
@@ -197,28 +228,28 @@ export function CheckInfo({
           <p>
             Allergien:{" "}
             <strong>
-              {displayedAdditionalData.allergies || "Keine Angabe"}
+              {additionalData.allergies || "Keine Angabe"}
             </strong>
           </p>
 
           <p>
             Fieber:{" "}
             <strong>
-              {displayedAdditionalData.temperature || "Keine Angabe"}
+              {additionalData.temperature || "Keine Angabe"}
             </strong>
           </p>
 
           <p>
             Beschwerden werden stärker:{" "}
             <strong>
-              {displayedAdditionalData.worsening || "Keine Angabe"}
+              {additionalData.worsening || "Keine Angabe"}
             </strong>
           </p>
 
           <p>
             Weitere Informationen:{" "}
             <strong>
-              {displayedAdditionalData.extraInfo || "Keine Angabe"}
+              {additionalData.extraInfo || "Keine Angabe"}
             </strong>
           </p>
         </div>

@@ -365,6 +365,13 @@ export default function Home() {
     );
   }
 
+  // removes symptom from symptomText list
+  function removeSymptomText(symptom: string) {
+    setSymptomText((previousSymptoms) =>
+      previousSymptoms.filter((item) => item !== symptom)
+    );
+  }
+
   /*
     Setzt beim Neustart die wichtigsten Auswahlen zurück.
   */
@@ -538,6 +545,10 @@ export default function Home() {
               symptomText={symptomText}
               selectedSymptoms={selectedSymptoms}
               setStep={goToStep}
+              setSelectedSymptoms={setSelectedSymptoms}
+              setSymptomText={setSymptomText}
+              removeSymptomText={removeSymptomText}
+              toggleSymptom={toggleSymptom}
             />
           )}
 
