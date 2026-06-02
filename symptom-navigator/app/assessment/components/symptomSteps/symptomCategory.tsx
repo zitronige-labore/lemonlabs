@@ -23,7 +23,7 @@ export default function SymptomCategory({categories,
   return (
     <>
     <p className={assessmentStyles.selectedText}>
-                  Ausgewählte Region: <strong>selectedSubRegion</strong>
+      Ausgewählte Region: <strong>{selectedSubRegion ?? "Keine Region ausgewählt"}</strong>
     </p>
 
 
@@ -35,7 +35,7 @@ export default function SymptomCategory({categories,
           {/* one button for every category, button text is element.category, stept is set to element.step */}
           {categories.map((element) => 
               (<button
-                key = {element.category}
+                key = {`${element.step}-${element.category}`}
                 type="button"
                 className={assessmentStyles.regionButton}
                 onClick={() => {

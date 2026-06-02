@@ -376,6 +376,22 @@ export default function SymptomTree({
           { symptomName: "Bleistiftstuhl (Auffällig dünner Stuhl)", schmerzen: false, symptomValue: "Bleistiftstuhl: Auffällig dünn geformter Stuhl." }
         ]
       },
+      {step: "Schulter",
+        symptoms:
+        [
+          { symptomName: "Stechender Schmerz beim seitlichen Anheben", schmerzen: true, symptomValue: "Impingement-Syndrom: Stechender Schmerz beim seitlichen Anheben des Arms (zwischen 60° und 120°)." },
+          { symptomName: "Starkes Schulterpochen nachts (Liegen unmöglich)", schmerzen: true, symptomValue: "Nachtschmerz: Starkes Pochen in der Schulter; Liegen auf der betroffenen Seite ist unmöglich." },
+          { symptomName: "Knirschen/Reibegeräusche im Schultergelenk", schmerzen: false, symptomValue: "Knirschen (Krepitation): Hörbare oder spürbare Reibegeräusche im Gelenk bei kreisenden Bewegungen." },
+          { symptomName: "Plötzlicher Knall mit Muskelvorwölbung", schmerzen: true, symptomValue: "Bizepssehnen-Ruptur: Plötzlicher \"Knall\" mit anschließender Vorwölbung des Muskelbauchs (\"Popeye-Syndrom\")." },
+          { symptomName: "Punktueller, messerscharfer Schmerz bei Bewegung", schmerzen: true, symptomValue: "Muskelkater vs. Riss: Diffuser Druckschmerz nach Sport vs. punktueller, messerscharfer Schmerz bei Bewegung." },
+          { symptomName: "Härte, knöcherne Verdickungen an Fingergelenken", schmerzen: true, symptomValue: "Arthrose-Knoten: Harte, knöcherne Verdickungen an den Fingergelenken (Heberden- & Bouchard-Knoten)." },
+          { symptomName: "Brennen, Kribbeln oder Ameisenlaufen", schmerzen: false, symptomValue: "Parästhesien: Brennen, Kribbeln oder \"Ameisenlaufen\" ohne äußeren Reiz." },
+          { symptomName: "Normale Berührung wird als schmerzhaft empfunden", schmerzen: true, symptomValue: "Dysästhesie: Missempfindung: Normale Berührung wird als unangenehm oder schmerzhaft empfunden." },
+          { symptomName: "Verlust der Trennung von zwei Berührungspunkten", schmerzen: false, symptomValue: "Diskriminierung: Verlust der Fähigkeit, zwei Berührungspunkte getrennt wahrzunehmen." },
+          { symptomName: "Fingernagel braucht > 2 Sek. um rosa zu werden", schmerzen: false, symptomValue: "Kapillarfüllzeit: Nach Druck auf den Nagel dauert es länger als 2 Sek., bis er wieder rosa wird." },
+          { symptomName: "Unerträglicher Schmerz, Haut blass & kalt", schmerzen: true, symptomValue: "Ischämieschmerz: Unerträglicher Schmerz bei blasser, kalter Haut (Gefäßverschluss - Notfall!)." }
+        ]
+      },
       {step: "Oberarm",
         symptoms:
         [
@@ -403,7 +419,6 @@ export default function SymptomTree({
           { symptomName: "Unfähigkeit die Hand nach oben zu strecken", schmerzen: false, symptomValue: "Fallhand: Unfähigkeit, die Hand im Handgelenk nach oben zu strecken (Radialis-Lähmung)." },
           { symptomName: "Tastbare Knoten in Innenhand (Strecken unmöglich)", schmerzen: false, symptomValue: "Dupuytren-Kontraktur: Tastbare Knoten oder Stränge in der Innenhand; Finger lassen sich nicht mehr flach auflegen." },
           { symptomName: "Finger bleibt in Beugung hängen und schnappt", schmerzen: true, symptomValue: "Trigger-Finger: Finger bleibt in Beugung hängen und \"schnappt\" erst bei Kraftaufwand auf." },
-          { symptomName: "Härte, knöcherne Verdickungen an Fingergelenken", schmerzen: true, symptomValue: "Arthrose-Knoten: Harte, knöcherne Verdickungen an den Fingergelenken (Heberden- & Bouchard-Knoten)." },
           { symptomName: "Härte, knöcherne Verdickungen an Fingergelenken", schmerzen: true, symptomValue: "Arthrose-Knoten: Harte, knöcherne Verdickungen an den Fingergelenken (Heberden- & Bouchard-Knoten)." },
           { symptomName: "Brennen, Kribbeln oder Ameisenlaufen", schmerzen: false, symptomValue: "Parästhesien: Brennen, Kribbeln oder \"Ameisenlaufen\" ohne äußeren Reiz." },
           { symptomName: "Normale Berührung wird als schmerzhaft empfunden", schmerzen: true, symptomValue: "Dysästhesie: Missempfindung: Normale Berührung wird als unangenehm oder schmerzhaft empfunden." },
@@ -600,7 +615,7 @@ export default function SymptomTree({
           { symptomName: "Umknicktrauma mit sofortiger massiver Schwellung", schmerzen: true, symptomValue: "Schwere Distorsion / Fraktur: Nach einem Unfall oder Umknicken schwillt das Gelenk sofort massiv an, Auftreten oder Belastung ist völlig unmöglich." }
         ]
       },
-      {step: "AllgemeinesBefinden",
+      {step: "Keine bestimmte Region / mehrere Stellen",
         symptoms:
         [
           { symptomName: "Schüttelfrost / Unkontrollierbares Zittern", schmerzen: false, symptomValue: "Schüttelfrost: Unkontrollierbares Zittern am ganzen Körper bei rasant steigendem Fieber." },
@@ -614,6 +629,14 @@ export default function SymptomTree({
           { symptomName: "Rote/lila Hautpunkte (nicht verblassend)", schmerzen: false, symptomValue: "Auftreten von kleinen, stecknadelkopfgroßen, roten oder lila Hautpunkten, die bei Druck (z. B. mit einem Glas) nicht verblassen" },
           { symptomName: "Plötzliche, große blaue Flecken ohne Stoßen", schmerzen: false, symptomValue: "Plötzliches Auftreten von großen, blauen Flecken am Körper, ohne dass man sich gestoßen oder verletzt hat" }
         ]
+      },
+      {step: "Psyche",
+        symptoms:
+        [
+          { symptomName: "Panikattacke", schmerzen: false, symptomValue: "Panikattacke: Plötzliche, intensive Angstgefühle, die zu körperlichen Symptomen wie Herzrasen, Schweißausbrüchen und Atemnot führen." },
+          { symptomName: "Halluzinationen", schmerzen: false, symptomValue: "Halluzinationen: Wahrnehmung von Dingen, die nicht existieren, oft begleitet von Verwirrtheit und Angst." },
+          { symptomName: "Stimmungsschwankungen", schmerzen: false, symptomValue: "Stimmungsschwankungen: Schwankende Stimmungen, die den Alltag beeinträchtigen" }
+        ]
       }
     ]
 
@@ -626,7 +649,7 @@ export default function SymptomTree({
       {categoryList.map((element) =>
           (step as Step) == element.step ? (
             <SymptomCategory
-              key={element.step}
+              key={element.step ?? "null-step"}
               categories={element.categories}
               {...categoryProps}
               />
@@ -637,7 +660,7 @@ export default function SymptomTree({
       {symptomList.map((element) =>
           (step as Step) == element.step ? (
             <SymptomSelection
-              key={element.step}
+              key={element.step ?? "null-step"}
               symptoms={element.symptoms}
               {...selectionProps}
               />
