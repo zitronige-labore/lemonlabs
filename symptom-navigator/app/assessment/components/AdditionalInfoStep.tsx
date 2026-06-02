@@ -18,13 +18,15 @@ type AdditionalInfoStepProps = {
   setAdditionalData: (data: AdditionalData) => void;
   onSkip: () => void;
   setStep: (step: Step) => void;
+  checkInfoActive: boolean;
 };
 
 export function AdditionalInfoStep({
   additionalData,
   setAdditionalData,
   onSkip,
-  setStep
+  setStep,
+  checkInfoActive
 }: AdditionalInfoStepProps) {
   const [inputError, setInputError] = useState("");
 
@@ -266,6 +268,7 @@ export function AdditionalInfoStep({
       </fieldset>
 
       <div className={assessmentStyles.quickSelect}>
+        {!checkInfoActive && (
         <button
           type="button"
           className={assessmentStyles.primaryButton}
@@ -275,6 +278,16 @@ export function AdditionalInfoStep({
         >
           weiter
         </button>
+        )}
+        {checkInfoActive && (
+        <button
+          type="button"
+          className={assessmentStyles.secondaryButton}
+          onClick={() => setStep("checkInfo")}
+        >
+          zurück zur Überprüfung
+        </button>
+        )}
       </div>
     </>
   );

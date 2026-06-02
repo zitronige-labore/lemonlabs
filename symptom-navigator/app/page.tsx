@@ -107,7 +107,7 @@ export default function Home() {
   */
   const [copyPainScale, setCopyPainScale] = useState<Record<string, string>>({});
 
-  const [checkInfoActive, setCheckInfoActive] = useState(false);
+  const [checkInfoActive, setCheckInfoActive] = useState<boolean>(false);
 
   /*
     Speichert allgemeine Angaben und Detailangaben zu den Beschwerden.
@@ -480,6 +480,8 @@ export default function Home() {
               basisData={basisData}
               setBasisData={setBasisData}
               onContinue={() => goToStep("bodyRegion")}
+              checkInfoActive={checkInfoActive}
+              setStep={goToStep}
             />
           )}
 
@@ -524,6 +526,7 @@ export default function Home() {
               setSelectedMainRegion={setSelectedMainRegion}
               setSelectedSubRegion={setSelectedSubRegion}
               setStep={goToStep}
+              checkInfoActive={checkInfoActive}
             />
           )}
 
@@ -534,6 +537,7 @@ export default function Home() {
               setAdditionalData={setAdditionalData}
               onSkip={() => goToStep("result")}
               setStep={goToStep}
+              checkInfoActive={checkInfoActive}
             />
           )}
 
@@ -545,10 +549,9 @@ export default function Home() {
               symptomText={symptomText}
               selectedSymptoms={selectedSymptoms}
               setStep={goToStep}
-              setSelectedSymptoms={setSelectedSymptoms}
-              setSymptomText={setSymptomText}
               removeSymptomText={removeSymptomText}
               toggleSymptom={toggleSymptom}
+              setCheckInfoActive={setCheckInfoActive}
             />
           )}
 

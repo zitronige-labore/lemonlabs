@@ -26,10 +26,9 @@ type CheckInfoProps = {
   selectedSymptoms: string[];
 
   setStep: (step: Step) => void;
-  setSelectedSymptoms: (symptoms: string[]) => void;
-  setSymptomText: (symptomText: string[]) => void;
   removeSymptomText: (symptom: string) => void;
   toggleSymptom: (symptom: string) => void;
+  setCheckInfoActive: (active: boolean) => void;
 };
 
 export function CheckInfo({
@@ -38,10 +37,9 @@ export function CheckInfo({
   symptomText,
   selectedSymptoms,
   setStep,
-  setSelectedSymptoms,
-  setSymptomText,
   removeSymptomText,
-  toggleSymptom
+  toggleSymptom,
+  setCheckInfoActive
 }: CheckInfoProps) {
   const [showSavedData, setShowSavedData] = useState(false);
 
@@ -147,6 +145,7 @@ export function CheckInfo({
             textAlign: "left",
             width: "100%",
             background: "#ffffff",
+            color: "#111111",
             padding: "16px",
             borderRadius: "12px",
             border: "1px solid #e5e7eb",
@@ -162,24 +161,28 @@ export function CheckInfo({
             <strong>{basisData.gender || "Keine Angabe"}</strong>
           </p>
 
-          {basisData.gender === "weiblich" && (
+          {basisData.gender === "weiblich" || basisData.gender === "divers" && (
           <>
             <p>
-              Schwangerschaft oder Stillzeit:{" "}
+              Schwangerschaft:{" "}
               <strong>
                 {basisData.pregnancy || "Keine Angabe"}
               </strong>
             </p>
 
-            <button
-              type="button"
-              className={assessmentStyles.secondaryButton}
-              onClick={() => setStep("basisStart")}
-            >
-              Basisdaten bearbeiten
-            </button>
           </>
           )}
+
+          <button
+              type="button"
+              className={assessmentStyles.secondaryButton}
+              onClick={() => {
+                setStep("basisStart");
+                setCheckInfoActive(true);
+              }}
+            >
+              Basisdaten bearbeiten
+          </button>
 
           {/*
           <p>
@@ -207,10 +210,13 @@ export function CheckInfo({
           <button
               type="button"
               className={assessmentStyles.secondaryButton}
-              onClick={() => setStep("basisStart")}
+              onClick={() => {
+                setStep("bodyRegion");
+                setCheckInfoActive(true);
+              }}
             >
               weitere Symptome angeben
-            </button>
+          </button>
 
 
           <hr style={{ margin: "16px 0", borderColor: "#e5e7eb" }} />
@@ -252,6 +258,17 @@ export function CheckInfo({
               {additionalData.extraInfo || "Keine Angabe"}
             </strong>
           </p>
+
+          <button
+              type="button"
+              className={assessmentStyles.secondaryButton}
+              onClick={() => {
+                setStep("additionalInfo");
+                setCheckInfoActive(true);
+              }}
+            >
+              Zusatzangaben bearbeiten
+          </button>
         </div>
       )}
 
