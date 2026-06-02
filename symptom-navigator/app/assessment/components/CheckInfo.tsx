@@ -8,8 +8,7 @@ import assessmentStyles from "../Assessment.module.css";
 import type {
   AdditionalData,
   BasisData,
-  MainRegion,
-  SubRegion,
+  Step,
 } from "../../types/assessment";
 
 type SavedAssessmentData = {
@@ -25,6 +24,8 @@ type CheckInfoProps = {
 
   symptomText: string[];
   selectedSymptoms: string[];
+
+  setStep: (step: Step) => void;
 };
 
 export function CheckInfo({
@@ -32,6 +33,7 @@ export function CheckInfo({
   additionalData,
   symptomText,
   selectedSymptoms,
+  setStep,
 }: CheckInfoProps) {
   const [showSavedData, setShowSavedData] = useState(false);
 
@@ -103,7 +105,8 @@ export function CheckInfo({
       : "Keine Angabe";
 
       
-
+      return (
+      <>
       <button
         type="button"
         className={assessmentStyles.secondaryButton}
@@ -137,12 +140,22 @@ export function CheckInfo({
           </p>
 
           {displayedBasisData.gender === "weiblich" && (
+          <>
             <p>
               Schwangerschaft oder Stillzeit:{" "}
               <strong>
                 {displayedBasisData.pregnancy || "Keine Angabe"}
               </strong>
             </p>
+
+            <button
+              type="button"
+              className={assessmentStyles.secondaryButton}
+              onClick={() => setStep("basisStart")}
+            >
+              Basisdaten bearbeiten
+            </button>
+          </>
           )}
 
           {/*
@@ -222,5 +235,6 @@ export function CheckInfo({
         >
           Einschätzung abschließen
       </button>
-    
+    </>
+    );
 }

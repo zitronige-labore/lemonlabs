@@ -28,6 +28,7 @@ import { SymptomTextInputStep } from "./assessment/components/SymptomTextInputSt
 import { TutorialModal } from "./assessment/components/TutorialModal";
 import { LoadingPopup } from "./assessment/components/LoadingPopup";
 import { ManageDataStep } from "./assessment/components/ManageDataStep";
+import { CheckInfo } from "./assessment/components/CheckInfo";
 
 import { Question } from "@phosphor-icons/react";
 
@@ -43,7 +44,6 @@ import type {
 } from "./types/assessment";
 
 import { emptyRedFlags } from "./assessment/utils/assessmentData";
-import { CheckInfo } from "./assessment/components/checkInfo";
 
 export default function Home() {
   /*
@@ -106,6 +106,8 @@ export default function Home() {
     Speichert die PainScale-Werte, damit sie beim Zurückgehen erhalten bleiben.
   */
   const [copyPainScale, setCopyPainScale] = useState<Record<string, string>>({});
+
+  const [checkInfoActive, setCheckInfoActive] = useState(false);
 
   /*
     Speichert allgemeine Angaben und Detailangaben zu den Beschwerden.
@@ -535,6 +537,7 @@ export default function Home() {
               basisData={basisData}
               symptomText={symptomText}
               selectedSymptoms={selectedSymptoms}
+              setStep={goToStep}
             />
           )}
 
