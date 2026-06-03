@@ -19,13 +19,13 @@ type HinweiseScreenProps = {
   setHinweiseBestaetigt: (checked: boolean) => void;
 
   onBack: () => void;
+
   onContinue: () => void;
 };
 
 export function HinweiseScreen({
   hinweiseBestaetigt,
   setHinweiseBestaetigt,
-  onBack,
   onContinue,
 }: HinweiseScreenProps) {
   const [showSos, setShowSos] = useState(false);
@@ -80,16 +80,8 @@ export function HinweiseScreen({
             Ich habe die Hinweise gelesen und verstanden.
           </label>
 
-          {/* Navigationsbuttons */}
+          {/* Navigationsbutton */}
           <div className={homeStyles.buttonBox}>
-            <button
-              type="button"
-              className={homeStyles.secondaryButton}
-              onClick={onBack}
-            >
-              Zurück
-            </button>
-
             <button
               type="button"
               className={homeStyles.primaryButton}
@@ -112,10 +104,7 @@ export function HinweiseScreen({
       </button>
 
       {/* Das Notruf-Modal */}
-      <SosModal
-        isOpen={showSos}
-        onClose={() => setShowSos(false)}
-      />
+      <SosModal isOpen={showSos} onClose={() => setShowSos(false)} />
 
       {/* Fußzeile der Seite */}
       <footer className={homeStyles.footer}>

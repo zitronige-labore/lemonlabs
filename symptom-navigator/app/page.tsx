@@ -243,6 +243,30 @@ export default function Home() {
         return 60;
       case "manageData":
         return 0;
+      // Alle Symptom-Kategorien (werden angezeigt bevor man eine Unterkategorie wählt)
+      case "Ohren":
+      case "Kopf":
+      case "Nacken":
+      case "Mund / Zähne":
+      case "Oberbauch":
+      case "Unterbauch":
+      case "ArmeHaende":
+      case "Hals":
+      case "Genitalbereich":
+      case "Becken":
+      case "Brust links":
+      case "Brust rechts":
+      case "Rücken oben":
+      case "Rücken unten":
+      case "Oberschenkel":
+      case "Knie":
+      case "Unterschenkel":
+      case "Fuß":
+      case "Augen":
+      case "Nase":
+      case "Keine bestimmte Region / mehrere Stellen":
+      case "Psyche":
+        return 60;
       // Alle Symptom-Kategorie-Steps
       case "innenOhr":
       case "aussenOhr":
@@ -276,6 +300,8 @@ export default function Home() {
         return 80;
       case "additionalInfo":
         return 90;
+      case "checkInfo":
+        return 95;
       case "result":
         return 100;
       default:
