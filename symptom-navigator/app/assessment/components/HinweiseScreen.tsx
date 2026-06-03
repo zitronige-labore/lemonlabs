@@ -18,6 +18,8 @@ type HinweiseScreenProps = {
 
   setHinweiseBestaetigt: (checked: boolean) => void;
 
+  onBack: () => void;
+
   onContinue: () => void;
 };
 

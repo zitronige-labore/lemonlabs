@@ -254,15 +254,17 @@ export default function Home() {
       case "Hals":
       case "Genitalbereich":
       case "Becken":
-      case "Brust":
-      case "Rücken":
+      case "Brust links":
+      case "Brust rechts":
+      case "Rücken oben":
+      case "Rücken unten":
       case "Oberschenkel":
       case "Knie":
       case "Unterschenkel":
       case "Fuß":
       case "Augen":
       case "Nase":
-      case "Allgemein (ganzer Körper)":
+      case "Keine bestimmte Region / mehrere Stellen":
       case "Psyche":
         return 60;
       // Alle Symptom-Kategorie-Steps
