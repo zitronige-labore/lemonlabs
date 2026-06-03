@@ -5,6 +5,25 @@
 
 /** @type {import('jest').Config} */
 const config = {
+
+  preset: "ts-jest",
+  testEnvironment: "node",
+  clearMocks: true,
+  coverageDirectory: "coverage",
+  coverageProvider: "v8",
+  transform: {
+    "^.+\\.(ts|tsx)$": ["ts-jest", {
+      tsconfig: {
+        jsx: "react-jsx",
+      },
+    }],
+  },
+  moduleNameMapper: {
+    // Next.js Server Actions: "use server" wird ignoriert
+    "^server-only$": "<rootDir>/__mocks__/server-only.js",
+  },
+
+
   // All imported modules in your tests should be mocked automatically
   // automock: false,
 
