@@ -121,42 +121,65 @@
 
 .emergencyButton,
 .primaryButton,
-.secondaryButton {
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+.secondaryButton,
+.continueButton {
   border: none;
-  padding: 14px 22px;
   border-radius: 14px;
   cursor: pointer;
   font-size: 1rem;
+  font-weight: 700;
+  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   max-width: 320px;
-  text-decoration: none;
-  display: block;
+  padding: 14px 20px;
   box-sizing: border-box;
-  text-align: center;
-  font-weight: 700;
+  text-decoration: none;
+  transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease, color 0.2s ease;
 }
 
 .primaryButton {
   background: var(--primary);
   color: var(--foreground);
+  box-shadow: 0 10px 30px rgba(37, 99, 235, 0.11);
 }
 
-.secondaryButton {
-  background: #ffffff;
-  color: #2563eb;
-  border: 2px solid #2563eb;
+.primaryButton:hover {
+  background: var(--primary-strong);
+  transform: translateY(-1px);
 }
 
 .primaryButton:disabled {
   color: var(--text-muted);
   background: var(--border);
   cursor: not-allowed;
+  transform: none;
+}
+
+.secondaryButton {
+  background: #ffffff;
+  color: #2563eb;
+  border: 2px solid #2563eb;
+  box-shadow: 0 10px 30px rgba(37, 99, 235, 0.11);
+}
+
+.secondaryButton:hover {
+  background: #eff6ff;
+  color: #1d4ed8;
+  transform: translateY(-1px);
 }
 
 .emergencyButton {
   background: #dc2626;
   color: #ffffff;
+  box-shadow: 0 10px 30px rgba(220, 38, 38, 0.18);
+}
+
+.emergencyButton:hover {
+  background: #b91c1c;
+  transform: translateY(-1px);
 }
 
 .sosButton {
@@ -174,6 +197,9 @@
   z-index: 20;
   border: none;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* ================= SOS Modal ================= */
@@ -231,12 +257,22 @@
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  display: flex;
+  display: inline-flex;
   justify-content: center;
   align-items: center;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
   cursor: pointer;
+  font-size: 1rem;
+  font-weight: 700;
+  text-decoration: none;
+  box-sizing: border-box;
+  box-shadow: 0 10px 30px rgba(37, 99, 235, 0.11);
+  transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
   z-index: 20;
+}
+
+.tutorialButton:hover {
+  background: var(--primary-strong);
+  transform: translateY(-1px);
 }
 
 .tutorialOverlay {
@@ -295,14 +331,6 @@
 @keyframes spin {
   to {
     transform: rotate(360deg);
-  }
-}
-
-/* ================= Dark Mode Styling ================= */
-@media (prefers-color-scheme: dark) {
-  .main {
-    padding: 40px 20px;
-    background: var(--background);
   }
 }
 

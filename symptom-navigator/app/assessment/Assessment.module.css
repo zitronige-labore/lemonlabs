@@ -96,13 +96,15 @@
 
 .label {
   display: flex;
+  flex-direction: row;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   color: var(--text-primary);
   margin-bottom: 14px;
   cursor: pointer;
   line-height: 1.5;
   font-size: 0.98rem;
+  justify-content: flex-start;
 }
 
 .formLabel {
@@ -146,19 +148,31 @@ textarea.input {
 
 /* ================= Buttons ================= */
 
-.primaryButton {
-  background: var(--primary);
-  color: white;
+.primaryButton,
+.secondaryButton,
+.emergencyButton,
+.continueButton {
   border: none;
-  padding: 14px 20px;
   border-radius: 14px;
   cursor: pointer;
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 700;
+  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   max-width: 320px;
-  margin-top: 18px;
-  transition: background 0.2s ease, transform 0.15s ease;
+  padding: 14px 20px;
+  box-sizing: border-box;
+  text-decoration: none;
+  transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease, color 0.2s ease;
+}
+
+.primaryButton {
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 10px 30px rgba(37, 99, 235, 0.11);
 }
 
 .primaryButton:hover {
@@ -176,28 +190,27 @@ textarea.input {
   background: var(--background) !important;
   color: var(--primary) !important;
   border: 1px solid var(--primary) !important;
-  border-radius: 14px;
-  padding: 14px 18px;
-  margin: 0 auto 18px auto;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
   gap: 8px;
-
-  width: 100%;
-  max-width: 260px;
-  font-size: 1rem;
-  font-weight: 700;
-  cursor: pointer;
-
+  max-width: 320px;
   box-shadow: 0 10px 30px rgba(37, 99, 235, 0.11);
-  transition: all 0.2s ease;
 }
 
 .secondaryButton:hover {
   background: var(--primary-soft) !important;
   color: var(--text-primary) !important;
+  transform: translateY(-1px);
+}
+
+.emergencyButton {
+  background: var(--danger);
+  color: white;
+  margin-top: 10px;
+  max-width: 320px;
+  box-shadow: 0 10px 30px rgba(220, 38, 38, 0.18);
+}
+
+.emergencyButton:hover {
+  background: #b91c1c;
   transform: translateY(-1px);
 }
 
@@ -215,26 +228,6 @@ textarea.input {
   color: var(--danger);
   font-size: clamp(1.3rem, 5vw, 1.6rem);
   margin-bottom: 8px;
-}
-
-.emergencyButton {
-  background: var(--danger);
-  color: white;
-  padding: 14px 20px;
-  border-radius: 14px;
-  text-decoration: none;
-  display: inline-block;
-  margin-top: 10px;
-  font-weight: 700;
-  width: 100%;
-  max-width: 280px;
-  box-sizing: border-box;
-  transition: background 0.2s ease, transform 0.15s ease;
-}
-
-.emergencyButton:hover {
-  background: #b91c1c;
-  transform: translateY(-1px);
 }
 
 /* ================= Interaktive Körperkarte ================= */
@@ -291,21 +284,29 @@ textarea.input {
   flex-direction: column;
   gap: 12px;
   margin-top: 24px;
+  margin-bottom: 12px;
+  align-items: center;
+  width: 100%;
 }
 
 .regionButton {
   background: var(--surface-alt);
   color: var(--text-primary);
   border: 1px solid var(--border);
-  padding: 14px 16px;
   border-radius: 14px;
   cursor: pointer;
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 700;
   text-align: center;
   width: 100%;
-  transition: background 0.2s ease, border 0.2s ease, color 0.2s ease,
-    transform 0.15s ease;
+  max-width: 320px;
+  padding: 14px 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  transition: background 0.2s ease, border 0.2s ease, color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
 }
 
 .regionButton:hover {
@@ -358,15 +359,20 @@ textarea.input {
   background: var(--primary);
   color: white;
   border: none;
-  padding: 14px 18px;
   border-radius: 14px;
   cursor: pointer;
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 700;
   width: 100%;
-  max-width: 280px;
+  max-width: 320px;
+  padding: 14px 20px;
   text-decoration: none;
-  transition: background 0.2s ease, transform 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  box-shadow: 0 10px 30px rgba(37, 99, 235, 0.11);
+  transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
 }
 
 .continueButton:hover {

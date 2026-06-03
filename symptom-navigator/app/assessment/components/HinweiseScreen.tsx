@@ -18,7 +18,6 @@ type HinweiseScreenProps = {
 
   setHinweiseBestaetigt: (checked: boolean) => void;
 
-  onBack: () => void;
   onContinue: () => void;
 };
 
@@ -82,14 +81,6 @@ export function HinweiseScreen({
 
           {/* Navigationsbuttons */}
           <div className={homeStyles.buttonBox}>
-            <button
-              type="button"
-              className={homeStyles.secondaryButton}
-              onClick={onBack}
-            >
-              Zurück
-            </button>
-
             <button
               type="button"
               className={homeStyles.primaryButton}
