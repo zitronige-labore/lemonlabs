@@ -14,9 +14,10 @@ interface SelectMoreSymptomsProps {
   setStep: (step: Step) => void;
   setSelectedMainRegion: (mainRegion: MainRegion | null) => void;
   setSelectedSubRegion: (subRegion: SubRegion | null) => void;
+  checkInfoActive: boolean;
 }
 
-export default function SelectMoreSymptoms({setStep, setSelectedMainRegion, setSelectedSubRegion}: SelectMoreSymptomsProps) {
+export default function SelectMoreSymptoms({setStep, setSelectedMainRegion, setSelectedSubRegion, checkInfoActive}: SelectMoreSymptomsProps) {
   return (
     <>
 
@@ -42,7 +43,12 @@ export default function SelectMoreSymptoms({setStep, setSelectedMainRegion, setS
                       type="button"
                       className={assessmentStyles.regionButton}
                       onClick={() => {
-                        setStep("additionalInfo");
+                        if (checkInfoActive) {
+                          setStep("checkInfo");
+                        }
+                        else {
+                          setStep("additionalInfo");
+                        }
                       }}
                     >
                       nein

@@ -28,6 +28,7 @@ import { SymptomTextInputStep } from "./assessment/components/SymptomTextInputSt
 import { TutorialModal } from "./assessment/components/TutorialModal";
 import { LoadingPopup } from "./assessment/components/LoadingPopup";
 import { ManageDataStep } from "./assessment/components/ManageDataStep";
+import { CheckInfo } from "./assessment/components/CheckInfo";
 
 import { Question } from "@phosphor-icons/react";
 
@@ -105,6 +106,8 @@ export default function Home() {
     Speichert die PainScale-Werte, damit sie beim Zurückgehen erhalten bleiben.
   */
   const [copyPainScale, setCopyPainScale] = useState<Record<string, string>>({});
+
+  const [checkInfoActive, setCheckInfoActive] = useState<boolean>(false);
 
   /*
     Speichert allgemeine Angaben und Detailangaben zu den Beschwerden.
@@ -362,6 +365,13 @@ export default function Home() {
     );
   }
 
+  // removes symptom from symptomText list
+  function removeSymptomText(symptom: string) {
+    setSymptomText((previousSymptoms) =>
+      previousSymptoms.filter((item) => item !== symptom)
+    );
+  }
+
   /*
     Setzt beim Neustart die wichtigsten Auswahlen zurück.
   */
@@ -470,6 +480,8 @@ export default function Home() {
               basisData={basisData}
               setBasisData={setBasisData}
               onContinue={() => goToStep("bodyRegion")}
+              checkInfoActive={checkInfoActive}
+              setStep={goToStep}
             />
           )}
 
@@ -514,6 +526,7 @@ export default function Home() {
               setSelectedMainRegion={setSelectedMainRegion}
               setSelectedSubRegion={setSelectedSubRegion}
               setStep={goToStep}
+              checkInfoActive={checkInfoActive}
             />
           )}
 
@@ -523,8 +536,25 @@ export default function Home() {
               additionalData={additionalData}
               setAdditionalData={setAdditionalData}
               onSkip={() => goToStep("result")}
+              setStep={goToStep}
+              checkInfoActive={checkInfoActive}
             />
           )}
+
+          {/* Schritt 6.25: checking information */}
+          {step === "checkInfo" && (
+            <CheckInfo
+              additionalData={additionalData}
+              basisData={basisData}
+              symptomText={symptomText}
+              selectedSymptoms={selectedSymptoms}
+              setStep={goToStep}
+              removeSymptomText={removeSymptomText}
+              toggleSymptom={toggleSymptom}
+              setCheckInfoActive={setCheckInfoActive}
+            />
+          )}
+
 
           {/* Schritt 6.5: Ladeanzeige */}
           {isLoading === true && (

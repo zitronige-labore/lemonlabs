@@ -7,7 +7,7 @@ import assessmentStyles from "../Assessment.module.css";
   Import des Typs für allgemeine Nutzerdaten
   und Beschwerdeinformationen.
 */
-import type { BasisData } from "../../types/assessment";
+import type { BasisData, Step } from "../../types/assessment";
 
 
 /*
@@ -26,6 +26,8 @@ type BasisStartStepProps = {
   basisData: BasisData;
   setBasisData: (basisData: BasisData) => void;
   onContinue: () => void;
+  checkInfoActive: boolean;
+  setStep: (step: Step) => void;
 };
 
 /*
@@ -41,6 +43,8 @@ export function BasisStartStep({
   basisData,
   setBasisData,
   onContinue,
+  checkInfoActive,
+  setStep
 }: BasisStartStepProps) {
   return (
     <>
@@ -134,6 +138,8 @@ export function BasisStartStep({
         )}
       </fieldset>
 
+      { !checkInfoActive && (
+      <>
       {/* Button zum Wechsel zur Körperregion-Auswahl */}
       <button
         type="button"
@@ -153,6 +159,20 @@ export function BasisStartStep({
       >
         Weiter zur Körperregion
       </button>
+      </>
+      )}
+
+      { checkInfoActive && (
+        <button
+          type="button"
+          className={assessmentStyles.primaryButton}
+          onClick={() => {
+              setStep("checkInfo");
+            }}
+        >
+          zurueck zur Überprüfung
+        </button>
+      )}
     </>
   );
 }
