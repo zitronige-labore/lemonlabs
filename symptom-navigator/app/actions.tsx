@@ -451,14 +451,18 @@ export async function accessAiDataWithAccessCode(accessCode: string) {
 // deleting after certain time (7 days in case of product backlog specification)
 export async function deleteOldCases() {
 
-  const current = new Date();
+  const daysUntilDelete = 0; // change this to 7 later
+
+  const cutoff = new Date(
+    Date.now() - daysUntilDelete * 24 * 60 * 60 * 1000
+  );
 
   // query to get cases older than 7 days
   const oldCases = await connectionPool.query(`
     SELECT case_id FROM cases
     WHERE date < $1
     `,
-    [current.setDate(current.getDate() - 7)]
+    [cutoff]
   );
 
   // delete each old cases
