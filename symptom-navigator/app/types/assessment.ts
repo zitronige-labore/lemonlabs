@@ -90,6 +90,7 @@ export type Step =
   | "textInput"
   | "selectMoreSymptoms"
   | "manageData"
+  | "other"
   | "checkInfo"
   | subregionCategory
   | categoryAfterCategoryIfNeeded

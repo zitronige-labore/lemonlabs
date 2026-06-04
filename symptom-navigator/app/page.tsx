@@ -447,7 +447,7 @@ export default function Home() {
   return (
     <main
       className={
-        step === "start" || step === "hinweise"
+        step === "start" || step === "hinweise" || step === "other"
           ? homeStyles.main
           : assessmentStyles.main
       }
@@ -485,8 +485,63 @@ export default function Home() {
           </button>
         </form>
       )}
+      {/* Terminvergabe */}
+      {step === "other" && (
+        <div className={homeStyles.hauptbox}>
+          <div className={homeStyles.kopfbox}>
+            <div className={homeStyles.header}>
+              <h1 className={homeStyles.title}>Termine</h1>
+            </div>
+            <div
+              style={{
+                marginTop: "24px",
+                background: "#ffffff",
+                borderRadius: "12px",
+                padding: "20px",
+                border: "1px solid #d1d5db",
+              }}
+            >
+              <p
+                style={{
+                  color: "#000000",
+                  lineHeight: "1.6",
+                  marginBottom: "16px",
+                }}
+              >
+                Vereinbaren Sie online einen Termin beim Robert Bosch Krankenhaus
+                Stuttgart.
+              </p>
+
+              <a
+                href="https://patientenportal.rbk.de/type"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={homeStyles.primaryButton}
+                style={{
+                  textDecoration: "none",
+                  display: "inline-flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                Zur Online-Terminvergabe
+              </a>
+            </div>
+
+            <div className={homeStyles.buttonBox}>
+              <button
+                type="button"
+                className={homeStyles.primaryButton}
+                onClick={() => goToStep("start")}
+              >
+                Zurück zur Startseite
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {/* Alle Schritte der eigentlichen Ersteinschätzung */}
-      {step !== "start" && step !== "hinweise" && step !== "manageData" && (
+      {step !== "start" && step !== "hinweise" && step !== "manageData" && step !== "other" && (
         <AssessmentLayout onSubmit={handleSubmit} progress={getStepProgress(step)}>
           {/* Schritt 1: Warnzeichen prüfen */}
           {step === "redflags" && (

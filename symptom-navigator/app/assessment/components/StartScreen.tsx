@@ -9,13 +9,8 @@ import { useState } from "react";
 import homeStyles from "../../Home.module.css";
 
 import type {
-  SubRegion,
-  MainRegion,
-  AdditionalData,
   Step
 } from "../../types/assessment";
-
-import Link from "next/link";
 
 /*
   Import der SosModal-Komponente
@@ -97,9 +92,10 @@ export function StartScreen({
             
 
             {/* Platzhalter für weitere Funktionen */}
-            <Link
-              href="/other"
+            <button
+              type="button"
               className={homeStyles.secondaryButton}
+              onClick={() => setStep("other")}
               style={{
                 display: "flex",
                 justifyContent: "center",
@@ -108,7 +104,7 @@ export function StartScreen({
               }}
             >
               Termine
-            </Link>
+            </button>
 
             {/* Datenverwaltungs-Buttons */}
             <button
