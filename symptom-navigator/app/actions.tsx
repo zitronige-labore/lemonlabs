@@ -680,7 +680,7 @@ export async function sendDataToAi() {
 
 
 
-
+/*
 // function for fhir mapping patient data
 export async function mappingFhirPerson() {
   
@@ -734,7 +734,7 @@ export async function mappingFhirPerson() {
 
 
 
-/*
+
 // function for fhir mapping observations iun our case symptoms and basisdata and additional data 
 export async function mappingFhirObservation() {
 
