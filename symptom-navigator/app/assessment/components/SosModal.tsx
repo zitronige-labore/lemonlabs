@@ -9,7 +9,7 @@ export function SosModal({ isOpen, onClose }: SosModalProps) {
   if (!isOpen) return null;
 
   return (
-    <div className={homeStyles.sosOverlay}>
+    <div className={homeStyles.sosModalOverlay}>
       <div className={homeStyles.sosModalBox}>
         <h2 className={homeStyles.emergencyTitleModal}>Notruf 112</h2>
         

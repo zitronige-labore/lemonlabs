@@ -103,7 +103,7 @@ export function StartScreen({
                 textDecoration: "none"
               }}
             >
-              Termine
+              Andere Anliegen
             </button>
 
             {/* Datenverwaltungs-Buttons */}
@@ -111,11 +111,6 @@ export function StartScreen({
               type="button"
               className={homeStyles.secondaryButton}
               onClick={() => setStep("manageData")}
-              style={{
-                backgroundColor: "#f0f9ff",
-                color: "#0369a1",
-                borderColor: "#0369a1"
-              }}
             >
               Gespeicherte Daten ansehen
             </button>
