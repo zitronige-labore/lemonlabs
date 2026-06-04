@@ -21,6 +21,10 @@ jest.mock("next/headers", () => ({
   ),
 }));
 
+// Mock for ai fetch (Ollama/MedGemma API)
+const mockFetch = jest.fn();
+global.fetch = mockFetch;
+
 // import functions to test
 
 import {
@@ -29,6 +33,14 @@ import {
   getDBData,
   getUserDataFromDB,
   getAiDataFromDB,
+  deleteCaseData,
+  deleteDataOnAccessCode,
+  accessDataWithAccessCode,
+  accessAiDataWithAccessCode,
+  deleteOldCases,
+  getDetailsNoCertainCount,
+  getAccessCode,
+  sendDataToAi,
 } from "../app/actions";
 
 
@@ -54,6 +66,7 @@ function buildFormData(overrides: Record<string, string> = {}): FormData {
     ...overrides,
   };
 
+
   const fd = new FormData();
   for (const [key, value] of Object.entries(defaults)) {
     fd.append(key, value);
@@ -78,7 +91,7 @@ describe("saveFormData", () => {
     mockQuery.mockResolvedValue({ rows: [] });
   });
 
-  it("write case-Basisdaten into DB and set Cookie", async () => {
+  it("writes case-Basisdata into DB and sets Cookie", async () => {
     const formData = buildFormData();
 
     await saveFormData(formData);
@@ -90,6 +103,8 @@ describe("saveFormData", () => {
     expect(firstCall[1]).toContain(30);
     // gender correctly converted
     expect(firstCall[1]).toContain("w");
+    // pregnancy correctly converted
+    expect(firstCall[1]).toContain(false);
 
     // cookie set
     expect(mockCookieSet).toHaveBeenCalledWith(
@@ -144,7 +159,7 @@ describe("saveFormData", () => {
     await expect(saveFormData(formData)).resolves.not.toThrow();
   });
 
-  it("write prewritten symptoms correctly in case_symptoms", async () => {
+  it("writes prewritten symptoms correctly in case_symptoms", async () => {
     const symptom = JSON.stringify({
       name: "Kopfschmerz",
       bodyRegion: "Kopf",
@@ -161,6 +176,184 @@ describe("saveFormData", () => {
     );
     expect(symptomInsert).toBeDefined();
     expect(symptomInsert![1]).toContain("Kopfschmerz");
+  });
+
+  it("writes text symptoms in raw_text_symptoms and case_symptoms", async () => {
+
+  mockQuery.mockReset();
+  mockQuery.mockImplementation((sql: string) => {
+    if (sql.includes("Insert into cases")) return Promise.resolve({ rows: [{ case_id: "42", access_code: "ABC" }] });
+    if (sql.includes("insert into raw_text_symptoms")) return Promise.resolve({ rows: [{ raw_id: "77" }] });
+    return Promise.resolve({ rows: [] });
+  });
+
+  const textSymptom = JSON.stringify({
+    text_symptom: "Starke Kopfschmerzen",
+    painscale: 7,
+    bodyregion: "Kopf",
+  });
+  const formData = buildFormData({ symptomText: textSymptom });
+
+  await saveFormData(formData);
+
+  // INSERT INTO raw_text_symptoms
+  const rawInsert = mockQuery.mock.calls.find(
+    (call) =>
+      typeof call[0] === "string" &&
+      call[0].includes("insert into raw_text_symptoms")
+  );
+  expect(rawInsert).toBeDefined();
+  expect(rawInsert![1]).toContain("Starke Kopfschmerzen");
+
+  // INSERT INTO case_symptoms with raw_id
+  const caseSymptomInsert = mockQuery.mock.calls.find(
+    (call) =>
+      typeof call[0] === "string" &&
+      call[0].includes("insert into case_symptoms")
+  );
+  expect(caseSymptomInsert).toBeDefined();
+  expect(caseSymptomInsert![1]).toContain(7); // painscale
+  expect(caseSymptomInsert![1]).toContain("Kopf"); // bodyregion
+});
+
+it("connects raw_id correctly between raw_text_symptoms and case_symptoms", async () => {
+
+  mockQuery.mockReset();
+
+  mockQuery.mockImplementation((sql: string) => {
+    if (sql.includes("insert into raw_text_symptoms")) {
+      return Promise.resolve({ rows: [{ raw_id: "99" }] });
+    }
+    if (sql.includes("Insert into cases")) {
+      return Promise.resolve({ rows: [{ case_id: "42", access_code: "ABC" }] });
+    }
+    return Promise.resolve({ rows: [] });
+  });
+
+  const textSymptom = JSON.stringify({
+    text_symptom: "Bauchschmerzen",
+    painscale: 5,
+    bodyregion: "Bauch",
+  });
+  const formData = buildFormData({ symptomText: textSymptom });
+
+  await saveFormData(formData);
+
+  const caseSymptomInsert = mockQuery.mock.calls.find(
+    (call) =>
+      typeof call[0] === "string" &&
+      call[0].includes("insert into case_symptoms")
+  );
+  expect(caseSymptomInsert![1][0]).toBe("99"); // raw_id korrekt weitergegeben
+});
+
+it("processes multiple text symptoms correctly", async () => {
+
+ mockQuery.mockReset();
+  let rawIdCounter = 0;
+  mockQuery.mockImplementation((sql: string) => {
+    if (sql.includes("Insert into cases")) return Promise.resolve({ rows: [{ case_id: "42", access_code: "ABC" }] });
+    if (sql.includes("insert into raw_text_symptoms")) return Promise.resolve({ rows: [{ raw_id: String(++rawIdCounter) }] });
+    return Promise.resolve({ rows: [] });
+  });
+
+  const symptom1 = JSON.stringify({ text_symptom: "Husten", painscale: 3, bodyregion: "Brust" });
+  const symptom2 = JSON.stringify({ text_symptom: "Fieber", painscale: 6, bodyregion: null });
+  const formData = buildFormData({
+    symptomText: `${symptom1}|||${symptom2}`,
+  });
+
+  await saveFormData(formData);
+
+  const rawInserts = mockQuery.mock.calls.filter(
+    (call) =>
+      typeof call[0] === "string" &&
+      call[0].includes("insert into raw_text_symptoms")
+  );
+  // ein INSERT pro Symptom
+  expect(rawInserts).toHaveLength(2);
+  expect(rawInserts[0][1]).toContain("Husten");
+  expect(rawInserts[1][1]).toContain("Fieber");
+});
+
+it("sets bodyregion to null when not specified", async () => {
+
+  mockQuery.mockReset();
+  mockQuery.mockImplementation((sql: string) => {
+    if (sql.includes("Insert into cases")) return Promise.resolve({ rows: [{ case_id: "42", access_code: "ABC" }] });
+    if (sql.includes("insert into raw_text_symptoms")) return Promise.resolve({ rows: [{ raw_id: "77" }] });
+    return Promise.resolve({ rows: [] });
+  });
+
+  const textSymptom = JSON.stringify({
+    text_symptom: "Schwindel",
+    painscale: 4,
+    bodyregion: null,
+  });
+  const formData = buildFormData({ symptomText: textSymptom });
+
+  await saveFormData(formData);
+
+  const caseSymptomInsert = mockQuery.mock.calls.find(
+    (call) =>
+      typeof call[0] === "string" &&
+      call[0].includes("insert into case_symptoms")
+  );
+  expect(caseSymptomInsert).toBeDefined();
+  // bodyregion is null (Index 3 in parameters)
+  expect(caseSymptomInsert![1][3]).toBeNull();
+});
+
+it("sets worseningBool to false when 'nein' is provided", async () => {
+  const formData = buildFormData({ worsening: "nein" });
+
+  await saveFormData(formData);
+
+  const additionalInfoInsert = mockQuery.mock.calls.find(
+    (call) =>
+      typeof call[0] === "string" &&
+      call[0].includes("Insert into additional_information")
+  );
+  // worsening is 6. parameter (Index 5)
+  expect(additionalInfoInsert![1][5]).toBe(false);
+});
+
+it("sets breastfeedingBool to true when 'ja' is provided", async () => {
+  const formData = buildFormData({ breastfeeding: "ja" });
+
+  await saveFormData(formData);
+
+  const additionalInfoInsert = mockQuery.mock.calls.find(
+    (call) =>
+      typeof call[0] === "string" &&
+      call[0].includes("Insert into additional_information")
+  );
+  // breastfeeding is the 7. parameter (Index 6)
+  expect(additionalInfoInsert![1][6]).toBe(true);
+  });
+
+  it("saves null when optional fields are empty", async () => {
+    const formData = buildFormData({
+      weight: "",
+      height: "",
+      temperature: "",
+      duration: "",
+      extraInfo: "",
+    });
+
+    await saveFormData(formData);
+
+    const additionalInfoInsert = mockQuery.mock.calls.find(
+      (call) =>
+        typeof call[0] === "string" &&
+        call[0].includes("Insert into additional_information")
+    );
+
+    expect(additionalInfoInsert![1][1]).toBeNull(); // weight
+    expect(additionalInfoInsert![1][2]).toBeNull(); // height
+    expect(additionalInfoInsert![1][3]).toBeNull(); // temperature
+    expect(additionalInfoInsert![1][4]).toBeNull(); // duration
+    expect(additionalInfoInsert![1][7]).toBeNull(); // extraInfo
   });
 });
 
@@ -181,7 +374,7 @@ describe("insertListIntoSymptomsNoCertainCount", () => {
     await insertListIntoSymptomsNoCertainCount(
       list,
       "allergy",
-      BigInt(1) as unknown as BigInteger
+      1 as unknown as BigInteger
     );
 
     expect(mockQuery).toHaveBeenCalledTimes(3);
@@ -197,7 +390,7 @@ describe("insertListIntoSymptomsNoCertainCount", () => {
     await insertListIntoSymptomsNoCertainCount(
       [],
       "allergy",
-      BigInt(1) as unknown as BigInteger
+      1 as unknown as BigInteger
     );
 
     expect(mockQuery).not.toHaveBeenCalled();
@@ -207,13 +400,24 @@ describe("insertListIntoSymptomsNoCertainCount", () => {
     await insertListIntoSymptomsNoCertainCount(
       ["Ibuprofen"],
       "medication",
-      BigInt(99) as unknown as BigInteger
+      99 as unknown as BigInteger
     );
 
     expect(mockQuery).toHaveBeenCalledWith(
       expect.any(String),
       expect.arrayContaining(["medication", "Ibuprofen"])
     );
+  });
+
+  it("saves null when a list element is empty", async () => {
+  mockQuery.mockResolvedValue({ rows: [] });
+
+  await insertListIntoSymptomsNoCertainCount([""], "allergy", 1 as unknown as BigInteger);
+
+  expect(mockQuery).toHaveBeenCalledWith(
+    expect.any(String),
+    expect.arrayContaining([null])
+  );
   });
 });
 
@@ -269,25 +473,25 @@ describe("getUserDataFromDB", () => {
   });
 
   it("returns an object with all expected fields", async () => {
-    mockQuery
-      .mockResolvedValueOnce({ rows: [{ sex: "w", age: 25, pregnancy: false }] }) // cases
-      .mockResolvedValueOnce({ rows: [{ name_de: "Kopfschmerz", painscale: 3, bodyregion: "Kopf" }] }) // case_symptoms
-      .mockResolvedValueOnce({ rows: [] })                                        // raw_text_symptoms JOIN
-      .mockResolvedValueOnce({ rows: [{ weight: 60, height: 165 }] })             // additional_information
-      .mockResolvedValueOnce({ rows: [{ detail: "Pollen" }] })                    // allergies
-      .mockResolvedValueOnce({ rows: [] })                                        // medication
-      .mockResolvedValueOnce({ rows: [] });                                       // conditions
+  mockQuery
+    .mockResolvedValueOnce({ rows: [{ sex: "w", age: 25, pregnancy: false }] })
+    .mockResolvedValueOnce({ rows: [{ name_de: "Kopfschmerz", painscale: 3, bodyregion: "Kopf" }] })
+    .mockResolvedValueOnce({ rows: [{ raw_symptoms: "Bauchschmerzen", painscale: 5, bodyregion: "Bauch" }] })
+    .mockResolvedValueOnce({ rows: [{ weight: 60, height: 165, temperature: 38.5, duration: 2, worsening: true, breastfeeding: false, extraInfo: "" }] })
+    .mockResolvedValueOnce({ rows: [{ detail: "Pollen" }] })
+    .mockResolvedValueOnce({ rows: [{ detail: "Ibuprofen" }] })
+    .mockResolvedValueOnce({ rows: [{ detail: "Asthma" }] });
 
-    const result = await getUserDataFromDB("1");
+  const result = await getUserDataFromDB("1");
 
-    expect(result).toHaveProperty("caseData");
-    expect(result).toHaveProperty("symptomData");
-    expect(result).toHaveProperty("textSymptomData");
-    expect(result).toHaveProperty("additionalInfoData");
-    expect(result).toHaveProperty("allergyData");
-    expect(result).toHaveProperty("medicationData");
-    expect(result).toHaveProperty("conditionsData");
-  });
+  expect(result.caseData).toEqual([{ sex: "w", age: 25, pregnancy: false }]);
+  expect(result.symptomData).toEqual([{ name_de: "Kopfschmerz", painscale: 3, bodyregion: "Kopf" }]);
+  expect(result.textSymptomData).toEqual([{ raw_symptoms: "Bauchschmerzen", painscale: 5, bodyregion: "Bauch" }]);
+  expect(result.additionalInfoData).toEqual([{ weight: 60, height: 165, temperature: 38.5, duration: 2, worsening: true, breastfeeding: false, extraInfo: "" }]);
+  expect(result.allergyData).toEqual({ allergies: ["Pollen"] });
+  expect(result.medicationData).toEqual({ medication: ["Ibuprofen"] });
+  expect(result.conditionsData).toEqual({ conditions: ["Asthma"] });
+});
 
   it("returns allergies correctly as an array in the format { allergies: [...] }", async () => {
     mockQuery
@@ -350,11 +554,467 @@ describe("getAiDataFromDB", () => {
   it("queries the recommendations table with the caseId", async () => {
     mockQuery.mockResolvedValueOnce({ rows: [] });
 
-    await getAiDataFromDB("caseId-99");
+    await getAiDataFromDB("99");
 
     expect(mockQuery).toHaveBeenCalledWith(
       expect.stringContaining("FROM recommendations"),
-      ["caseId-99"]
+      ["99"]
     );
   });
+
+
+
+
+
+
+
+describe("deleteCaseData", () => {
+  beforeEach(() => {
+    mockQuery.mockReset();
+    mockQuery.mockResolvedValue({ rows: [] });
+  });
+
+  it("executes exactly 6 DELETE-Queries", async () => {
+    await deleteCaseData("42");
+
+    expect(mockQuery).toHaveBeenCalledTimes(6);
+    const allSql = mockQuery.mock.calls.map((call) => call[0] as string);
+      expect(allSql.some((sql) => sql.includes("DELETE FROM"))).toBe(true);
+    });
+
+  it("deletes from all relevant tables", async () => {
+    await deleteCaseData("42");
+
+    const deletedTables = mockQuery.mock.calls.map((call) =>
+      (call[0] as string).match(/DELETE FROM (\w+)/)?.[1]
+    );
+
+    expect(deletedTables).toContain("cases");
+    expect(deletedTables).toContain("raw_text_symptoms");
+    expect(deletedTables).toContain("case_symptoms");
+    expect(deletedTables).toContain("details_no_certain_count");
+    expect(deletedTables).toContain("additional_information");
+    expect(deletedTables).toContain("recommendations");
+  });
+
+  it("passes the caseId to all queries", async () => {
+    await deleteCaseData("99");
+
+    for (const call of mockQuery.mock.calls) {
+      expect(call[1]).toContain("99");
+    }
+  });
+});
+
+
+
+
+
+
+
+describe("deleteDataOnAccessCode", () => {
+  beforeEach(() => {
+    mockQuery.mockReset();
+  });
+
+  it("returns true and deletes the case when the access code exists", async () => {
+    // SELECT case_id FROM cases
+    mockQuery.mockResolvedValueOnce({ rows: [{ case_id: "5" }] });
+    // 6x DELETE (deleteCaseData intern)
+    mockQuery.mockResolvedValue({ rows: [] });
+
+    const result = await deleteDataOnAccessCode("edd3b000-85fb-4ef3-a319-01b0adf21704");
+
+    expect(result).toBe(true);
+    // mindestens 7 Calls: 1 SELECT + 6 DELETE
+    expect(mockQuery.mock.calls.length).toBeGreaterThanOrEqual(7);
+  });
+
+  it("returns false when the access code does not exist", async () => {
+    mockQuery.mockResolvedValueOnce({ rows: [] });
+
+    const result = await deleteDataOnAccessCode("UNGÜLTIG");
+
+    expect(result).toBe(false);
+    // only 1 call to check for access code, no deletes
+    expect(mockQuery).toHaveBeenCalledTimes(1);
+  });
+
+  it("searches in the cases table for the access_code", async () => {
+    mockQuery.mockResolvedValueOnce({ rows: [] });
+
+    await deleteDataOnAccessCode("XYZ");
+
+    expect(mockQuery).toHaveBeenCalledWith(
+      expect.stringContaining("access_code"),
+      ["XYZ"]
+    );
+  });
+});
+
+
+
+
+
+
+
+describe("accessDataWithAccessCode", () => {
+  beforeEach(() => {
+    mockQuery.mockReset();
+  });
+
+  it("returns null when no case with the access code exists", async () => {
+    mockQuery.mockResolvedValueOnce({ rows: [] });
+
+    const result = await accessDataWithAccessCode("this-code-does-not-exist");
+
+    expect(result).toBeNull();
+  });
+
+  it("returns the case data when the access code exists", async () => {
+    // SELECT case_id
+    mockQuery.mockResolvedValueOnce({ rows: [{ case_id: "7" }] });
+    // getUserDataFromDB intern: 7 Queries
+    mockQuery
+      .mockResolvedValueOnce({ rows: [{ sex: "w", age: 30, pregnancy: false }] })
+      .mockResolvedValueOnce({ rows: [] })
+      .mockResolvedValueOnce({ rows: [] })
+      .mockResolvedValueOnce({ rows: [] })
+      .mockResolvedValueOnce({ rows: [] })
+      .mockResolvedValueOnce({ rows: [] })
+      .mockResolvedValueOnce({ rows: [] });
+
+    const result = await accessDataWithAccessCode("0509d8f0-bd4b-4273-895b-cf961f08aafa");
+
+    expect(result).not.toBeNull();
+    expect(result).toHaveProperty("caseData");
+  });
+
+  it("searches in the cases table for the access_code", async () => {
+    mockQuery.mockResolvedValueOnce({ rows: [] });
+
+    await accessDataWithAccessCode("04db0194-1b52-4d21-84fb-f39bbe26860d");
+
+    expect(mockQuery).toHaveBeenCalledWith(
+      expect.stringContaining("access_code"),
+      ["04db0194-1b52-4d21-84fb-f39bbe26860d"]
+    );
+  });
+});
+
+
+
+
+
+
+
+describe("accessAiDataWithAccessCode", () => {
+  beforeEach(() => {
+    mockQuery.mockReset();
+  });
+
+  it("returns null when no case with the access code exists", async () => {
+    mockQuery.mockResolvedValueOnce({ rows: [] });
+
+    const result = await accessAiDataWithAccessCode("FALSCH");
+
+    expect(result).toBeNull();
+  });
+
+  it("returns AI data when the access code exists", async () => {
+    const fakeAiRows = [{ urgency_level: 2, advice_text: "Ruhe", suspicion1: "Erkältung" }];
+    // SELECT case_id
+    mockQuery.mockResolvedValueOnce({ rows: [{ case_id: "3" }] });
+    // getAiDataFromDB intern
+    mockQuery.mockResolvedValueOnce({ rows: fakeAiRows });
+
+    const result = await accessAiDataWithAccessCode("04db0194-1b52-4d21-84fb-f39bbe26860d");
+
+    expect(result).toEqual(fakeAiRows);
+  });
+
+  it("searches in the cases table for the access_code", async () => {
+    mockQuery.mockResolvedValueOnce({ rows: [] });
+
+    await accessAiDataWithAccessCode("04db0194-1b52-4d21-84fb-f39bbe26860d");
+
+    expect(mockQuery).toHaveBeenCalledWith(
+      expect.stringContaining("access_code"),
+      ["04db0194-1b52-4d21-84fb-f39bbe26860d"]
+    );
+  });
+});
+
+
+
+
+
+
+
+describe("deleteOldCases", () => {
+  beforeEach(() => {
+    mockQuery.mockReset();
+  });
+
+  it("deletes all returned old cases", async () => {
+    // SELECT old case_ids
+    mockQuery.mockResolvedValueOnce({
+      rows: [{ case_id: "1" }, { case_id: "2" }],
+    });
+    // 6 DELETEs per case = 12 total
+    mockQuery.mockResolvedValue({ rows: [] });
+
+    await deleteOldCases();
+
+    // 1 SELECT + 6 DELETE * 2 cases = 13
+    expect(mockQuery.mock.calls.length).toBe(13);
+  });
+
+  it("does not perform any DELETEs when no old cases exist", async () => {
+    mockQuery.mockResolvedValueOnce({ rows: [] });
+
+    await deleteOldCases();
+
+    expect(mockQuery).toHaveBeenCalledTimes(1);
+  });
+
+  it("searches for cases older than 7 days", async () => {
+    mockQuery.mockResolvedValueOnce({ rows: [] });
+
+    await deleteOldCases();
+
+    const selectCall = mockQuery.mock.calls[0];
+    expect(selectCall[0]).toMatch(/date < \$1/i);
+  });
+});
+
+
+
+
+
+
+
+describe("getDetailsNoCertainCount", () => {
+  beforeEach(() => {
+    mockQuery.mockReset();
+  });
+
+  it("returns an object with the listName as key and an array as value", async () => {
+    mockQuery.mockResolvedValueOnce({
+      rows: [{ detail: "Pollen" }, { detail: "Nüsse" }],
+    });
+
+    const result = await getDetailsNoCertainCount("allergy", "allergies", "1");
+
+    expect(result).toEqual({ allergies: ["Pollen", "Nüsse"] });
+  });
+
+  it("returns an empty array when no entries are found", async () => {
+    mockQuery.mockResolvedValueOnce({ rows: [] });
+
+    const result = await getDetailsNoCertainCount("medication", "medication", "1");
+
+    expect(result).toEqual({ medication: [] });
+  });
+
+  it("filters correctly by category and case_id", async () => {
+    mockQuery.mockResolvedValueOnce({ rows: [] });
+
+    await getDetailsNoCertainCount("condition", "conditions", "55");
+
+    expect(mockQuery).toHaveBeenCalledWith(
+      expect.stringContaining("details_no_certain_count"),
+      ["55", "condition"]
+    );
+  });
+
+});
+
+
+
+
+
+
+describe("getAccessCode", () => {
+  beforeEach(() => {
+    mockQuery.mockReset();
+    mockCookieGet.mockReset();
+  });
+
+  it("returns the access_code", async () => {
+    mockCookieGet.mockReturnValue({ value: "42" });
+    mockQuery.mockResolvedValueOnce({ rows: [{ access_code: "666864ea-a64e-4ddd-8597-93e53160a296" }] });
+
+    const result = await getAccessCode();
+
+    expect(result).toBe("666864ea-a64e-4ddd-8597-93e53160a296");
+  });
+
+  it("searches the cases table for the case_id from the cookie", async () => {
+    mockCookieGet.mockReturnValue({ value: "7" });
+    mockQuery.mockResolvedValueOnce({ rows: [{ access_code: "666864ea-a64e-4ddd-8597-93e53160a296" }] });
+
+    await getAccessCode();
+
+    expect(mockQuery).toHaveBeenCalledWith(
+      expect.stringContaining("access_code"),
+      ["7"]
+    );
+  });
+
+  it("reads the 'caseId' cookie", async () => {
+    mockCookieGet.mockReturnValue({ value: "123" });
+    mockQuery.mockResolvedValueOnce({ rows: [{ access_code: "A" }] });
+
+    await getAccessCode();
+
+    expect(mockCookieGet).toHaveBeenCalledWith("caseId");
+  });
+
+  it("if no caseId cookie is set, it passes undefined to the database query", async () => {
+    mockCookieGet.mockReturnValue(undefined);
+    mockQuery.mockResolvedValueOnce({ rows: [{ access_code: "889a84e4-be41-491d-a6b7-b6669df1a75f" }] });
+
+    await getAccessCode();
+
+    expect(mockQuery).toHaveBeenCalledWith(
+      expect.any(String),
+      [undefined]
+    );
+  });
+});
+
+
+
+
+
+describe("sendDataToAi", () => {
+  beforeEach(() => {
+    mockQuery.mockReset();
+    mockCookieGet.mockReset();
+    mockFetch.mockReset();
+
+    // Cookie with caseId
+    mockCookieGet.mockReturnValue({ value: "1" });
+    
+
+    // getUserDataFromDB: 7 Queries
+    mockQuery
+      .mockResolvedValueOnce({ rows: [{ sex: "w", age: 28, pregnancy: false }] })
+      .mockResolvedValueOnce({ rows: [{ name_de: "Kopfschmerz", painscale: 4, bodyregion: "Kopf" }] })
+      .mockResolvedValueOnce({ rows: [] })
+      .mockResolvedValueOnce({ rows: [{ weight: 60, height: 165, temperature: 38.5, duration: 2, worsening: true, breastfeeding: false, extraInfo: "" }] })
+      .mockResolvedValueOnce({ rows: [] })
+      .mockResolvedValueOnce({ rows: [] })
+      .mockResolvedValueOnce({ rows: [] });
+
+    // INSERT INTO recommendations
+    mockQuery.mockResolvedValue({ rows: [] });
+
+    // fetch mock: valid AI-Answer
+    mockFetch.mockResolvedValue({
+      status: 200,
+      json: async () => ({
+        choices: [
+          {
+            message: {
+              content: JSON.stringify({
+                assessment: {
+                  urgency: "3",
+                  urgencyText: "Zeitnahe Abklärung empfohlen",
+                  suspicions: {
+                    suspicion1: { reasonForSuspicion1: "Grippe", probability1: "0.7" },
+                    suspicion2: { reasonForSuspicion2: "Erkältung", probability2: "0.15" },
+                    suspicion3: { reasonForSuspicion3: "COVID-19", probability3: "0.1" },
+                    suspicion4: { reasonForSuspicion4: "Sinusitis", probability4: "0.03" },
+                    suspicion5: { reasonForSuspicion5: "Allergie", probability5: "0.02" },
+                  },
+                  nextSteps: "Bitte einen Arzt aufsuchen.",
+                },
+              }),
+            },
+          },
+        ],
+      }),
+    });
+
+    process.env.MEDGEMMA_API_URL = "http://fake-ai-url/api";
+    process.env.MEDGEMMA_API_KEY = "fake-key";
+    process.env.MEDGEMMA_API_MODEL = "fake-model";
+  });
+
+  it("liest die caseId aus dem 'caseId' Cookie", async () => {
+    await sendDataToAi();
+
+    expect(mockCookieGet).toHaveBeenCalledWith("caseId");
+  });
+
+  it("returns the parsed AI result", async () => {
+    const result = await sendDataToAi();
+
+    expect(result).toHaveProperty("assessment");
+    expect(result.assessment).toHaveProperty("urgency", "3");
+    expect(result.assessment.suspicions.suspicion1.reasonForSuspicion1).toBe("Grippe");
+  });
+
+  it("writes the result to the recommendations table", async () => {
+    await sendDataToAi();
+
+    const insertCall = mockQuery.mock.calls.find(
+      (call) => typeof call[0] === "string" && call[0].includes("INSERT INTO recommendations")
+    );
+    expect(insertCall).toBeDefined();
+    // urgency_level
+    expect(insertCall![1][1]).toBe("3");
+    // advice_text
+    expect(insertCall![1][2]).toBe("Bitte einen Arzt aufsuchen.");
+    // probabilities are stored multiplied by 100
+    expect(insertCall![1][8]).toBe(70);
+  });
+
+  it("sends the fetch request to the configured MEDGEMMA_API_URL", async () => {
+    await sendDataToAi();
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      "http://fake-ai-url/api",
+      expect.objectContaining({ method: "POST" })
+    );
+  });
+
+  it("passes the Authorization header with the API key", async () => {
+    await sendDataToAi();
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          Authorization: "Bearer fake-key",
+        }),
+      })
+    );
+  });
+
+  it("returns an error if no caseId is available in the cookie", async () => {
+    mockCookieGet.mockReturnValue(undefined);
+  
+    await expect(sendDataToAi()).rejects.toThrow("Keine aktive Session gefunden");
+});
+
+  it("returns undefined if the AI-API throws an error", async () => {
+    mockFetch.mockRejectedValueOnce(new Error("Network Error"));
+
+    const result = await sendDataToAi();
+
+    // catch-block in sendDataToAi returns undefined
+    expect(result).toBeUndefined();
+  });
+
+  it("returns undefined when the AI-API returns a string error", async () => {
+  mockFetch.mockRejectedValueOnce("einfacher string fehler");
+
+  const result = await sendDataToAi();
+
+  expect(result).toBeUndefined();
+});
+});
 });
