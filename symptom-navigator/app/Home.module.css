@@ -49,7 +49,7 @@
 }
 
 .subtitle {
-  color: var(--danger);
+  color: #000000;
   font-size: 2rem;
   font-weight: 350;
   margin-top: -1vh;
@@ -77,7 +77,7 @@
 }
 
 .warningText {
-  color: var(--primary);
+  color: #000000;
   font-size: 1rem;
 }
 
@@ -141,33 +141,34 @@
 }
 
 .primaryButton {
-  background: var(--primary);
-  color: var(--foreground);
+  background: #60a5fa;
+  color: #ffffff;
   box-shadow: 0 10px 30px rgba(37, 99, 235, 0.11);
 }
 
 .primaryButton:hover {
-  background: var(--primary-strong);
+  background: #3b82f6;
   transform: translateY(-1px);
 }
 
 .primaryButton:disabled {
-  color: var(--text-muted);
-  background: var(--border);
+  color: #ffffff;
+  background: #60a5fa;
   cursor: not-allowed;
+  opacity: 0.55;
   transform: none;
 }
 
 .secondaryButton {
-  background: #ffffff;
-  color: #2563eb;
-  border: 2px solid #2563eb;
+  background: #60a5fa !important;
+  color: #ffffff !important;
+  border: none !important;
   box-shadow: 0 10px 30px rgba(37, 99, 235, 0.11);
 }
 
 .secondaryButton:hover {
-  background: #eff6ff;
-  color: #1d4ed8;
+  background: #3b82f6 !important;
+  color: #ffffff !important;
   transform: translateY(-1px);
 }
 

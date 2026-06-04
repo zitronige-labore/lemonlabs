@@ -29,6 +29,7 @@ import { TutorialModal } from "./assessment/components/TutorialModal";
 import { LoadingPopup } from "./assessment/components/LoadingPopup";
 import { ManageDataStep } from "./assessment/components/ManageDataStep";
 import { CheckInfo } from "./assessment/components/CheckInfo";
+import { OtherStep } from "./assessment/components/OtherStep";
 
 import { Question } from "@phosphor-icons/react";
 
@@ -447,7 +448,7 @@ export default function Home() {
   return (
     <main
       className={
-        step === "start" || step === "hinweise"
+        step === "start" || step === "hinweise" || step === "other"
           ? homeStyles.main
           : assessmentStyles.main
       }
@@ -485,8 +486,12 @@ export default function Home() {
           </button>
         </form>
       )}
+      {/* Terminvergabe */}
+      {step === "other" && (
+        <OtherStep onBack={() => goToStep("start")} />
+      )}
       {/* Alle Schritte der eigentlichen Ersteinschätzung */}
-      {step !== "start" && step !== "hinweise" && step !== "manageData" && (
+      {step !== "start" && step !== "hinweise" && step !== "manageData" && step !== "other" && (
         <AssessmentLayout onSubmit={handleSubmit} progress={getStepProgress(step)}>
           {/* Schritt 1: Warnzeichen prüfen */}
           {step === "redflags" && (

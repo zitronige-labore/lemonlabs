@@ -9,13 +9,8 @@ import { useState } from "react";
 import homeStyles from "../../Home.module.css";
 
 import type {
-  SubRegion,
-  MainRegion,
-  AdditionalData,
   Step
 } from "../../types/assessment";
-
-import Link from "next/link";
 
 /*
   Import der SosModal-Komponente
@@ -97,9 +92,10 @@ export function StartScreen({
             
 
             {/* Platzhalter für weitere Funktionen */}
-            <Link
-              href="/other"
+            <button
+              type="button"
               className={homeStyles.secondaryButton}
+              onClick={() => setStep("other")}
               style={{
                 display: "flex",
                 justifyContent: "center",
@@ -107,19 +103,14 @@ export function StartScreen({
                 textDecoration: "none"
               }}
             >
-              Termine
-            </Link>
+              Andere Anliegen
+            </button>
 
             {/* Datenverwaltungs-Buttons */}
             <button
               type="button"
               className={homeStyles.secondaryButton}
               onClick={() => setStep("manageData")}
-              style={{
-                backgroundColor: "#f0f9ff",
-                color: "#0369a1",
-                borderColor: "#0369a1"
-              }}
             >
               Gespeicherte Daten ansehen
             </button>
