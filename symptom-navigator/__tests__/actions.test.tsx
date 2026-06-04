@@ -474,7 +474,7 @@ describe("getUserDataFromDB", () => {
 
   it("returns an object with all expected fields", async () => {
   mockQuery
-    .mockResolvedValueOnce({ rows: [{ sex: "w", age: 25, pregnancy: false }] })
+    .mockResolvedValueOnce({ rows: [{ sex: "w", age: 25, pregnancy: false, date: "2023-01-01" }] })
     .mockResolvedValueOnce({ rows: [{ name_de: "Kopfschmerz", painscale: 3, bodyregion: "Kopf" }] })
     .mockResolvedValueOnce({ rows: [{ raw_symptoms: "Bauchschmerzen", painscale: 5, bodyregion: "Bauch" }] })
     .mockResolvedValueOnce({ rows: [{ weight: 60, height: 165, temperature: 38.5, duration: 2, worsening: true, breastfeeding: false, extraInfo: "" }] })
@@ -484,7 +484,7 @@ describe("getUserDataFromDB", () => {
 
   const result = await getUserDataFromDB("1");
 
-  expect(result.caseData).toEqual([{ sex: "w", age: 25, pregnancy: false }]);
+  expect(result.caseData).toEqual([{ sex: "w", age: 25, pregnancy: false, date: "2023-01-01" }]);
   expect(result.symptomData).toEqual([{ name_de: "Kopfschmerz", painscale: 3, bodyregion: "Kopf" }]);
   expect(result.textSymptomData).toEqual([{ raw_symptoms: "Bauchschmerzen", painscale: 5, bodyregion: "Bauch" }]);
   expect(result.additionalInfoData).toEqual([{ weight: 60, height: 165, temperature: 38.5, duration: 2, worsening: true, breastfeeding: false, extraInfo: "" }]);
