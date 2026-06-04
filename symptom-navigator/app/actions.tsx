@@ -26,6 +26,9 @@ export async function saveFormData(formData: FormData) {
     } else if (sexString === "divers") {
         sex = 'd';
     }
+    else if (true){
+        sex = '';
+    }
 
     //pregnancy
     let pregnancy = false;
