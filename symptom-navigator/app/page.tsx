@@ -29,6 +29,7 @@ import { TutorialModal } from "./assessment/components/TutorialModal";
 import { LoadingPopup } from "./assessment/components/LoadingPopup";
 import { ManageDataStep } from "./assessment/components/ManageDataStep";
 import { CheckInfo } from "./assessment/components/CheckInfo";
+import { OtherStep } from "./assessment/components/OtherStep";
 
 import { Question } from "@phosphor-icons/react";
 
@@ -487,58 +488,7 @@ export default function Home() {
       )}
       {/* Terminvergabe */}
       {step === "other" && (
-        <div className={homeStyles.hauptbox}>
-          <div className={homeStyles.kopfbox}>
-            <div className={homeStyles.header}>
-              <h1 className={homeStyles.title}>Termine</h1>
-            </div>
-            <div
-              style={{
-                marginTop: "24px",
-                background: "#ffffff",
-                borderRadius: "12px",
-                padding: "20px",
-                border: "1px solid #d1d5db",
-              }}
-            >
-              <p
-                style={{
-                  color: "#000000",
-                  lineHeight: "1.6",
-                  marginBottom: "16px",
-                }}
-              >
-                Vereinbaren Sie online einen Termin beim Robert Bosch Krankenhaus
-                Stuttgart.
-              </p>
-
-              <a
-                href="https://patientenportal.rbk.de/type"
-                target="_blank"
-                rel="noopener noreferrer"
-                className={homeStyles.primaryButton}
-                style={{
-                  textDecoration: "none",
-                  display: "inline-flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                Zur Online-Terminvergabe
-              </a>
-            </div>
-
-            <div className={homeStyles.buttonBox}>
-              <button
-                type="button"
-                className={homeStyles.primaryButton}
-                onClick={() => goToStep("start")}
-              >
-                Zurück zur Startseite
-              </button>
-            </div>
-          </div>
-        </div>
+        <OtherStep onBack={() => goToStep("start")} />
       )}
       {/* Alle Schritte der eigentlichen Ersteinschätzung */}
       {step !== "start" && step !== "hinweise" && step !== "manageData" && step !== "other" && (
