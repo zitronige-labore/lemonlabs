@@ -18,8 +18,10 @@ export function OtherStep({ onBack }: OtherStepProps) {
             borderRadius: "12px",
             padding: "20px",
             border: "1px solid #d1d5db",
+            textAlign:"center",
           }}
         >
+
           <p
             style={{
               color: "#000000",
@@ -27,10 +29,25 @@ export function OtherStep({ onBack }: OtherStepProps) {
               marginBottom: "16px",
             }}
           >
-            Vereinbaren Sie online einen Termin beim Robert Bosch Krankenhaus
-            Stuttgart.
+            Wählen Sie einen Terminservice Ihrer Wahl:
           </p>
 
+          <a
+            href="https://www.doctolib.de/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={homeStyles.primaryButton}
+            style={{
+              textDecoration: "none",
+              display: "inline-flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            Doctolib
+          </a>
+
+          <br /><br />
           <a
             href="https://patientenportal.rbk.de/type"
             target="_blank"
@@ -43,7 +60,7 @@ export function OtherStep({ onBack }: OtherStepProps) {
               alignItems: "center",
             }}
           >
-            Zur Online-Terminvergabe
+            Robert Bosch Krankenhaus Stuttgart
           </a>
         </div>
 
