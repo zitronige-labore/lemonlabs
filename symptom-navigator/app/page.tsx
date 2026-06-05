@@ -112,7 +112,7 @@ export default function Home() {
   const [checkInfoActive, setCheckInfoActive] = useState<boolean>(false);
 
   // state to check if offline
-  const [isOffline, setIsOffline] = useState<boolean>(!navigator.onLine);
+  const [isOffline, setIsOffline] = useState<boolean>(false);
 
 
   // event listener to check if user goes offline or comes back online
