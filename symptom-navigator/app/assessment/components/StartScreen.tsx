@@ -1,68 +1,41 @@
-import { useState } from "react";
-
-/*
-  Import der CSS-Module der Startseite.
-
-  Diese Styles werden für Layout,
-  Buttons, Footer und das Logo verwendet.
-*/
+import { useEffect, useState } from "react";
 import homeStyles from "../../Home.module.css";
-
-import type {
-  Step
-} from "../../types/assessment";
-
-/*
-  Import der SosModal-Komponente
-*/
+import type { Step } from "../../types/assessment";
 import { SosModal } from "./SosModal";
 
-/*
-  Eigenschaften der StartScreen-Komponente.
-
-  onStartAssessment:
-  Funktion zum Starten der Ersteinschätzung
-  und Wechseln zur Hinweis-Seite.
-*/
 type StartScreenProps = {
   onStartAssessment: () => void;
   resetProcess: () => void;
   setStep: (step: Step) => void;
 };
 
-/*
-  Diese Komponente stellt die Startseite
-  der Anwendung dar.
-
-  Sie enthält:
-  - Titel und Logo
-  - Hauptaktion zum Start der Ersteinschätzung
-  - Footer
-  - Schnellzugriff auf den Notruf
-*/
 export function StartScreen({
   onStartAssessment,
   resetProcess,
-  setStep
+  setStep,
 }: StartScreenProps) {
-
   const [showSos, setShowSos] = useState(false);
+  const [showStartHints, setShowStartHints] = useState(true);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setShowStartHints(false);
+    }, 10000);
+
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  const hideStartHints = () => setShowStartHints(false);
 
   return (
     <>
-      {/* Hauptcontainer der Startseite */}
       <div className={homeStyles.hauptbox}>
         <div className={homeStyles.kopfbox}>
-          {/* Kopfbereich mit Titel und Logo */}
           <div className={homeStyles.header}>
-            <h1 className={homeStyles.title}>
-              MediGuide
-            </h1>
+            <h1 className={homeStyles.title}>MediGuide</h1>
 
             <h2 className={homeStyles.subtitle}>
               <span>by lemonlabs</span>
-
-              {/* Logo der Anwendung */}
               <img
                 src="/images/logo778899.svg"
                 alt="Lemonlabs Logo"
@@ -71,95 +44,111 @@ export function StartScreen({
             </h2>
           </div>
 
-          {/* Einleitungstext */}
-          <p className={homeStyles.intro}>
-            Was ist dein Anliegen?
-          </p>
+          <p className={homeStyles.intro}>Was ist dein Anliegen?</p>
 
-          {/* Hauptbuttons der Startseite */}
           <div className={homeStyles.buttonBox}>
-            {/* Start der Ersteinschätzung */}
-            <button
-              type="button"
-              className={homeStyles.primaryButton}
-              onClick={() => {
-                onStartAssessment();
-                resetProcess();
-              }}
-            >
-              Ersteinschätzung von Symptomen
-            </button>
-            
+            <div className={homeStyles.startHintTarget}>
+              <button
+                type="button"
+                className={homeStyles.primaryButton}
+                onClick={() => {
+                  onStartAssessment();
+                  resetProcess();
+                }}
+              >
+                Ersteinschätzung von Symptomen
+              </button>
 
-            {/* Platzhalter für weitere Funktionen */}
-            <button
-              type="button"
-              className={homeStyles.secondaryButton}
-              onClick={() => setStep("other")}
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                textDecoration: "none"
-              }}
-            >
-              Andere Anliegen
-            </button>
+              {showStartHints && (
+                <button
+                  type="button"
+                  className={homeStyles.startHint}
+                  onClick={hideStartHints}
+                >
+                  Startet die geführte Symptomeinschätzung Schritt für Schritt.
+                </button>
+              )}
+            </div>
 
-            {/* Datenverwaltungs-Buttons */}
-            <button
-              type="button"
-              className={homeStyles.secondaryButton}
-              onClick={() => setStep("manageData")}
-            >
-              Gespeicherte Daten ansehen
-            </button>
+            <div className={homeStyles.startHintTarget}>
+              <button
+                type="button"
+                className={homeStyles.secondaryButton}
+                onClick={() => setStep("other")}
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  textDecoration: "none",
+                }}
+              >
+                Andere Anliegen
+              </button>
+
+              {showStartHints && (
+                <button
+                  type="button"
+                  className={homeStyles.startHint}
+                  onClick={hideStartHints}
+                >
+                  Öffnet Termine, Online-Rezepte und die Datenverwaltung.
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Schnellzugriff auf den Notruf */}
       <button
         type="button"
-        onClick={() => setShowSos(true)}
+        onClick={() => {
+          hideStartHints();
+          setShowSos(true);
+        }}
         className={homeStyles.sosButton}
       >
         SOS
       </button>
 
-      {/* Das Notruf-Modal */}
+      {showStartHints && (
+        <>
+          <button
+            type="button"
+            className={`${homeStyles.startHint} ${homeStyles.sosHint}`}
+            onClick={hideStartHints}
+          >
+            Öffnet schnelle Hinweise für akute Notfälle.
+          </button>
+
+          <button
+            type="button"
+            className={`${homeStyles.startHint} ${homeStyles.tutorialHint}`}
+            onClick={hideStartHints}
+          >
+            Erklärt den aktuellen Schritt der Anwendung.
+          </button>
+        </>
+      )}
+
       <SosModal
         isOpen={showSos}
         onClose={() => setShowSos(false)}
       />
 
-      {/* Fußzeile der Startseite */}
       <footer className={homeStyles.footer}>
-        <button
-          type="button"
-          className={homeStyles.footerLink}
-        >
+        <button type="button" className={homeStyles.footerLink}>
           Kontakt
         </button>
 
-        <button
-          type="button"
-          className={homeStyles.footerLink}
-        >
+        <button type="button" className={homeStyles.footerLink}>
           Datenschutz
         </button>
 
-        <button
-          type="button"
-          className={homeStyles.footerLink}
-        >
+        <button type="button" className={homeStyles.footerLink}>
           Support
         </button>
 
-        <button
-          type="button"
-          className={homeStyles.footerLink}
-        >
+        <button type="button" className={homeStyles.footerLink}>
           Impressum
         </button>
       </footer>

@@ -478,17 +478,22 @@ export default function Home() {
             step={step}
             setStep={(newStep) => goToStep("start")}
           />
-          <button
-            type="submit"
-            className={assessmentStyles.continueButton}
-          >
-            Zurück zur Startseite
-          </button>
+          <div className={assessmentStyles.buttonGroup}>
+            <button
+              type="submit"
+              className={assessmentStyles.continueButton}
+            >
+              Zurück zur Startseite
+            </button>
+          </div>
         </form>
       )}
       {/* Terminvergabe */}
       {step === "other" && (
-        <OtherStep onBack={() => goToStep("start")} />
+        <OtherStep
+          onBack={() => goToStep("start")}
+          onManageData={() => goToStep("manageData")}
+        />
       )}
       {/* Alle Schritte der eigentlichen Ersteinschätzung */}
       {step !== "start" && step !== "hinweise" && step !== "manageData" && step !== "other" && (
