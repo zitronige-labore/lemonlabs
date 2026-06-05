@@ -572,18 +572,7 @@
   }
 
   .startHint {
-    position: relative;
-    left: auto;
-    top: auto;
-    translate: none;
-    width: 100%;
-    max-width: 320px;
-  }
-
-  .startHint::before {
-    left: 50%;
-    top: -8px;
-    transform: translateX(-50%) rotate(45deg);
+    display: none;
   }
 
   .sosButton {
@@ -592,25 +581,11 @@
     padding: 14px 18px;
   }
 
-  .sosHint {
-    right: 16px;
-    bottom: 136px;
-    width: auto;
-    max-width: min(230px, calc(100vw - 32px));
-  }
-
   .tutorialButton {
     left: 16px;
     bottom: 76px;
     width: 46px;
     height: 46px;
-  }
-
-  .tutorialHint {
-    left: 16px;
-    bottom: 132px;
-    width: auto;
-    max-width: min(230px, calc(100vw - 32px));
   }
 
   .tutorialTitle {
