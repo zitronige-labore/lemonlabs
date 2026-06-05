@@ -248,7 +248,7 @@ export async function getUserDataFromDB(caseId: string) {
 
   // DB queries
   const caseData = await connectionPool.query(`
-    SELECT sex, age, pregnancy
+    SELECT sex, age, pregnancy, date
     FROM cases
     WHERE case_id = $1
     ;
