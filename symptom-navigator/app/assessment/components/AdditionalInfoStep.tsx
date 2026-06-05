@@ -37,7 +37,7 @@ export function AdditionalInfoStep({
 
   return (
     <>
-      <p className={assessmentStyles.text}>
+      <p className={assessmentStyles.optionalHint}>
         Optional: Diese Angaben können helfen, die Beschwerden besser
         einzuordnen. Sie können diesen Schritt auch überspringen.
       </p>

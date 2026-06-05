@@ -30,6 +30,7 @@
   padding: 32px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   box-sizing: border-box;
+  overflow: visible;
 }
 
 /* ================= Header mit Titel und Logo ================= */
@@ -119,6 +120,58 @@
   align-items: center;
 }
 
+.startHintTarget {
+  width: 100%;
+  max-width: 320px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.startHint {
+  position: absolute;
+  left: calc(100% + 18px);
+  top: 50%;
+  translate: 0 -50%;
+  width: 260px;
+  max-width: 260px;
+  border: none;
+  border-radius: 12px;
+  background: #ccfbf1;
+  color: #134e4a;
+  cursor: pointer;
+  font-family: var(--font-base);
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.35;
+  padding: 10px 12px;
+  text-align: center;
+  box-shadow: 0 10px 24px rgba(15, 118, 110, 0.18);
+  animation: hintBubbleFade 10s ease-in forwards;
+  z-index: 21;
+}
+
+.startHint::before {
+  content: "";
+  position: absolute;
+  left: -8px;
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  background: #ccfbf1;
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.startHint:hover {
+  background: #99f6e4;
+  animation-play-state: paused;
+}
+
+.startHint:hover::before {
+  background: #99f6e4;
+}
+
 .emergencyButton,
 .primaryButton,
 .secondaryButton,
@@ -188,12 +241,12 @@
   right: 24px;
   bottom: 72px;
   background: var(--danger);
-  color: var(--foreground);
+  color: #ffffff;
   text-decoration: none;
   font-weight: 700;
-  font-size: 1rem;
-  border-radius: 18px;
-  padding: 16px 22px;
+  font-size: 1.15rem;
+  border-radius: 20px;
+  padding: 18px 26px;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
   z-index: 20;
   border: none;
@@ -201,6 +254,25 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+}
+
+.sosHint {
+  position: fixed;
+  top: auto;
+  left: auto;
+  right: 24px;
+  bottom: 148px;
+  translate: none;
+  width: 230px;
+  max-width: 230px;
+}
+
+.sosHint::before {
+  top: auto;
+  right: 34px;
+  bottom: -8px;
+  left: auto;
+  transform: rotate(45deg);
 }
 
 /* ================= SOS Modal ================= */
@@ -252,8 +324,8 @@
   position: fixed;
   left: 24px;
   bottom: 72px;
-  background: var(--primary);
-  color: var(--foreground);
+  background: #00f5d4;
+  color: #042f2e;
   border: none;
   width: 50px;
   height: 50px;
@@ -266,14 +338,32 @@
   font-weight: 700;
   text-decoration: none;
   box-sizing: border-box;
-  box-shadow: 0 10px 30px rgba(37, 99, 235, 0.11);
+  box-shadow: 0 0 18px rgba(0, 245, 212, 0.7), 0 10px 30px rgba(13, 148, 136, 0.22);
   transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
   z-index: 20;
 }
 
 .tutorialButton:hover {
-  background: var(--primary-strong);
+  background: #2fffe3;
   transform: translateY(-1px);
+  box-shadow: 0 0 24px rgba(0, 245, 212, 0.9), 0 12px 34px rgba(13, 148, 136, 0.28);
+}
+
+.tutorialHint {
+  position: fixed;
+  top: auto;
+  left: 24px;
+  bottom: 136px;
+  translate: none;
+  width: 230px;
+  max-width: 230px;
+}
+
+.tutorialHint::before {
+  top: auto;
+  bottom: -8px;
+  left: 24px;
+  transform: rotate(45deg);
 }
 
 .tutorialOverlay {
@@ -332,6 +422,23 @@
 @keyframes spin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes hintBubbleFade {
+  0% {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  10% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(-4px);
   }
 }
 
@@ -457,10 +564,39 @@
     text-align: left;
   }
 
+  .startHintTarget {
+    max-width: 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .startHint {
+    position: relative;
+    left: auto;
+    top: auto;
+    translate: none;
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .startHint::before {
+    left: 50%;
+    top: -8px;
+    transform: translateX(-50%) rotate(45deg);
+  }
+
   .sosButton {
     right: 16px;
     bottom: 76px;
     padding: 14px 18px;
+  }
+
+  .sosHint {
+    right: 16px;
+    bottom: 136px;
+    width: auto;
+    max-width: min(230px, calc(100vw - 32px));
   }
 
   .tutorialButton {
@@ -468,6 +604,13 @@
     bottom: 76px;
     width: 46px;
     height: 46px;
+  }
+
+  .tutorialHint {
+    left: 16px;
+    bottom: 132px;
+    width: auto;
+    max-width: min(230px, calc(100vw - 32px));
   }
 
   .tutorialTitle {

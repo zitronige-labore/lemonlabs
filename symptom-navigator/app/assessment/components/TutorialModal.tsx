@@ -14,14 +14,75 @@ type TutorialContent = {
   steps: string[];
 };
 
+const symptomCategorySteps = new Set<Step>([
+  "Ohren",
+  "Kopf",
+  "Nacken",
+  "Mund / Zähne",
+  "Oberbauch",
+  "Unterbauch",
+  "ArmeHaende",
+  "Hals",
+  "Genitalbereich",
+  "Becken",
+  "Oberschenkel",
+  "Knie",
+  "Unterschenkel",
+  "Fuß",
+]);
+
+const symptomSelectionSteps = new Set<Step>([
+  "aussenOhr",
+  "innenOhr",
+  "Augen",
+  "Nase",
+  "kopfSpannung",
+  "kopfMigraene",
+  "kopfCluster",
+  "kopfBegleitung",
+  "kopfWarnsignale",
+  "nackenBewegung",
+  "nackenWarnsignale",
+  "mundZaehneSchmerz",
+  "mundZaehneSchleimhaut",
+  "mdSpeiseroehre",
+  "mdMagen",
+  "mdGalle",
+  "mdDarm",
+  "mdEnddarm",
+  "Schulter",
+  "Oberarm",
+  "Unterarm",
+  "Hand",
+  "halsMandeln",
+  "halsRachen",
+  "halsKehlkopf",
+  "halsDruesen",
+  "Brust links",
+  "Brust rechts",
+  "RueckenOben",
+  "RueckenUnten",
+  "genitalHarnwege",
+  "genitalSymptomeWeiblich",
+  "genitalSymptomeMaennlich",
+  "genitalSymptomeDivers",
+  "genitalWarnsignale",
+  "beineGelenke",
+  "beineMuskeln",
+  "beineNervenGefaese",
+  "beineWarnsignale",
+  "Keine bestimmte Region / mehrere Stellen",
+  "Psyche",
+]);
+
 const tutorialContentByStep: Partial<Record<Exclude<Step, null>, TutorialContent>> = {
   start: {
     title: "Start",
     description:
-      "Hier beginnst du die Ersteinschätzung oder verwaltest bereits gespeicherte Angaben.",
+      "Hier beginnst du die Ersteinschätzung oder klärst andere Anliegen.",
     steps: [
-      "Wähle Ersteinschätzung starten, um den geführten Ablauf zu beginnen.",
-      "Über Daten verwalten kannst du gespeicherte Angaben prüfen.",
+      "Wähle Ersteinschätzung von Symptomen, um den geführten Ablauf zu beginnen.",
+      "Über Andere Anliegen kannst du Termine, Online-Rezepte und gespeicherte Daten verwalten.",
       "Der SOS-Button ist jederzeit für akute Notfälle erreichbar.",
     ],
   },
@@ -49,17 +110,18 @@ const tutorialContentByStep: Partial<Record<Exclude<Step, null>, TutorialContent
     title: "Basisangaben",
     description: "Diese Angaben helfen, Beschwerden besser einzuordnen.",
     steps: [
-      "Trage Alter und  Geschlecht ein.",
-      "Falls eine Schwangerschaft relevant ist, gib sie hier an.",
+      "Trage Alter und Geschlecht ein.",
+      "Falls eine Schwangerschaft vorliegt, gib sie hier an.",
+      "Mit Weiter kommst du zur Auswahl der betroffenen Körperregion.",
     ],
   },
   bodyRegion: {
-    title: " Körperregion",
+    title: "Körperregion",
     description:
-      "Wähle zuerst den groben Bereich und danach die genauere Stelle deiner Beschwerden.",
+      "Wähle zuerst den groben Bereich und danach unten die genauere Stelle deiner Beschwerden.",
     steps: [
-      "Klicke eine Hauptregion auf der Körperkarte oder in der Liste an.",
-      "Wähle danach die passende Unterregion aus.",
+      "Klicke eine Hauptregion auf der Körperkarte an.",
+      "Wähle danach die passende Unterregion aus der Liste, die unten erscheint.",
       "Der Weiter-Button wird aktiv, sobald beide Angaben ausgewählt sind.",
     ],
   },
@@ -70,7 +132,37 @@ const tutorialContentByStep: Partial<Record<Exclude<Step, null>, TutorialContent
     steps: [
       "Wähle die Symptomgruppe, die deine Beschwerden am besten beschreibt.",
       "Wenn keine Auswahl passt, kannst du Beschwerden später frei formulieren.",
-      "Du kannst im Verlauf weitere Symptome hinzufuegen.",
+      "Du kannst im Verlauf weitere Symptome hinzufügen.",
+    ],
+  },
+  Kopf: {
+    title: "Kopf: Beschwerden eingrenzen",
+    description:
+      "Hier wählst du aus, welche Art von Kopfbeschwerden am besten zu deiner Situation passt.",
+    steps: [
+      "Wähle eine Symptomgruppe wie Spannung, Migräne, Clusterkopfschmerz oder Begleiterscheinungen.",
+      "Nutze Dringende Warnsignale, wenn die Beschwerden plötzlich, ungewöhnlich stark oder alarmierend sind.",
+      "Nach der Auswahl kommst du zu konkreten Aussagen, die du einzeln markieren kannst.",
+    ],
+  },
+  kopfSpannung: {
+    title: "Spannung und Druck im Kopf",
+    description:
+      "Hier markierst du die konkreten Merkmale deiner Spannungskopfschmerzen oder Druckbeschwerden.",
+    steps: [
+      "Wähle alle Aussagen aus, die deinen Kopfschmerz passend beschreiben.",
+      "Bei schmerzhaften Angaben kannst du die Stärke über die Schmerzskala einschätzen.",
+      "Gehe weiter, wenn die wichtigsten Merkmale deiner Beschwerden erfasst sind.",
+    ],
+  },
+  kopfWarnsignale: {
+    title: "Warnsignale bei Kopfbeschwerden",
+    description:
+      "Hier geht es um Hinweise, die bei Kopfbeschwerden besonders ernst genommen werden sollten.",
+    steps: [
+      "Markiere nur Warnsignale, die aktuell wirklich zutreffen.",
+      "Plötzliche, sehr starke oder ungewohnte Beschwerden sollten medizinisch abgeklärt werden.",
+      "Bei akuter Verschlechterung oder Unsicherheit nutze den SOS-Button oder rufe 112.",
     ],
   },
   textInput: {
@@ -100,7 +192,7 @@ const tutorialContentByStep: Partial<Record<Exclude<Step, null>, TutorialContent
     steps: [
       "Ergänze Medikamente, Vorerkrankungen, Allergien oder Temperatur, falls relevant.",
       "Du kannst Felder leer lassen, wenn du nichts dazu angeben möchtest.",
-      "Mit Überspringen kommst du ohne Zusatzangaben weiter.",
+      "Mit Weiter kommst du zur Überprüfung deiner Angaben.",
     ],
   },
   checkInfo: {
@@ -115,11 +207,22 @@ const tutorialContentByStep: Partial<Record<Exclude<Step, null>, TutorialContent
   },
   manageData: {
     title: "Daten verwalten",
-    description: "Hier kannst du gespeicherte Angaben lokal verwalten.",
+    description:
+      "Hier kannst du gespeicherte Angaben mit deinem Zugriffscode abrufen oder löschen.",
     steps: [
-      "Prüfe, welche Daten für die Anwendung gespeichert wurden.",
-      "Nutze die angebotenen Aktionen zum Anzeigen oder Löschen.",
-      "Kehre danach zur Startseite zurück.",
+      "Gib den Zugriffscode ein, den du beim Speichern erhalten hast.",
+      "Nutze Abrufen, um gespeicherte Daten anzusehen und bei Bedarf herunterzuladen.",
+      "Nutze Löschen nur, wenn die Daten wirklich entfernt werden sollen.",
+    ],
+  },
+  other: {
+    title: "Andere Anliegen",
+    description:
+      "Hier findest du Anliegen, die nicht zur Symptomeinschätzung gehören.",
+    steps: [
+      "Unter Termine findest du externe Terminservices.",
+      "Unter Online Rezepte gelangst du zum E-Rezept-Angebot.",
+      "Unter Gespeicherte Daten verwalten kommst du zur Datenverwaltung.",
     ],
   },
   result: {
@@ -135,13 +238,35 @@ const tutorialContentByStep: Partial<Record<Exclude<Step, null>, TutorialContent
 };
 
 const categoryTutorialContent: TutorialContent = {
-  title: "Symptome eingrenzen",
+  title: "Symptomgruppe auswählen",
   description:
-    "Dieser Bereich hilft dir, die Beschwerden innerhalb der gewählten Region genauer zu beschreiben.",
+    "Hier wählst du aus, welche Beschwerdegruppe innerhalb der gewählten Region am besten passt.",
   steps: [
-    "Wähle alle Aussagen aus, die auf deine Beschwerden zutreffen.",
-    "Falls eine Schmerzskala angezeigt wird, gib die aktuelle Stärke an.",
-    "Gehe weiter, sobald die wichtigsten Symptome erfasst sind.",
+    "Wähle die Kategorie, die deine Beschwerden am besten beschreibt.",
+    "Wenn keine Kategorie passt, kannst du über Sonstiges eine freie Beschreibung eingeben.",
+    "Nach der Kategorieauswahl folgen konkrete Symptome oder Warnzeichen.",
+  ],
+};
+
+const symptomTutorialContent: TutorialContent = {
+  title: "Symptome markieren",
+  description:
+    "Hier beschreibst du deine Beschwerden genauer, indem du passende Aussagen auswählst.",
+  steps: [
+    "Markiere alle Aussagen, die aktuell auf deine Beschwerden zutreffen.",
+    "Wenn eine Schmerzskala erscheint, gib die Stärke möglichst realistisch an.",
+    "Mit Weiter speicherst du die Auswahl und entscheidest danach, ob weitere Symptome ergänzt werden.",
+  ],
+};
+
+const fallbackTutorialContent: TutorialContent = {
+  title: "Tutorial",
+  description:
+    "Dieser Schritt führt dich durch den aktuellen Teil der Ersteinschätzung.",
+  steps: [
+    "Lies die angezeigten Fragen und Hinweise sorgfältig.",
+    "Fülle nur Angaben aus, die du sicher beantworten kannst.",
+    "Nutze Weiter, sobald du mit diesem Schritt fertig bist.",
   ],
 };
 
@@ -150,7 +275,15 @@ function getTutorialContent(currentStep: Step): TutorialContent {
     return tutorialContentByStep[currentStep];
   }
 
-  return categoryTutorialContent;
+  if (symptomCategorySteps.has(currentStep)) {
+    return categoryTutorialContent;
+  }
+
+  if (symptomSelectionSteps.has(currentStep)) {
+    return symptomTutorialContent;
+  }
+
+  return fallbackTutorialContent;
 }
 
 export function TutorialModal({
@@ -169,7 +302,7 @@ export function TutorialModal({
           type="button"
           className={homeStyles.closeTutorialButton}
           onClick={onClose}
-          aria-label="Tutorial schliessen"
+          aria-label="Tutorial schließen"
         >
           <X size={24} weight="bold" />
         </button>

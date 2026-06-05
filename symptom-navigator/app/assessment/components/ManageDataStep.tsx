@@ -168,7 +168,7 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
                     className={assessmentStyles.input}
                     onChange={(e) => setCode(e.target.value.trim())}
                 />
-                <div className={assessmentStyles.label}>
+                <div className={assessmentStyles.buttonGroup}>
                     <button
                         type="button"
                         className={assessmentStyles.continueButton}
@@ -309,7 +309,7 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
                             </div>
                         )}
 
-                        <div>  
+                        <div className={assessmentStyles.buttonGroup}>
                             <button
                                 type="button"
                                 className={assessmentStyles.secondaryButton}
