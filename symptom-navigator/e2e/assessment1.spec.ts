@@ -4,7 +4,8 @@ import {
   getCaseFromDb,
   getAdditionalInfoFromDb,
   getSymptomsFromDb,
-  getRecommendationFromDb
+  getRecommendationFromDb,
+  getDetailsNoCertainCountFromDb
 } from './helpers/dbAssert';
 
 test.beforeEach(async () => {
@@ -36,36 +37,42 @@ test("complete assessment flow is saved correctly to the database", async ({ pag
 
   await page.getByRole("button", { name: "Weiter zur Körperregion" }).click();
 
-  // click head region on the SVG body map
-  await page.locator('path').first().click();
+  // click "Kopf & Gesicht" region on the SVG body map via aria-label
+  await page.getByRole("button", { name: "Kopf & Gesicht" }).click();
 
-  // select sub-region button that appears after main region click
-  await page.getByRole("button", { name: "Kopf" }).click();
+  // select "Kopf" as sub-region from the buttons that appear below
+  await page.getByRole("button", { name: "Kopf", exact: true }).click();
+
+  // continue to symptom categories
   await page.getByRole("button", { name: "Weiter" }).last().click();
 
-  // fill in symptom duration and pain intensity (BasisDetailsStep)
-  await page.getByPlaceholder("Zum Beispiel: seit 2 Tagen").fill("seit 3 Tagen");
-  await page.locator('input[type="range"]').fill("5");
-  await page.getByRole("button", { name: "Weiter" }).click();
-
   // select symptom category
-  await page.getByRole("button", { name: /Spannung & Druck/ }).click();
+  await page.getByRole("button", { name: /Spannung & Druck im Kopf/ }).click();
 
-  // select symptom from list
-  await page.getByRole("button", { name: /Dumpfer, drückender Schmerz/ }).click();
+  // select symptom via checkbox label — symptoms are checkboxes not buttons
+  await page.getByLabel("Dumpfer, drückender Schmerz (beidseitig)").check();
+
+  // fill in symptom duration and pain intensity
+  await page.locator('input[type="range"]').fill("7");
+
+    // select symptom from list
+  await page.getByLabel("Schwerer Druck auf dem gesamten Schädel").check();
+
+  // continue
   await page.getByRole("button", { name: "Weiter" }).click();
-
-  // skip free text symptom input
-  await page.getByRole("button", { name: "Überspringen" }).click();
 
   // do not add more symptoms
   await page.getByRole("button", { name: "nein" }).click();
+
 
   // fill in optional medication field
   await page.getByLabel("Nehmen Sie aktuell Medikamente ein?").fill("Ibuprofen");
 
   // fill in allergies field
   await page.getByLabel("Sind Allergien bekannt?").fill("Pollen");
+
+  // select condition via checkbox
+  await page.getByLabel("Bluthochdruck").check();
 
   // continue to check info screen
   await page.getByRole("button", { name: "weiter" }).click();
@@ -92,6 +99,18 @@ test("complete assessment flow is saved correctly to the database", async ({ pag
   // assert at least one symptom was saved
   const symptoms = await getSymptomsFromDb(dbCase.case_id);
   expect(symptoms.length).toBeGreaterThan(0);
+
+  // assert allergies were saved
+const allergies = await getDetailsNoCertainCountFromDb(dbCase.case_id, "allergy");
+expect(allergies).toContain("Pollen");
+
+// assert medication was saved
+const medication = await getDetailsNoCertainCountFromDb(dbCase.case_id, "medication");
+expect(medication).toContain("Ibuprofen");
+
+// assert conditions were saved
+const conditions = await getDetailsNoCertainCountFromDb(dbCase.case_id, "condition");
+expect(conditions).toContain("Bluthochdruck");
 
   // assert AI recommendation was saved with a valid urgency level
   const recommendation = await getRecommendationFromDb(dbCase.case_id);

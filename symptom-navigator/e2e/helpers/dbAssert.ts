@@ -28,3 +28,16 @@ export async function getRecommendationFromDb(caseId: string) {
   `, [caseId]);
   return result.rows[0] ?? null;
 }
+
+export async function getDetailsNoCertainCountFromDb(caseId: string, category: string) {
+  const result = await pool.query(`
+    SELECT detail
+    FROM details_no_certain_count
+    WHERE case_id = $1
+    AND category = $2
+    ;
+    `,
+    [caseId, category]
+  );
+  return result.rows.map((row: any) => row.detail);
+}
