@@ -123,6 +123,8 @@ export async function saveFormData(formData: FormData) {
         [age, sex, pregnancy, timestamp]
     );
 
+    const caseId = dbReturn.rows[0].case_id;
+
 
     // writing additional info into db
 
@@ -134,7 +136,7 @@ export async function saveFormData(formData: FormData) {
         worsening, breastfeeding, extrainfo)
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8);
         `,
-        [dbReturn.rows[0].case_id, weight || null, height || null, temperatureFloat|| null, duration|| null, 
+        [caseId, weight || null, height || null, temperatureFloat|| null, duration|| null, 
         worseningBool, breastfeedingBool, extraInfo|| null]
     );
 
@@ -142,13 +144,13 @@ export async function saveFormData(formData: FormData) {
     // insert for multiple values
 
     // allergies
-    insertListIntoSymptomsNoCertainCount(allergyList, "allergy", dbReturn.rows[0].case_id);
+    insertListIntoSymptomsNoCertainCount(allergyList, "allergy", caseId);
 
     // medication
-    insertListIntoSymptomsNoCertainCount(medicationList, "medication", dbReturn.rows[0].case_id);
+    insertListIntoSymptomsNoCertainCount(medicationList, "medication", caseId);
 
     // conditions
-    insertListIntoSymptomsNoCertainCount(conditionList, "condition", dbReturn.rows[0].case_id);
+    insertListIntoSymptomsNoCertainCount(conditionList, "condition", caseId);
 
 
     // writing raw text symptoms in db
@@ -169,7 +171,7 @@ export async function saveFormData(formData: FormData) {
             insert into case_symptoms (raw_id, case_id, painscale, bodyregion)
             VALUES ($1, $2, $3, $4)
             `,
-            [raw_id.rows[0].raw_id, dbReturn.rows[0].case_id, symptomTextListJson[i].painscale, symptomTextListJson[i].bodyregion || null]
+            [raw_id.rows[0].raw_id, caseId, symptomTextListJson[i].painscale, symptomTextListJson[i].bodyregion || null]
         );
       }
     }
@@ -180,7 +182,7 @@ export async function saveFormData(formData: FormData) {
         await connectionPool.query(
           `INSERT INTO case_symptoms (name_de, case_id, bodyregion, painscale) 
           VALUES ($1, $2, $3, $4)`,
-          [symptomListJson[i].name, dbReturn.rows[0].case_id, symptomListJson[i].bodyRegion, symptomListJson[i].painscale]
+          [symptomListJson[i].name, caseId, symptomListJson[i].bodyRegion, symptomListJson[i].painscale]
         );
       }
     }
@@ -192,7 +194,8 @@ export async function saveFormData(formData: FormData) {
 
     // set cookie to acess later on
     const sessionCookie = await cookies();
-    sessionCookie.set({name: 'caseId', value: dbReturn.rows[0].case_id, httpOnly: true, path: '/' });
+    sessionCookie.set({name: 'caseId', value: caseId, httpOnly: true, path: '/' });
+    return caseId.toString();
 }
 
 
@@ -496,11 +499,8 @@ export async function getDetailsNoCertainCount(category: string, listName: strin
 
 
 // function to get access code
-export async function getAccessCode() {
+export async function getAccessCode(caseId: string) {
   
-  // reading cookies to get case id
-  const cookieStore = await cookies();
-  const caseId = cookieStore.get('caseId')?.value;
 
   const accessCode = await connectionPool.query(`
     SELECT access_code
@@ -519,15 +519,9 @@ export async function getAccessCode() {
 
 
 // function to send and recieve promt/response from ollama, same concept for the argument as getDBData above
-export async function sendDataToAi() {
+export async function sendDataToAi(caseId: string) {
 
-  // reading cookies to get case id
-  const cookieStore = await cookies();
-  const caseId = cookieStore.get('caseId')?.value;
 
-  if (!caseId) {
-    throw new Error('Keine aktive Session gefunden');
-  }
 
   // get data from db
   // DB query

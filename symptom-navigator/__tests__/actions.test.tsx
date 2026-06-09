@@ -838,48 +838,26 @@ describe("getDetailsNoCertainCount", () => {
 describe("getAccessCode", () => {
   beforeEach(() => {
     mockQuery.mockReset();
-    mockCookieGet.mockReset();
   });
 
   it("returns the access_code", async () => {
-    mockCookieGet.mockReturnValue({ value: "42" });
+
     mockQuery.mockResolvedValueOnce({ rows: [{ access_code: "666864ea-a64e-4ddd-8597-93e53160a296" }] });
 
-    const result = await getAccessCode();
+    const result = await getAccessCode("4");
 
     expect(result).toBe("666864ea-a64e-4ddd-8597-93e53160a296");
   });
 
-  it("searches the cases table for the case_id from the cookie", async () => {
-    mockCookieGet.mockReturnValue({ value: "7" });
+  it("searches the cases table for the case_id", async () => {
+
     mockQuery.mockResolvedValueOnce({ rows: [{ access_code: "666864ea-a64e-4ddd-8597-93e53160a296" }] });
 
-    await getAccessCode();
+    await getAccessCode("4");
 
     expect(mockQuery).toHaveBeenCalledWith(
       expect.stringContaining("access_code"),
-      ["7"]
-    );
-  });
-
-  it("reads the 'caseId' cookie", async () => {
-    mockCookieGet.mockReturnValue({ value: "123" });
-    mockQuery.mockResolvedValueOnce({ rows: [{ access_code: "A" }] });
-
-    await getAccessCode();
-
-    expect(mockCookieGet).toHaveBeenCalledWith("caseId");
-  });
-
-  it("if no caseId cookie is set, it passes undefined to the database query", async () => {
-    mockCookieGet.mockReturnValue(undefined);
-    mockQuery.mockResolvedValueOnce({ rows: [{ access_code: "889a84e4-be41-491d-a6b7-b6669df1a75f" }] });
-
-    await getAccessCode();
-
-    expect(mockQuery).toHaveBeenCalledWith(
-      expect.any(String),
-      [undefined]
+      ["4"]
     );
   });
 });
@@ -891,11 +869,8 @@ describe("getAccessCode", () => {
 describe("sendDataToAi", () => {
   beforeEach(() => {
     mockQuery.mockReset();
-    mockCookieGet.mockReset();
     mockFetch.mockReset();
 
-    // Cookie with caseId
-    mockCookieGet.mockReturnValue({ value: "1" });
     
 
     // getUserDataFromDB: 7 Queries
@@ -943,14 +918,9 @@ describe("sendDataToAi", () => {
     process.env.MEDGEMMA_API_MODEL = "fake-model";
   });
 
-  it("liest die caseId aus dem 'caseId' Cookie", async () => {
-    await sendDataToAi();
-
-    expect(mockCookieGet).toHaveBeenCalledWith("caseId");
-  });
 
   it("returns the parsed AI result", async () => {
-    const result = await sendDataToAi();
+    const result = await sendDataToAi("19");
 
     expect(result).toHaveProperty("assessment");
     expect(result.assessment).toHaveProperty("urgency", "3");
@@ -958,7 +928,7 @@ describe("sendDataToAi", () => {
   });
 
   it("writes the result to the recommendations table", async () => {
-    await sendDataToAi();
+    await sendDataToAi("19");
 
     const insertCall = mockQuery.mock.calls.find(
       (call) => typeof call[0] === "string" && call[0].includes("INSERT INTO recommendations")
@@ -973,7 +943,7 @@ describe("sendDataToAi", () => {
   });
 
   it("sends the fetch request to the configured MEDGEMMA_API_URL", async () => {
-    await sendDataToAi();
+    await sendDataToAi("19");
 
     expect(mockFetch).toHaveBeenCalledWith(
       "http://fake-ai-url/api",
@@ -982,7 +952,7 @@ describe("sendDataToAi", () => {
   });
 
   it("passes the Authorization header with the API key", async () => {
-    await sendDataToAi();
+    await sendDataToAi("19");
 
     expect(mockFetch).toHaveBeenCalledWith(
       expect.any(String),
@@ -994,16 +964,10 @@ describe("sendDataToAi", () => {
     );
   });
 
-  it("returns an error if no caseId is available in the cookie", async () => {
-    mockCookieGet.mockReturnValue(undefined);
-  
-    await expect(sendDataToAi()).rejects.toThrow("Keine aktive Session gefunden");
-});
-
   it("returns undefined if the AI-API throws an error", async () => {
     mockFetch.mockRejectedValueOnce(new Error("Network Error"));
 
-    const result = await sendDataToAi();
+    const result = await sendDataToAi("19");
 
     // catch-block in sendDataToAi returns undefined
     expect(result).toBeUndefined();
@@ -1012,7 +976,7 @@ describe("sendDataToAi", () => {
   it("returns undefined when the AI-API returns a string error", async () => {
   mockFetch.mockRejectedValueOnce("einfacher string fehler");
 
-  const result = await sendDataToAi();
+  const result = await sendDataToAi("19");
 
   expect(result).toBeUndefined();
 });
