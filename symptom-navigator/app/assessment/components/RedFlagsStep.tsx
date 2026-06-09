@@ -20,6 +20,7 @@ type RedFlagsStepProps = {
 
   noRedFlags: boolean;
   hasEmergency: boolean;
+  isOffline: boolean;
 
   updateRedFlag: (
     key: keyof RedFlags,
@@ -38,8 +39,10 @@ export function RedFlagsStep({
   updateRedFlag,
   selectNoRedFlags,
   onContinue,
+  isOffline,
 }: RedFlagsStepProps) {
   const [showSos, setShowSos] = useState(false);
+  const [specificallyNoEmergency, setSpecificallyNoEmergency] = useState(false);
 
   return (
     <>
@@ -122,9 +125,10 @@ export function RedFlagsStep({
           <input
             type="checkbox"
             checked={noRedFlags}
-            onChange={(event) =>
-              selectNoRedFlags(event.target.checked)
-            }
+            onChange={(event) =>{
+              selectNoRedFlags(event.target.checked);
+              setSpecificallyNoEmergency(true);
+            }}
           />
           Keines davon trifft zu
         </label>
@@ -155,7 +159,7 @@ export function RedFlagsStep({
         onClose={() => setShowSos(false)}
       />
 
-      {!hasEmergency && (
+      {!hasEmergency && !isOffline && (
         <button
           type="button"
           className={assessmentStyles.primaryButton}
@@ -164,6 +168,11 @@ export function RedFlagsStep({
         >
           Weiter
         </button>
+      )}
+      {!hasEmergency && isOffline && specificallyNoEmergency && (
+        <p>
+          Im Offline Modus geht es hier nicht weiter. Sobald eine Internetverbindung besteht, können Sie hier Symptome angeben aus auswerten lassen.
+        </p>
       )}
     </>
   );

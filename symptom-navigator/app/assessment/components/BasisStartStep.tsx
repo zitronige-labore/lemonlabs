@@ -8,6 +8,7 @@ import assessmentStyles from "../Assessment.module.css";
   und Beschwerdeinformationen.
 */
 import type { BasisData, Step } from "../../types/assessment";
+import { useState } from "react";
 
 
 /*
@@ -46,6 +47,8 @@ export function BasisStartStep({
   checkInfoActive,
   setStep
 }: BasisStartStepProps) {
+  const [ageError, setAgeError] = useState("");
+
   return (
     <>
       {/* Beschreibung des aktuellen Schritts */}
@@ -67,15 +70,39 @@ export function BasisStartStep({
             className={assessmentStyles.input}
             type="number"
             min="0"
+            max="120"
             value={basisData.age}
-            onChange={(event) =>
-              setBasisData({
+            onChange={(event) => {
+              const value = event.target.value; //holt Benutzereingabe
+              const age = Number(value);
+
+              console.log(value);
+              console.log(age);
+              console.log(isNaN(age));
+              setBasisData({ //Eingabe speichern
                 ...basisData,
-                age: event.target.value,
-              })
+                age: value,
+              });
+              //const age = Number(value); //cast in zahl 
+              if (
+                value === "" ||
+                Number.isNaN(age) ||
+                !Number.isInteger(age) ||
+                age < 0
+                || age > 120) {
+                setAgeError("Bitte geben Sie ein gültiges Alter ein.")
+              } else {
+                setAgeError("");
+              }
             }
-            placeholder="Zum Beispiel: 25"
+            } placeholder="Zum Beispiel: 25"
           />
+          {ageError && (
+            <p className={assessmentStyles.errorText}>
+              {ageError}
+            </p>
+          )}
+
         </label>
 
         {/* Auswahl des Geschlechts */}
@@ -138,37 +165,38 @@ export function BasisStartStep({
         )}
       </fieldset>
 
-      { !checkInfoActive && (
-      <>
-      {/* Button zum Wechsel zur Körperregion-Auswahl */}
-      <button
-        type="button"
-        className={assessmentStyles.primaryButton}
-        onClick={onContinue}
+      {!checkInfoActive && (
+        <>
+          {/* Button zum Wechsel zur Körperregion-Auswahl */}
+          <button
+            type="button"
+            className={assessmentStyles.primaryButton}
+            onClick={onContinue}
 
-        /*
-          Der Button bleibt deaktiviert,
-          solange Pflichtangaben fehlen.
-        */
-        disabled={
-          !basisData.age ||
-          !basisData.gender ||
-          (basisData.gender === "weiblich" &&
-            !basisData.pregnancy)
-        }
-      >
-        Weiter zur Körperregion
-      </button>
-      </>
+            /*
+              Der Button bleibt deaktiviert,
+              solange Pflichtangaben fehlen.
+            */
+            disabled={
+              !basisData.age ||
+              !basisData.gender ||
+              (basisData.gender === "weiblich" &&
+                !basisData.pregnancy) ||
+              ageError != ""
+            }
+          >
+            Weiter zur Körperregion
+          </button>
+        </>
       )}
 
-      { checkInfoActive && (
+      {checkInfoActive && (
         <button
           type="button"
           className={assessmentStyles.primaryButton}
           onClick={() => {
-              setStep("checkInfo");
-            }}
+            setStep("checkInfo");
+          }}
         >
           zurueck zur Überprüfung
         </button>

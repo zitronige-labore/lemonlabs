@@ -7,12 +7,14 @@ type StartScreenProps = {
   onStartAssessment: () => void;
   resetProcess: () => void;
   setStep: (step: Step) => void;
+  isOffline: boolean;
 };
 
 export function StartScreen({
   onStartAssessment,
   resetProcess,
   setStep,
+  isOffline,
 }: StartScreenProps) {
   const [showSos, setShowSos] = useState(false);
 
@@ -31,37 +33,60 @@ export function StartScreen({
           <p className={homeStyles.intro}>Was ist dein Anliegen?</p>
 
           <div className={homeStyles.buttonBox}>
-            <section
-              className={`${homeStyles.actionCard} ${homeStyles.primaryActionCard}`}
-            >
-              <button
-                type="button"
-                className={homeStyles.primaryButton}
-                onClick={() => {
-                  onStartAssessment();
-                  resetProcess();
-                }}
-              >
-                Ersteinschätzung von Symptomen
-              </button>
-              <p className={homeStyles.actionDescription}>
-                Geführte Einschätzung mit Warnzeichen-Prüfung, Körperregion und
-                anschließender Zusammenfassung.
-              </p>
-            </section>
+            {!isOffline && (
+              <>
+                <section
+                  className={`${homeStyles.actionCard} ${homeStyles.primaryActionCard}`}
+                >
+                  <button
+                    type="button"
+                    className={homeStyles.primaryButton}
+                    onClick={() => {
+                      onStartAssessment();
+                      resetProcess();
+                    }}
+                  >
+                    Ersteinschätzung von Symptomen
+                  </button>
 
-            <section className={homeStyles.actionCard}>
-              <button
-                type="button"
-                className={homeStyles.secondaryButton}
-                onClick={() => setStep("other")}
-              >
-                Andere Anliegen
-              </button>
-              <p className={homeStyles.actionDescription}>
-                Termine, Online-Rezepte und gespeicherte Daten verwalten.
-              </p>
-            </section>
+                  <p className={homeStyles.actionDescription}>
+                    Geführte Einschätzung mit Warnzeichen-Prüfung, Körperregion
+                    und anschließender Zusammenfassung.
+                  </p>
+                </section>
+
+                <section className={homeStyles.actionCard}>
+                  <button
+                    type="button"
+                    className={homeStyles.secondaryButton}
+                    onClick={() => setStep("other")}
+                  >
+                    Andere Anliegen
+                  </button>
+
+                  <p className={homeStyles.actionDescription}>
+                    Termine, Online-Rezepte und gespeicherte Daten verwalten.
+                  </p>
+                </section>
+              </>
+            )}
+
+            {isOffline && (
+              <>
+                <p>Hier Offline Hinweise oder Buttons einfügen</p>
+
+                <button
+                  type="button"
+                  className={homeStyles.primaryButton}
+                  onClick={() => {
+                    onStartAssessment();
+                    resetProcess();
+                  }}
+                >
+                  Warnzeichen erkennen
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>

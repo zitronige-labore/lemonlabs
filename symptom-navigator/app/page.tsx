@@ -108,7 +108,32 @@ export default function Home() {
   */
   const [copyPainScale, setCopyPainScale] = useState<Record<string, string>>({});
 
+  // state to track if checkInfo is active so user can be lead back to it
   const [checkInfoActive, setCheckInfoActive] = useState<boolean>(false);
+
+  // state to check if offline
+  const [isOffline, setIsOffline] = useState<boolean>(false);
+
+
+  // event listener to check if user goes offline or comes back online
+  useEffect(() => {
+    function handleOnline() {
+      setIsOffline(false);
+    }
+
+    function handleOffline() {
+      setIsOffline(true);
+    }
+
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+
+    return function() {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, []);
+
 
   /*
     Speichert allgemeine Angaben und Detailangaben zu den Beschwerden.
@@ -408,6 +433,7 @@ export default function Home() {
     setSymptomText([]);
     setSelectedSymptoms([]);
     setCopyPainScale({});
+    setNoRedFlags(false);
   }
 
 
@@ -459,6 +485,7 @@ export default function Home() {
           onStartAssessment={() => goToStep("hinweise")}
           resetProcess={resetProcess}
           setStep={goToStep}
+          isOffline={isOffline}
         />
       )}
 
@@ -498,6 +525,7 @@ export default function Home() {
       {/* Alle Schritte der eigentlichen Ersteinschätzung */}
       {step !== "start" && step !== "hinweise" && step !== "manageData" && step !== "other" && (
         <AssessmentLayout onSubmit={handleSubmit} progress={getStepProgress(step)}>
+          
           {/* Schritt 1: Warnzeichen prüfen */}
           {step === "redflags" && (
             <RedFlagsStep
@@ -507,6 +535,7 @@ export default function Home() {
               updateRedFlag={updateRedFlag}
               selectNoRedFlags={selectNoRedFlags}
               onContinue={() => goToStep("basisStart")}
+              isOffline={isOffline}
             />
           )}
 
@@ -588,6 +617,7 @@ export default function Home() {
               removeSymptomText={removeSymptomText}
               toggleSymptom={toggleSymptom}
               setCheckInfoActive={setCheckInfoActive}
+              isOffline={isOffline}
             />
           )}
 
