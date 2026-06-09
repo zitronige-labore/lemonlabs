@@ -18,6 +18,12 @@ const config = {
       },
     }],
   },
+
+  testPathIgnorePatterns: [
+    "\\\\node_modules\\\\",
+    "<rootDir>/e2e/",
+  ],
+
   moduleNameMapper: {
     // Next.js Server Actions: "use server" wird ignoriert
     "^server-only$": "<rootDir>/__mocks__/server-only.js",

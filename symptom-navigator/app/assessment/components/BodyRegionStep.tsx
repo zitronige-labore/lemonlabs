@@ -56,6 +56,8 @@ export function BodyRegionStep({
   }) => (
     <path
       d={d}
+      role="button"
+      aria-label={region}
       className={`${assessmentStyles.bodyPart} ${selectedMainRegion === region ? assessmentStyles.selectedBodyPart : ""
         }`}
       onMouseEnter={() => setHoveredPart(region)}
@@ -88,6 +90,8 @@ export function BodyRegionStep({
         width={width}
         height={height}
         rx="10"
+        role="button"
+        aria-label={region}
         className={`${assessmentStyles.bodyPart} ${selectedMainRegion === region ? assessmentStyles.selectedBodyPart : ""
           }`}
         onMouseEnter={() => setHoveredPart(region)}
