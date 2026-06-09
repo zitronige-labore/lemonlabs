@@ -37,26 +37,6 @@ export function StartScreen({
               <>
                 <section
                   className={`${homeStyles.actionCard} ${homeStyles.primaryActionCard}`}
-
-            {!isOffline && (
-            <>
-            <div className={homeStyles.startHintTarget}>
-              <button
-                type="button"
-                className={homeStyles.primaryButton}
-                onClick={() => {
-                  onStartAssessment();
-                  resetProcess();
-                }}
-              >
-                Ersteinschätzung von Symptomen
-              </button>
-
-              {showStartHints && (
-                <button
-                  type="button"
-                  className={homeStyles.startHint}
-                  onClick={hideStartHints}
                 >
                   <button
                     type="button"
@@ -105,26 +85,6 @@ export function StartScreen({
                 >
                   Warnzeichen erkennen
                 </button>
-              )}
-            </div>
-            </>
-            )}
-            {isOffline && (
-              <>
-              <p>
-                Hier Offline Hinweise oder Buttons einfügen
-              </p>
-            
-              <button
-                type="button"
-                className={homeStyles.primaryButton}
-                onClick={() => {
-                  onStartAssessment();
-                  resetProcess();
-                }}
-              >
-                Warnzeichen erkennen
-              </button>
               </>
             )}
           </div>
