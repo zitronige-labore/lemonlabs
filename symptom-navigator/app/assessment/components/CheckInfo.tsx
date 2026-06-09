@@ -29,6 +29,7 @@ type CheckInfoProps = {
   removeSymptomText: (symptom: string) => void;
   toggleSymptom: (symptom: string) => void;
   setCheckInfoActive: (active: boolean) => void;
+  isOffline: boolean;
 };
 
 export function CheckInfo({
@@ -39,7 +40,8 @@ export function CheckInfo({
   setStep,
   removeSymptomText,
   toggleSymptom,
-  setCheckInfoActive
+  setCheckInfoActive,
+  isOffline,
 }: CheckInfoProps) {
   const [showSavedData, setShowSavedData] = useState(false);
 
@@ -272,17 +274,19 @@ export function CheckInfo({
         </div>
       )}
 
-
-
-
-
-
-      <button
+      {!isOffline && (
+        <button
           type="submit"
           className={assessmentStyles.primaryButton}
         >
           Einschätzung abschließen
-      </button>
+        </button>
+      )}
+      {isOffline && (
+        <p>
+          Im Offline-Modus können keine Daten bearbeitet werden. Sobald eine Internetverbindung besteht, ist das Vortsetzen möglich.
+        </p>
+      )}
     </>
     );
 }

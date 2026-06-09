@@ -7,12 +7,14 @@ type StartScreenProps = {
   onStartAssessment: () => void;
   resetProcess: () => void;
   setStep: (step: Step) => void;
+  isOffline: boolean;
 };
 
 export function StartScreen({
   onStartAssessment,
   resetProcess,
   setStep,
+  isOffline,
 }: StartScreenProps) {
   const [showSos, setShowSos] = useState(false);
   const [showStartHints, setShowStartHints] = useState(true);
@@ -47,6 +49,9 @@ export function StartScreen({
           <p className={homeStyles.intro}>Was ist dein Anliegen?</p>
 
           <div className={homeStyles.buttonBox}>
+
+            {!isOffline && (
+            <>
             <div className={homeStyles.startHintTarget}>
               <button
                 type="button"
@@ -95,6 +100,26 @@ export function StartScreen({
                 </button>
               )}
             </div>
+            </>
+            )}
+            {isOffline && (
+              <>
+              <p>
+                Hier Offline Hinweise oder Buttons einfügen
+              </p>
+            
+              <button
+                type="button"
+                className={homeStyles.primaryButton}
+                onClick={() => {
+                  onStartAssessment();
+                  resetProcess();
+                }}
+              >
+                Warnzeichen erkennen
+              </button>
+              </>
+            )}
           </div>
         </div>
       </div>

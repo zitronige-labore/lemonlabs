@@ -556,9 +556,9 @@ export async function sendDataToAi() {
     4 - Möglicher medizinischer Notfall
     5 - Akuter Notfall ),
   2. eine Liste von 5 moeglichen Vermutungen
-  3. Wahrscheinlichkeiten fuer jede Vermutung
+  3. Wahrscheinlichkeiten fuer jede Vermutung (NUR als 0.XX angeben, NICHT in Prozent umwandeln oder mit Worten)
   4. kurze Begruendung der Vermutungen
-  5. eine kurze Handlungsempfehlung in einfacher Sprache fuer den Patienten.
+  5. eine kurze Handlungsempfehlung in einfacher Sprache fuer den Patienten, hier keine Vermutungen
   Hier sind die Daten: ${data}`;
 
   // JSON schema (looks weird because it used to be xml (yes there was a reason for that too, it was not just because I felt like it))
@@ -568,7 +568,11 @@ export async function sendDataToAi() {
     assessment: {
       type: "object",
       properties: {
-        urgency: { type: "string" },
+        urgency: { 
+          type: "number",
+          minimum: 1,
+          maximum: 5
+        },
         urgencyText: { type: "string" },
         suspicions: {
           type: "object",
