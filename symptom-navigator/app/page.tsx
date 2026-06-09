@@ -120,6 +120,9 @@ export default function Home() {
 
   // event listener to check if user goes offline or comes back online
   useEffect(() => {
+
+    setIsOffline(!navigator.onLine); 
+
     function handleOnline() {
       setIsOffline(false);
     }
