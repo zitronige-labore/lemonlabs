@@ -183,7 +183,7 @@ textarea.input {
 .errorText {
   color: var(--danger);
   font-size: 0.9rem;
-  font-weight: 700;
+  font-weight: 400;
   margin: 4px 0 0;
 }
 
