@@ -13,18 +13,40 @@
   in der Anwendung wiederverwendet werden.
 */
 :root {
-  --background: #ffffff;
+  --background: #f6f8fb;
   --foreground: #0f172a;
-  --surface: #eff6ff;
+  --surface: #ffffff;
   --surface-alt: #f8fbff;
-  --border: #cbd5e1;
+  --surface-muted: #eef6fb;
+  --border: #d9e2ec;
+  --border-strong: #b8c7d6;
   --text-primary: #0f172a;
   --text-muted: #475569;
-  --primary: #3b82f6;
-  --primary-soft: #dbeafe;
-  --primary-strong: #2563eb;
+  --text-subtle: #64748b;
+  --primary: #107aca;
+  --primary-soft: #dbeeff;
+  --primary-strong: #0e6eb6;
+  --primary-hover: #0e6eb6;
+  --primary-active: #0c5f9d;
+  --primary-surface: #f1f8fe;
+  --secondary: #dbeafe;
+  --secondary-hover: #bfdbfe;
+  --secondary-text: #1e3a8a;
+  --focus-ring: rgba(16, 122, 202, 0.28);
   --danger: #dc2626;
+  --danger-hover: #b91c1c;
   --danger-soft: #fee2e2;
+  --danger-border: #fecaca;
+  --radius-card: 24px;
+  --radius-control: 14px;
+  --shadow-card: 0 24px 70px rgba(15, 23, 42, 0.11);
+  --shadow-control: 0 10px 24px rgba(16, 122, 202, 0.2);
+  --shadow-danger: 0 12px 30px rgba(220, 38, 38, 0.26);
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 32px;
+  --space-5: 40px;
 }
 
 /*
@@ -61,4 +83,24 @@ body {
   line-height: 1.5;
   min-height: 100vh;
   color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 3px;
 }

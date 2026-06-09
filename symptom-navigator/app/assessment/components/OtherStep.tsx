@@ -8,22 +8,6 @@ type OtherStepProps = {
 
 type OtherConcern = "termine" | "rezepte" | "daten" | null;
 
-const sectionTitleStyle = {
-  color: "#000000",
-  fontSize: "1.15rem",
-  fontWeight: 700,
-  lineHeight: "1.4",
-  margin: "0 0 12px",
-};
-
-const sectionStyle = {
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  gap: "12px",
-  marginBottom: "28px",
-} as const;
-
 const linkButtonStyle = {
   textDecoration: "none",
   display: "inline-flex",
@@ -41,23 +25,14 @@ export function OtherStep({ onBack, onManageData }: OtherStepProps) {
           <h1 className={homeStyles.title}>Andere Anliegen</h1>
         </div>
 
-        <div
-          style={{
-            marginTop: "24px",
-            background: "#ffffff",
-            borderRadius: "12px",
-            padding: "20px",
-            border: "1px solid #d1d5db",
-            textAlign: "center",
-          }}
-        >
+        <div className={homeStyles.panel}>
           {!selectedConcern && (
-            <section style={{ ...sectionStyle, marginBottom: 0 }}>
-              <h2 style={sectionTitleStyle}>Was möchten Sie tun?</h2>
+            <section className={homeStyles.actionStack}>
+              <h2 className={homeStyles.sectionTitle}>Was möchten Sie tun?</h2>
 
               <button
                 type="button"
-                className={homeStyles.primaryButton}
+                className={homeStyles.secondaryButton}
                 onClick={() => setSelectedConcern("termine")}
               >
                 Termine
@@ -82,14 +57,16 @@ export function OtherStep({ onBack, onManageData }: OtherStepProps) {
           )}
 
           {selectedConcern === "termine" && (
-            <section style={{ ...sectionStyle, marginBottom: 0 }}>
-              <h2 style={sectionTitleStyle}>Termine online vereinbaren</h2>
+            <section className={homeStyles.actionStack}>
+              <h2 className={homeStyles.sectionTitle}>
+                Termine online vereinbaren
+              </h2>
 
               <a
                 href="https://www.doctolib.de/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className={homeStyles.primaryButton}
+                className={homeStyles.secondaryButton}
                 style={linkButtonStyle}
               >
                 DoctoLib
@@ -99,18 +76,17 @@ export function OtherStep({ onBack, onManageData }: OtherStepProps) {
                 href="https://patientenportal.rbk.de/type"
                 target="_blank"
                 rel="noopener noreferrer"
-                className={homeStyles.primaryButton}
+                className={homeStyles.secondaryButton}
                 style={linkButtonStyle}
               >
                 Robert Bosch Krankenhaus Stuttgart
               </a>
-
             </section>
           )}
 
           {selectedConcern === "rezepte" && (
-            <section style={{ ...sectionStyle, marginBottom: 0 }}>
-              <h2 style={sectionTitleStyle}>Online Rezepte</h2>
+            <section className={homeStyles.actionStack}>
+              <h2 className={homeStyles.sectionTitle}>Online Rezepte</h2>
 
               <a
                 href="https://www.gesund.de/e-rezept"
@@ -121,13 +97,14 @@ export function OtherStep({ onBack, onManageData }: OtherStepProps) {
               >
                 gesund.de - E-Rezept
               </a>
-
             </section>
           )}
 
           {selectedConcern === "daten" && (
-            <section style={{ ...sectionStyle, marginBottom: 0 }}>
-              <h2 style={sectionTitleStyle}>Gespeicherte Daten verwalten</h2>
+            <section className={homeStyles.actionStack}>
+              <h2 className={homeStyles.sectionTitle}>
+                Gespeicherte Daten verwalten
+              </h2>
 
               <button
                 type="button"
@@ -136,7 +113,6 @@ export function OtherStep({ onBack, onManageData }: OtherStepProps) {
               >
                 Gespeicherte Daten ansehen und löschen
               </button>
-
             </section>
           )}
         </div>
@@ -144,7 +120,7 @@ export function OtherStep({ onBack, onManageData }: OtherStepProps) {
         <div className={homeStyles.buttonBox}>
           <button
             type="button"
-            className={homeStyles.primaryButton}
+            className={homeStyles.secondaryButton}
             onClick={onBack}
           >
             Zurück zur Startseite

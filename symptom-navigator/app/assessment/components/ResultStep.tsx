@@ -169,7 +169,7 @@ export function ResultStep({
               textAlign: "left",
             }}
           >
-            <strong style={{ color: "#1e3a8a" }}>
+            <strong style={{ color: "var(--primary)" }}>
               {key.replace("suspicion", "Vermutung ")}:
             </strong>{" "}
             {name}
@@ -304,7 +304,7 @@ export function ResultStep({
                 textAlign: "left",
               }}
             >
-              <strong style={{ color: "#1e3a8a" }}>
+              <strong style={{ color: "var(--primary)" }}>
                 Platzhalter-Begründung:
               </strong>
               <br />

@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 import withPWA from "@ducanh2912/next-pwa";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  devIndicators: false,
 };
 
 const isDev = process.env.NODE_ENV === "development";
