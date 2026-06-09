@@ -26,6 +26,7 @@ type HinweiseScreenProps = {
 export function HinweiseScreen({
   hinweiseBestaetigt,
   setHinweiseBestaetigt,
+  onBack,
   onContinue,
 }: HinweiseScreenProps) {
   const [showSos, setShowSos] = useState(false);
@@ -41,12 +42,6 @@ export function HinweiseScreen({
 
             <h2 className={homeStyles.subtitle}>
               <span>by lemonlabs</span>
-
-              <img
-                src="/images/logo778899.svg"
-                alt="Lemonlabs Logo"
-                className={homeStyles.logo}
-              />
             </h2>
           </div>
 
@@ -90,6 +85,13 @@ export function HinweiseScreen({
             >
               Weiter zur Ersteinschätzung
             </button>
+            <button
+              type="button"
+              className={homeStyles.secondaryButton}
+              onClick={onBack}
+            >
+              Zurück
+            </button>
           </div>
         </div>
       </div>
@@ -99,6 +101,7 @@ export function HinweiseScreen({
         type="button"
         onClick={() => setShowSos(true)}
         className={homeStyles.sosButton}
+        aria-label="SOS Notfallhilfe öffnen"
       >
         SOS
       </button>
