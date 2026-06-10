@@ -307,7 +307,7 @@
   position: fixed;
   left: max(16px, env(safe-area-inset-left));
   bottom: max(24px, env(safe-area-inset-bottom));
-  background: #8ee6e3;
+  background: #00f5ea;
   color: #000000;
   border: 1px solid var(--border);
   width: 52px;
@@ -323,7 +323,7 @@
 }
 
 .tutorialButton:hover {
-  background: #78d8d5;
+  background: #00ddd4;
   transform: translateY(-1px);
 }
 

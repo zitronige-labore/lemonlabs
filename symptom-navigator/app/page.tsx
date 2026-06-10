@@ -61,6 +61,7 @@ export default function Home() {
     Speichert, welcher Schritt im Ablauf aktuell angezeigt wird.
   */
   const [step, setStep] = useState<Step>("start");
+  const [highestAssessmentProgress, setHighestAssessmentProgress] = useState(0);
 
   // reference to current step
   const stepRef = useRef<Step>("start");
@@ -225,7 +226,12 @@ export default function Home() {
         }
 
         stepRef.current = zielStep;
-          setStep(zielStep);
+        setHighestAssessmentProgress((previousProgress) =>
+          zielStep === "start" || zielStep === "hinweise"
+            ? 0
+            : Math.max(previousProgress, getStepProgress(zielStep))
+        );
+        setStep(zielStep);
       }
     }
       
@@ -255,6 +261,11 @@ export default function Home() {
   function goToStep(nextStep: Step) {
     stepRef.current = nextStep;
     history.pushState({ step: nextStep }, "", "#" + nextStep);
+    setHighestAssessmentProgress((previousProgress) =>
+      nextStep === "start" || nextStep === "hinweise"
+        ? 0
+        : Math.max(previousProgress, getStepProgress(nextStep))
+    );
     setStep(nextStep);
   }
   function getStepProgress(step: Step): number {
@@ -434,6 +445,7 @@ export default function Home() {
     setSelectedSymptoms([]);
     setCopyPainScale({});
     setNoRedFlags(false);
+    setHighestAssessmentProgress(0);
   }
 
 
@@ -524,7 +536,10 @@ export default function Home() {
       )}
       {/* Alle Schritte der eigentlichen Ersteinschätzung */}
       {step !== "start" && step !== "hinweise" && step !== "manageData" && step !== "other" && (
-        <AssessmentLayout onSubmit={handleSubmit} progress={getStepProgress(step)}>
+        <AssessmentLayout
+          onSubmit={handleSubmit}
+          progress={Math.max(highestAssessmentProgress, getStepProgress(step))}
+        >
           
           {/* Schritt 1: Warnzeichen prüfen */}
           {step === "redflags" && (
