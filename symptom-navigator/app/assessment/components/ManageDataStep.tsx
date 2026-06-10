@@ -1,5 +1,6 @@
 import type { Step } from "../../types/assessment";
 import assessmentStyles from "../Assessment.module.css";
+import { makeDBDataReadable } from "../utils/assessmentData";
 import { accessDataWithAccessCode, deleteDataOnAccessCode, accessAiDataWithAccessCode } from "../../actions";
 import { useState } from "react";
 import jsPDF from "jspdf";
@@ -18,26 +19,8 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
     const [code, setCode] = useState<string>("");
 
 
-    // convert coded values to be read by users if necessary
-
-    let geschlecht = data?.caseData?.[0]?.sex;
-    if (geschlecht === "m") {
-        geschlecht = "männlich";
-    } else if (geschlecht === "w") {
-        geschlecht = "weiblich";
-    }
-
-    let schwangerschaft = "nicht angegeben";
-    if (data?.caseData?.[0]?.pregnancy === true) schwangerschaft = "ja";
-    else if (data?.caseData?.[0]?.pregnancy === false) schwangerschaft = "nein";
-
-    let stillzeit = "nicht angegeben";
-    if (data?.caseData?.[0]?.lactation === true) stillzeit = "ja";
-    else if (data?.caseData?.[0]?.lactation === false) stillzeit = "nein";
-
-    let worsening: string | undefined;
-    if (data?.additionalInfoData?.[0]?.worsening === true) worsening = "ja";
-    else if (data?.additionalInfoData?.[0]?.worsening === false) worsening = "nein";
+    // convert coded values to be read by users where necessary
+    const [geschlecht, schwangerschaft, stillzeit, worsening] = makeDBDataReadable(data)
 
     // helper functions for pdf and txt export
     const handleDownloadTxt = () => {
