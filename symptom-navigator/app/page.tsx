@@ -61,6 +61,7 @@ export default function Home() {
     Speichert, welcher Schritt im Ablauf aktuell angezeigt wird.
   */
   const [step, setStep] = useState<Step>("start");
+  const [highestAssessmentProgress, setHighestAssessmentProgress] = useState(0);
 
   // saves case ID
   const [caseId, setCaseId] = useState("")
@@ -228,7 +229,12 @@ export default function Home() {
         }
 
         stepRef.current = zielStep;
-          setStep(zielStep);
+        setHighestAssessmentProgress((previousProgress) =>
+          zielStep === "start" || zielStep === "hinweise"
+            ? 0
+            : Math.max(previousProgress, getStepProgress(zielStep))
+        );
+        setStep(zielStep);
       }
     }
       
@@ -258,6 +264,11 @@ export default function Home() {
   function goToStep(nextStep: Step) {
     stepRef.current = nextStep;
     history.pushState({ step: nextStep }, "", "#" + nextStep);
+    setHighestAssessmentProgress((previousProgress) =>
+      nextStep === "start" || nextStep === "hinweise"
+        ? 0
+        : Math.max(previousProgress, getStepProgress(nextStep))
+    );
     setStep(nextStep);
   }
   function getStepProgress(step: Step): number {
@@ -437,27 +448,7 @@ export default function Home() {
     setSelectedSymptoms([]);
     setCopyPainScale({});
     setNoRedFlags(false);
-    setRedFlags(emptyRedFlags);
-    setCaseId("");
-    setBasisData({
-      age: "",
-      gender: "",
-      pregnancy: "",
-      duration: "",
-      intensity: "0",
-    });
-    setAdditionalData({
-      medication: "",
-      conditions: "",
-      duration: "",
-      allergies: "",
-      temperature: "",
-      worsening: "",
-      weight: "",
-      height: "",
-      breastfeeding: "",
-      extraInfo: "",
-    });
+    setHighestAssessmentProgress(0);
   }
 
 
@@ -549,7 +540,10 @@ export default function Home() {
       )}
       {/* Alle Schritte der eigentlichen Ersteinschätzung */}
       {step !== "start" && step !== "hinweise" && step !== "manageData" && step !== "other" && (
-        <AssessmentLayout onSubmit={handleSubmit} progress={getStepProgress(step)}>
+        <AssessmentLayout
+          onSubmit={handleSubmit}
+          progress={Math.max(highestAssessmentProgress, getStepProgress(step))}
+        >
           
           {/* Schritt 1: Warnzeichen prüfen */}
           {step === "redflags" && (

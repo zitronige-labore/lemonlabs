@@ -37,6 +37,18 @@ export default function SymptomSelection({
   }: SymptomSelectionProps) {
   
   const [painscales, setPainscales] = useState<Record<string, string>>(copyPainScale);
+  const saveSelectedSymptomPainScales = () => {
+    setSelectedSymptoms((prev) =>
+      prev.map((s) => {
+        const match = symptoms.find((e) => s.includes(`"name": "${e.symptomValue}"`));
+        if (match) {
+          return `{"name": "${match.symptomValue}", "bodyRegion": "${selectedSubRegion}", "painscale": ${painscales[match.symptomValue] ?? null}}`;
+        }
+        return s;
+      })
+    );
+    setCopyPainScale(painscales);
+  };
   
   return (
     
@@ -98,25 +110,28 @@ export default function SymptomSelection({
       ))                               
     }
 
+      <button
+        type="button"
+        className={assessmentStyles.symptomOtherOption}
+        onClick={() => {
+          saveSelectedSymptomPainScales();
+          setStep("textInput");
+        }}
+      >
+        <span className={assessmentStyles.fakeCheckbox} aria-hidden="true" />
+        <span>Sonstiges</span>
+      </button>
+
     </fieldset>
 
     <button
         type="button"
         className={assessmentStyles.primaryButton}
         onClick={() => {
-          setSelectedSymptoms((prev) =>
-            prev.map((s) => {
-              const match = symptoms.find((e) => s.includes(`"name": "${e.symptomValue}"`));
-              if (match) {
-                return `{"name": "${match.symptomValue}", "bodyRegion": "${selectedSubRegion}", "painscale": ${painscales[match.symptomValue] ?? null}}`;
-              }
-              return s;
-            })
-          );
-          setCopyPainScale(painscales);
+          saveSelectedSymptomPainScales();
           setStep("selectMoreSymptoms"); 
         }}
-      >
+    >
       Weiter
     </button>
     </>

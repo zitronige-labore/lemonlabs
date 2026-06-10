@@ -136,6 +136,41 @@
   flex: 0 0 auto;
 }
 
+.symptomOtherOption {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: clamp(16px, 4vw, 20px);
+  margin: 0 0 var(--space-3);
+  text-align: left;
+  background: var(--surface-alt);
+  color: var(--text-primary);
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  line-height: 1.5;
+  font: inherit;
+  font-size: 0.98rem;
+  transition: border-color 0.18s ease, background 0.18s ease, transform 0.12s ease;
+}
+
+.symptomOtherOption:hover {
+  background: var(--secondary);
+  border-color: var(--secondary-hover);
+  transform: translateY(-1px);
+}
+
+.fakeCheckbox {
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+  border: 2px solid var(--border-strong);
+  border-radius: 4px;
+  background: #ffffff;
+  flex: 0 0 auto;
+}
+
 .formLabel {
   display: flex;
   flex-direction: column;
@@ -343,16 +378,16 @@ textarea.input {
 
 .selectedBodyPart,
 .selectedBodyPart:hover {
-  fill: rgba(220, 38, 38, 0.18);
+  fill: rgba(220, 38, 38, 0.42);
   stroke: var(--danger);
-  filter: drop-shadow(0 0 6px rgba(220, 38, 38, 0.34));
+  filter: drop-shadow(0 0 8px rgba(220, 38, 38, 0.46));
 }
 
 .selectedRegion,
 .selectedRegion:hover {
-  background: var(--danger-soft);
-  color: #991b1b;
-  border-color: var(--danger-border);
+  background: var(--secondary);
+  color: var(--secondary-text);
+  border-color: var(--secondary-hover);
 }
 
 .slider {

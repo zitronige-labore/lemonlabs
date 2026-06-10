@@ -53,7 +53,7 @@ export default function SymptomCategory({categories,
               setStep("textInput");
             }}
           >
-            sonstiges
+            Sonstiges
           </button>
         </div>
       </fieldset>
