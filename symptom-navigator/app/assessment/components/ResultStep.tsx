@@ -64,6 +64,7 @@ export function ResultStep({
   const [showAiReasoning, setShowAiReasoning] = useState(false);
   const [showEmergencyPopup, setShowEmergencyPopup] = useState(false);
   const [accessCode, setAccessCode] = useState<string | null>(null);
+  const [accessCodeCopied, setAccessCodeCopied] = useState(false);
 
   /*
     Bevorzugt werden die strukturierten Daten aus der Datenbank.
@@ -102,6 +103,18 @@ export function ResultStep({
       getAccessCode(caseId).then(setAccessCode);
     }
   }, [caseId]);
+
+  const handleCopyAccessCode = async () => {
+    if (!accessCode) return;
+
+    try {
+      await navigator.clipboard.writeText(accessCode);
+      setAccessCodeCopied(true);
+      window.setTimeout(() => setAccessCodeCopied(false), 2000);
+    } catch {
+      setAccessCodeCopied(false);
+    }
+  };
 
 
   const symptomTextValue =
@@ -345,17 +358,41 @@ export function ResultStep({
           <p style={{ margin: "0 0 6px 0", fontSize: "1rem" }}>
             Ihr persönlicher Zugangscode:
           </p>
-          <p
+          <div
             style={{
-              margin: 0,
-              fontSize: "1rem",
-              fontWeight: "500",
-              color: "var(--primary)",
-              letterSpacing: "0.15em",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: "12px",
+              flexWrap: "wrap",
             }}
           >
-            {accessCode}
-          </p>
+            <p
+              style={{
+                margin: 0,
+                fontSize: "1rem",
+                fontWeight: "500",
+                color: "var(--primary)",
+                letterSpacing: "0.15em",
+                overflowWrap: "anywhere",
+              }}
+            >
+              {accessCode}
+            </p>
+            <button
+              type="button"
+              className={assessmentStyles.secondaryButton}
+              onClick={handleCopyAccessCode}
+              style={{
+                width: "auto",
+                minHeight: "40px",
+                padding: "8px 14px",
+                fontSize: "0.9rem",
+              }}
+            >
+              {accessCodeCopied ? "Kopiert!" : "Kopieren"}
+            </button>
+          </div>
           <p style={{ margin: "8px 0 0 0", fontSize: "0.85rem", color: "#64748b" }}>
             Mit diesem Code können Sie Ihre Daten später wieder abrufen.
           </p>
