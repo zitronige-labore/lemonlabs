@@ -63,6 +63,9 @@ export default function Home() {
   const [step, setStep] = useState<Step>("start");
   const [highestAssessmentProgress, setHighestAssessmentProgress] = useState(0);
 
+  // saves case ID
+  const [caseId, setCaseId] = useState("")
+
   // reference to current step
   const stepRef = useRef<Step>("start");
 
@@ -469,9 +472,10 @@ export default function Home() {
     setIsLoading(true);
 
     try {
-      await handleSaveForm();
+      const id = await handleSaveForm();
+      setCaseId(id)
 
-      const aiAnswer = await sendDataToAi();
+      const aiAnswer = await sendDataToAi(id);
       setAiAnswer(aiAnswer);
     } catch (error) {
       console.error("Error saving form or fetching AI response:", error);
@@ -654,6 +658,7 @@ export default function Home() {
               additionalData={additionalData}
               onGoHome={() => goToStep("start")}
               aiAnswer={aiAnswer}
+              caseId={caseId}
             />
           )}
         </AssessmentLayout>

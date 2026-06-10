@@ -29,7 +29,8 @@ export function useSaveForm(basisData: any, additionalData:any, redFlags: any, s
         formData.set("worsening", additionalData.worsening);
         formData.set("extraInfo", additionalData.extraInfo);
         formData.set("redFlags", redFlags); 
-        await saveFormData(formData); // call the server action to save the form data in the db and set the cookie
-        }, [basisData, additionalData, redFlags, selectedMainRegion, selectedSubRegion, selectedSymptoms, symptomText]);
+        const caseId = await saveFormData(formData); // call the server action to save the form data in the db and set the cookie
+        return caseId;    
+    }, [basisData, additionalData, redFlags, selectedMainRegion, selectedSubRegion, selectedSymptoms, symptomText]);
     return handleSaveForm;
 }
