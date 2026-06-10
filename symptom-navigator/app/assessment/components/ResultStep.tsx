@@ -1,9 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 /*
   Import der CSS-Module für den Assessment-Bereich.
 */
 import assessmentStyles from "../Assessment.module.css";
+
+// import to show access code
+import { getAccessCode } from "../../actions";
 
 import type {
   AdditionalData,
@@ -15,6 +18,7 @@ import type {
 type SavedAssessmentData = {
   basisData?: BasisData;
   additionalData?: AdditionalData;
+  caseId?:string;
   selectedMainRegion?: MainRegion | null;
   selectedSubRegion?: SubRegion | null;
   symptomText?: string[];
@@ -28,7 +32,7 @@ type ResultStepProps = {
   selectedMainRegion: MainRegion | null;
   selectedSubRegion: SubRegion | null;
 
-
+  caseId?:string;
   symptomText: string[];
   selectedSymptoms: string[];
   aiAnswer: any;
@@ -53,11 +57,13 @@ export function ResultStep({
   selectedSymptoms,
   aiAnswer,
   savedAssessmentData,
+  caseId,
   onGoHome,
 }: ResultStepProps) {
   const [showSavedData, setShowSavedData] = useState(false);
   const [showAiReasoning, setShowAiReasoning] = useState(false);
   const [showEmergencyPopup, setShowEmergencyPopup] = useState(false);
+  const [accessCode, setAccessCode] = useState<string | null>(null);
 
   /*
     Bevorzugt werden die strukturierten Daten aus der Datenbank.
@@ -89,6 +95,14 @@ export function ResultStep({
       displayedAdditionalData.conditions.length > 0
       ? displayedAdditionalData.conditions
       : "Keine Angabe";
+
+
+  useEffect(() => {
+    if (caseId) {
+      getAccessCode(caseId).then(setAccessCode);
+    }
+  }, [caseId]);
+
 
   const symptomTextValue =
     displayedSymptomText && displayedSymptomText.length > 0 ?
@@ -314,6 +328,40 @@ export function ResultStep({
           )}
         </div>
       )}
+
+
+      {accessCode && (
+        <div
+          style={{
+            padding: "16px",
+            background: "#eff6ff",
+            borderRadius: "12px",
+            border: "1px solid #bfdbfe",
+            marginBottom: "16px",
+            width: "100%",
+            textAlign: "left",
+          }}
+        >
+          <p style={{ margin: "0 0 6px 0", fontSize: "1rem" }}>
+            Ihr persönlicher Zugangscode:
+          </p>
+          <p
+            style={{
+              margin: 0,
+              fontSize: "1rem",
+              fontWeight: "500",
+              color: "var(--primary)",
+              letterSpacing: "0.15em",
+            }}
+          >
+            {accessCode}
+          </p>
+          <p style={{ margin: "8px 0 0 0", fontSize: "0.85rem", color: "#64748b" }}>
+            Mit diesem Code können Sie Ihre Daten später wieder abrufen.
+          </p>
+        </div>
+      )}
+
 
       <p className={assessmentStyles.selectedText}>
         Ihre Angaben wurden erfasst.

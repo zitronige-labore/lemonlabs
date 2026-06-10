@@ -62,6 +62,9 @@ export default function Home() {
   */
   const [step, setStep] = useState<Step>("start");
 
+  // saves case ID
+  const [caseId, setCaseId] = useState("")
+
   // reference to current step
   const stepRef = useRef<Step>("start");
 
@@ -434,6 +437,27 @@ export default function Home() {
     setSelectedSymptoms([]);
     setCopyPainScale({});
     setNoRedFlags(false);
+    setRedFlags(emptyRedFlags);
+    setCaseId("");
+    setBasisData({
+      age: "",
+      gender: "",
+      pregnancy: "",
+      duration: "",
+      intensity: "0",
+    });
+    setAdditionalData({
+      medication: "",
+      conditions: "",
+      duration: "",
+      allergies: "",
+      temperature: "",
+      worsening: "",
+      weight: "",
+      height: "",
+      breastfeeding: "",
+      extraInfo: "",
+    });
   }
 
 
@@ -457,9 +481,10 @@ export default function Home() {
     setIsLoading(true);
 
     try {
-      await handleSaveForm();
+      const id = await handleSaveForm();
+      setCaseId(id)
 
-      const aiAnswer = await sendDataToAi();
+      const aiAnswer = await sendDataToAi(id);
       setAiAnswer(aiAnswer);
     } catch (error) {
       console.error("Error saving form or fetching AI response:", error);
@@ -639,6 +664,7 @@ export default function Home() {
               additionalData={additionalData}
               onGoHome={() => goToStep("start")}
               aiAnswer={aiAnswer}
+              caseId={caseId}
             />
           )}
         </AssessmentLayout>
