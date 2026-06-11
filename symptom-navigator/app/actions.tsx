@@ -219,30 +219,6 @@ export async function insertListIntoSymptomsNoCertainCount(list: string[], nameO
 
 
 
-// function to get the data from the db and use it in frontend
-// save data in a variable, prevState is to be able to use the data when outputting, accessCode is passed via formData
-export async function getDBData(accessCode: string) {
-
-
-// DB query
-const DatenAusDB = await connectionPool.query(`
-    SELECT * FROM cases
-    WHERE case_id = $accessCode
-    `,
-  [accessCode]
-);
-
-// catching incorrect inputs and returning data if exists
-  if (DatenAusDB.rows.length > 0) {
-  console.log("Abfrageergebnis:", DatenAusDB);
-  return DatenAusDB.rows[0];
-  } else {
-    console.log("Keine Daten");
-    return null;
-  }
-}
-
-
 
 
 // function to get case data

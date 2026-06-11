@@ -13,40 +13,18 @@ import { downloadTxt, downloadPdf, type AssessmentExportData } from "../utils/ex
 import type {
   AdditionalData,
   BasisData,
-  MainRegion,
-  SubRegion,
 } from "../../types/assessment";
 
 
-type SavedAssessmentData = {
-  basisData?: BasisData;
-  additionalData?: AdditionalData;
-  caseId?:string;
-  selectedMainRegion?: MainRegion | null;
-  selectedSubRegion?: SubRegion | null;
-  symptomText?: string[];
-  selectedSymptoms?: string[];
-};
 
 type ResultStepProps = {
   basisData: BasisData;
   additionalData: AdditionalData;
 
-  selectedMainRegion: MainRegion | null;
-  selectedSubRegion: SubRegion | null;
-
   caseId:string;
   symptomText: string[];
   selectedSymptoms: string[];
   aiAnswer: any;
-
-  /*
-    Optional:
-    Hier können später die strukturierten Werte aus der Datenbank übergeben werden,
-    z. B. aus der neuen Actions-Funktion von Franziska.
-    Wenn keine DB-Daten vorhanden sind, werden die bisherigen Props verwendet.
-  */
-  savedAssessmentData?: SavedAssessmentData;
 
   onGoHome: () => void;
 };
@@ -55,13 +33,10 @@ type ResultStepProps = {
 export async function ResultStep({
   basisData,
   additionalData,
-  selectedMainRegion,
-  selectedSubRegion,
   symptomText,
   selectedSymptoms,
   aiAnswer,
   caseId,
-  savedAssessmentData,
   onGoHome,
 }: ResultStepProps) {
 
@@ -72,13 +47,11 @@ export async function ResultStep({
   const [accessCodeCopied, setAccessCodeCopied] = useState(false);
 
 
-  const displayedBasisData = savedAssessmentData?.basisData ?? basisData;
-  const displayedAdditionalData =
-    savedAssessmentData?.additionalData ?? additionalData;
+  const displayedBasisData = basisData;
+  const displayedAdditionalData = additionalData;
   
-  const displayedSymptomText = savedAssessmentData?.symptomText ?? symptomText;
-  const displayedSelectedSymptoms =
-    savedAssessmentData?.selectedSymptoms ?? selectedSymptoms;
+  const displayedSymptomText = symptomText;
+  const displayedSelectedSymptoms = selectedSymptoms;
 
   console.log("aiAnswer in ResultStep:", aiAnswer);
 
