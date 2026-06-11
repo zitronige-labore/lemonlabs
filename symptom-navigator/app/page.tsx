@@ -673,8 +673,6 @@ export default function Home() {
           {step === "result" && (
             <ResultStep
               basisData={basisData}
-              selectedMainRegion={selectedMainRegion}
-              selectedSubRegion={selectedSubRegion}
               symptomText={symptomText}
               selectedSymptoms={selectedSymptoms}
               additionalData={additionalData}
