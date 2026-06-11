@@ -2,6 +2,16 @@
 
 ## Review 1
 
+- Letztes Epic höher priorisieren
+- Triage-Katalog gefällt, bei den verwendeten Begriffen jedoch aufpassen
+- Hinweis zur Entwicklung: Oft sind 20 % der Zeit ausreichend, um 80 % der Funktionen umzusetzen. Der technische Restaufwand wird häufig unterschätzt, daher möglichst früh mit der Implementierung beginnen
+- Auswahl der Körperregionen positiv aufgenommen
+- Gute Lösung mit wenigen Klicks zur Navigation
+- SOS-Button sollte ausblendbar sein, wenn kein Notfall vorliegt, wenn es zur Symptomabfrage über geht
+- Gewicht direkt am Anfang abfragen ist sinnvoll, idealerweise mit wissenschaftlicher Begründung
+- Idee mit Herausforderungs-Folie wurde sehr positiv bewertet
+- Frage, weshalb Stillen abgefragt wird; kritisch 
+- Wie wird mit Anfragen umgegangen, die nicht zur medizinischen Thematik passen?
 
 ## Review 2
 
