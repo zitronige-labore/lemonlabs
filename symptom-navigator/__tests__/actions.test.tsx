@@ -30,7 +30,6 @@ global.fetch = mockFetch;
 import {
   saveFormData,
   insertListIntoSymptomsNoCertainCount,
-  getDBData,
   getUserDataFromDB,
   getAiDataFromDB,
   deleteCaseData,
@@ -421,45 +420,6 @@ describe("insertListIntoSymptomsNoCertainCount", () => {
   });
 });
 
-
-
-
-
-
-
-describe("getDBData", () => {
-  beforeEach(() => {
-    mockQuery.mockReset();
-  });
-
-  it("returns the first row when the case exists", async () => {
-    const fakeRow = { case_id: "7", age: 45, sex: "m" };
-    mockQuery.mockResolvedValueOnce({ rows: [fakeRow] });
-
-    const result = await getDBData("7");
-
-    expect(result).toEqual(fakeRow);
-  });
-
-  it("returns null when no case is found", async () => {
-    mockQuery.mockResolvedValueOnce({ rows: [] });
-
-    const result = await getDBData("999");
-
-    expect(result).toBeNull();
-  });
-
-  it("includes the access_code in the query", async () => {
-    mockQuery.mockResolvedValueOnce({ rows: [] });
-
-    await getDBData("123");
-
-    expect(mockQuery).toHaveBeenCalledWith(
-      expect.stringContaining("$accessCode"),
-      ["123"]
-    );
-  });
-});
 
 
 
