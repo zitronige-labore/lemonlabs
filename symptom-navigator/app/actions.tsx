@@ -219,30 +219,6 @@ export async function insertListIntoSymptomsNoCertainCount(list: string[], nameO
 
 
 
-// function to get the data from the db and use it in frontend
-// save data in a variable, prevState is to be able to use the data when outputting, accessCode is passed via formData
-export async function getDBData(accessCode: string) {
-
-
-// DB query
-const DatenAusDB = await connectionPool.query(`
-    SELECT * FROM cases
-    WHERE case_id = $accessCode
-    `,
-  [accessCode]
-);
-
-// catching incorrect inputs and returning data if exists
-  if (DatenAusDB.rows.length > 0) {
-  console.log("Abfrageergebnis:", DatenAusDB);
-  return DatenAusDB.rows[0];
-  } else {
-    console.log("Keine Daten");
-    return null;
-  }
-}
-
-
 
 
 // function to get case data
@@ -646,8 +622,24 @@ export async function sendDataToAi(caseId: string) {
     // response as json as for some reason it is apparently not json enough yet
     const result = JSON.parse(dataUnprocessed.choices[0].message.content);
 
+    // trying to remove some common errors
+    const parseProb = (val: unknown): number | null => {
+      const num = parseFloat(String(val).replace('%', '').replace(',', '.').replace(':', ''));
+      return isNaN(num) ? null : Math.min(100, Math.max(0, num <= 1 ? num * 100 : num));
+    };
+
     // printing response
-    console.log('medgemma response as object:', result);
+    console.log('medgemma response as object:', result, 
+    "\nsuspicion1:", result.assessment.suspicions.suspicion1.reasonForSuspicion1, 
+    result.assessment.suspicions.suspicion1.probability1,
+    "\nsuspicion2:", result.assessment.suspicions.suspicion2.reasonForSuspicion2, 
+    result.assessment.suspicions.suspicion2.probability2,
+    "\nsuspicion3:", result.assessment.suspicions.suspicion3.reasonForSuspicion3, 
+    result.assessment.suspicions.suspicion3.probability3,
+    "\nsuspicion4:", result.assessment.suspicions.suspicion4.reasonForSuspicion4, 
+    result.assessment.suspicions.suspicion4.probability4,
+    "\nsuspicion5:", result.assessment.suspicions.suspicion5.reasonForSuspicion5, 
+    result.assessment.suspicions.suspicion5.probability5);
 
     await connectionPool.query(
       `
@@ -663,11 +655,11 @@ export async function sendDataToAi(caseId: string) {
         result.assessment.suspicions.suspicion3.reasonForSuspicion3,
         result.assessment.suspicions.suspicion4.reasonForSuspicion4,
         result.assessment.suspicions.suspicion5.reasonForSuspicion5,
-        result.assessment.suspicions.suspicion1.probability1*100,
-        result.assessment.suspicions.suspicion2.probability2*100,
-        result.assessment.suspicions.suspicion3.probability3*100,
-        result.assessment.suspicions.suspicion4.probability4*100,
-        result.assessment.suspicions.suspicion5.probability5*100
+        parseProb(result.assessment.suspicions.suspicion1.probability1),
+        parseProb(result.assessment.suspicions.suspicion2.probability2),
+        parseProb(result.assessment.suspicions.suspicion3.probability3),
+        parseProb(result.assessment.suspicions.suspicion4.probability4),
+        parseProb(result.assessment.suspicions.suspicion5.probability5),
       ]
     );
 

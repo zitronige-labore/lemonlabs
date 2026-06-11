@@ -30,44 +30,27 @@ export function StartScreen({
             </h2>
           </div>
 
-          <p className={homeStyles.intro}>Was ist dein Anliegen?</p>
-
           <div className={homeStyles.buttonBox}>
             {!isOffline && (
               <>
-                <section
-                  className={`${homeStyles.actionCard} ${homeStyles.primaryActionCard}`}
+                <button
+                  type="button"
+                  className={`${homeStyles.primaryButton} ${homeStyles.startActionButton}`}
+                  onClick={() => {
+                    onStartAssessment();
+                    resetProcess();
+                  }}
                 >
-                  <button
-                    type="button"
-                    className={homeStyles.primaryButton}
-                    onClick={() => {
-                      onStartAssessment();
-                      resetProcess();
-                    }}
-                  >
-                    Ersteinschätzung von Symptomen
-                  </button>
+                  Ersteinschätzung von Symptomen
+                </button>
 
-                  <p className={homeStyles.actionDescription}>
-                    Geführte Einschätzung mit Warnzeichen-Prüfung, Körperregion
-                    und anschließender Zusammenfassung.
-                  </p>
-                </section>
-
-                <section className={homeStyles.actionCard}>
-                  <button
-                    type="button"
-                    className={homeStyles.secondaryButton}
-                    onClick={() => setStep("other")}
-                  >
-                    Andere Anliegen
-                  </button>
-
-                  <p className={homeStyles.actionDescription}>
-                    Termine, Online-Rezepte und gespeicherte Daten verwalten.
-                  </p>
-                </section>
+                <button
+                  type="button"
+                  className={`${homeStyles.secondaryButton} ${homeStyles.startActionButton}`}
+                  onClick={() => setStep("other")}
+                >
+                  Andere Anliegen
+                </button>
               </>
             )}
 

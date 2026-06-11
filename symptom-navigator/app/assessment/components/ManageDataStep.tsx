@@ -1,9 +1,9 @@
 import type { Step } from "../../types/assessment";
 import assessmentStyles from "../Assessment.module.css";
+import { makeDBDataReadable } from "../utils/assessmentData";
 import { accessDataWithAccessCode, deleteDataOnAccessCode, accessAiDataWithAccessCode } from "../../actions";
 import { useState } from "react";
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
+import { downloadTxt, downloadPdf, type AssessmentExportData } from "../utils/exportUtils";
 
 type ManageDataStepProps = {
     step: Step;
@@ -18,140 +18,37 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
     const [code, setCode] = useState<string>("");
 
 
-    // convert coded values to be read by users if necessary
+    // convert coded values to be read by users where necessary
+    const [geschlecht, schwangerschaft, stillzeit, worsening] = makeDBDataReadable(data);
 
-    let geschlecht = data?.caseData?.[0]?.sex;
-    if (geschlecht === "m") {
-        geschlecht = "männlich";
-    } else if (geschlecht === "w") {
-        geschlecht = "weiblich";
-    }
-
-    let schwangerschaft = "nicht angegeben";
-    if (data?.caseData?.[0]?.pregnancy === true) schwangerschaft = "ja";
-    else if (data?.caseData?.[0]?.pregnancy === false) schwangerschaft = "nein";
-
-    let stillzeit = "nicht angegeben";
-    if (data?.caseData?.[0]?.lactation === true) stillzeit = "ja";
-    else if (data?.caseData?.[0]?.lactation === false) stillzeit = "nein";
-
-    let worsening: string | undefined;
-    if (data?.additionalInfoData?.[0]?.worsening === true) worsening = "ja";
-    else if (data?.additionalInfoData?.[0]?.worsening === false) worsening = "nein";
-
-    // helper functions for pdf and txt export
-    const handleDownloadTxt = () => {
-        const rows: string[] = [];
-
-        rows.push("Daten\n");
-
-        rows.push("Patientendaten");
-        rows.push(`Alter: ${data?.caseData?.[0]?.age || "Keine Angabe"}`);
-        rows.push(`Geschlecht: ${geschlecht || "Keine Angabe"}`);
-        rows.push(`Größe: ${data?.additionalInfoData?.[0]?.height ? `${data.additionalInfoData[0].height} cm` : "Keine Angabe"}`);
-        rows.push(`Gewicht: ${data?.additionalInfoData?.[0]?.weight ? `${data.additionalInfoData[0].weight} kg` : "Keine Angabe"}`);
-        rows.push(`Temperatur: ${data?.additionalInfoData?.[0]?.temperature ? `${data.additionalInfoData[0].temperature} °C` : "Keine Angabe"}`);
-        rows.push(`Dauer der Symptome: ${data?.additionalInfoData?.[0]?.duration ? `${data.additionalInfoData[0].duration} Tage` : "Keine Angabe"}`);
-        rows.push(`Symptome werden schlimmer: ${worsening || "Keine Angabe"}`);
-        if (geschlecht !== "männlich") {
-            rows.push(`Schwangerschaft: ${schwangerschaft}`);
-            rows.push(`Stillzeit: ${stillzeit}`);
-        }
-        rows.push(`Medikation: ${data?.medicationData?.medication?.join(", ") || "Keine Angabe"}`);
-        rows.push(`Allergien: ${data?.allergyData?.allergies?.join(", ") || "Keine Angabe"}`);
-        rows.push(`Vorerkrankungen: ${data?.conditionsData?.conditions?.join(", ") || "Keine Angabe"}`);
-
-        rows.push("\nSymptome");
-        if (data?.symptomData?.[0]?.name_de) {
-            rows.push(`Symptome: ${data?.symptomData?.map((s: { name_de: string }) => s.name_de).join(", ")}`);
-        }
-        if (data?.textSymptomData?.[0]?.raw_symptoms) {
-            rows.push(`Selbst beschriebene Beschwerden: ${data?.textSymptomData?.[0]?.raw_symptoms}`);
-        }
-
-        rows.push("\nKI Auswertung");
-        rows.push(`Dringlichkeitsstufe: ${aiData?.[0]?.urgency_level || "Keine Angabe"}`);
-        rows.push(`Handlungsempfehlung: ${aiData?.[0]?.advice_text || "Keine Angabe"}`);
-
-        rows.push("\nVewrmutungen:");
-        [1, 2, 3, 4, 5].forEach((i) => {
-            const suspicion = aiData?.[0]?.[`suspicion${i}`];
-            const probability = aiData?.[0]?.[`probability${i}`];
-            if (suspicion) {
-            rows.push(`Vermutung ${i}: ${suspicion} (${probability != null ? `${probability}%` : "Keine Angabe"})`);
-            rows.push(`Wahrscheinlichkeit: ${probability != null ? `${probability}%` : "Keine Angabe"}`);
-            }
-        });
-
-        rows.push(`\nDaten erfasst am: ${data?.caseData?.[0]?.date ? new Date(data.caseData[0].date).toLocaleString() : "Keine Angabe"}`);
-
-        const text = rows.join("\n");
-        const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "assessment.txt";
-        a.click();
-        URL.revokeObjectURL(url);
+    // building txt and pdf
+    function buildExportData(): AssessmentExportData {
+        return {
+            alter: data?.caseData?.[0]?.age || "Keine Angabe",
+            geschlecht: geschlecht || "Keine Angabe",
+            schwangerschaft,
+            stillzeit,
+            worsening,
+            groesse: data?.additionalInfoData?.[0]?.height ? `${data.additionalInfoData[0].height} cm` : "Keine Angabe",
+            gewicht: data?.additionalInfoData?.[0]?.weight ? `${data.additionalInfoData[0].weight} kg` : "Keine Angabe",
+            temperatur: data?.additionalInfoData?.[0]?.temperature ? `${data.additionalInfoData[0].temperature} °C` : "Keine Angabe",
+            dauer: data?.additionalInfoData?.[0]?.duration ? `${data.additionalInfoData[0].duration} Tage` : "Keine Angabe",
+            medikation: data?.medicationData?.medication?.join(", ") || "Keine Angabe",
+            allergien: data?.allergyData?.allergies?.join(", ") || "Keine Angabe",
+            vorerkrankungen: data?.conditionsData?.conditions?.join(", ") || "Keine Angabe",
+            symptome: data?.symptomData?.[0]?.name_de ? data.symptomData.map((s: any) => s.name_de).join(", ") : "",
+            textSymptome: data?.textSymptomData?.[0]?.raw_symptoms || "",
+            datum: data?.caseData?.[0]?.date ? new Date(data.caseData[0].date).toLocaleString() : "Keine Angabe",
+            dringlichkeit: aiData?.[0]?.urgency_level?.toString() || "Keine Angabe",
+            handlungsempfehlung: aiData?.[0]?.advice_text || "Keine Angabe",
+            vermutungen: [1,2,3,4,5]
+            .map(i => ({
+                text: aiData?.[0]?.[`suspicion${i}`] || "",
+                wahrscheinlichkeit: aiData?.[0]?.[`probability${i}`] != null ? `${aiData[0][`probability${i}`]}%` : "Keine Angabe",
+            }))
+            .filter(v => v.text),
         };
-
-
-    const tableBody: string[][] = [];
-    tableBody.push(["Alter", data?.caseData?.[0]?.age || "Keine Angabe"]);
-    tableBody.push(["Geschlecht", geschlecht || "Keine Angabe"]);
-    tableBody.push(["Größe", data?.additionalInfoData?.[0]?.height ? `${data.additionalInfoData[0].height} cm` : "Keine Angabe"]);
-    tableBody.push(["Gewicht", data?.additionalInfoData?.[0]?.weight ? `${data.additionalInfoData[0].weight} kg` : "Keine Angabe"]);
-    tableBody.push(["Medikation", data?.medicationData?.medication?.join(", ") || "Keine Angabe"]);
-    tableBody.push(["Allergien", data?.allergyData?.allergies?.join(", ") || "Keine Angabe"]);
-    tableBody.push(["Vorerkrankungen", data?.conditionsData?.conditions?.join(", ") || "Keine Angabe"]);
-    tableBody.push(["Temperatur", data?.additionalInfoData?.[0]?.temperature ? `${data.additionalInfoData[0].temperature} °C` : "Keine Angabe"]);
-    tableBody.push(["Dauer der Symptome", data?.additionalInfoData?.[0]?.duration ? `${data.additionalInfoData[0].duration} Tage` : "Keine Angabe"]);
-    tableBody.push(["Symptome werden schlimmer", worsening || "Keine Angabe"]);
-    if (geschlecht !== "männlich") {
-        tableBody.push(["Schwangerschaft", schwangerschaft]);
-        tableBody.push(["Stillzeit", stillzeit]);
-    }
-    if (data?.symptomData?.[0]?.name_de != null && data?.symptomData?.[0]?.name_de != '') {
-        tableBody.push(["Symptome", data?.symptomData?.map((s: { name_de: string }) => s.name_de).join(", ") || "Keine Angabe"]);
-    }
-    if (data?.textSymptomData?.[0]?.raw_symptoms != null && data?.textSymptomData?.[0]?.raw_symptoms != '') {
-        tableBody.push(["selbst geschriebene Beschwerden", data?.textSymptomData?.[0]?.raw_symptoms || "Keine Angabe"]);
-    }
-    tableBody.push(["Dringlichkeitsstufe (KI)", aiData?.[0]?.urgency_level || "Keine Angabe"]);
-    tableBody.push(["Handlungsempfehlung (KI)", aiData?.[0]?.advice_text || "Keine Angabe"]);
-    tableBody.push(["Vermutung 1 (KI)", aiData?.[0]?.suspicion1 || "Keine Angabe"]);
-    tableBody.push(["Wahrscheinlichkeit", aiData?.[0]?.probability1 != null ? `${aiData[0].probability1}%` : "Keine Angabe"]);
-    tableBody.push(["Vermutung 2 (KI)", aiData?.[0]?.suspicion2 || "Keine Angabe"]);
-    tableBody.push(["Wahrscheinlichkeit", aiData?.[0]?.probability2 != null ? `${aiData[0].probability2}%` : "Keine Angabe"]);
-    tableBody.push(["Vermutung 3 (KI)", aiData?.[0]?.suspicion3 || "Keine Angabe"]);
-    tableBody.push(["Wahrscheinlichkeit", aiData?.[0]?.probability3 != null ? `${aiData[0].probability3}%` : "Keine Angabe"]);
-    tableBody.push(["Vermutung 4 (KI)", aiData?.[0]?.suspicion4 || "Keine Angabe"]);
-    tableBody.push(["Wahrscheinlichkeit", aiData?.[0]?.probability4 != null ? `${aiData[0].probability4}%` : "Keine Angabe"]);
-    tableBody.push(["Vermutung 5 (KI)", aiData?.[0]?.suspicion5 || "Keine Angabe"]);
-    tableBody.push(["Wahrscheinlichkeit", aiData?.[0]?.probability5 != null ? `${aiData[0].probability5}%` : "Keine Angabe"]);
-    tableBody.push(["Daten erfasst am", data?.caseData?.[0]?.date ? new Date(data.caseData[0].date).toLocaleString() : "Keine Angabe"]);
-
-    const handleDownloadPdf = () => {
-    const doc = new jsPDF();
-
-    doc.setFontSize(16);
-    doc.text(
-    `
-    Daten
-    `
-    , 10, 10); 
-
-    autoTable(doc, {
-        startY: 25,
-        theme: "plain",
-        body: tableBody,
-        styles: { fontSize: 10 },
-        headStyles: { fillColor: [41, 128, 185] },
-        alternateRowStyles: { fillColor: [245, 245, 245] },
-    });
-
-    doc.save("assessment.pdf");
-    };
+        }
 
     return (
         <div className={assessmentStyles.resultBox}>
@@ -313,7 +210,7 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
                             <button
                                 type="button"
                                 className={assessmentStyles.secondaryButton}
-                                onClick={handleDownloadPdf}
+                                onClick={() => downloadPdf(buildExportData())}
                             >
                                 pdf herunterladen
                             </button>
@@ -321,7 +218,7 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
                             <button
                                 type="button"
                                 className={assessmentStyles.secondaryButton}
-                                onClick={handleDownloadTxt}
+                                onClick={() => downloadTxt(buildExportData())}
                             >
                                 txt herunterladen
                             </button>

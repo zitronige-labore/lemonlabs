@@ -81,3 +81,28 @@ export function getSubRegions(
   }
 }
 
+export function makeDBDataReadable(data: any)
+{
+   // convert coded values to be read by users where necessary
+
+    let geschlecht = data?.caseData?.[0]?.sex;
+    if (geschlecht === "m") {
+        geschlecht = "männlich";
+    } else if (geschlecht === "w") {
+        geschlecht = "weiblich";
+    }
+
+    let schwangerschaft = "nicht angegeben";
+    if (data?.caseData?.[0]?.pregnancy === true) schwangerschaft = "ja";
+    else if (data?.caseData?.[0]?.pregnancy === false) schwangerschaft = "nein";
+
+    let stillzeit = "nicht angegeben";
+    if (data?.caseData?.[0]?.lactation === true) stillzeit = "ja";
+    else if (data?.caseData?.[0]?.lactation === false) stillzeit = "nein";
+
+    let worsening: string | undefined;
+    if (data?.additionalInfoData?.[0]?.worsening === true) worsening = "ja";
+    else if (data?.additionalInfoData?.[0]?.worsening === false) worsening = "nein";
+
+    return [geschlecht, schwangerschaft, stillzeit, worsening]
+}
