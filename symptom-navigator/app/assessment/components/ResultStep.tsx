@@ -6,7 +6,9 @@ import { useState, useEffect } from "react";
 import assessmentStyles from "../Assessment.module.css";
 
 // import to show access code
-import { getAccessCode } from "../../actions";
+import { getAccessCode, getAiDataFromDB, getUserDataFromDB } from "../../actions";
+import { makeDBDataReadable } from "../utils/assessmentData";
+import { downloadTxt, downloadPdf, type AssessmentExportData } from "../utils/exportUtils";
 
 import type {
   AdditionalData,
@@ -14,6 +16,7 @@ import type {
   MainRegion,
   SubRegion,
 } from "../../types/assessment";
+
 
 type SavedAssessmentData = {
   basisData?: BasisData;
@@ -32,7 +35,7 @@ type ResultStepProps = {
   selectedMainRegion: MainRegion | null;
   selectedSubRegion: SubRegion | null;
 
-  caseId?:string;
+  caseId:string;
   symptomText: string[];
   selectedSymptoms: string[];
   aiAnswer: any;
@@ -48,7 +51,8 @@ type ResultStepProps = {
   onGoHome: () => void;
 };
 
-export function ResultStep({
+
+export async function ResultStep({
   basisData,
   additionalData,
   selectedMainRegion,
@@ -56,27 +60,21 @@ export function ResultStep({
   symptomText,
   selectedSymptoms,
   aiAnswer,
-  savedAssessmentData,
   caseId,
+  savedAssessmentData,
   onGoHome,
 }: ResultStepProps) {
+
   const [showSavedData, setShowSavedData] = useState(false);
   const [showAiReasoning, setShowAiReasoning] = useState(false);
   const [showEmergencyPopup, setShowEmergencyPopup] = useState(false);
   const [accessCode, setAccessCode] = useState<string | null>(null);
 
-  /*
-    Bevorzugt werden die strukturierten Daten aus der Datenbank.
-    Falls diese noch nicht vorhanden sind, nutzt die ResultPage weiterhin
-    die bisherigen Props aus dem lokalen State.
-  */
+
   const displayedBasisData = savedAssessmentData?.basisData ?? basisData;
   const displayedAdditionalData =
     savedAssessmentData?.additionalData ?? additionalData;
-  const displayedMainRegion =
-    savedAssessmentData?.selectedMainRegion ?? selectedMainRegion;
-  const displayedSubRegion =
-    savedAssessmentData?.selectedSubRegion ?? selectedSubRegion;
+  
   const displayedSymptomText = savedAssessmentData?.symptomText ?? symptomText;
   const displayedSelectedSymptoms =
     savedAssessmentData?.selectedSymptoms ?? selectedSymptoms;
@@ -95,6 +93,46 @@ export function ResultStep({
       displayedAdditionalData.conditions.length > 0
       ? displayedAdditionalData.conditions
       : "Keine Angabe";
+
+
+  // build export files
+  function buildExportData(): AssessmentExportData {
+    return {
+      alter: displayedBasisData.age || "Keine Angabe",
+      geschlecht: displayedBasisData.gender || "Keine Angabe",
+      schwangerschaft: displayedBasisData.pregnancy || "Keine Angabe",
+      stillzeit: displayedAdditionalData.breastfeeding || "Keine Angabe",
+      worsening: displayedAdditionalData.worsening || undefined,
+      groesse: displayedAdditionalData.height ? `${displayedAdditionalData.height} cm` : "Keine Angabe",
+      gewicht: displayedAdditionalData.weight ? `${displayedAdditionalData.weight} kg` : "Keine Angabe",
+      temperatur: displayedAdditionalData.temperature || "Keine Angabe",
+      dauer: displayedAdditionalData.duration || "Keine Angabe",
+      medikation: displayedAdditionalData.medication || "Keine Angabe",
+      allergien: displayedAdditionalData.allergies || "Keine Angabe",
+      vorerkrankungen: displayedAdditionalData.conditions || "Keine Angabe",
+      symptome: displayedSelectedSymptoms.length > 0
+        ? displayedSelectedSymptoms.map(s => { try { return JSON.parse(s).name; } catch { return s; } }).join(", ")
+        : "",
+      textSymptome: displayedSymptomText.length > 0
+        ? displayedSymptomText.map(s => { try { return JSON.parse(s).text_symptom; } catch { return s; } }).join(", ")
+        : "",
+      datum: new Date().toLocaleString(),
+      dringlichkeit: aiAnswer?.assessment?.urgency?.toString() || "Keine Angabe",
+      handlungsempfehlung: aiAnswer?.assessment?.nextSteps || "Keine Angabe",
+      vermutungen: suspicions
+        ? [1,2,3,4,5].map(i => {
+            const s = suspicions[`suspicion${i}`];
+            if (!s) return null;
+            const reasonKey = Object.keys(s).find(k => k.toLowerCase().includes("reason"));
+            const probKey = Object.keys(s).find(k => k.toLowerCase().includes("probability"));
+            return {
+              text: reasonKey ? s[reasonKey] : "Keine Angabe",
+              wahrscheinlichkeit: probKey && s[probKey] ? `${s[probKey]}` : "Keine Angabe",
+            };
+          }).filter(Boolean) as AssessmentExportData["vermutungen"]
+        : [],
+    };
+  }
 
 
   useEffect(() => {
@@ -430,6 +468,23 @@ export function ResultStep({
             Symptome:
           </p>
           <strong>{selectedSymptomsValue}</strong>
+
+          <div className={assessmentStyles.buttonGroup}>
+            <button
+              type="button"
+              className={assessmentStyles.secondaryButton}
+              onClick={() => downloadPdf(buildExportData())}
+            >
+              pdf herunterladen
+            </button>
+            <button
+              type="button"
+              className={assessmentStyles.secondaryButton}
+              onClick={() => downloadTxt(buildExportData())}
+            >
+              txt herunterladen
+            </button>
+          </div>
 
 
           <hr style={{ margin: "16px 0", borderColor: "#e5e7eb" }} />
