@@ -74,16 +74,14 @@ export function BasisStartStep({
             value={basisData.age}
             onChange={(event) => {
               const value = event.target.value; //holt Benutzereingabe
-              const age = Number(value);
+              
 
-              console.log(value);
-              console.log(age);
-              console.log(isNaN(age));
               setBasisData({ //Eingabe speichern
                 ...basisData,
                 age: value,
               });
-              //const age = Number(value); //cast in zahl 
+
+              const age = Number(value); //cast in zahl 
               if (
                 value === "" ||
                 Number.isNaN(age) ||
@@ -95,7 +93,7 @@ export function BasisStartStep({
                 setAgeError("");
               }
             }
-            } placeholder="Zum Beispiel: 25"
+            } placeholder="Zum Beispiel: 25 (Neugeborene: 0)"
           />
           {ageError && (
             <p className={assessmentStyles.errorText}>
@@ -182,7 +180,7 @@ export function BasisStartStep({
               !basisData.gender ||
               (basisData.gender === "weiblich" &&
                 !basisData.pregnancy) ||
-              ageError != ""
+              ageError !== ""
             }
           >
             Weiter zur Körperregion
