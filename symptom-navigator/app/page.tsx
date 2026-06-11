@@ -222,12 +222,6 @@ export default function Home() {
   "additionalInfo",
 ];
 
-  // sets browser history at start (for navigation)
-  useEffect(function() {
-    history.replaceState({ step: step }, "", "#" + step);
-    return;
-    }, []);
-
 
   // catch the back and forth button from browser
   useEffect(function() {
@@ -261,20 +255,75 @@ export default function Home() {
     };
   }, []);
 
-  // warning of data loss when reload
-  useEffect(function() {
-    function handleBeforeUnload(event: BeforeUnloadEvent) {
-      if (formularSteps.includes(step)) {
-        event.preventDefault();
+
+
+  // loading session storage data 
+  useEffect(() => {
+      const saved = sessionStorage.getItem("assessmentState");
+      if (!saved) {
+        // if no state is saved → normal initialiying to start
+        history.replaceState({ step: "start" }, "", "#start");
+        return;
+      };
+
+      try {
+        const s = JSON.parse(saved);
+        if (s.step)                setStep(s.step);
+        stepRef.current = s.step;
+        if (s.basisData)           setBasisData(s.basisData);
+        if (s.additionalData)      setAdditionalData(s.additionalData);
+        if (s.redFlags)            setRedFlags(s.redFlags);
+        if (s.selectedMainRegion)  setSelectedMainRegion(s.selectedMainRegion);
+        if (s.selectedSubRegion)   setSelectedSubRegion(s.selectedSubRegion);
+        if (s.selectedSymptoms)    setSelectedSymptoms(s.selectedSymptoms);
+        if (s.symptomText)         setSymptomText(s.symptomText);
+        if (s.copyPainScale)       setCopyPainScale(s.copyPainScale);
+        if (s.noRedFlags != null)  setNoRedFlags(s.noRedFlags);
+        if (s.checkInfoActive != null) setCheckInfoActive(s.checkInfoActive);
+        if (s.caseId)              setCaseId(s.caseId);
+        if (s.aiAnswer)            setAiAnswer(s.aiAnswer);
+      } catch {
+        sessionStorage.removeItem("assessmentState");
       }
-    }
+    }, []);
 
-    window.addEventListener("beforeunload", handleBeforeUnload);
+  // writing state changes into session storage
+  useEffect(() => {
+    
+    if (step === "start") return;
 
-    return function() {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
+    const state = {
+      step,
+      basisData,
+      additionalData,
+      redFlags,
+      selectedMainRegion,
+      selectedSubRegion,
+      selectedSymptoms,
+      symptomText,
+      copyPainScale,
+      noRedFlags,
+      checkInfoActive,
+      caseId,
+      aiAnswer,
     };
-  }, [step]);
+
+    sessionStorage.setItem("assessmentState", JSON.stringify(state));
+  }, [
+    step,
+    basisData,
+    additionalData,
+    redFlags,
+    selectedMainRegion,
+    selectedSubRegion,
+    selectedSymptoms,
+    symptomText,
+    copyPainScale,
+    noRedFlags,
+    checkInfoActive,
+    caseId,
+    aiAnswer,
+  ]);
 
   // replaces setStep so the browser history gets update while setting the step
   function goToStep(nextStep: Step) {
@@ -287,6 +336,7 @@ export default function Home() {
     );
     setStep(nextStep);
   }
+
   function getStepProgress(step: Step): number {
     switch (step) {
       case "redflags":
