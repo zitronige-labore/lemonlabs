@@ -27,3 +27,10 @@
 - Testnutzer organisieren  
 
 # Design Dokument
+
+- entspricht inhaltlich genau den Erwartungen an das Konzept
+- Ausarbeitung wurde insgesamt sehr positiv bewertet
+- Es wird kein zusätzliches Konzeptdokument benötigt
+- kann bei Bedarf noch ergänzt werden
+- Besonders gut: Das Dokument kann anderen Teams als Orientierung dienen, falls Fragen zum Umfang oder Aufbau des Konzepts aufkommen
+- Mögliche Ergänzung wäre kurzer Ausblick auf die weitere Entwicklung  
