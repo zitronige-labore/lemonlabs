@@ -25,3 +25,5 @@
 - Feedback systematisch erfassen und einarbeiten
 - Teststrategie festlegen: Wie testen wir?
 - Testnutzer organisieren  
+
+# Design Dokument
