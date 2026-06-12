@@ -35,6 +35,8 @@ import { Question } from "@phosphor-icons/react";
 
 import SymptomTree from "./assessment/components/symptomSteps/symptomTree";
 
+import { SelectedSymptom } from "./types/assessment";
+
 import type {
   AdditionalData,
   BasisData,
@@ -100,12 +102,13 @@ export default function Home() {
   /*
     Speichert die Freitextbeschreibung der Beschwerden.
   */
+   
   const [symptomText, setSymptomText] = useState<string[]>([]);
 
   /*
     Speichert die ausgewählten Symptome aus der Symptomauswahl.
   */
-  const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
+  const [selectedSymptoms, setSelectedSymptoms] = useState<SelectedSymptom[]>([]);
 
   /*
     Speichert die PainScale-Werte, damit sie beim Zurückgehen erhalten bleiben.
@@ -202,7 +205,7 @@ export default function Home() {
     redFlags,
     selectedMainRegion,
     selectedSubRegion,
-    selectedSymptoms,
+    selectedSymptoms.map(s => s.symptomName),
     symptomText
   );
 
@@ -423,17 +426,28 @@ export default function Home() {
     Fügt ein Symptom zur Auswahl hinzu oder entfernt es wieder.
     Optional kann zusätzlich ein PainScale-Wert gespeichert werden.
   */
-  function toggleSymptom(symptom: string, painscale?: string) {
-    console.log("togglelog: ", symptom, painscale);
+ function toggleSymptom(symptomName: string, snomedCode: string) {
+    console.log("togglelog FHIR: ", symptomName, snomedCode);
 
-    setSelectedSymptoms((previousSymptoms) =>
-      previousSymptoms.some((s) => s.includes(symptom))
-        ? previousSymptoms.filter((s) => !s.includes(symptom))
-        : [
+    setSelectedSymptoms((previousSymptoms) => {
+      // Prüfen ob das Symptom anhand des SNOMED-Codes bereits ausgewählt wurde
+      const exists = previousSymptoms.some((s) => s.snomedCode === snomedCode);
+
+      if (exists) {
+        // Wenn es schon drin ist: Rausfiltern 
+        return previousSymptoms.filter((s) => s.snomedCode !== snomedCode);
+      } else {
+        // Wenn es neu geklickt wurde: Als strukturiertes FHIR-Objekt hinzufügen
+        return [
           ...previousSymptoms,
-          `${symptom}, "painscale": ${painscale ?? null}`,
-        ]
-    );
+          {
+            symptomName: symptomName,
+            snomedCode: snomedCode,
+            system: "http://snomed.info/sct"
+          }
+        ];
+      }
+    });
   }
 
   /*
@@ -598,15 +612,15 @@ export default function Home() {
           )}
 
           {/* Schritt 4: Symptombaum navigieren */}
-          <SymptomTree
+        <SymptomTree
             step={step}
             setStep={goToStep}
             selectedSubRegion={selectedSubRegion}
-            toggleSymptom={toggleSymptom}
-            selectedSymptoms={selectedSymptoms}
+            toggleSymptom={(symptom: string) => toggleSymptom(symptom, "UNKNOWN")}
+            selectedSymptoms={selectedSymptoms.map(s => s.symptomName)}
             setCopyPainScale={setCopyPainScale}
             copyPainScale={copyPainScale}
-            setSelectedSymptoms={setSelectedSymptoms}
+            setSelectedSymptoms={() => {}}
             basisdata={basisData}
           />
 
@@ -647,10 +661,10 @@ export default function Home() {
               additionalData={additionalData}
               basisData={basisData}
               symptomText={symptomText}
-              selectedSymptoms={selectedSymptoms}
+              selectedSymptoms={selectedSymptoms.map(s => s.symptomName)} 
               setStep={goToStep}
               removeSymptomText={removeSymptomText}
-              toggleSymptom={toggleSymptom}
+              toggleSymptom={(symptom) => toggleSymptom(symptom, "UNKNOWN")} 
               setCheckInfoActive={setCheckInfoActive}
               isOffline={isOffline}
             />
@@ -663,12 +677,12 @@ export default function Home() {
             />
           )}
 
-          {/* Schritt 7: Ergebnis und Zusammenfassung */}
+      {/* Schritt 7: Ergebnis und Zusammenfassung */}
           {step === "result" && (
             <ResultStep
               basisData={basisData}
               symptomText={symptomText}
-              selectedSymptoms={selectedSymptoms}
+              selectedSymptoms={selectedSymptoms.map(s => s.symptomName)}
               additionalData={additionalData}
               onGoHome={() => goToStep("start")}
               aiAnswer={aiAnswer}

@@ -2,7 +2,6 @@
   Beschreibt alle möglichen Schritte des gesamten Ablaufs
   der Ersteinschätzung innerhalb der Anwendung.
 */
-
 export type subregionCategory =
   | SubRegion
   | null;
@@ -196,3 +195,28 @@ export type BasisData = {
   duration: string;
   intensity: string;
 };
+
+/* 
+  Stellt sicher, dass beim Auswählen eines Symptoms der SNOMED-Code mitgenommen wird.
+*/
+export interface SelectedSymptom {
+  symptomName: string;  // Name in der UI
+  snomedCode: string;   // eindeutiger medizinischer Code
+  system: string;       // Immer "http://snomed.info/sct"
+}
+
+/* 
+  Bündelt die bestehenden Typen und fügt die FHIR-konformen Symptome hinzu.
+*/
+export interface AssessmentState {
+  step: Step;
+  selectedMainRegion: MainRegion | null;
+  selectedSubRegion: SubRegion | null;
+  basisData: BasisData;
+  additionalData: AdditionalData;
+  redFlags: RedFlags;
+  copyPainScale: Record<string, string>; // Speichert Schmerzintensitäten
+  
+  // Hier nutzen wir das neue, strukturierte Objekt-Array statt eines einfachen string[]
+  selectedSymptoms: SelectedSymptom[]; 
+}
