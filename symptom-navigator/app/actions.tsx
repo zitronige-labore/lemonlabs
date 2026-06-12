@@ -496,7 +496,7 @@ export async function getAccessCode(caseId: string) {
 
 
 // function to send and recieve promt/response from ollama, same concept for the argument as getDBData above
-export async function sendDataToAi(basisData: BasisData, additionalData: AdditionalData, symptomText: string[], selectedymptoms: string[], caseId?: string) {
+export async function sendDataToAi(basisData?: BasisData, additionalData?: AdditionalData, symptomText?: string[], selectedymptoms?: string[], caseId?: string) {
 
 
   // using cashe or db data depending on arguments given
