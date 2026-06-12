@@ -641,6 +641,8 @@ export default function SymptomTree({
       }
     ]
 
+  // setting step type dependent on category list
+  export type CategoryTargetSteps = typeof categoryList[number]["categories"][number]["step"];
 
   return (
 
