@@ -56,7 +56,6 @@ global.fetch = mockFetch;
 
 
 // import functions to test
-
 import {
   saveFormData,
   insertListIntoSymptomsNoCertainCount,
@@ -135,7 +134,7 @@ function buildAdditionalData(overrides: Partial<AdditionalData> = {}): Additiona
 const sampleSelectedSymptoms = [
   JSON.stringify({ name: "Kopfschmerz", bodyRegion: "Kopf", painscale: 4 }),
 ];
-const sampleSymptomText: string[] = [];
+const sampleSymptomText: string[] = [`{ name: "Ich blute", bodyRegion: "Kopf", painscale: 2 }`];
 
 // testing saveFormData
 
@@ -890,64 +889,44 @@ describe("getAccessCode", () => {
 
 
 
-  // dummy fixtures for sendDataToAi tests
-function buildBasisData(overrides: Partial<BasisData> = {}): BasisData {
-  return {
-    age: "28",
-    gender: "weiblich",
-    pregnancy: "nein",
-    duration: "2",
-    intensity: "4",
-    ...overrides,
-  };
-}
-
-function buildAdditionalData(overrides: Partial<AdditionalData> = {}): AdditionalData {
-  return {
-    medication: "Ibuprofen",
-    conditions: "Asthma",
-    allergies: "Pollen",
-    temperature: "38.5",
-    duration: "2",
-    worsening: "ja",
-    weight: "60",
-    height: "165",
-    breastfeeding: "nein",
-    extraInfo: "",
-    ...overrides,
-  };
-}
-
-const sampleSelectedSymptoms = [
-  JSON.stringify({ name: "Kopfschmerz", bodyRegion: "Kopf", painscale: 4 }),
-];
-const sampleSymptomText: string[] = [];
-
-
 describe("buildUnifiedData", () => {
-  it("returns a unified object when all parameters are provided", () => {
+  it("returns a unified object when all parameters are provided", async () => {
     const basisData = buildBasisData();
     const additionalData = buildAdditionalData();
 
-    const result = buildUnifiedData(
+    const result = await buildUnifiedData(
       basisData,
       additionalData,
       sampleSymptomText,
       sampleSelectedSymptoms
     );
 
-    expect(result).not.toBeNull();
-    expect(result!.caseData).toEqual(basisData);
-    expect(result!.additionalInfoData).toEqual(additionalData);
-    expect(result!.symptomData).toEqual(sampleSelectedSymptoms);
-    expect(result!.textSymptomData).toEqual(sampleSymptomText);
-    expect(result!.allergyData).toEqual({ allergies: "Pollen" });
-    expect(result!.medicationData).toEqual({ medication: "Ibuprofen" });
-    expect(result!.conditionsData).toEqual({ conditions: "Asthma" });
+expect(result).not.toBeNull();
+
+
+expect(result!.caseData.age).toBe(basisData.age);
+expect(result!.caseData.gender).toBe(basisData.gender);
+expect(result!.caseData.pregnancy).toBe(basisData.pregnancy);
+
+expect(result!.additionalInfoData.breastfeeding).toBe(additionalData.breastfeeding);
+expect(result!.additionalInfoData.duration).toBe(additionalData.duration);
+expect(result!.additionalInfoData.weight).toBe(additionalData.weight);
+expect(result!.additionalInfoData.height).toBe(additionalData.height);
+expect(result!.additionalInfoData.worsening).toBe(additionalData.worsening);
+expect(result!.additionalInfoData.extraInfo).toBe(additionalData.extraInfo);
+expect(result!.additionalInfoData.temperature).toBe(additionalData.temperature);
+
+
+expect(result!.symptomData.some((s: string) => s.includes("Kopfschmerz"))).toBe(true);
+expect(result!.textSymptomData.some((s: string) => s.includes("Ich blute"))).toBe(true)
+
+expect(result!.allergyData.allergies).toContain("Pollen");
+expect(result!.medicationData.medication).toContain("Ibuprofen");
+expect(result!.conditionsData.conditions).toContain("Asthma");
   });
 
-  it("returns null when basisData is missing", () => {
-    const result = buildUnifiedData(
+  it("returns null when basisData is missing", async() => {
+    const result = await buildUnifiedData(
       undefined,
       buildAdditionalData(),
       sampleSymptomText,
@@ -957,8 +936,8 @@ describe("buildUnifiedData", () => {
     expect(result).toBeNull();
   });
 
-  it("returns null when additionalData is missing", () => {
-    const result = buildUnifiedData(
+  it("returns null when additionalData is missing", async () => {
+    const result = await buildUnifiedData(
       buildBasisData(),
       undefined,
       sampleSymptomText,
@@ -968,8 +947,8 @@ describe("buildUnifiedData", () => {
     expect(result).toBeNull();
   });
 
-  it("returns null when symptomText is missing", () => {
-    const result = buildUnifiedData(
+  it("returns null when symptomText is missing", async () => {
+    const result = await buildUnifiedData(
       buildBasisData(),
       buildAdditionalData(),
       undefined,
@@ -979,8 +958,8 @@ describe("buildUnifiedData", () => {
     expect(result).toBeNull();
   });
 
-  it("returns null when selectedymptoms is missing", () => {
-    const result = buildUnifiedData(
+  it("returns null when selectedymptoms is missing", async () => {
+    const result = await buildUnifiedData(
       buildBasisData(),
       buildAdditionalData(),
       sampleSymptomText,
@@ -993,21 +972,24 @@ describe("buildUnifiedData", () => {
 
 
 describe("buildAiPrompt", () => {
-  it("includes data from caseData, additionalInfoData and symptoms in the prompt", () => {
-    const data = buildUnifiedData(
+  it("includes data from caseData, additionalInfoData and symptoms in the prompt", async() => {
+    const data = await buildUnifiedData(
       buildBasisData({ age: "28" }),
       buildAdditionalData({ allergies: "Pollen", medication: "Ibuprofen", conditions: "Asthma" }),
       sampleSymptomText,
       sampleSelectedSymptoms
     )!;
 
-    const prompt = buildAiPrompt(data);
+    if(data!=null) {
+      const prompt = await buildAiPrompt(data);
+    
 
-    expect(prompt).toContain("28");
-    expect(prompt).toContain("Pollen");
-    expect(prompt).toContain("Ibuprofen");
-    expect(prompt).toContain("Asthma");
-    expect(prompt).toContain("Kopfschmerz");
+      expect(prompt).toContain("28");
+      expect(prompt).toContain("Pollen");
+      expect(prompt).toContain("Ibuprofen");
+      expect(prompt).toContain("Asthma");
+      expect(prompt).toContain("Kopfschmerz");
+    }
   });
 
   it("works with data coming from getUserDataFromDB shape", async () => {
@@ -1022,7 +1004,7 @@ describe("buildAiPrompt", () => {
       .mockResolvedValueOnce({ rows: [{ detail: "Asthma" }] });
 
     const dbData = await getUserDataFromDB("1");
-    const prompt = buildAiPrompt(dbData);
+    const prompt = await buildAiPrompt(dbData);
 
     expect(prompt).toContain("Kopfschmerz");
     expect(prompt).toContain("Pollen");

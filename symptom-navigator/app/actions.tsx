@@ -505,7 +505,7 @@ export async function sendDataToAi(basisData?: BasisData, additionalData?: Addit
 
 
   if (basisData && additionalData && symptomText && selectedymptoms) {
-    cacheData = buildUnifiedData(basisData, additionalData, symptomText, selectedymptoms)
+    cacheData = await buildUnifiedData(basisData, additionalData, symptomText, selectedymptoms)
   }
 
   if(cacheData == null && caseId) {
@@ -523,7 +523,7 @@ export async function sendDataToAi(basisData?: BasisData, additionalData?: Addit
   
 
   // define promt
-  const prompt = buildAiPrompt(data)
+  const prompt = await buildAiPrompt(data)
 
   console.log("promt: ", prompt, "case data: ", data.caseData, 
     "additionalInfo: ", data.additionalInfoData, 
@@ -612,7 +612,7 @@ export async function sendDataToAi(basisData?: BasisData, additionalData?: Addit
 
 
 // function to build one type of data construct for the ai to proccess
-export function buildUnifiedData(
+export async function buildUnifiedData(
   basisData?: BasisData,
   additionalData?: AdditionalData,
   symptomText?: string[],
@@ -626,7 +626,15 @@ export function buildUnifiedData(
     caseData: basisData,
     symptomData: selectedymptoms,
     textSymptomData: symptomText,
-    additionalInfoData: additionalData,
+    additionalInfoData: {
+      duration: additionalData.duration,
+      temperature: additionalData.temperature,
+      worsening: additionalData.worsening,
+      weight: additionalData.weight,
+      height: additionalData.height,
+      breastfeeding: additionalData.breastfeeding,
+      extraInfo: additionalData.extraInfo,
+    },
     allergyData: { allergies: additionalData.allergies },
     medicationData: { medication: additionalData.medication },
     conditionsData: { conditions: additionalData.conditions },
@@ -637,17 +645,22 @@ export function buildUnifiedData(
 
 
 // building prompt
-export function buildAiPrompt(data: NonNullable<ReturnType<typeof buildUnifiedData> | Awaited<ReturnType<typeof getUserDataFromDB>>>) {
-  return `
+export async function buildAiPrompt(
+  data: NonNullable<
+    Awaited<ReturnType<typeof buildUnifiedData>>
+    | Awaited<ReturnType<typeof getUserDataFromDB>>
+  >
+) {
+  const prompt = `
   EINGABEDATEN:
   - Alter, Geschlecht, Schwangerschaft:
   ${JSON.stringify(data.caseData, null, 2)}
   - Optional: Gewicht (kg), Groesse (cm), Koerpertemperatur (°C), Symptomdauer (Tage), 
   Verschlimmerung, Stillzeit, Allergien, Vorerkrankungen, Medikamente:
   ${JSON.stringify(data.additionalInfoData, null, 2)}
-  ${JSON.stringify(data.allergyData.allergies, null, 2)}
-  ${JSON.stringify(data.conditionsData.conditions, null, 2)}
-  ${JSON.stringify(data.medicationData.medication, null, 2)}
+  ${JSON.stringify(data.allergyData, null, 2)}
+  ${JSON.stringify(data.conditionsData, null, 2)}
+  ${JSON.stringify(data.medicationData, null, 2)}
   - Symptome (vordefiniert, Feld "name_de"):
     - Schmerzskala (painscale) und Koerperregion (bodyregion) pro Symptom
     - Falls die Koerperregion nicht zur Symptombeschreibung passt, ignoriere sie
@@ -670,6 +683,8 @@ export function buildAiPrompt(data: NonNullable<ReturnType<typeof buildUnifiedDa
   4. kurze Begruendung der Vermutungen
   5. eine kurze Handlungsempfehlung in einfacher Sprache fuer den Patienten, hier keine Vermutungen
 `;
+
+return prompt;
 }
 
 
