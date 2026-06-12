@@ -612,7 +612,7 @@ export async function sendDataToAi(basisData?: BasisData, additionalData?: Addit
 
 
 // function to build one type of data construct for the ai to proccess
-function buildUnifiedData(
+export function buildUnifiedData(
   basisData?: BasisData,
   additionalData?: AdditionalData,
   symptomText?: string[],
@@ -637,7 +637,7 @@ function buildUnifiedData(
 
 
 // building prompt
-function buildAiPrompt(data: NonNullable<ReturnType<typeof buildUnifiedData> | Awaited<ReturnType<typeof getUserDataFromDB>>>) {
+export function buildAiPrompt(data: NonNullable<ReturnType<typeof buildUnifiedData> | Awaited<ReturnType<typeof getUserDataFromDB>>>) {
   return `
   EINGABEDATEN:
   - Alter, Geschlecht, Schwangerschaft:
@@ -645,6 +645,9 @@ function buildAiPrompt(data: NonNullable<ReturnType<typeof buildUnifiedData> | A
   - Optional: Gewicht (kg), Groesse (cm), Koerpertemperatur (°C), Symptomdauer (Tage), 
   Verschlimmerung, Stillzeit, Allergien, Vorerkrankungen, Medikamente:
   ${JSON.stringify(data.additionalInfoData, null, 2)}
+  ${JSON.stringify(data.allergyData.allergies, null, 2)}
+  ${JSON.stringify(data.conditionsData.conditions, null, 2)}
+  ${JSON.stringify(data.medicationData.medication, null, 2)}
   - Symptome (vordefiniert, Feld "name_de"):
     - Schmerzskala (painscale) und Koerperregion (bodyregion) pro Symptom
     - Falls die Koerperregion nicht zur Symptombeschreibung passt, ignoriere sie
