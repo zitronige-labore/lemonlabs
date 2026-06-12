@@ -501,8 +501,9 @@ export default function Home() {
     // since ai answer goes wring sometimes, up to 3 tries are allowed
     while(triesLeft>0) {
       try {
-        const aiAnswer = await sendDataToAi(id);
+        const aiAnswer = await sendDataToAi(basisData, additionalData, symptomText, selectedSymptoms);
         setAiAnswer(aiAnswer);
+        triesLeft = 0;
       } catch (error) {
         if(triesLeft!>0) {
           console.error("Error saving data into db:", error);
