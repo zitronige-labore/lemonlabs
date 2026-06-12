@@ -1,64 +1,115 @@
-/*
-  Importiert Tailwind CSS global in die Anwendung.
-
-  Dadurch können Tailwind-Klassen
-  im gesamten Projekt verwendet werden.
-*/
 @import "tailwindcss";
 
-/*
-  Globale CSS-Variablen für Farben.
-
-  Diese Werte können später überall
-  in der Anwendung wiederverwendet werden.
-*/
 :root {
   --background: #ffffff;
-  --foreground: #0f172a;
-  --surface: #eff6ff;
-  --surface-alt: #f8fbff;
-  --border: #cbd5e1;
-  --text-primary: #0f172a;
-  --text-muted: #475569;
-  --primary: #3b82f6;
-  --primary-soft: #dbeafe;
-  --primary-strong: #2563eb;
-  --danger: #dc2626;
-  --danger-soft: #fee2e2;
+  --foreground: #0f2340;
+
+  --surface: #ffffff;
+  --surface-alt: #eff6ff;
+  --surface-muted: #f5f9ff;
+
+  --border: #d7e3ef;
+  --border-strong: #adc2d6;
+
+  --text-primary: #0f2340;
+  --text-secondary: #16324f;
+  --text-muted: #4d6178;
+  --text-subtle: #6b7e92;
+
+  --primary: #1b334e;
+  --primary-hover: #254769;
+  --primary-active: #13263c;
+  --primary-soft: #e3eef9;
+  --primary-surface: #eff6ff;
+
+  --info: #1c86ff;
+  --info-hover: #0f72df;
+  --info-active: #0a5db7;
+
+  --secondary: #ffffff;
+  --secondary-hover: #e8f3ff;
+  --secondary-text: #16324f;
+
+  --danger: #ff4141;
+  --danger-hover: #e73535;
+  --danger-active: #c92828;
+  --danger-soft: #fff0f0;
+  --danger-border: #ffc4c4;
+
+  --focus-ring: rgba(28, 134, 255, 0.28);
+
+  --radius-card: 18px;
+  --radius-control: 16px;
+  --radius-small: 12px;
+
+  --shadow-card: 0 20px 45px rgba(15, 35, 64, 0.08);
+  --shadow-control: 0 10px 22px rgba(27, 51, 78, 0.18);
+  --shadow-control-hover: 0 14px 28px rgba(27, 51, 78, 0.22);
+  --shadow-danger: 0 12px 28px rgba(255, 65, 65, 0.26);
+
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 32px;
+  --space-5: 40px;
+
+  --content-width: 650px;
+  --reading-width: 56ch;
+  --button-width: 340px;
+  --button-height: 65px;
 }
 
-/*
-  Verknüpft die globalen CSS-Variablen
-  mit dem Tailwind-Theme-System.
-
-  Dadurch können die Farben und Schriftarten
-  auch innerhalb von Tailwind genutzt werden.
-*/
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-
   --font-base: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-sans: var(--font-base);
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
-/*
-  Aktiviert automatisch ein dunkles Farbschema,
-  wenn das Betriebssystem des Nutzers
-  den Dark Mode verwendet.
-*/
-/*
-  Globale Standardstyles für den Body.
+* {
+  box-sizing: border-box;
+}
 
-  Legt Hintergrundfarbe, Textfarbe
-  und Standardschriftart fest.
-*/
+html {
+  background: var(--background);
+}
+
 body {
+  min-height: 100vh;
+  margin: 0;
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-base);
-  line-height: 1.5;
-  min-height: 100vh;
+  font-size: 16px;
+  line-height: 1.65;
   color-scheme: light;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+p,
+li,
+label,
+input,
+select,
+textarea,
+button {
+  letter-spacing: 0;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 3px;
 }

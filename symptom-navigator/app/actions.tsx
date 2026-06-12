@@ -5,6 +5,7 @@ import { log } from "console";
 import { connectionPool } from "./dbs/db"; // for database queries
 import { cookies } from 'next/headers' // for cookies
 import { parseString } from 'xml2js'; // for xml
+import { AdditionalData, BasisData } from "./types/assessment";
 
 // function to save form data in variables and query to write to the db
 // formData is used instead of passing different data types to stay as close as possible to the default behaviour of a form action
@@ -123,6 +124,8 @@ export async function saveFormData(formData: FormData) {
         [age, sex, pregnancy, timestamp]
     );
 
+    const caseId = dbReturn.rows[0].case_id;
+
 
     // writing additional info into db
 
@@ -134,7 +137,7 @@ export async function saveFormData(formData: FormData) {
         worsening, breastfeeding, extrainfo)
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8);
         `,
-        [dbReturn.rows[0].case_id, weight || null, height || null, temperatureFloat|| null, duration|| null, 
+        [caseId, weight || null, height || null, temperatureFloat|| null, duration|| null, 
         worseningBool, breastfeedingBool, extraInfo|| null]
     );
 
@@ -142,13 +145,13 @@ export async function saveFormData(formData: FormData) {
     // insert for multiple values
 
     // allergies
-    insertListIntoSymptomsNoCertainCount(allergyList, "allergy", dbReturn.rows[0].case_id);
+    insertListIntoSymptomsNoCertainCount(allergyList, "allergy", caseId);
 
     // medication
-    insertListIntoSymptomsNoCertainCount(medicationList, "medication", dbReturn.rows[0].case_id);
+    insertListIntoSymptomsNoCertainCount(medicationList, "medication", caseId);
 
     // conditions
-    insertListIntoSymptomsNoCertainCount(conditionList, "condition", dbReturn.rows[0].case_id);
+    insertListIntoSymptomsNoCertainCount(conditionList, "condition", caseId);
 
 
     // writing raw text symptoms in db
@@ -169,7 +172,7 @@ export async function saveFormData(formData: FormData) {
             insert into case_symptoms (raw_id, case_id, painscale, bodyregion)
             VALUES ($1, $2, $3, $4)
             `,
-            [raw_id.rows[0].raw_id, dbReturn.rows[0].case_id, symptomTextListJson[i].painscale, symptomTextListJson[i].bodyregion || null]
+            [raw_id.rows[0].raw_id, caseId, symptomTextListJson[i].painscale, symptomTextListJson[i].bodyregion || null]
         );
       }
     }
@@ -180,7 +183,7 @@ export async function saveFormData(formData: FormData) {
         await connectionPool.query(
           `INSERT INTO case_symptoms (name_de, case_id, bodyregion, painscale) 
           VALUES ($1, $2, $3, $4)`,
-          [symptomListJson[i].name, dbReturn.rows[0].case_id, symptomListJson[i].bodyRegion, symptomListJson[i].painscale]
+          [symptomListJson[i].name, caseId, symptomListJson[i].bodyRegion, symptomListJson[i].painscale]
         );
       }
     }
@@ -192,7 +195,8 @@ export async function saveFormData(formData: FormData) {
 
     // set cookie to acess later on
     const sessionCookie = await cookies();
-    sessionCookie.set({name: 'caseId', value: dbReturn.rows[0].case_id, httpOnly: true, path: '/' });
+    sessionCookie.set({name: 'caseId', value: caseId, httpOnly: true, path: '/' });
+    return caseId.toString();
 }
 
 
@@ -214,30 +218,6 @@ export async function insertListIntoSymptomsNoCertainCount(list: string[], nameO
 }
 
 
-
-
-// function to get the data from the db and use it in frontend
-// save data in a variable, prevState is to be able to use the data when outputting, accessCode is passed via formData
-export async function getDBData(accessCode: string) {
-
-
-// DB query
-const DatenAusDB = await connectionPool.query(`
-    SELECT * FROM cases
-    WHERE case_id = $accessCode
-    `,
-  [accessCode]
-);
-
-// catching incorrect inputs and returning data if exists
-  if (DatenAusDB.rows.length > 0) {
-  console.log("Abfrageergebnis:", DatenAusDB);
-  return DatenAusDB.rows[0];
-  } else {
-    console.log("Keine Daten");
-    return null;
-  }
-}
 
 
 
@@ -496,11 +476,8 @@ export async function getDetailsNoCertainCount(category: string, listName: strin
 
 
 // function to get access code
-export async function getAccessCode() {
+export async function getAccessCode(caseId: string) {
   
-  // reading cookies to get case id
-  const cookieStore = await cookies();
-  const caseId = cookieStore.get('caseId')?.value;
 
   const accessCode = await connectionPool.query(`
     SELECT access_code
@@ -519,110 +496,43 @@ export async function getAccessCode() {
 
 
 // function to send and recieve promt/response from ollama, same concept for the argument as getDBData above
-export async function sendDataToAi() {
+export async function sendDataToAi(basisData?: BasisData, additionalData?: AdditionalData, symptomText?: string[], selectedymptoms?: string[], caseId?: string) {
 
-  // reading cookies to get case id
-  const cookieStore = await cookies();
-  const caseId = cookieStore.get('caseId')?.value;
 
-  if (!caseId) {
-    throw new Error('Keine aktive Session gefunden');
+  // using cashe or db data depending on arguments given
+  let cacheData = null;
+  let DBdata = null;
+
+
+  if (basisData && additionalData && symptomText && selectedymptoms) {
+    cacheData = await buildUnifiedData(basisData, additionalData, symptomText, selectedymptoms)
   }
 
-  // get data from db
-  // DB query
-  // to be replaced later
-  const DatenAusDB = await getUserDataFromDB(caseId);
+  if(cacheData == null && caseId) {
+    // get data from db
+    DBdata = await getUserDataFromDB(caseId);
+  }
 
-  // db data as string
-  const data = JSON.stringify(DatenAusDB, null, 2);
+  const data = cacheData != null ? cacheData : DBdata;
+
+  // in case neither db data nor cashe data are available
+  if (data == null) {
+    console.error("Keine Daten verfügbar (weder Cache noch DB).");
+    return;
+  }
+  
 
   // define promt
-  const prompt = `
-  EINGABEDATEN:
-  - Alter, Geschlecht, Schwangerschaft
-  - Optional: Gewicht (kg), Groesse (cm), Koerpertemperatur (°C)
-  - Optional: Symptomdauer (Tage), Verschlimmerung, Stillzeit, Allergien, Vorerkrankungen, Medikamente
-  - Symptome: entweder als "raw_symptoms" (Freitext) oder als "name_de" (vordefiniertes Symptom)
-  - Schmerzskala (painscale) und Koerperregion (bodyregion) pro Symptom
-  - Falls die Koerperregion nicht zur Symptombeschreibung passt, ignoriere sie
-  - null-Eintraege ignorieren
+  const prompt = await buildAiPrompt(data)
 
-  Erstelle basierend auf diesen Daten:
-  1. eine Einschaetzung der Dringlichkeit auf einer Skala von 1 bis 5
-  ( 1 - Beobachtung der Beschwerden
-    2 -  Arztbesuch erforderlich
-    3 -  Zeitnahe medizinische Abklärung erforderlich
-    4 - Möglicher medizinischer Notfall
-    5 - Akuter Notfall ),
-  2. eine Liste von 5 moeglichen Vermutungen
-  3. Wahrscheinlichkeiten fuer jede Vermutung
-  4. kurze Begruendung der Vermutungen
-  5. eine kurze Handlungsempfehlung in einfacher Sprache fuer den Patienten.
-  Hier sind die Daten: ${data}`;
+  console.log("promt: ", prompt, "case data: ", data.caseData, 
+    "additionalInfo: ", data.additionalInfoData, 
+    "symptoms: ", data.symptomData, "text symptoms: ", data.textSymptomData, 
+    "conditions: ", data.conditionsData.conditions, "allergies: ", data.allergyData.allergies, 
+    "medication: ", data.medicationData.medication)
 
-  // JSON schema (looks weird because it used to be xml (yes there was a reason for that too, it was not just because I felt like it))
-  const format = {
-  type: "object",
-  properties: {
-    assessment: {
-      type: "object",
-      properties: {
-        urgency: { type: "string" },
-        urgencyText: { type: "string" },
-        suspicions: {
-          type: "object",
-          properties: {
-            suspicion1: {
-              type: "object",
-              properties: {
-                reasonForSuspicion1: { type: "string" },
-                probability1: { type: "string" }
-              },
-              required: ["reasonForSuspicion1", "probability1"]
-            },
-            suspicion2: {
-              type: "object",
-              properties: {
-                reasonForSuspicion2: { type: "string" },
-                probability2: { type: "string" }
-              },
-              required: ["reasonForSuspicion2", "probability2"]
-            },
-            suspicion3: {
-              type: "object",
-              properties: {
-                reasonForSuspicion3: { type: "string" },
-                probability3: { type: "string" }
-              },
-              required: ["reasonForSuspicion3", "probability3"]
-            },
-            suspicion4: {
-              type: "object",
-              properties: {
-                reasonForSuspicion4: { type: "string" },
-                probability4: { type: "string" }
-              },
-              required: ["reasonForSuspicion4", "probability4"]
-            },
-            suspicion5: {
-              type: "object",
-              properties: {
-                reasonForSuspicion5: { type: "string" },
-                probability5: { type: "string" }
-              },
-              required: ["reasonForSuspicion5", "probability5"]
-            }
-          },
-          required: ["suspicion1", "suspicion2", "suspicion3", "suspicion4", "suspicion5"]
-        },
-        nextSteps: { type: "string" }
-      },
-      required: ["urgency", "urgencyText", "suspicions", "nextSteps"]
-    }
-  },
-  required: ["assessment"]
-};
+  // JSON schema for ai answer (looks weird because it used to be xml (yes there was a reason for that too, it was not just because I felt like it))
+  const format = aiAnswerFormat;
 
   try {
     // Make request to Ollama API
@@ -648,8 +558,24 @@ export async function sendDataToAi() {
     // response as json as for some reason it is apparently not json enough yet
     const result = JSON.parse(dataUnprocessed.choices[0].message.content);
 
+    // trying to remove some common errors
+    const parseProb = (val: unknown): number | null => {
+      const num = parseFloat(String(val).replace('%', '').replace(',', '.').replace(':', ''));
+      return isNaN(num) ? null : Math.min(100, Math.max(0, num <= 1 ? num * 100 : num));
+    };
+
     // printing response
-    console.log('medgemma response as object:', result);
+    console.log('medgemma response as object:', result, 
+    "\nsuspicion1:", result.assessment.suspicions.suspicion1.reasonForSuspicion1, 
+    result.assessment.suspicions.suspicion1.probability1,
+    "\nsuspicion2:", result.assessment.suspicions.suspicion2.reasonForSuspicion2, 
+    result.assessment.suspicions.suspicion2.probability2,
+    "\nsuspicion3:", result.assessment.suspicions.suspicion3.reasonForSuspicion3, 
+    result.assessment.suspicions.suspicion3.probability3,
+    "\nsuspicion4:", result.assessment.suspicions.suspicion4.reasonForSuspicion4, 
+    result.assessment.suspicions.suspicion4.probability4,
+    "\nsuspicion5:", result.assessment.suspicions.suspicion5.reasonForSuspicion5, 
+    result.assessment.suspicions.suspicion5.probability5);
 
     await connectionPool.query(
       `
@@ -665,11 +591,11 @@ export async function sendDataToAi() {
         result.assessment.suspicions.suspicion3.reasonForSuspicion3,
         result.assessment.suspicions.suspicion4.reasonForSuspicion4,
         result.assessment.suspicions.suspicion5.reasonForSuspicion5,
-        result.assessment.suspicions.suspicion1.probability1*100,
-        result.assessment.suspicions.suspicion2.probability2*100,
-        result.assessment.suspicions.suspicion3.probability3*100,
-        result.assessment.suspicions.suspicion4.probability4*100,
-        result.assessment.suspicions.suspicion5.probability5*100
+        parseProb(result.assessment.suspicions.suspicion1.probability1),
+        parseProb(result.assessment.suspicions.suspicion2.probability2),
+        parseProb(result.assessment.suspicions.suspicion3.probability3),
+        parseProb(result.assessment.suspicions.suspicion4.probability4),
+        parseProb(result.assessment.suspicions.suspicion5.probability5),
       ]
     );
 
@@ -680,6 +606,181 @@ export async function sendDataToAi() {
     console.error('Fehler message:', error instanceof Error ? error.message : error);
   }
 }
+
+
+
+
+
+// function to build one type of data construct for the ai to proccess
+export async function buildUnifiedData(
+  basisData?: BasisData,
+  additionalData?: AdditionalData,
+  symptomText?: string[],
+  selectedymptoms?: string[]
+) {
+  if (!basisData || !additionalData || !symptomText || !selectedymptoms) {
+    return null;
+  }
+
+  return {
+    caseData: basisData,
+    symptomData: selectedymptoms,
+    textSymptomData: symptomText,
+    additionalInfoData: {
+      duration: additionalData.duration,
+      temperature: additionalData.temperature,
+      worsening: additionalData.worsening,
+      weight: additionalData.weight,
+      height: additionalData.height,
+      breastfeeding: additionalData.breastfeeding,
+      extraInfo: additionalData.extraInfo,
+    },
+    allergyData: { allergies: additionalData.allergies },
+    medicationData: { medication: additionalData.medication },
+    conditionsData: { conditions: additionalData.conditions },
+  };
+}
+
+
+
+
+// building prompt
+export async function buildAiPrompt(
+  data: NonNullable<
+    Awaited<ReturnType<typeof buildUnifiedData>>
+    | Awaited<ReturnType<typeof getUserDataFromDB>>
+  >
+) {
+  const prompt = `
+  EINGABEDATEN:
+  - Alter, Geschlecht, Schwangerschaft:
+  ${JSON.stringify(data.caseData, null, 2)}
+  - Optional: Gewicht (kg), Groesse (cm), Koerpertemperatur (°C), Symptomdauer (Tage), 
+  Verschlimmerung, Stillzeit, Allergien, Vorerkrankungen, Medikamente:
+  ${JSON.stringify(data.additionalInfoData, null, 2)}
+  ${JSON.stringify(data.allergyData, null, 2)}
+  ${JSON.stringify(data.conditionsData, null, 2)}
+  ${JSON.stringify(data.medicationData, null, 2)}
+  - Symptome (vordefiniert, Feld "name_de"):
+    - Schmerzskala (painscale) und Koerperregion (bodyregion) pro Symptom
+    - Falls die Koerperregion nicht zur Symptombeschreibung passt, ignoriere sie
+    ${JSON.stringify(data.symptomData, null, 2)}
+  -Frei beschriebene Symptome (Feld "raw_symptoms"):
+    - Schmerzskala (painscale) und Koerperregion (bodyregion) pro Symptom
+    - Falls die Koerperregion nicht zur Symptombeschreibung passt, ignoriere sie
+    ${JSON.stringify(data.textSymptomData, null, 2)}
+  - null-Eintraege und leere Listen ueberall ignorieren
+
+  Erstelle basierend auf diesen Daten:
+  1. eine Einschaetzung der Dringlichkeit auf einer Skala von 1 bis 5
+  ( 1 - Beobachtung der Beschwerden
+    2 -  Arztbesuch erforderlich
+    3 -  Zeitnahe medizinische Abklärung erforderlich
+    4 - Möglicher medizinischer Notfall
+    5 - Akuter Notfall ),
+  2. eine Liste von 5 moeglichen Vermutungen
+  3. Wahrscheinlichkeiten fuer jede Vermutung (NUR als 0.XX angeben, NICHT in Prozent umwandeln oder mit Worten)
+  4. kurze Begruendung der Vermutungen
+  5. eine kurze Handlungsempfehlung in einfacher Sprache fuer den Patienten, hier keine Vermutungen
+`;
+
+return prompt;
+}
+
+
+
+
+// JSON schema for ai answer (looks weird because it used to be xml (yes there was a reason for that too, it was not just because I felt like it))
+  const aiAnswerFormat = {
+  type: "object",
+  properties: {
+    assessment: {
+      type: "object",
+      properties: {
+        urgency: { 
+          type: "number",
+          minimum: 1,
+          maximum: 5
+        },
+        urgencyText: { type: "string" },
+        suspicions: {
+          type: "object",
+          properties: {
+            suspicion1: {
+              type: "object",
+              properties: {
+                reasonForSuspicion1: { type: "string" },
+                probability1: {
+                  type: "number",
+                  minimum: 0,
+                  maximum: 1,
+                  description: "Wahrscheinlichkeit als Dezimalzahl zwischen 0 und 1, z.B. 0.35"
+                }
+              },
+              required: ["reasonForSuspicion1", "probability1"]
+            },
+            suspicion2: {
+              type: "object",
+              properties: {
+                reasonForSuspicion2: { type: "string" },
+                probability2: {
+                  type: "number",
+                  minimum: 0,
+                  maximum: 1,
+                  description: "Wahrscheinlichkeit als Dezimalzahl zwischen 0 und 1, z.B. 0.35"
+                }
+              },
+              required: ["reasonForSuspicion2", "probability2"]
+            },
+            suspicion3: {
+              type: "object",
+              properties: {
+                reasonForSuspicion3: { type: "string" },
+                probability3: {
+                  type: "number",
+                  minimum: 0,
+                  maximum: 1,
+                  description: "Wahrscheinlichkeit als Dezimalzahl zwischen 0 und 1, z.B. 0.35"
+                }
+              },
+              required: ["reasonForSuspicion3", "probability3"]
+            },
+            suspicion4: {
+              type: "object",
+              properties: {
+                reasonForSuspicion4: { type: "string" },
+                probability4: {
+                  type: "number",
+                  minimum: 0,
+                  maximum: 1,
+                  description: "Wahrscheinlichkeit als Dezimalzahl zwischen 0 und 1, z.B. 0.35"
+                }
+              },
+              required: ["reasonForSuspicion4", "probability4"]
+            },
+            suspicion5: {
+              type: "object",
+              properties: {
+                reasonForSuspicion5: { type: "string" },
+                probability5:  {
+                  type: "number",
+                  minimum: 0,
+                  maximum: 1,
+                  description: "Wahrscheinlichkeit als Dezimalzahl zwischen 0 und 1, z.B. 0.35"
+                }
+              },
+              required: ["reasonForSuspicion5", "probability5"]
+            }
+          },
+          required: ["suspicion1", "suspicion2", "suspicion3", "suspicion4", "suspicion5"]
+        },
+        nextSteps: { type: "string" }
+      },
+      required: ["urgency", "urgencyText", "suspicions", "nextSteps"]
+    }
+  },
+  required: ["assessment"]
+};
 
 
 

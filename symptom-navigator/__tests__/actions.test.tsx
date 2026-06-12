@@ -1,3 +1,32 @@
+// import placeholder
+type AdditionalData = {
+  medication?: string;
+
+  conditions: string;
+
+  allergies: string;
+
+  temperature: string;
+  duration: string;
+  worsening: string;
+
+  weight: string;
+  height: string;
+
+  breastfeeding: string;
+
+  extraInfo: string;
+};
+
+
+type BasisData = {
+  age: string;
+  gender: string;
+  pregnancy: string;
+  duration: string;
+  intensity: string;
+};
+
 // mocks
 
 
@@ -25,12 +54,11 @@ jest.mock("next/headers", () => ({
 const mockFetch = jest.fn();
 global.fetch = mockFetch;
 
-// import functions to test
 
+// import functions to test
 import {
   saveFormData,
   insertListIntoSymptomsNoCertainCount,
-  getDBData,
   getUserDataFromDB,
   getAiDataFromDB,
   deleteCaseData,
@@ -41,6 +69,8 @@ import {
   getDetailsNoCertainCount,
   getAccessCode,
   sendDataToAi,
+  buildUnifiedData,
+  buildAiPrompt,
 } from "../app/actions";
 
 
@@ -66,13 +96,45 @@ function buildFormData(overrides: Record<string, string> = {}): FormData {
     ...overrides,
   };
 
-
   const fd = new FormData();
   for (const [key, value] of Object.entries(defaults)) {
     fd.append(key, value);
   }
   return fd;
 }
+
+// dummy fixtures for sendDataToAi tests
+function buildBasisData(overrides: Partial<BasisData> = {}): BasisData {
+  return {
+    age: "28",
+    gender: "weiblich",
+    pregnancy: "nein",
+    duration: "2",
+    intensity: "4",
+    ...overrides,
+  };
+}
+
+function buildAdditionalData(overrides: Partial<AdditionalData> = {}): AdditionalData {
+  return {
+    medication: "Ibuprofen",
+    conditions: "Asthma",
+    allergies: "Pollen",
+    temperature: "38.5",
+    duration: "2",
+    worsening: "ja",
+    weight: "60",
+    height: "165",
+    breastfeeding: "nein",
+    extraInfo: "",
+    ...overrides,
+  };
+}
+
+const sampleSelectedSymptoms = [
+  JSON.stringify({ name: "Kopfschmerz", bodyRegion: "Kopf", painscale: 4 }),
+];
+const sampleSymptomText: string[] = [`{ name: "Ich blute", bodyRegion: "Kopf", painscale: 2 }`];
 
 // testing saveFormData
 
@@ -421,45 +483,6 @@ describe("insertListIntoSymptomsNoCertainCount", () => {
   });
 });
 
-
-
-
-
-
-
-describe("getDBData", () => {
-  beforeEach(() => {
-    mockQuery.mockReset();
-  });
-
-  it("returns the first row when the case exists", async () => {
-    const fakeRow = { case_id: "7", age: 45, sex: "m" };
-    mockQuery.mockResolvedValueOnce({ rows: [fakeRow] });
-
-    const result = await getDBData("7");
-
-    expect(result).toEqual(fakeRow);
-  });
-
-  it("returns null when no case is found", async () => {
-    mockQuery.mockResolvedValueOnce({ rows: [] });
-
-    const result = await getDBData("999");
-
-    expect(result).toBeNull();
-  });
-
-  it("includes the access_code in the query", async () => {
-    mockQuery.mockResolvedValueOnce({ rows: [] });
-
-    await getDBData("123");
-
-    expect(mockQuery).toHaveBeenCalledWith(
-      expect.stringContaining("$accessCode"),
-      ["123"]
-    );
-  });
-});
 
 
 
@@ -838,48 +861,26 @@ describe("getDetailsNoCertainCount", () => {
 describe("getAccessCode", () => {
   beforeEach(() => {
     mockQuery.mockReset();
-    mockCookieGet.mockReset();
   });
 
   it("returns the access_code", async () => {
-    mockCookieGet.mockReturnValue({ value: "42" });
+
     mockQuery.mockResolvedValueOnce({ rows: [{ access_code: "666864ea-a64e-4ddd-8597-93e53160a296" }] });
 
-    const result = await getAccessCode();
+    const result = await getAccessCode("4");
 
     expect(result).toBe("666864ea-a64e-4ddd-8597-93e53160a296");
   });
 
-  it("searches the cases table for the case_id from the cookie", async () => {
-    mockCookieGet.mockReturnValue({ value: "7" });
+  it("searches the cases table for the case_id", async () => {
+
     mockQuery.mockResolvedValueOnce({ rows: [{ access_code: "666864ea-a64e-4ddd-8597-93e53160a296" }] });
 
-    await getAccessCode();
+    await getAccessCode("4");
 
     expect(mockQuery).toHaveBeenCalledWith(
       expect.stringContaining("access_code"),
-      ["7"]
-    );
-  });
-
-  it("reads the 'caseId' cookie", async () => {
-    mockCookieGet.mockReturnValue({ value: "123" });
-    mockQuery.mockResolvedValueOnce({ rows: [{ access_code: "A" }] });
-
-    await getAccessCode();
-
-    expect(mockCookieGet).toHaveBeenCalledWith("caseId");
-  });
-
-  it("if no caseId cookie is set, it passes undefined to the database query", async () => {
-    mockCookieGet.mockReturnValue(undefined);
-    mockQuery.mockResolvedValueOnce({ rows: [{ access_code: "889a84e4-be41-491d-a6b7-b6669df1a75f" }] });
-
-    await getAccessCode();
-
-    expect(mockQuery).toHaveBeenCalledWith(
-      expect.any(String),
-      [undefined]
+      ["4"]
     );
   });
 });
@@ -888,27 +889,137 @@ describe("getAccessCode", () => {
 
 
 
-describe("sendDataToAi", () => {
-  beforeEach(() => {
-    mockQuery.mockReset();
-    mockCookieGet.mockReset();
-    mockFetch.mockReset();
+describe("buildUnifiedData", () => {
+  it("returns a unified object when all parameters are provided", async () => {
+    const basisData = buildBasisData();
+    const additionalData = buildAdditionalData();
 
-    // Cookie with caseId
-    mockCookieGet.mockReturnValue({ value: "1" });
+    const result = await buildUnifiedData(
+      basisData,
+      additionalData,
+      sampleSymptomText,
+      sampleSelectedSymptoms
+    );
+
+expect(result).not.toBeNull();
+
+
+expect(result!.caseData.age).toBe(basisData.age);
+expect(result!.caseData.gender).toBe(basisData.gender);
+expect(result!.caseData.pregnancy).toBe(basisData.pregnancy);
+
+expect(result!.additionalInfoData.breastfeeding).toBe(additionalData.breastfeeding);
+expect(result!.additionalInfoData.duration).toBe(additionalData.duration);
+expect(result!.additionalInfoData.weight).toBe(additionalData.weight);
+expect(result!.additionalInfoData.height).toBe(additionalData.height);
+expect(result!.additionalInfoData.worsening).toBe(additionalData.worsening);
+expect(result!.additionalInfoData.extraInfo).toBe(additionalData.extraInfo);
+expect(result!.additionalInfoData.temperature).toBe(additionalData.temperature);
+
+
+expect(result!.symptomData.some((s: string) => s.includes("Kopfschmerz"))).toBe(true);
+expect(result!.textSymptomData.some((s: string) => s.includes("Ich blute"))).toBe(true)
+
+expect(result!.allergyData.allergies).toContain("Pollen");
+expect(result!.medicationData.medication).toContain("Ibuprofen");
+expect(result!.conditionsData.conditions).toContain("Asthma");
+  });
+
+  it("returns null when basisData is missing", async() => {
+    const result = await buildUnifiedData(
+      undefined,
+      buildAdditionalData(),
+      sampleSymptomText,
+      sampleSelectedSymptoms
+    );
+
+    expect(result).toBeNull();
+  });
+
+  it("returns null when additionalData is missing", async () => {
+    const result = await buildUnifiedData(
+      buildBasisData(),
+      undefined,
+      sampleSymptomText,
+      sampleSelectedSymptoms
+    );
+
+    expect(result).toBeNull();
+  });
+
+  it("returns null when symptomText is missing", async () => {
+    const result = await buildUnifiedData(
+      buildBasisData(),
+      buildAdditionalData(),
+      undefined,
+      sampleSelectedSymptoms
+    );
+
+    expect(result).toBeNull();
+  });
+
+  it("returns null when selectedymptoms is missing", async () => {
+    const result = await buildUnifiedData(
+      buildBasisData(),
+      buildAdditionalData(),
+      sampleSymptomText,
+      undefined
+    );
+
+    expect(result).toBeNull();
+  });
+});
+
+
+describe("buildAiPrompt", () => {
+  it("includes data from caseData, additionalInfoData and symptoms in the prompt", async() => {
+    const data = await buildUnifiedData(
+      buildBasisData({ age: "28" }),
+      buildAdditionalData({ allergies: "Pollen", medication: "Ibuprofen", conditions: "Asthma" }),
+      sampleSymptomText,
+      sampleSelectedSymptoms
+    )!;
+
+    if(data!=null) {
+      const prompt = await buildAiPrompt(data);
     
 
-    // getUserDataFromDB: 7 Queries
+      expect(prompt).toContain("28");
+      expect(prompt).toContain("Pollen");
+      expect(prompt).toContain("Ibuprofen");
+      expect(prompt).toContain("Asthma");
+      expect(prompt).toContain("Kopfschmerz");
+    }
+  });
+
+  it("works with data coming from getUserDataFromDB shape", async () => {
+    mockQuery.mockReset();
     mockQuery
       .mockResolvedValueOnce({ rows: [{ sex: "w", age: 28, pregnancy: false }] })
       .mockResolvedValueOnce({ rows: [{ name_de: "Kopfschmerz", painscale: 4, bodyregion: "Kopf" }] })
       .mockResolvedValueOnce({ rows: [] })
       .mockResolvedValueOnce({ rows: [{ weight: 60, height: 165, temperature: 38.5, duration: 2, worsening: true, breastfeeding: false, extraInfo: "" }] })
-      .mockResolvedValueOnce({ rows: [] })
-      .mockResolvedValueOnce({ rows: [] })
-      .mockResolvedValueOnce({ rows: [] });
+      .mockResolvedValueOnce({ rows: [{ detail: "Pollen" }] })
+      .mockResolvedValueOnce({ rows: [{ detail: "Ibuprofen" }] })
+      .mockResolvedValueOnce({ rows: [{ detail: "Asthma" }] });
 
-    // INSERT INTO recommendations
+    const dbData = await getUserDataFromDB("1");
+    const prompt = await buildAiPrompt(dbData);
+
+    expect(prompt).toContain("Kopfschmerz");
+    expect(prompt).toContain("Pollen");
+    expect(prompt).toContain("Ibuprofen");
+    expect(prompt).toContain("Asthma");
+  });
+});
+
+
+describe("sendDataToAi", () => {
+  beforeEach(() => {
+    mockQuery.mockReset();
+    mockFetch.mockReset();
+
+    // INSERT INTO recommendations (and any other query during cache-path)
     mockQuery.mockResolvedValue({ rows: [] });
 
     // fetch mock: valid AI-Answer
@@ -943,78 +1054,182 @@ describe("sendDataToAi", () => {
     process.env.MEDGEMMA_API_MODEL = "fake-model";
   });
 
-  it("liest die caseId aus dem 'caseId' Cookie", async () => {
-    await sendDataToAi();
+  describe("with cache data (basisData, additionalData, symptomText, selectedymptoms)", () => {
+    const basisData = buildBasisData();
+    const additionalData = buildAdditionalData();
 
-    expect(mockCookieGet).toHaveBeenCalledWith("caseId");
+    it("returns the parsed AI result", async () => {
+      const result = await sendDataToAi(
+        basisData,
+        additionalData,
+        sampleSymptomText,
+        sampleSelectedSymptoms,
+        "19"
+      );
+
+      expect(result).toHaveProperty("assessment");
+      expect(result.assessment).toHaveProperty("urgency", "3");
+      expect(result.assessment.suspicions.suspicion1.reasonForSuspicion1).toBe("Grippe");
+    });
+
+    it("does not query getUserDataFromDB when cache data is provided", async () => {
+      await sendDataToAi(
+        basisData,
+        additionalData,
+        sampleSymptomText,
+        sampleSelectedSymptoms,
+        "19"
+      );
+
+      const dbDataQueries = mockQuery.mock.calls.filter(
+        (call) =>
+          typeof call[0] === "string" &&
+          (call[0].includes("FROM cases") || call[0].includes("FROM case_symptoms"))
+      );
+      expect(dbDataQueries).toHaveLength(0);
+    });
+
+    it("writes the result to the recommendations table with the given caseId", async () => {
+      await sendDataToAi(
+        basisData,
+        additionalData,
+        sampleSymptomText,
+        sampleSelectedSymptoms,
+        "19"
+      );
+
+      const insertCall = mockQuery.mock.calls.find(
+        (call) => typeof call[0] === "string" && call[0].includes("INSERT INTO recommendations")
+      );
+      expect(insertCall).toBeDefined();
+      expect(insertCall![1][0]).toBe("19"); // caseId
+      expect(insertCall![1][1]).toBe("3"); // urgency_level
+      expect(insertCall![1][2]).toBe("Bitte einen Arzt aufsuchen."); // advice_text
+      expect(insertCall![1][8]).toBe(70); // probability1 * 100
+    });
+
+    it("sends the fetch request to the configured MEDGEMMA_API_URL", async () => {
+      await sendDataToAi(
+        basisData,
+        additionalData,
+        sampleSymptomText,
+        sampleSelectedSymptoms,
+        "19"
+      );
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        "http://fake-ai-url/api",
+        expect.objectContaining({ method: "POST" })
+      );
+    });
+
+    it("passes the Authorization header with the API key", async () => {
+      await sendDataToAi(
+        basisData,
+        additionalData,
+        sampleSymptomText,
+        sampleSelectedSymptoms,
+        "19"
+      );
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            Authorization: "Bearer fake-key",
+          }),
+        })
+      );
+    });
+
+    it("returns undefined if the AI-API throws an error", async () => {
+      mockFetch.mockRejectedValueOnce(new Error("Network Error"));
+
+      const result = await sendDataToAi(
+        basisData,
+        additionalData,
+        sampleSymptomText,
+        sampleSelectedSymptoms,
+        "19"
+      );
+
+      expect(result).toBeUndefined();
+    });
+
+    it("returns undefined when the AI-API returns a string error", async () => {
+      mockFetch.mockRejectedValueOnce("einfacher string fehler");
+
+      const result = await sendDataToAi(
+        basisData,
+        additionalData,
+        sampleSymptomText,
+        sampleSelectedSymptoms,
+        "19"
+      );
+
+      expect(result).toBeUndefined();
+    });
   });
 
-  it("returns the parsed AI result", async () => {
-    const result = await sendDataToAi();
+  describe("with only caseId (DB fallback)", () => {
+    beforeEach(() => {
+      // getUserDataFromDB: 7 Queries
+      mockQuery
+        .mockResolvedValueOnce({ rows: [{ sex: "w", age: 28, pregnancy: false }] })
+        .mockResolvedValueOnce({ rows: [{ name_de: "Kopfschmerz", painscale: 4, bodyregion: "Kopf" }] })
+        .mockResolvedValueOnce({ rows: [] })
+        .mockResolvedValueOnce({ rows: [{ weight: 60, height: 165, temperature: 38.5, duration: 2, worsening: true, breastfeeding: false, extraInfo: "" }] })
+        .mockResolvedValueOnce({ rows: [] })
+        .mockResolvedValueOnce({ rows: [] })
+        .mockResolvedValueOnce({ rows: [] });
 
-    expect(result).toHaveProperty("assessment");
-    expect(result.assessment).toHaveProperty("urgency", "3");
-    expect(result.assessment.suspicions.suspicion1.reasonForSuspicion1).toBe("Grippe");
+      // INSERT INTO recommendations
+      mockQuery.mockResolvedValue({ rows: [] });
+    });
+
+    it("falls back to DB data when no cache data is provided", async () => {
+      const result = await sendDataToAi(undefined, undefined, undefined, undefined, "19");
+
+      expect(result).toHaveProperty("assessment");
+      expect(result.assessment).toHaveProperty("urgency", "3");
+    });
+
+    it("queries getUserDataFromDB when no cache data is provided", async () => {
+      await sendDataToAi(undefined, undefined, undefined, undefined, "19");
+
+      const dbDataQuery = mockQuery.mock.calls.find(
+        (call) => typeof call[0] === "string" && call[0].includes("FROM cases")
+      );
+      expect(dbDataQuery).toBeDefined();
+      expect(dbDataQuery![1]).toEqual(["19"]);
+    });
+
+    it("writes the result to the recommendations table", async () => {
+      await sendDataToAi(undefined, undefined, undefined, undefined, "19");
+
+      const insertCall = mockQuery.mock.calls.find(
+        (call) => typeof call[0] === "string" && call[0].includes("INSERT INTO recommendations")
+      );
+      expect(insertCall).toBeDefined();
+      expect(insertCall![1][0]).toBe("19");
+      expect(insertCall![1][1]).toBe("3");
+    });
   });
 
-  it("writes the result to the recommendations table", async () => {
-    await sendDataToAi();
+  describe("with neither cache data nor caseId", () => {
+    it("returns undefined and logs an error", async () => {
+      const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {});
 
-    const insertCall = mockQuery.mock.calls.find(
-      (call) => typeof call[0] === "string" && call[0].includes("INSERT INTO recommendations")
-    );
-    expect(insertCall).toBeDefined();
-    // urgency_level
-    expect(insertCall![1][1]).toBe("3");
-    // advice_text
-    expect(insertCall![1][2]).toBe("Bitte einen Arzt aufsuchen.");
-    // probabilities are stored multiplied by 100
-    expect(insertCall![1][8]).toBe(70);
+      const result = await sendDataToAi(undefined, undefined, undefined, undefined, undefined);
+
+      expect(result).toBeUndefined();
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.stringContaining("Keine Daten verfügbar")
+      );
+      expect(mockFetch).not.toHaveBeenCalled();
+
+      consoleSpy.mockRestore();
+    });
   });
-
-  it("sends the fetch request to the configured MEDGEMMA_API_URL", async () => {
-    await sendDataToAi();
-
-    expect(mockFetch).toHaveBeenCalledWith(
-      "http://fake-ai-url/api",
-      expect.objectContaining({ method: "POST" })
-    );
-  });
-
-  it("passes the Authorization header with the API key", async () => {
-    await sendDataToAi();
-
-    expect(mockFetch).toHaveBeenCalledWith(
-      expect.any(String),
-      expect.objectContaining({
-        headers: expect.objectContaining({
-          Authorization: "Bearer fake-key",
-        }),
-      })
-    );
-  });
-
-  it("returns an error if no caseId is available in the cookie", async () => {
-    mockCookieGet.mockReturnValue(undefined);
-  
-    await expect(sendDataToAi()).rejects.toThrow("Keine aktive Session gefunden");
-});
-
-  it("returns undefined if the AI-API throws an error", async () => {
-    mockFetch.mockRejectedValueOnce(new Error("Network Error"));
-
-    const result = await sendDataToAi();
-
-    // catch-block in sendDataToAi returns undefined
-    expect(result).toBeUndefined();
-  });
-
-  it("returns undefined when the AI-API returns a string error", async () => {
-  mockFetch.mockRejectedValueOnce("einfacher string fehler");
-
-  const result = await sendDataToAi();
-
-  expect(result).toBeUndefined();
-});
 });
 });

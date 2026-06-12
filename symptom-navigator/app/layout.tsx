@@ -51,7 +51,7 @@ const geistMono = Geist_Mono({
 */
 export const metadata: Metadata = {
   title: "MediGuide",
-  description: "asses your symptoms",
+  description: "Ersteinschätzung von Symptomen",
   manifest: "/manifest.json",
 };
 
@@ -72,7 +72,7 @@ export default function RootLayout({
       und bindet die Schriftarten global ein.
     */
     <html
-      lang="en"
+      lang="de"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       {/*

@@ -61,6 +61,10 @@ export default function Home() {
     Speichert, welcher Schritt im Ablauf aktuell angezeigt wird.
   */
   const [step, setStep] = useState<Step>("start");
+  const [highestAssessmentProgress, setHighestAssessmentProgress] = useState(0);
+
+  // saves case ID
+  const [caseId, setCaseId] = useState("")
 
   // reference to current step
   const stepRef = useRef<Step>("start");
@@ -108,7 +112,48 @@ export default function Home() {
   */
   const [copyPainScale, setCopyPainScale] = useState<Record<string, string>>({});
 
+  // state to track if checkInfo is active so user can be lead back to it
   const [checkInfoActive, setCheckInfoActive] = useState<boolean>(false);
+
+  // state to check if offline
+  const [isOffline, setIsOffline] = useState<boolean>(false);
+
+
+  // event listener to check if user goes offline or comes back online
+  useEffect(() => {
+
+    // server ping to check more reliably than using navigator.isOnline
+    async function checkConnection() {
+    try {
+      await fetch('/api/ping', { method: 'HEAD' });
+      setIsOffline(false);
+    } catch {
+      setIsOffline(true);
+    }
+  }
+
+  checkConnection();
+
+  const interval = setInterval(checkConnection, 5000);
+
+
+    function handleOnline() {
+      checkConnection;
+    }
+
+    function handleOffline() {
+      setIsOffline(true);
+    }
+
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+
+    return function() {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, []);
+
 
   /*
     Speichert allgemeine Angaben und Detailangaben zu den Beschwerden.
@@ -200,7 +245,12 @@ export default function Home() {
         }
 
         stepRef.current = zielStep;
-          setStep(zielStep);
+        setHighestAssessmentProgress((previousProgress) =>
+          zielStep === "start" || zielStep === "hinweise"
+            ? 0
+            : Math.max(previousProgress, getStepProgress(zielStep))
+        );
+        setStep(zielStep);
       }
     }
       
@@ -230,6 +280,11 @@ export default function Home() {
   function goToStep(nextStep: Step) {
     stepRef.current = nextStep;
     history.pushState({ step: nextStep }, "", "#" + nextStep);
+    setHighestAssessmentProgress((previousProgress) =>
+      nextStep === "start" || nextStep === "hinweise"
+        ? 0
+        : Math.max(previousProgress, getStepProgress(nextStep))
+    );
     setStep(nextStep);
   }
   function getStepProgress(step: Step): number {
@@ -408,6 +463,8 @@ export default function Home() {
     setSymptomText([]);
     setSelectedSymptoms([]);
     setCopyPainScale({});
+    setNoRedFlags(false);
+    setHighestAssessmentProgress(0);
   }
 
 
@@ -430,13 +487,29 @@ export default function Home() {
 
     setIsLoading(true);
 
-    try {
-      await handleSaveForm();
+    let id;
+    let triesLeft = 3;
 
-      const aiAnswer = await sendDataToAi();
-      setAiAnswer(aiAnswer);
+    
+    try {
+      id = await handleSaveForm();
+      setCaseId(id)
     } catch (error) {
-      console.error("Error saving form or fetching AI response:", error);
+      console.error("Error fetching AI response:", error);
+    }
+
+    // since ai answer goes wring sometimes, up to 3 tries are allowed
+    while(triesLeft>0) {
+      try {
+        const aiAnswer = await sendDataToAi(basisData, additionalData, symptomText, selectedSymptoms, id);
+        setAiAnswer(aiAnswer);
+        triesLeft = 0;
+      } catch (error) {
+        if(triesLeft!>0) {
+          console.error("Error saving data into db:", error);
+        }
+        triesLeft--;
+      }
     }
 
     setIsLoading(false);
@@ -459,6 +532,7 @@ export default function Home() {
           onStartAssessment={() => goToStep("hinweise")}
           resetProcess={resetProcess}
           setStep={goToStep}
+          isOffline={isOffline}
         />
       )}
 
@@ -497,7 +571,11 @@ export default function Home() {
       )}
       {/* Alle Schritte der eigentlichen Ersteinschätzung */}
       {step !== "start" && step !== "hinweise" && step !== "manageData" && step !== "other" && (
-        <AssessmentLayout onSubmit={handleSubmit} progress={getStepProgress(step)}>
+        <AssessmentLayout
+          onSubmit={handleSubmit}
+          progress={Math.max(highestAssessmentProgress, getStepProgress(step))}
+        >
+          
           {/* Schritt 1: Warnzeichen prüfen */}
           {step === "redflags" && (
             <RedFlagsStep
@@ -507,6 +585,7 @@ export default function Home() {
               updateRedFlag={updateRedFlag}
               selectNoRedFlags={selectNoRedFlags}
               onContinue={() => goToStep("basisStart")}
+              isOffline={isOffline}
             />
           )}
 
@@ -588,6 +667,7 @@ export default function Home() {
               removeSymptomText={removeSymptomText}
               toggleSymptom={toggleSymptom}
               setCheckInfoActive={setCheckInfoActive}
+              isOffline={isOffline}
             />
           )}
 
@@ -602,13 +682,12 @@ export default function Home() {
           {step === "result" && (
             <ResultStep
               basisData={basisData}
-              selectedMainRegion={selectedMainRegion}
-              selectedSubRegion={selectedSubRegion}
               symptomText={symptomText}
               selectedSymptoms={selectedSymptoms}
               additionalData={additionalData}
               onGoHome={() => goToStep("start")}
               aiAnswer={aiAnswer}
+              caseId={caseId}
             />
           )}
         </AssessmentLayout>

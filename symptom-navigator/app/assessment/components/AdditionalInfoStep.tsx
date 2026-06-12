@@ -30,6 +30,12 @@ export function AdditionalInfoStep({
 }: AdditionalInfoStepProps) {
   const [inputError, setInputError] = useState("");
 
+  const [weightError, setWeightError] = useState("");
+  const [heightError, setHeightError] = useState("");
+  const [temperatureError, setTemperatureError] = useState("");
+  const [durationError, setDurationError] = useState("");
+
+
   const Pattern = /^[^,]+(,[^,]+)*$/;
 
   const medicationValue =
@@ -83,14 +89,35 @@ export function AdditionalInfoStep({
             className={assessmentStyles.input}
             type="number"
             value={additionalData.weight}
-            onChange={(event) =>
+            onChange={(event) => {
+              const value = event.target.value;
               setAdditionalData({
                 ...additionalData,
-                weight: event.target.value,
-              })
+                weight: value,
+
+              });
+              const weight = Number(value);
+              if (value === "") {
+                setWeightError("");
+              } else if (
+                weight <= 0 ||
+                weight > 600 ||
+                !Number.isInteger(weight)
+              ) {
+                setWeightError("Bitte geben Sie ein gültiges Gewicht ein.")
+              }
+              else {
+                setWeightError("");
+              }
             }
-            placeholder="Zum Beispiel: 72 kg"
+            } placeholder="Zum Beispiel: 72 kg"
           />
+          {weightError && (
+            <p className={assessmentStyles.errorText}>
+              {weightError}
+            </p>
+          )}
+
         </label>
 
         <label className={assessmentStyles.formLabel}>
@@ -100,14 +127,37 @@ export function AdditionalInfoStep({
             className={assessmentStyles.input}
             type="number"
             value={additionalData.height}
-            onChange={(event) =>
+            onChange={(event) => {
+              const value = event.target.value;
+
               setAdditionalData({
                 ...additionalData,
-                height: event.target.value,
-              })
+                height: value,
+
+              });
+              const height = Number(value);
+              if (value === "") {
+                setHeightError("");
+              } else if (
+                height < 40
+                || height > 300
+                || !Number.isInteger(height)
+              ) {
+                setHeightError("Bitte geben Sie ein gültige Körpergröße ein.")
+              }
+              else {
+                setHeightError("");
+              }
             }
-            placeholder="Zum Beispiel: 175 cm"
+
+            } placeholder="Zum Beispiel: 175 cm"
           />
+          {heightError && (
+            <p className={assessmentStyles.errorText}>
+              {heightError}
+            </p>
+          )}
+
         </label>
 
         <label className={assessmentStyles.formLabel}>
@@ -134,7 +184,8 @@ export function AdditionalInfoStep({
           Sind Vorerkrankungen bekannt?
 
           {[
-            "Diabetes",
+            "Diabetes Typ 1",
+            "Diabetes Typ 2",
             "Bluthochdruck",
             "Herzkrankheit",
             "Asthma",
@@ -203,14 +254,36 @@ export function AdditionalInfoStep({
             type="number"
             step="0.01"
             value={additionalData.temperature}
-            onChange={(event) =>
+            onChange={(event) => {
+
+              const value = event.target.value;
+
               setAdditionalData({
                 ...additionalData,
-                temperature: event.target.value,
-              })
-            }
-            placeholder="Zum Beispiel: 38,5 °C oder nicht gemessen"
+                temperature: value,
+              });
+              const temperature = Number(value);
+              if (value === "") {
+                setTemperatureError("");
+              } else if (
+                temperature < 30
+                || temperature > 45
+              ) {
+                setTemperatureError("Bitte geben Sie ein gültige Körpertemperatur ein.")
+              }
+              else {
+                setTemperatureError("");
+              }
+            }}
+            placeholder="Zum Beispiel: 38,5 °C"
           />
+
+          {temperatureError && (
+            <p className={assessmentStyles.errorText}>
+              {temperatureError}
+            </p>
+          )}
+
         </label>
 
         <label className={assessmentStyles.formLabel}>
@@ -220,14 +293,37 @@ export function AdditionalInfoStep({
             className={assessmentStyles.input}
             type="number"
             value={additionalData.duration}
-            onChange={(event) =>
+            onChange={(event) => {
+              const value = event.target.value;
+
               setAdditionalData({
                 ...additionalData,
-                duration: event.target.value,
+                duration: value,
               })
+
+              const duration = Number(value);
+              if (value === "") {
+                setDurationError("");
+              } else if (
+                duration < 0 ||
+                duration > 365 ||
+                !Number.isInteger(duration)
+              ) {
+                setDurationError("Bitte geben Sie ein gültige Anzahl an Tagen ein.")
+              }
+              else {
+                setDurationError("");
+              }
             }
-            placeholder="Zum Beispiel: 2"
+            } placeholder="Zum Beispiel: 2"
           />
+
+            {durationError && (
+            <p className={assessmentStyles.errorText}>
+              {durationError}
+            </p>
+          )}
+
         </label>
 
         <label className={assessmentStyles.formLabel}>
@@ -255,6 +351,7 @@ export function AdditionalInfoStep({
 
           <textarea
             className={assessmentStyles.input}
+            maxLength={500}
             value={additionalData.extraInfo}
             onChange={(event) =>
               setAdditionalData({
@@ -269,24 +366,24 @@ export function AdditionalInfoStep({
 
       <div className={assessmentStyles.quickSelect}>
         {!checkInfoActive && (
-        <button
-          type="button"
-          className={assessmentStyles.primaryButton}
-          onClick={() => {
-            setStep("checkInfo");
-          }}
-        >
-          weiter
-        </button>
+          <button
+            type="button"
+            className={assessmentStyles.primaryButton}
+            onClick={() => {
+              setStep("checkInfo");
+            }}
+          >
+            weiter
+          </button>
         )}
         {checkInfoActive && (
-        <button
-          type="button"
-          className={assessmentStyles.secondaryButton}
-          onClick={() => setStep("checkInfo")}
-        >
-          zurück zur Überprüfung
-        </button>
+          <button
+            type="button"
+            className={assessmentStyles.secondaryButton}
+            onClick={() => setStep("checkInfo")}
+          >
+            zurück zur Überprüfung
+          </button>
         )}
       </div>
     </>

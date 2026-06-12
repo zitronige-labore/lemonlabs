@@ -1,0 +1,111 @@
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+
+export type AssessmentExportData = {
+  alter: string;
+  geschlecht: string;
+  schwangerschaft: string;
+  stillzeit: string;
+  worsening: string | undefined;
+  groesse: string;
+  gewicht: string;
+  temperatur: string;
+  dauer: string;
+  medikation: string;
+  allergien: string;
+  vorerkrankungen: string;
+  symptome: string;
+  textSymptome: string;
+  datum: string;
+  dringlichkeit: string;
+  handlungsempfehlung: string;
+  vermutungen: { text: string; wahrscheinlichkeit: string }[];
+};
+
+export function downloadTxt(d: AssessmentExportData) {
+  const rows: string[] = [];
+
+  rows.push("Daten\n");
+
+  rows.push("Patientendaten");
+  rows.push(`Alter: ${d.alter}`);
+  rows.push(`Geschlecht: ${d.geschlecht}`);
+  rows.push(`Größe: ${d.groesse}`);
+  rows.push(`Gewicht: ${d.gewicht}`);
+  rows.push(`Temperatur: ${d.temperatur}`);
+  rows.push(`Dauer der Symptome: ${d.dauer}`);
+  rows.push(`Symptome werden schlimmer: ${d.worsening || "Keine Angabe"}`);
+  if (d.geschlecht !== "männlich") {
+    rows.push(`Schwangerschaft: ${d.schwangerschaft}`);
+    rows.push(`Stillzeit: ${d.stillzeit}`);
+  }
+  rows.push(`Medikation: ${d.medikation}`);
+  rows.push(`Allergien: ${d.allergien}`);
+  rows.push(`Vorerkrankungen: ${d.vorerkrankungen}`);
+
+  rows.push("\nSymptome");
+  if (d.symptome) rows.push(`Symptome: ${d.symptome}`);
+  if (d.textSymptome) rows.push(`Selbst beschriebene Beschwerden: ${d.textSymptome}`);
+
+  rows.push("\nKI Auswertung");
+  rows.push(`Dringlichkeitsstufe: ${d.dringlichkeit}`);
+  rows.push(`Handlungsempfehlung: ${d.handlungsempfehlung}`);
+
+  rows.push("\nVermutungen:");
+  d.vermutungen.forEach((v, i) => {
+    rows.push(`Vermutung ${i + 1}: ${v.text} (${v.wahrscheinlichkeit})`);
+    rows.push(`Wahrscheinlichkeit: ${v.wahrscheinlichkeit}`);
+  });
+
+  rows.push(`\nDaten erfasst am: ${d.datum}`);
+
+  const text = rows.join("\n");
+  const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "assessment.txt";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+export function downloadPdf(d: AssessmentExportData) {
+  const tableBody: string[][] = [];
+
+  tableBody.push(["Alter", d.alter]);
+  tableBody.push(["Geschlecht", d.geschlecht]);
+  tableBody.push(["Größe", d.groesse]);
+  tableBody.push(["Gewicht", d.gewicht]);
+  tableBody.push(["Medikation", d.medikation]);
+  tableBody.push(["Allergien", d.allergien]);
+  tableBody.push(["Vorerkrankungen", d.vorerkrankungen]);
+  tableBody.push(["Temperatur", d.temperatur]);
+  tableBody.push(["Dauer der Symptome", d.dauer]);
+  tableBody.push(["Symptome werden schlimmer", d.worsening || "Keine Angabe"]);
+  if (d.geschlecht !== "männlich") {
+    tableBody.push(["Schwangerschaft", d.schwangerschaft]);
+    tableBody.push(["Stillzeit", d.stillzeit]);
+  }
+  if (d.symptome) tableBody.push(["Symptome", d.symptome]);
+  if (d.textSymptome) tableBody.push(["selbst geschriebene Beschwerden", d.textSymptome]);
+  tableBody.push(["Dringlichkeitsstufe (KI)", d.dringlichkeit]);
+  tableBody.push(["Handlungsempfehlung (KI)", d.handlungsempfehlung]);
+  d.vermutungen.forEach((v, i) => {
+    tableBody.push([`Vermutung ${i + 1} (KI)`, v.text]);
+    tableBody.push(["Wahrscheinlichkeit", v.wahrscheinlichkeit]);
+  });
+  tableBody.push(["Daten erfasst am", d.datum]);
+
+  const doc = new jsPDF();
+  doc.setFontSize(16);
+  doc.text(`\n    Daten\n    `, 10, 10);
+  autoTable(doc, {
+    startY: 25,
+    theme: "plain",
+    body: tableBody,
+    styles: { fontSize: 10 },
+    headStyles: { fillColor: [41, 128, 185] },
+    alternateRowStyles: { fillColor: [245, 245, 245] },
+  });
+  doc.save("assessment.pdf");
+}
