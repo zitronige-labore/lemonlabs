@@ -6,8 +6,7 @@ import { useState, useEffect } from "react";
 import assessmentStyles from "../Assessment.module.css";
 
 // import to show access code
-import { getAccessCode, getAiDataFromDB, getUserDataFromDB } from "../../actions";
-import { makeDBDataReadable } from "../utils/assessmentData";
+import { getAccessCode } from "../../actions";
 import { downloadTxt, downloadPdf, type AssessmentExportData } from "../utils/exportUtils";
 
 import type {
@@ -30,7 +29,7 @@ type ResultStepProps = {
 };
 
 
-export async function ResultStep({
+export function ResultStep({
   basisData,
   additionalData,
   symptomText,
