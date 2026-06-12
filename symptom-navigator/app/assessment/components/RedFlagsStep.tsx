@@ -21,6 +21,7 @@ type RedFlagsStepProps = {
   noRedFlags: boolean;
   hasEmergency: boolean;
   isOffline: boolean;
+  startFormOffline: boolean;
 
   updateRedFlag: (
     key: keyof RedFlags,
@@ -36,6 +37,7 @@ export function RedFlagsStep({
   redFlags,
   noRedFlags,
   hasEmergency,
+  startFormOffline,
   updateRedFlag,
   selectNoRedFlags,
   onContinue,
@@ -159,7 +161,7 @@ export function RedFlagsStep({
         onClose={() => setShowSos(false)}
       />
 
-      {!hasEmergency && !isOffline && (
+      {!hasEmergency && (!isOffline || startFormOffline) && (
         <button
           type="button"
           className={assessmentStyles.primaryButton}
@@ -169,7 +171,7 @@ export function RedFlagsStep({
           Weiter
         </button>
       )}
-      {!hasEmergency && isOffline && specificallyNoEmergency && (
+      {!hasEmergency && isOffline && specificallyNoEmergency && !startFormOffline && (
         <p>
           Im Offline Modus geht es hier nicht weiter. Sobald eine Internetverbindung besteht, können Sie hier Symptome angeben aus auswerten lassen.
         </p>
