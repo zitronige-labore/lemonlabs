@@ -1,7 +1,8 @@
 // server side actions for assessment page
 "use server"
 
-import { log } from "console";
+import { getSymptomList } from "./assessment/medicalLogic/SymptomLists"; // for snomed mapping
+import { Step } from "./types/assessment"; // needed type
 import { connectionPool } from "./dbs/db"; // for database queries
 import { cookies } from 'next/headers' // for cookies
 import { parseString } from 'xml2js'; // for xml
@@ -145,13 +146,13 @@ export async function saveFormData(formData: FormData) {
     // insert for multiple values
 
     // allergies
-    insertListIntoSymptomsNoCertainCount(allergyList, "allergy", caseId);
+    await insertListIntoSymptomsNoCertainCount(allergyList, "allergy", caseId);
 
     // medication
-    insertListIntoSymptomsNoCertainCount(medicationList, "medication", caseId);
+    await insertListIntoSymptomsNoCertainCount(medicationList, "medication", caseId);
 
     // conditions
-    insertListIntoSymptomsNoCertainCount(conditionList, "condition", caseId);
+    await insertListIntoSymptomsNoCertainCount(conditionList, "condition", caseId);
 
 
     // writing raw text symptoms in db
@@ -193,9 +194,7 @@ export async function saveFormData(formData: FormData) {
     console.log("Formulardaten in DB gespeichert");
     console.log("DB Rückgabe:", dbReturn);
 
-    // set cookie to acess later on
-    const sessionCookie = await cookies();
-    sessionCookie.set({name: 'caseId', value: caseId, httpOnly: true, path: '/' });
+
     return caseId.toString();
 }
 
@@ -577,6 +576,8 @@ export async function sendDataToAi(basisData?: BasisData, additionalData?: Addit
     "\nsuspicion5:", result.assessment.suspicions.suspicion5.reasonForSuspicion5, 
     result.assessment.suspicions.suspicion5.probability5);
 
+
+    // writing result into db
     await connectionPool.query(
       `
       INSERT INTO recommendations (case_id, urgency_level, advice_text, suspicion1, suspicion2, suspicion3, suspicion4, suspicion5, probability1, probability2, probability3, probability4, probability5)
@@ -606,6 +607,7 @@ export async function sendDataToAi(basisData?: BasisData, additionalData?: Addit
     console.error('Fehler message:', error instanceof Error ? error.message : error);
   }
 }
+
 
 
 
@@ -785,112 +787,87 @@ return prompt;
 
 
 
-/*
-// function for fhir mapping patient data
-export async function mappingFhirPerson() {
+
+
+// function to map snomed code to symptom name
+export async function mapNameToSnomed(name: string) {
+
+  // list for symptom pages
+  const symptomList: {
+    step: Step;
+    symptoms: {
+    symptomName: string;
+    schmerzen: boolean;
+    symptomValue: string;
+    snomedCode: string;
+    }[];
+  }[] = getSymptomList();
+
+  for (const category of symptomList) {
+    const match = category.symptoms.find((s) => s.symptomValue === name);
+    if (match) {
+      return match.snomedCode;
+    }
+  }
+  return null;
+}
+
+// function for fhir stuff example
+export async function fhirExample(caseId: string) {
   
-  // cookies auslesen um case id zu bekommen
-  const cookieStore = await cookies();
-  const caseId = cookieStore.get('caseId')?.value;
+  // get all needed data from db
+  const userData = await getUserDataFromDB(caseId);
+  const aiData = await getAiDataFromDB(caseId);
+  
+  // example for getting a snomed code
+  const snomedCode = mapNameToSnomed(
+    "Verzerrtsehen: Gerade Linien (z. B. Fliesenbaufugen, Textzeilen) erscheinen verbogen, wellig oder verzerrt (Hinweis auf Makulaerkrankung)."
+  )
 
-  // daten fuer patient auslesen
-  let genderDB = await connectionPool.query(
-    `
-    SELECT sex FROM cases
-    WHERE case_id = $1
-    `,
-    [caseId]);
+  // example for accesssing a specific part of db data
+
+  // einzelnen wert ansprechen
+  // const ageOnItsOwn = userData.caseData[0]?.age;
+  // einfach das ganze objekt uebernehmen, db rueckgaben enthalten immer objekte mit spaltenname: inhalt, deswegen {}, statt []
+  // so kann mann dann auf alle inhalte zugreifen
+  // const {sex, age, pregnancy, date} = userData.caseData[0] ?? {};
+  // so kann man die dann ansprechen
+  // const gender = sex;
 
 
-  // gender in fhir akzeptierte strings umwandeln
-  let gender = genderDB.rows[0].sex;
-  if (gender == 'm') {
-    gender = 'male';
-  } else if (gender == 'w') {
-    gender = 'female';
-  } else if (gender == 'd') {
-    gender = 'other';
-  }
-  else {
-    gender = 'unknown';
-  }
+  // mapping fuer alle daten
+  // caseData
+  const { sex, age, pregnancy, date } = userData.caseData[0] ?? {};
 
-  // schaetzung fuer birthdate basierend auf dem alter, evtl. rausnehmen
-  const DBage = await connectionPool.query(
-  `
-  SELECT age FROM cases
-  WHERE case_id = $1
-  `,
-  [caseId]); 
-    
-  const approxBirthdate = new Date().getFullYear() - DBage.rows[0].age + "-01-01";
+  // additionalInfoData
+  const { weight, height, temperature, duration, worsening, breastfeeding, extraInfo } = userData.additionalInfoData[0] ?? {};
 
-  const patient = {
-  "resourceType" : "Patient",
-  "identifier" : [],
-  "active" : true,
-  "gender" : gender, // male | female | other | unknown
-  "birthDate" : approxBirthdate, // The date of birth for the individual
-  "managingOrganization" : "lemonlabs - th mannheim", // Organization that is the custodian of the patient record
-  }
+  // allergyData (string liste)
+  const { allergies } = userData.allergyData ?? {};
 
-  return patient;
+  // medicationData (string liste)
+  const { medication } = userData.medicationData ?? {};
+
+  // conditionsData (string liste)
+  const { conditions } = userData.conditionsData ?? {};
+
+  // symptomData (list of prewritten symptoms)
+  const symptoms = userData.symptomData.map(
+    ({ name_de, painscale, bodyregion }: { name_de: string; painscale: number | null; bodyregion: string | null }) => ({
+      name_de,
+      painscale,
+      bodyregion,
+    })
+  );
+  // accessing example:
+  const nameOfFistSymptom = symptoms[0].name_de;
+
+  // textSymptomData (list of self written symptoms)
+  const textSymptoms = userData.textSymptomData.map(
+  ({ raw_symptoms, painscale, bodyregion }: { raw_symptoms: string; painscale: number | null; bodyregion: string | null }) => ({
+    raw_symptoms,
+    painscale,
+    bodyregion,
+  })
+);
 }
-
-
-
-
-// function for fhir mapping observations iun our case symptoms and basisdata and additional data 
-export async function mappingFhirObservation() {
-
-  const ovservation = {
-  "resourceType" : "Observation",
-  // from Resource: id, meta, implicitRules, and language
-  // from DomainResource: text, contained, extension, and modifierExtension
-  "identifier" : [], // Business Identifier for observation
-  "category" : [], // Classification of  type of observation
-  "code" : {}, // I R!  Type of observation (code / type)
-  "subject" : "Patient", // Who and/or what the observation is about
-  "organizer" : null, // I This observation organizes/groups a set of sub-observations
-  // effective[x]: Clinically relevant time/time-period for observation. One of these 4:
-  "effectiveDateTime" : "<dateTime>",
-  "issued" : "<instant>", // Date/Time this version was made available
-  "performer" : "Patient", // Who is responsible for the observation
-  // value[x]: Actual result. One of these 12:
-  "valueQuantity" : {},
-  "valueCodeableConcept" : {},
-  "valueString" : "<string>",
-  "valueBoolean" : null,
-  "valueInteger" : null,
-  "valueTime" : "<time>",
-  "valueDateTime" : "<dateTime>",
-  "valuePeriod" : {},
-  "interpretationContext" : [], // Context for understanding the observation
-  "note" : [], // Comments about the observation
-  "bodySite" : {}, // DEPRECATED: Observed body part, CodeableReference(BodySite)
-  "bodyStructure" : {}, // Observed body structure,  CodeableReference(BodyStructure) 
-  "method" : {}, // How it was done, CodeableConcept
-  "hasMember" : [], // Related resource that belongs to the Observation group, { Reference(Observation|QuestionnaireResponse) }
-  "derivedFrom" : [], // Related resource from which the observation is made, { Reference(DocumentReference|ImagingSelection|ImagingStudy|Observation|QuestionnaireResponse) }
-  "component" : [{ // I Component results
-    "code" : {}, // I R!  Type of component observation (code / type)
-    // value[x]: Actual component result. One of these 12:
-    "valueQuantity" : {},
-    "valueCodeableConcept" : {},
-    "valueString" : "<string>",
-    "valueBoolean" : null,
-    "valueInteger" : null,
-    "valueRange" : {},
-    "valueRatio" : {},
-    "valueSampledData" : {},
-    "valueTime" : "<time>",
-    "valueDateTime" : "<dateTime>",
-    "valuePeriod" : {},
-    "valueAttachment" : {},
-    "dataAbsentReason" : {}, // I Why the component result value is missing
-    "interpretation" : [], // High, low, normal, etc
-    "referenceRange" : [] // Provides guide for interpretation of component result value
-  }]
-}
-
-}*/

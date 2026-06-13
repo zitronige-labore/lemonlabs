@@ -38,16 +38,32 @@ jest.mock("../app/dbs/db", () => ({
   },
 }));
 
-// cookie mock
-const mockCookieSet = jest.fn();
-const mockCookieGet = jest.fn();
-jest.mock("next/headers", () => ({
-  cookies: jest.fn(() =>
-    Promise.resolve({
-      set: mockCookieSet,
-      get: mockCookieGet,
-    })
-  ),
+// mock for SymptomLists
+jest.mock("../app/assessment/medicalLogic/SymptomLists", () => ({
+  getSymptomList: jest.fn(() => [
+    {
+      step: "Augen",
+      symptoms: [
+        {
+          symptomName: "Verzerrtsehen",
+          schmerzen: false,
+          symptomValue: "Verzerrtsehen: Gerade Linien erscheinen verbogen.",
+          snomedCode: "1023001",
+        },
+      ],
+    },
+    {
+      step: "Hand",
+      symptoms: [
+        {
+          symptomName: "Parästhesien",
+          schmerzen: false,
+          symptomValue: "Parästhesien: Brennen, Kribbeln oder Ameisenlaufen.",
+          snomedCode: "43214002",
+        },
+      ],
+    },
+  ]),
 }));
 
 // Mock for ai fetch (Ollama/MedGemma API)
@@ -71,6 +87,7 @@ import {
   sendDataToAi,
   buildUnifiedData,
   buildAiPrompt,
+  mapNameToSnomed,
 } from "../app/actions";
 
 
@@ -141,7 +158,6 @@ const sampleSymptomText: string[] = [`{ name: "Ich blute", bodyRegion: "Kopf", p
 describe("saveFormData", () => {
   beforeEach(() => {
     mockQuery.mockReset();
-    mockCookieSet.mockReset();
 
     // INSERT INTO cases returns case_id, access_code
     mockQuery.mockResolvedValueOnce({
@@ -153,7 +169,7 @@ describe("saveFormData", () => {
     mockQuery.mockResolvedValue({ rows: [] });
   });
 
-  it("writes case-Basisdata into DB and sets Cookie", async () => {
+  it("writes case-Basisdata into DB", async () => {
     const formData = buildFormData();
 
     await saveFormData(formData);
@@ -168,10 +184,6 @@ describe("saveFormData", () => {
     // pregnancy correctly converted
     expect(firstCall[1]).toContain(false);
 
-    // cookie set
-    expect(mockCookieSet).toHaveBeenCalledWith(
-      expect.objectContaining({ name: "caseId", value: "42" })
-    );
   });
 
   it("converts 'männlich' correctly to 'm'", async () => {
@@ -1054,182 +1066,208 @@ describe("sendDataToAi", () => {
     process.env.MEDGEMMA_API_MODEL = "fake-model";
   });
 
-  describe("with cache data (basisData, additionalData, symptomText, selectedymptoms)", () => {
-    const basisData = buildBasisData();
-    const additionalData = buildAdditionalData();
+describe("with cache data (basisData, additionalData, symptomText, selectedymptoms)", () => {
+  const basisData = buildBasisData();
+  const additionalData = buildAdditionalData();
 
-    it("returns the parsed AI result", async () => {
-      const result = await sendDataToAi(
-        basisData,
-        additionalData,
-        sampleSymptomText,
-        sampleSelectedSymptoms,
-        "19"
-      );
+  it("returns the parsed AI result", async () => {
+    const result = await sendDataToAi(
+      basisData,
+      additionalData,
+      sampleSymptomText,
+      sampleSelectedSymptoms,
+      "19"
+    );
 
-      expect(result).toHaveProperty("assessment");
-      expect(result.assessment).toHaveProperty("urgency", "3");
-      expect(result.assessment.suspicions.suspicion1.reasonForSuspicion1).toBe("Grippe");
-    });
-
-    it("does not query getUserDataFromDB when cache data is provided", async () => {
-      await sendDataToAi(
-        basisData,
-        additionalData,
-        sampleSymptomText,
-        sampleSelectedSymptoms,
-        "19"
-      );
-
-      const dbDataQueries = mockQuery.mock.calls.filter(
-        (call) =>
-          typeof call[0] === "string" &&
-          (call[0].includes("FROM cases") || call[0].includes("FROM case_symptoms"))
-      );
-      expect(dbDataQueries).toHaveLength(0);
-    });
-
-    it("writes the result to the recommendations table with the given caseId", async () => {
-      await sendDataToAi(
-        basisData,
-        additionalData,
-        sampleSymptomText,
-        sampleSelectedSymptoms,
-        "19"
-      );
-
-      const insertCall = mockQuery.mock.calls.find(
-        (call) => typeof call[0] === "string" && call[0].includes("INSERT INTO recommendations")
-      );
-      expect(insertCall).toBeDefined();
-      expect(insertCall![1][0]).toBe("19"); // caseId
-      expect(insertCall![1][1]).toBe("3"); // urgency_level
-      expect(insertCall![1][2]).toBe("Bitte einen Arzt aufsuchen."); // advice_text
-      expect(insertCall![1][8]).toBe(70); // probability1 * 100
-    });
-
-    it("sends the fetch request to the configured MEDGEMMA_API_URL", async () => {
-      await sendDataToAi(
-        basisData,
-        additionalData,
-        sampleSymptomText,
-        sampleSelectedSymptoms,
-        "19"
-      );
-
-      expect(mockFetch).toHaveBeenCalledWith(
-        "http://fake-ai-url/api",
-        expect.objectContaining({ method: "POST" })
-      );
-    });
-
-    it("passes the Authorization header with the API key", async () => {
-      await sendDataToAi(
-        basisData,
-        additionalData,
-        sampleSymptomText,
-        sampleSelectedSymptoms,
-        "19"
-      );
-
-      expect(mockFetch).toHaveBeenCalledWith(
-        expect.any(String),
-        expect.objectContaining({
-          headers: expect.objectContaining({
-            Authorization: "Bearer fake-key",
-          }),
-        })
-      );
-    });
-
-    it("returns undefined if the AI-API throws an error", async () => {
-      mockFetch.mockRejectedValueOnce(new Error("Network Error"));
-
-      const result = await sendDataToAi(
-        basisData,
-        additionalData,
-        sampleSymptomText,
-        sampleSelectedSymptoms,
-        "19"
-      );
-
-      expect(result).toBeUndefined();
-    });
-
-    it("returns undefined when the AI-API returns a string error", async () => {
-      mockFetch.mockRejectedValueOnce("einfacher string fehler");
-
-      const result = await sendDataToAi(
-        basisData,
-        additionalData,
-        sampleSymptomText,
-        sampleSelectedSymptoms,
-        "19"
-      );
-
-      expect(result).toBeUndefined();
-    });
+    expect(result).toHaveProperty("assessment");
+    expect(result.assessment).toHaveProperty("urgency", "3");
+    expect(result.assessment.suspicions.suspicion1.reasonForSuspicion1).toBe("Grippe");
   });
 
-  describe("with only caseId (DB fallback)", () => {
-    beforeEach(() => {
-      // getUserDataFromDB: 7 Queries
-      mockQuery
-        .mockResolvedValueOnce({ rows: [{ sex: "w", age: 28, pregnancy: false }] })
-        .mockResolvedValueOnce({ rows: [{ name_de: "Kopfschmerz", painscale: 4, bodyregion: "Kopf" }] })
-        .mockResolvedValueOnce({ rows: [] })
-        .mockResolvedValueOnce({ rows: [{ weight: 60, height: 165, temperature: 38.5, duration: 2, worsening: true, breastfeeding: false, extraInfo: "" }] })
-        .mockResolvedValueOnce({ rows: [] })
-        .mockResolvedValueOnce({ rows: [] })
-        .mockResolvedValueOnce({ rows: [] });
+  it("does not query getUserDataFromDB when cache data is provided", async () => {
+    await sendDataToAi(
+      basisData,
+      additionalData,
+      sampleSymptomText,
+      sampleSelectedSymptoms,
+      "19"
+    );
 
-      // INSERT INTO recommendations
-      mockQuery.mockResolvedValue({ rows: [] });
-    });
-
-    it("falls back to DB data when no cache data is provided", async () => {
-      const result = await sendDataToAi(undefined, undefined, undefined, undefined, "19");
-
-      expect(result).toHaveProperty("assessment");
-      expect(result.assessment).toHaveProperty("urgency", "3");
-    });
-
-    it("queries getUserDataFromDB when no cache data is provided", async () => {
-      await sendDataToAi(undefined, undefined, undefined, undefined, "19");
-
-      const dbDataQuery = mockQuery.mock.calls.find(
-        (call) => typeof call[0] === "string" && call[0].includes("FROM cases")
-      );
-      expect(dbDataQuery).toBeDefined();
-      expect(dbDataQuery![1]).toEqual(["19"]);
-    });
-
-    it("writes the result to the recommendations table", async () => {
-      await sendDataToAi(undefined, undefined, undefined, undefined, "19");
-
-      const insertCall = mockQuery.mock.calls.find(
-        (call) => typeof call[0] === "string" && call[0].includes("INSERT INTO recommendations")
-      );
-      expect(insertCall).toBeDefined();
-      expect(insertCall![1][0]).toBe("19");
-      expect(insertCall![1][1]).toBe("3");
-    });
+    const dbDataQueries = mockQuery.mock.calls.filter(
+      (call) =>
+        typeof call[0] === "string" &&
+        (call[0].includes("FROM cases") || call[0].includes("FROM case_symptoms"))
+    );
+    expect(dbDataQueries).toHaveLength(0);
   });
 
-  describe("with neither cache data nor caseId", () => {
-    it("returns undefined and logs an error", async () => {
-      const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+  it("writes the result to the recommendations table with the given caseId", async () => {
+    await sendDataToAi(
+      basisData,
+      additionalData,
+      sampleSymptomText,
+      sampleSelectedSymptoms,
+      "19"
+    );
 
-      const result = await sendDataToAi(undefined, undefined, undefined, undefined, undefined);
+    const insertCall = mockQuery.mock.calls.find(
+      (call) => typeof call[0] === "string" && call[0].includes("INSERT INTO recommendations")
+    );
+    expect(insertCall).toBeDefined();
+    expect(insertCall![1][0]).toBe("19"); // caseId
+    expect(insertCall![1][1]).toBe("3"); // urgency_level
+    expect(insertCall![1][2]).toBe("Bitte einen Arzt aufsuchen."); // advice_text
+    expect(insertCall![1][8]).toBe(70); // probability1 * 100
+  });
 
-      expect(result).toBeUndefined();
-      expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining("Keine Daten verfügbar")
-      );
-      expect(mockFetch).not.toHaveBeenCalled();
+  it("sends the fetch request to the configured MEDGEMMA_API_URL", async () => {
+    await sendDataToAi(
+      basisData,
+      additionalData,
+      sampleSymptomText,
+      sampleSelectedSymptoms,
+      "19"
+    );
 
-      consoleSpy.mockRestore();
-    });
+    expect(mockFetch).toHaveBeenCalledWith(
+      "http://fake-ai-url/api",
+      expect.objectContaining({ method: "POST" })
+    );
+  });
+
+  it("passes the Authorization header with the API key", async () => {
+    await sendDataToAi(
+      basisData,
+      additionalData,
+      sampleSymptomText,
+      sampleSelectedSymptoms,
+      "19"
+    );
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          Authorization: "Bearer fake-key",
+        }),
+      })
+    );
+  });
+
+  it("returns undefined if the AI-API throws an error", async () => {
+    mockFetch.mockRejectedValueOnce(new Error("Network Error"));
+
+    const result = await sendDataToAi(
+      basisData,
+      additionalData,
+      sampleSymptomText,
+      sampleSelectedSymptoms,
+      "19"
+    );
+
+    expect(result).toBeUndefined();
+  });
+
+  it("returns undefined when the AI-API returns a string error", async () => {
+    mockFetch.mockRejectedValueOnce("einfacher string fehler");
+
+    const result = await sendDataToAi(
+      basisData,
+      additionalData,
+      sampleSymptomText,
+      sampleSelectedSymptoms,
+      "19"
+    );
+
+    expect(result).toBeUndefined();
   });
 });
+
+describe("with only caseId (DB fallback)", () => {
+  beforeEach(() => {
+    // getUserDataFromDB: 7 Queries
+    mockQuery
+      .mockResolvedValueOnce({ rows: [{ sex: "w", age: 28, pregnancy: false }] })
+      .mockResolvedValueOnce({ rows: [{ name_de: "Kopfschmerz", painscale: 4, bodyregion: "Kopf" }] })
+      .mockResolvedValueOnce({ rows: [] })
+      .mockResolvedValueOnce({ rows: [{ weight: 60, height: 165, temperature: 38.5, duration: 2, worsening: true, breastfeeding: false, extraInfo: "" }] })
+      .mockResolvedValueOnce({ rows: [] })
+      .mockResolvedValueOnce({ rows: [] })
+      .mockResolvedValueOnce({ rows: [] });
+
+    // INSERT INTO recommendations
+    mockQuery.mockResolvedValue({ rows: [] });
+  });
+
+  it("falls back to DB data when no cache data is provided", async () => {
+    const result = await sendDataToAi(undefined, undefined, undefined, undefined, "19");
+
+    expect(result).toHaveProperty("assessment");
+    expect(result.assessment).toHaveProperty("urgency", "3");
+  });
+
+  it("queries getUserDataFromDB when no cache data is provided", async () => {
+    await sendDataToAi(undefined, undefined, undefined, undefined, "19");
+
+    const dbDataQuery = mockQuery.mock.calls.find(
+      (call) => typeof call[0] === "string" && call[0].includes("FROM cases")
+    );
+    expect(dbDataQuery).toBeDefined();
+    expect(dbDataQuery![1]).toEqual(["19"]);
+  });
+
+  it("writes the result to the recommendations table", async () => {
+    await sendDataToAi(undefined, undefined, undefined, undefined, "19");
+
+    const insertCall = mockQuery.mock.calls.find(
+      (call) => typeof call[0] === "string" && call[0].includes("INSERT INTO recommendations")
+    );
+    expect(insertCall).toBeDefined();
+    expect(insertCall![1][0]).toBe("19");
+    expect(insertCall![1][1]).toBe("3");
+  });
+});
+
+describe("with neither cache data nor caseId", () => {
+  it("returns undefined and logs an error", async () => {
+    const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+
+    const result = await sendDataToAi(undefined, undefined, undefined, undefined, undefined);
+
+    expect(result).toBeUndefined();
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.stringContaining("Keine Daten verfügbar")
+    );
+    expect(mockFetch).not.toHaveBeenCalled();
+
+    consoleSpy.mockRestore();
+  });
+});
+});
+});
+
+
+
+describe("mapNameToSnomed", () => {
+  it("returns the correct snomedCode for an existing symptomValue", async () => {
+    const result = await mapNameToSnomed(
+      "Verzerrtsehen: Gerade Linien erscheinen verbogen."
+    );
+
+    expect(result).toBe("1023001");
+  });
+
+  it("finds matches across different categories", async () => {
+    const result = await mapNameToSnomed(
+      "Parästhesien: Brennen, Kribbeln oder Ameisenlaufen."
+    );
+
+    expect(result).toBe("43214002");
+  });
+
+  it("returns null when no matching symptomValue exists", async () => {
+    const result = await mapNameToSnomed("Nicht existierendes Symptom");
+
+    expect(result).toBeNull();
+  });
 });
