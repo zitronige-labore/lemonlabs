@@ -499,7 +499,7 @@ export default function Home() {
     let triesLeft = 3;
 
     try {
-      if(await redFlagScan) {
+      if(await redFlagScan(basisData, additionalData, selectedSubRegion!, selectedSymptoms, symptomText)) {
         setRedFlagScanPositive(true)
       }
     }
