@@ -1,8 +1,25 @@
+// this file contains the symptom category list
+// this list can be adjusted to change the categories leading to the specific symptoms
+
+
 import { Step } from "@/app/types/assessment";
 
 export function getSymptomCategoryList(gender: string) {
 
   // list for category pages
+  /* pattern: 
+  {step: this is a subregion step, so either:
+    "Kopf", "Augen", "Ohren", "Nase", "Mund / Zähne", "Hals", "Nacken", "Brust links", "Brust rechts",
+    "Oberbauch", "Unterbauch", "Rücken oben", "Rücken unten", "Becken", "Genitalbereich","Schulter",
+    "Oberarm", "Unterarm", "Hand", "Oberschenkel", "Knie", "Unterschenkel", "Fuß", "Psyche", "Keine bestimmte Region / mehrere Stellen";
+    since there are already symptoms for all subregions, please just adjust the categories as needed
+    ,
+    categories:[
+        { category: "this is the text that will show up on the category button", step: "this is the name for the next category step, 
+        this *exact* name must show up as a step entry in SymptomList.ts in the same folder as this file" },
+        { category: "more categories can be added here", step: "aussenOhr" }
+      ]
+    },*/
   const categoryList: {
   step: Step;
   categories: {
