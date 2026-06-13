@@ -118,6 +118,9 @@ export default function Home() {
   // state to check if offline
   const [isOffline, setIsOffline] = useState<boolean>(false);
 
+  // state in case form should be started in offline mode
+  const [startFormOffline, setStartFormOffline] = useState<boolean>(false)
+
 
   // event listener to check if user goes offline or comes back online
   useEffect(() => {
@@ -487,14 +490,29 @@ export default function Home() {
 
     setIsLoading(true);
 
-    try {
-      const id = await handleSaveForm();
-      setCaseId(id)
+    let id;
+    let triesLeft = 3;
 
-      const aiAnswer = await sendDataToAi(id);
-      setAiAnswer(aiAnswer);
+    
+    try {
+      id = await handleSaveForm();
+      setCaseId(id)
     } catch (error) {
-      console.error("Error saving form or fetching AI response:", error);
+      console.error("Error fetching AI response:", error);
+    }
+
+    // since ai answer goes wring sometimes, up to 3 tries are allowed
+    while(triesLeft>0) {
+      try {
+        const aiAnswer = await sendDataToAi(basisData, additionalData, symptomText, selectedSymptoms, id);
+        setAiAnswer(aiAnswer);
+        triesLeft = 0;
+      } catch (error) {
+        if(triesLeft!>0) {
+          console.error("Error saving data into db:", error);
+        }
+        triesLeft--;
+      }
     }
 
     setIsLoading(false);
@@ -518,6 +536,7 @@ export default function Home() {
           resetProcess={resetProcess}
           setStep={goToStep}
           isOffline={isOffline}
+          setStartFormOffline={setStartFormOffline}
         />
       )}
 
@@ -571,6 +590,7 @@ export default function Home() {
               selectNoRedFlags={selectNoRedFlags}
               onContinue={() => goToStep("basisStart")}
               isOffline={isOffline}
+              startFormOffline={startFormOffline}
             />
           )}
 

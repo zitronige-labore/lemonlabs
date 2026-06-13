@@ -14,6 +14,9 @@ test.beforeEach(async () => {
 
 test("complete assessment flow is saved correctly to the database", async ({ page }) => {
 
+  // browser log
+  page.on("console", (msg) => console.log("BROWSER LOG:", msg.text()));
+
   // navigate to start page
   await page.goto("/");
   await page.getByRole("button", { name: "Ersteinschätzung von Symptomen" }).click();
