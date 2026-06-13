@@ -5,6 +5,7 @@ import { log } from "console";
 import { connectionPool } from "./dbs/db"; // for database queries
 import { cookies } from 'next/headers' // for cookies
 import { parseString } from 'xml2js'; // for xml
+import { AdditionalData, BasisData } from "./types/assessment";
 
 // function to save form data in variables and query to write to the db
 // formData is used instead of passing different data types to stay as close as possible to the default behaviour of a form action
@@ -495,108 +496,43 @@ export async function getAccessCode(caseId: string) {
 
 
 // function to send and recieve promt/response from ollama, same concept for the argument as getDBData above
-export async function sendDataToAi(caseId: string) {
+export async function sendDataToAi(basisData?: BasisData, additionalData?: AdditionalData, symptomText?: string[], selectedymptoms?: string[], caseId?: string) {
 
 
+  // using cashe or db data depending on arguments given
+  let cacheData = null;
+  let DBdata = null;
 
-  // get data from db
-  // DB query
-  // to be replaced later
-  const DatenAusDB = await getUserDataFromDB(caseId);
 
-  // db data as string
-  const data = JSON.stringify(DatenAusDB, null, 2);
+  if (basisData && additionalData && symptomText && selectedymptoms) {
+    cacheData = await buildUnifiedData(basisData, additionalData, symptomText, selectedymptoms)
+  }
+
+  if(cacheData == null && caseId) {
+    // get data from db
+    DBdata = await getUserDataFromDB(caseId);
+  }
+
+  const data = cacheData != null ? cacheData : DBdata;
+
+  // in case neither db data nor cashe data are available
+  if (data == null) {
+    console.error("Keine Daten verfügbar (weder Cache noch DB).");
+    return;
+  }
+  
 
   // define promt
-  const prompt = `
-  EINGABEDATEN:
-  - Alter, Geschlecht, Schwangerschaft
-  - Optional: Gewicht (kg), Groesse (cm), Koerpertemperatur (°C)
-  - Optional: Symptomdauer (Tage), Verschlimmerung, Stillzeit, Allergien, Vorerkrankungen, Medikamente
-  - Symptome: entweder als "raw_symptoms" (Freitext) oder als "name_de" (vordefiniertes Symptom)
-  - Schmerzskala (painscale) und Koerperregion (bodyregion) pro Symptom
-  - Falls die Koerperregion nicht zur Symptombeschreibung passt, ignoriere sie
-  - null-Eintraege ignorieren
+  const prompt = await buildAiPrompt(data)
 
-  Erstelle basierend auf diesen Daten:
-  1. eine Einschaetzung der Dringlichkeit auf einer Skala von 1 bis 5
-  ( 1 - Beobachtung der Beschwerden
-    2 -  Arztbesuch erforderlich
-    3 -  Zeitnahe medizinische Abklärung erforderlich
-    4 - Möglicher medizinischer Notfall
-    5 - Akuter Notfall ),
-  2. eine Liste von 5 moeglichen Vermutungen
-  3. Wahrscheinlichkeiten fuer jede Vermutung (NUR als 0.XX angeben, NICHT in Prozent umwandeln oder mit Worten)
-  4. kurze Begruendung der Vermutungen
-  5. eine kurze Handlungsempfehlung in einfacher Sprache fuer den Patienten, hier keine Vermutungen
-  Hier sind die Daten: ${data}`;
+  console.log("promt: ", prompt, "case data: ", data.caseData, 
+    "additionalInfo: ", data.additionalInfoData, 
+    "symptoms: ", data.symptomData, "text symptoms: ", data.textSymptomData, 
+    "conditions: ", data.conditionsData.conditions, "allergies: ", data.allergyData.allergies, 
+    "medication: ", data.medicationData.medication)
 
-  // JSON schema (looks weird because it used to be xml (yes there was a reason for that too, it was not just because I felt like it))
-  const format = {
-  type: "object",
-  properties: {
-    assessment: {
-      type: "object",
-      properties: {
-        urgency: { 
-          type: "number",
-          minimum: 1,
-          maximum: 5
-        },
-        urgencyText: { type: "string" },
-        suspicions: {
-          type: "object",
-          properties: {
-            suspicion1: {
-              type: "object",
-              properties: {
-                reasonForSuspicion1: { type: "string" },
-                probability1: { type: "string" }
-              },
-              required: ["reasonForSuspicion1", "probability1"]
-            },
-            suspicion2: {
-              type: "object",
-              properties: {
-                reasonForSuspicion2: { type: "string" },
-                probability2: { type: "string" }
-              },
-              required: ["reasonForSuspicion2", "probability2"]
-            },
-            suspicion3: {
-              type: "object",
-              properties: {
-                reasonForSuspicion3: { type: "string" },
-                probability3: { type: "string" }
-              },
-              required: ["reasonForSuspicion3", "probability3"]
-            },
-            suspicion4: {
-              type: "object",
-              properties: {
-                reasonForSuspicion4: { type: "string" },
-                probability4: { type: "string" }
-              },
-              required: ["reasonForSuspicion4", "probability4"]
-            },
-            suspicion5: {
-              type: "object",
-              properties: {
-                reasonForSuspicion5: { type: "string" },
-                probability5: { type: "string" }
-              },
-              required: ["reasonForSuspicion5", "probability5"]
-            }
-          },
-          required: ["suspicion1", "suspicion2", "suspicion3", "suspicion4", "suspicion5"]
-        },
-        nextSteps: { type: "string" }
-      },
-      required: ["urgency", "urgencyText", "suspicions", "nextSteps"]
-    }
-  },
-  required: ["assessment"]
-};
+  // JSON schema for ai answer (looks weird because it used to be xml (yes there was a reason for that too, it was not just because I felt like it))
+  const format = aiAnswerFormat;
 
   try {
     // Make request to Ollama API
@@ -670,6 +606,181 @@ export async function sendDataToAi(caseId: string) {
     console.error('Fehler message:', error instanceof Error ? error.message : error);
   }
 }
+
+
+
+
+
+// function to build one type of data construct for the ai to proccess
+export async function buildUnifiedData(
+  basisData?: BasisData,
+  additionalData?: AdditionalData,
+  symptomText?: string[],
+  selectedymptoms?: string[]
+) {
+  if (!basisData || !additionalData || !symptomText || !selectedymptoms) {
+    return null;
+  }
+
+  return {
+    caseData: basisData,
+    symptomData: selectedymptoms,
+    textSymptomData: symptomText,
+    additionalInfoData: {
+      duration: additionalData.duration,
+      temperature: additionalData.temperature,
+      worsening: additionalData.worsening,
+      weight: additionalData.weight,
+      height: additionalData.height,
+      breastfeeding: additionalData.breastfeeding,
+      extraInfo: additionalData.extraInfo,
+    },
+    allergyData: { allergies: additionalData.allergies },
+    medicationData: { medication: additionalData.medication },
+    conditionsData: { conditions: additionalData.conditions },
+  };
+}
+
+
+
+
+// building prompt
+export async function buildAiPrompt(
+  data: NonNullable<
+    Awaited<ReturnType<typeof buildUnifiedData>>
+    | Awaited<ReturnType<typeof getUserDataFromDB>>
+  >
+) {
+  const prompt = `
+  EINGABEDATEN:
+  - Alter, Geschlecht, Schwangerschaft:
+  ${JSON.stringify(data.caseData, null, 2)}
+  - Optional: Gewicht (kg), Groesse (cm), Koerpertemperatur (°C), Symptomdauer (Tage), 
+  Verschlimmerung, Stillzeit, Allergien, Vorerkrankungen, Medikamente:
+  ${JSON.stringify(data.additionalInfoData, null, 2)}
+  ${JSON.stringify(data.allergyData, null, 2)}
+  ${JSON.stringify(data.conditionsData, null, 2)}
+  ${JSON.stringify(data.medicationData, null, 2)}
+  - Symptome (vordefiniert, Feld "name_de"):
+    - Schmerzskala (painscale) und Koerperregion (bodyregion) pro Symptom
+    - Falls die Koerperregion nicht zur Symptombeschreibung passt, ignoriere sie
+    ${JSON.stringify(data.symptomData, null, 2)}
+  -Frei beschriebene Symptome (Feld "raw_symptoms"):
+    - Schmerzskala (painscale) und Koerperregion (bodyregion) pro Symptom
+    - Falls die Koerperregion nicht zur Symptombeschreibung passt, ignoriere sie
+    ${JSON.stringify(data.textSymptomData, null, 2)}
+  - null-Eintraege und leere Listen ueberall ignorieren
+
+  Erstelle basierend auf diesen Daten:
+  1. eine Einschaetzung der Dringlichkeit auf einer Skala von 1 bis 5
+  ( 1 - Beobachtung der Beschwerden
+    2 -  Arztbesuch erforderlich
+    3 -  Zeitnahe medizinische Abklärung erforderlich
+    4 - Möglicher medizinischer Notfall
+    5 - Akuter Notfall ),
+  2. eine Liste von 5 moeglichen Vermutungen
+  3. Wahrscheinlichkeiten fuer jede Vermutung (NUR als 0.XX angeben, NICHT in Prozent umwandeln oder mit Worten)
+  4. kurze Begruendung der Vermutungen
+  5. eine kurze Handlungsempfehlung in einfacher Sprache fuer den Patienten, hier keine Vermutungen
+`;
+
+return prompt;
+}
+
+
+
+
+// JSON schema for ai answer (looks weird because it used to be xml (yes there was a reason for that too, it was not just because I felt like it))
+  const aiAnswerFormat = {
+  type: "object",
+  properties: {
+    assessment: {
+      type: "object",
+      properties: {
+        urgency: { 
+          type: "number",
+          minimum: 1,
+          maximum: 5
+        },
+        urgencyText: { type: "string" },
+        suspicions: {
+          type: "object",
+          properties: {
+            suspicion1: {
+              type: "object",
+              properties: {
+                reasonForSuspicion1: { type: "string" },
+                probability1: {
+                  type: "number",
+                  minimum: 0,
+                  maximum: 1,
+                  description: "Wahrscheinlichkeit als Dezimalzahl zwischen 0 und 1, z.B. 0.35"
+                }
+              },
+              required: ["reasonForSuspicion1", "probability1"]
+            },
+            suspicion2: {
+              type: "object",
+              properties: {
+                reasonForSuspicion2: { type: "string" },
+                probability2: {
+                  type: "number",
+                  minimum: 0,
+                  maximum: 1,
+                  description: "Wahrscheinlichkeit als Dezimalzahl zwischen 0 und 1, z.B. 0.35"
+                }
+              },
+              required: ["reasonForSuspicion2", "probability2"]
+            },
+            suspicion3: {
+              type: "object",
+              properties: {
+                reasonForSuspicion3: { type: "string" },
+                probability3: {
+                  type: "number",
+                  minimum: 0,
+                  maximum: 1,
+                  description: "Wahrscheinlichkeit als Dezimalzahl zwischen 0 und 1, z.B. 0.35"
+                }
+              },
+              required: ["reasonForSuspicion3", "probability3"]
+            },
+            suspicion4: {
+              type: "object",
+              properties: {
+                reasonForSuspicion4: { type: "string" },
+                probability4: {
+                  type: "number",
+                  minimum: 0,
+                  maximum: 1,
+                  description: "Wahrscheinlichkeit als Dezimalzahl zwischen 0 und 1, z.B. 0.35"
+                }
+              },
+              required: ["reasonForSuspicion4", "probability4"]
+            },
+            suspicion5: {
+              type: "object",
+              properties: {
+                reasonForSuspicion5: { type: "string" },
+                probability5:  {
+                  type: "number",
+                  minimum: 0,
+                  maximum: 1,
+                  description: "Wahrscheinlichkeit als Dezimalzahl zwischen 0 und 1, z.B. 0.35"
+                }
+              },
+              required: ["reasonForSuspicion5", "probability5"]
+            }
+          },
+          required: ["suspicion1", "suspicion2", "suspicion3", "suspicion4", "suspicion5"]
+        },
+        nextSteps: { type: "string" }
+      },
+      required: ["urgency", "urgencyText", "suspicions", "nextSteps"]
+    }
+  },
+  required: ["assessment"]
+};
 
 
 
