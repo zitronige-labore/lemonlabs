@@ -118,6 +118,9 @@ export default function Home() {
   // state to check if offline
   const [isOffline, setIsOffline] = useState<boolean>(false);
 
+  // state in case form should be started in offline mode
+  const [startFormOffline, setStartFormOffline] = useState<boolean>(false)
+
 
   // event listener to check if user goes offline or comes back online
   useEffect(() => {
@@ -533,6 +536,7 @@ export default function Home() {
           resetProcess={resetProcess}
           setStep={goToStep}
           isOffline={isOffline}
+          setStartFormOffline={setStartFormOffline}
         />
       )}
 
@@ -586,6 +590,7 @@ export default function Home() {
               selectNoRedFlags={selectNoRedFlags}
               onContinue={() => goToStep("basisStart")}
               isOffline={isOffline}
+              startFormOffline={startFormOffline}
             />
           )}
 
