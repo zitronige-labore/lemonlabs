@@ -146,13 +146,13 @@ export async function saveFormData(formData: FormData) {
     // insert for multiple values
 
     // allergies
-    insertListIntoSymptomsNoCertainCount(allergyList, "allergy", caseId);
+    await insertListIntoSymptomsNoCertainCount(allergyList, "allergy", caseId);
 
     // medication
-    insertListIntoSymptomsNoCertainCount(medicationList, "medication", caseId);
+    await insertListIntoSymptomsNoCertainCount(medicationList, "medication", caseId);
 
     // conditions
-    insertListIntoSymptomsNoCertainCount(conditionList, "condition", caseId);
+    await insertListIntoSymptomsNoCertainCount(conditionList, "condition", caseId);
 
 
     // writing raw text symptoms in db
@@ -194,9 +194,7 @@ export async function saveFormData(formData: FormData) {
     console.log("Formulardaten in DB gespeichert");
     console.log("DB Rückgabe:", dbReturn);
 
-    // set cookie to acess later on
-    const sessionCookie = await cookies();
-    sessionCookie.set({name: 'caseId', value: caseId, httpOnly: true, path: '/' });
+
     return caseId.toString();
 }
 
@@ -613,8 +611,7 @@ export async function sendDataToAi(basisData?: BasisData, additionalData?: Addit
 
 
 
-// function to map snomed code to symptom name
-export async function mapNameToSnomed(name: string) {
+
 
 // function to build one type of data construct for the ai to proccess
 export async function buildUnifiedData(
@@ -790,10 +787,11 @@ return prompt;
 
 
 
-/*
-// function for fhir mapping patient data
-export async function mappingFhirPerson() {
-  
+
+
+// function to map snomed code to symptom name
+export async function mapNameToSnomed(name: string) {
+
   // list for symptom pages
   const symptomList: {
     step: Step;
@@ -811,13 +809,8 @@ export async function mappingFhirPerson() {
       return match.snomedCode;
     }
   }
-
   return null;
-
 }
-
-
-
 
 // function for fhir stuff example
 export async function fhirExample(caseId: string) {
