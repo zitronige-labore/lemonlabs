@@ -8,18 +8,11 @@ import { cookies } from 'next/headers' // for cookies
 import { parseString } from 'xml2js'; // for xml
 
 
-// function to save form data in variables and query to write to the db
-// formData is used instead of passing different data types to stay as close as possible to the default behaviour of a form action
 /**
- * Arguments: caseId (string) - die case_id des Falls
- * Returns: object with
- *  - caseData: Array<{sex, age, pregnancy, date}>
- *  - symptomData: Array<{name_de, painscale, bodyregion}>
- *  - textSymptomData: Array<{raw_symptoms, painscale, bodyregion}>
- *  - additionalInfoData: Array<{weight, height, temperature, duration, worsening, breastfeeding, extraInfo}>
- *  - allergyData: {allergies: string[]}
- *  - medicationData: {medication: string[]}
- *  - conditionsData: {conditions: string[]}
+ * Saves form data in variables and writes them to the DB.
+ * formData is used instead of passing different data types to stay as close as possible to the default behaviour of a form action.
+ * @param formData - FormData object containing all form fields
+ * @returns Promise<string> - the case_id of the newly created case as string
  */
 export async function saveFormData(formData: FormData) {
 
@@ -219,13 +212,12 @@ export async function saveFormData(formData: FormData) {
 
 
 
-// function to write information into db if there is no certain length of the list
 /**
- * Arguments:
- *  - list (string[]) - list of values (e.g. allergies, medication, conditions)
- *  - nameOfCategory (string) - category name for the "category" column (e.g. "allergy")
- *  - case_id (BigInteger) - id of the associated case
- * Returns: void - no return value, only writes to the DB
+ * Writes a list of values into the DB if there is no certain length of the list.
+ * @param list - list of values (e.g. allergies, medication, conditions)
+ * @param nameOfCategory - category name for the "category" column (e.g. "allergy")
+ * @param case_id - id of the associated case
+ * @returns Promise<void> - no return value, only writes to the DB
  */
 export async function insertListIntoSymptomsNoCertainCount(list: string[], nameOfCategory: string, case_id: BigInteger) {
 
@@ -247,17 +239,39 @@ export async function insertListIntoSymptomsNoCertainCount(list: string[], nameO
 
 
 
-// function to get case data from db
 /**
- * Arguments: caseId (string) - the case_id of the case
- * Returns: object with
- *  - caseData: Array<{sex, age, pregnancy, date}>
- *  - symptomData: Array<{name_de, painscale, bodyregion}>
- *  - textSymptomData: Array<{raw_symptoms, painscale, bodyregion}>
- *  - additionalInfoData: Array<{weight, height, temperature, duration, worsening, breastfeeding, extraInfo}>
- *  - allergyData: {allergies: string[]}
- *  - medicationData: {medication: string[]}
- *  - conditionsData: {conditions: string[]}
+ * Gets case data from the DB.
+ * @param caseId - the case_id of the case
+ * @returns Promise<{
+ *   caseData: Array<{
+ *     sex: 'w' | 'm' | 'd',
+ *     age: number,
+ *     pregnancy: boolean,
+ *     date: Date
+ *   }>,
+ *   symptomData: Array<{
+ *     name_de: string,
+ *     painscale: number | null,
+ *     bodyregion: string | null
+ *   }>,
+ *   textSymptomData: Array<{
+ *     raw_symptoms: string,
+ *     painscale: number | null,
+ *     bodyregion: string | null
+ *   }>,
+ *   additionalInfoData: Array<{
+ *     weight: number | null,
+ *     height: number | null,
+ *     temperature: number | null,
+ *     duration: number | null,
+ *     worsening: boolean | null,
+ *     breastfeeding: boolean | null,
+ *     extraInfo: string | null
+ *   }>,
+ *   allergyData: { allergies: string[] },
+ *   medicationData: { medication: string[] },
+ *   conditionsData: { conditions: string[] }
+ * }>
  */
 export async function getUserDataFromDB(caseId: string) {
 
@@ -324,10 +338,23 @@ export async function getUserDataFromDB(caseId: string) {
 
 
 
-// function to get ai data from db
 /**
- * Arguments: caseId (string) - the case_id of the case
- * Returns: Array<{urgency_level, advice_text, suspicion1...5, probability1...5}> - rows from the recommendations table (empty if no AI response exists yet)
+ * Gets AI data from the DB.
+ * @param caseId - the case_id of the case
+ * @returns Promise<Array<{
+ *   urgency_level: number,        // 1–5
+ *   advice_text: string,
+ *   suspicion1: string,
+ *   suspicion2: string,
+ *   suspicion3: string,
+ *   suspicion4: string,
+ *   suspicion5: string,
+ *   probability1: number | null,  // 0–100, already scaled by parseProb
+ *   probability2: number | null,
+ *   probability3: number | null,
+ *   probability4: number | null,
+ *   probability5: number | null
+ * }>> - rows from the recommendations table (empty array if no AI response exists yet)
  */
 export async function getAiDataFromDB(caseId: string) {
   const aiData = await connectionPool.query(`
@@ -343,10 +370,10 @@ export async function getAiDataFromDB(caseId: string) {
 
 
 
-// function to delete all data relating to a case
 /**
- * Arguments: caseId (string) - the case_id of the case to delete
- * Returns: void - deletes all related entries from cases, raw_text_symptoms, case_symptoms, details_no_certain_count, additional_information, recommendations
+ * Deletes all data relating to a case.
+ * @param caseId - the case_id of the case to delete
+ * @returns Promise<void> - deletes all related entries from cases, raw_text_symptoms, case_symptoms, details_no_certain_count, additional_information, recommendations
  */
 export async function deleteCaseData(caseId: string) {
 
@@ -400,10 +427,10 @@ export async function deleteCaseData(caseId: string) {
 
 
 
-// deleting data when recieving access code
 /**
- * Arguments: accessCode (string) - the access code of the case
- * Returns: boolean - true if a case was found and deleted, otherwise false
+ * Deletes data when receiving an access code.
+ * @param accessCode - the access code of the case
+ * @returns Promise<boolean> - true if a case was found and deleted, otherwise false
  */
 export async function deleteDataOnAccessCode(accessCode: string) {
 
@@ -428,10 +455,10 @@ export async function deleteDataOnAccessCode(accessCode: string) {
 }
 
 
-// accessing case data via access code
 /**
- * Arguments: accessCode (string) - the access code of the case
- * Returns: object in the same format as getUserDataFromDB() (see above), or null if no case with this code exists
+ * Accesses case data via access code.
+ * @param accessCode - the access code of the case
+ * @returns Promise<object|null> - object in the same format as getUserDataFromDB(), or null if no case with this code exists
  */
 export async function accessDataWithAccessCode(accessCode: string) {
 
@@ -457,10 +484,10 @@ export async function accessDataWithAccessCode(accessCode: string) {
 
 
 
-// accessing ai data via access code
 /**
- * Arguments: accessCode (string) - the access code of the case
- * Returns: array in the same format as getAiDataFromDB() (see above), or null if no case with this code exists
+ * Accesses AI data via access code.
+ * @param accessCode - the access code of the case
+ * @returns Promise<Array|null> - array in the same format as getAiDataFromDB(), or null if no case with this code exists
  */
 export async function accessAiDataWithAccessCode(accessCode: string) {
 
@@ -488,10 +515,9 @@ export async function accessAiDataWithAccessCode(accessCode: string) {
 
 
 
-// deleting after certain time (7 days in case of product backlog specification)
 /**
- * Arguments: none
- * Returns: void - deletes all cases older than daysUntilDelete days (currently 7)
+ * Deletes cases older than a certain time (7 days as per product backlog specification).
+ * @returns Promise<void> - deletes all cases older than daysUntilDelete days (currently 7)
  */
 export async function deleteOldCases() {
 
@@ -519,13 +545,12 @@ export async function deleteOldCases() {
 
 
 
-// helper function to get details without count as proper format
 /**
- * Arguments:
- *  - category (string) - value of the "category" column (e.g. "allergy", "medication", "condition")
- *  - listName (string) - desired key name in the returned object
- *  - case_id (string) - the case_id of the case
- * Returns: { [listName]: string[] } - object with a dynamic key whose value is an array of "detail" values
+ * Helper function to get details without certain count in proper format.
+ * @param category - value of the "category" column (e.g. "allergy", "medication", "condition")
+ * @param listName - desired key name in the returned object
+ * @param case_id - the case_id of the case
+ * @returns Promise<{ [listName]: string[] }> - object with a dynamic key whose value is an array of "detail" values
  */
 export async function getDetailsNoCertainCount(category: string, listName: string, case_id: string) {
   
@@ -546,10 +571,10 @@ export async function getDetailsNoCertainCount(category: string, listName: strin
 
 
 
-// function to get access code
 /**
- * Arguments: caseId (string) - the case_id of the case
- * Returns: string - the access_code of the case (assumes case_id exists; no null check)
+ * Gets the access code for a case.
+ * @param caseId - the case_id of the case
+ * @returns Promise<string> - the access_code of the case (assumes case_id exists; no null check)
  */
 export async function getAccessCode(caseId: string) {
   
@@ -570,16 +595,29 @@ export async function getAccessCode(caseId: string) {
 
 
 
-// function to send and recieve promt/response from ollama, same concept for the argument as getDBData above
 /**
- * Arguments (all optional):
- *  - basisData (BasisData)
- *  - additionalData (AdditionalData)
- *  - symptomText (string[])
- *  - selectedymptoms (string[])
- *  - caseId (string)
- * Behavior: if basisData, additionalData, symptomText, and selectedymptoms are all present, the prompt is built directly from them (cache path); otherwise data is read from the DB via caseId.
- * Returns: the full AI result object (result, format per aiAnswerFormat: { assessment: { urgency, urgencyText, suspicions: {suspicion1..5}, nextSteps } }), or undefined on error/missing data. Also writes the result to the recommendations table.
+ * Sends data to the AI and receives a response.
+ * If basisData, additionalData, symptomText, and selectedymptoms are all present,
+ * the prompt is built directly from them (cache path); otherwise data is read from the DB via caseId.
+ * @param basisData - (optional) BasisData
+ * @param additionalData - (optional) AdditionalData
+ * @param symptomText - (optional) string[]
+ * @param selectedymptoms - (optional) string[]
+ * @param caseId - (optional) string
+ * @returns Promise<{
+ *   assessment: {
+ *     urgency: number,            // 1–5
+ *     urgencyText: string,
+ *     suspicions: {
+ *       suspicion1: { reasonForSuspicion1: string, probability1: number },
+ *       suspicion2: { reasonForSuspicion2: string, probability2: number },
+ *       suspicion3: { reasonForSuspicion3: string, probability3: number },
+ *       suspicion4: { reasonForSuspicion4: string, probability4: number },
+ *       suspicion5: { reasonForSuspicion5: string, probability5: number }
+ *     },
+ *     nextSteps: string
+ *   }
+ * } | undefined> - undefined on error or missing data. Also writes the result to the recommendations table.
  */
 export async function sendDataToAi(basisData?: BasisData, additionalData?: AdditionalData, symptomText?: string[], selectedymptoms?: string[], caseId?: string) {
 
@@ -701,14 +739,29 @@ export async function sendDataToAi(basisData?: BasisData, additionalData?: Addit
 
 
 
-// function to build one type of data construct for the ai to proccess
 /**
- * Arguments (all optional, but all required for a result):
- *  - basisData (BasisData)
- *  - additionalData (AdditionalData)
- *  - symptomText (string[])
- *  - selectedymptoms (string[])
- * Returns: object in the same format as getUserDataFromDB() (caseData, symptomData, textSymptomData, additionalInfoData, allergyData, medicationData, conditionsData), or null if any argument is missing
+ * Builds one unified data construct for the AI to process.
+ * @param basisData - (optional) BasisData
+ * @param additionalData - (optional) AdditionalData
+ * @param symptomText - (optional) string[]
+ * @param selectedymptoms - (optional) string[]
+ * @returns Promise<{
+ *   caseData: BasisData,
+ *   symptomData: string[],
+ *   textSymptomData: string[],
+ *   additionalInfoData: {
+ *     duration: number | null,
+ *     temperature: number | null,
+ *     worsening: boolean | null,
+ *     weight: number | null,
+ *     height: number | null,
+ *     breastfeeding: boolean | null,
+ *     extraInfo: string | null
+ *   },
+ *   allergyData: { allergies: string[] },
+ *   medicationData: { medication: string[] },
+ *   conditionsData: { conditions: string[] }
+ * } | null> - null if any argument is missing
  */
 export async function buildUnifiedData(
   basisData?: BasisData,
@@ -742,10 +795,10 @@ export async function buildUnifiedData(
 
 
 
-// building prompt
 /**
- * Arguments: data - object in the format of getUserDataFromDB() or buildUnifiedData() (non-null)
- * Returns: string - the finished prompt text for the AI
+ * Builds the prompt for the AI.
+ * @param data - object in the format of getUserDataFromDB() or buildUnifiedData() (non-null)
+ * @returns Promise<string> - the finished prompt text for the AI
  */
 export async function buildAiPrompt(
   data: NonNullable<
@@ -889,10 +942,10 @@ return prompt;
 
 
 
-// function to map snomed code to symptom name
 /**
- * Arguments: name (string) - the symptomValue of a symptom
- * Returns: string - the corresponding SNOMED code, or null if no matching symptom was found
+ * Maps a symptom value to its SNOMED code.
+ * @param name - the symptomValue of a symptom
+ * @returns Promise<string|null> - the corresponding SNOMED code, or null if no matching symptom was found
  */
 export async function mapNameToSnomed(name: string) {
 
