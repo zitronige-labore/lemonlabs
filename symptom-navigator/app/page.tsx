@@ -31,6 +31,7 @@ import { LoadingPopup } from "./assessment/components/LoadingPopup";
 import { ManageDataStep } from "./assessment/components/ManageDataStep";
 import { CheckInfo } from "./assessment/components/CheckInfo";
 import { OtherStep } from "./assessment/components/OtherStep";
+import { RedFlagPositivePopUp } from "./assessment/components/RedFlagScanPositivePopUp";
 
 import { Question } from "@phosphor-icons/react";
 
@@ -126,6 +127,8 @@ export default function Home() {
   // state to check if redFlag scan was positive
   const [redFlagScanPositive, setRedFlagScanPositive] = useState<boolean>(false);
 
+  // state to save redflags detected by red flag scan 
+  const [redFlagScanResult, setRedFlagScanResult] = useState<string[]>([]);
 
   // event listener to check if user goes offline or comes back online
   useEffect(() => {
@@ -496,9 +499,12 @@ export default function Home() {
     let id;
     let triesLeft = 3;
 
+
     try {
-      if(await redFlagScan(basisData, additionalData, selectedSubRegion!, selectedSymptoms, symptomText)) {
+      const redFlagScanResultLokal = await redFlagScan(basisData, additionalData, selectedSubRegion!, selectedSymptoms, symptomText)
+      if(redFlagScanResultLokal[0]) {
         setRedFlagScanPositive(true)
+        setRedFlagScanResult(redFlagScanResultLokal[1])
       }
     }
     catch (error) {
@@ -713,9 +719,10 @@ export default function Home() {
 
       {/* SOS ausloesen */}
       {redFlagScanPositive && (
-        <SosModal
-        isOpen={redFlagScanPositive}
-        onClose={() => setRedFlagScanPositive(false)}
+        <RedFlagPositivePopUp
+          redFlagScanResult={redFlagScanResult}
+          isOpen={redFlagScanPositive}
+          onClose={() => setRedFlagScanPositive(false)}
         />
       )}
 
