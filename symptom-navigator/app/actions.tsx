@@ -1,7 +1,8 @@
 // server side actions for assessment page
 "use server"
 
-import { log } from "console";
+import { getSymptomList } from "./assessment/medicalLogic/SymptomLists"; // for snomed mapping
+import { Step } from "./types/assessment"; // needed type
 import { connectionPool } from "./dbs/db"; // for database queries
 import { cookies } from 'next/headers' // for cookies
 import { parseString } from 'xml2js'; // for xml
@@ -577,6 +578,8 @@ export async function sendDataToAi(basisData?: BasisData, additionalData?: Addit
     "\nsuspicion5:", result.assessment.suspicions.suspicion5.reasonForSuspicion5, 
     result.assessment.suspicions.suspicion5.probability5);
 
+
+    // writing result into db
     await connectionPool.query(
       `
       INSERT INTO recommendations (case_id, urgency_level, advice_text, suspicion1, suspicion2, suspicion3, suspicion4, suspicion5, probability1, probability2, probability3, probability4, probability5)
@@ -610,6 +613,8 @@ export async function sendDataToAi(basisData?: BasisData, additionalData?: Addit
 
 
 
+// function to map snomed code to symptom name
+export async function mapNameToSnomed(name: string) {
 
 // function to build one type of data construct for the ai to proccess
 export async function buildUnifiedData(
@@ -789,108 +794,41 @@ return prompt;
 // function for fhir mapping patient data
 export async function mappingFhirPerson() {
   
-  // cookies auslesen um case id zu bekommen
-  const cookieStore = await cookies();
-  const caseId = cookieStore.get('caseId')?.value;
+  // list for symptom pages
+  const symptomList: {
+    step: Step;
+    symptoms: {
+    symptomName: string;
+    schmerzen: boolean;
+    symptomValue: string;
+    snomedCode: string;
+    }[];
+  }[] = getSymptomList();
 
-  // daten fuer patient auslesen
-  let genderDB = await connectionPool.query(
-    `
-    SELECT sex FROM cases
-    WHERE case_id = $1
-    `,
-    [caseId]);
-
-
-  // gender in fhir akzeptierte strings umwandeln
-  let gender = genderDB.rows[0].sex;
-  if (gender == 'm') {
-    gender = 'male';
-  } else if (gender == 'w') {
-    gender = 'female';
-  } else if (gender == 'd') {
-    gender = 'other';
-  }
-  else {
-    gender = 'unknown';
+  for (const category of symptomList) {
+    const match = category.symptoms.find((s) => s.symptomValue === name);
+    if (match) {
+      return match.snomedCode;
+    }
   }
 
-  // schaetzung fuer birthdate basierend auf dem alter, evtl. rausnehmen
-  const DBage = await connectionPool.query(
-  `
-  SELECT age FROM cases
-  WHERE case_id = $1
-  `,
-  [caseId]); 
-    
-  const approxBirthdate = new Date().getFullYear() - DBage.rows[0].age + "-01-01";
+  return null;
 
-  const patient = {
-  "resourceType" : "Patient",
-  "identifier" : [],
-  "active" : true,
-  "gender" : gender, // male | female | other | unknown
-  "birthDate" : approxBirthdate, // The date of birth for the individual
-  "managingOrganization" : "lemonlabs - th mannheim", // Organization that is the custodian of the patient record
-  }
-
-  return patient;
 }
 
 
 
 
-// function for fhir mapping observations iun our case symptoms and basisdata and additional data 
-export async function mappingFhirObservation() {
+// function for fhir stuff example
+export async function fhirExample(caseId: string) {
+  
+  // get all needed data from db
+  const userData = getUserDataFromDB(caseId);
+  const aiData = getAiDataFromDB(caseId);
+  
+  // example for getting a snomed code
+  const snomedCode = mapNameToSnomed(
+    "Verzerrtsehen: Gerade Linien (z. B. Fliesenbaufugen, Textzeilen) erscheinen verbogen, wellig oder verzerrt (Hinweis auf Makulaerkrankung)."
+  )
 
-  const ovservation = {
-  "resourceType" : "Observation",
-  // from Resource: id, meta, implicitRules, and language
-  // from DomainResource: text, contained, extension, and modifierExtension
-  "identifier" : [], // Business Identifier for observation
-  "category" : [], // Classification of  type of observation
-  "code" : {}, // I R!  Type of observation (code / type)
-  "subject" : "Patient", // Who and/or what the observation is about
-  "organizer" : null, // I This observation organizes/groups a set of sub-observations
-  // effective[x]: Clinically relevant time/time-period for observation. One of these 4:
-  "effectiveDateTime" : "<dateTime>",
-  "issued" : "<instant>", // Date/Time this version was made available
-  "performer" : "Patient", // Who is responsible for the observation
-  // value[x]: Actual result. One of these 12:
-  "valueQuantity" : {},
-  "valueCodeableConcept" : {},
-  "valueString" : "<string>",
-  "valueBoolean" : null,
-  "valueInteger" : null,
-  "valueTime" : "<time>",
-  "valueDateTime" : "<dateTime>",
-  "valuePeriod" : {},
-  "interpretationContext" : [], // Context for understanding the observation
-  "note" : [], // Comments about the observation
-  "bodySite" : {}, // DEPRECATED: Observed body part, CodeableReference(BodySite)
-  "bodyStructure" : {}, // Observed body structure,  CodeableReference(BodyStructure) 
-  "method" : {}, // How it was done, CodeableConcept
-  "hasMember" : [], // Related resource that belongs to the Observation group, { Reference(Observation|QuestionnaireResponse) }
-  "derivedFrom" : [], // Related resource from which the observation is made, { Reference(DocumentReference|ImagingSelection|ImagingStudy|Observation|QuestionnaireResponse) }
-  "component" : [{ // I Component results
-    "code" : {}, // I R!  Type of component observation (code / type)
-    // value[x]: Actual component result. One of these 12:
-    "valueQuantity" : {},
-    "valueCodeableConcept" : {},
-    "valueString" : "<string>",
-    "valueBoolean" : null,
-    "valueInteger" : null,
-    "valueRange" : {},
-    "valueRatio" : {},
-    "valueSampledData" : {},
-    "valueTime" : "<time>",
-    "valueDateTime" : "<dateTime>",
-    "valuePeriod" : {},
-    "valueAttachment" : {},
-    "dataAbsentReason" : {}, // I Why the component result value is missing
-    "interpretation" : [], // High, low, normal, etc
-    "referenceRange" : [] // Provides guide for interpretation of component result value
-  }]
 }
-
-}*/
