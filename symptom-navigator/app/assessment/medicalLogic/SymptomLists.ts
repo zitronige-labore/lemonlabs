@@ -1,9 +1,22 @@
+// this file contains the symptoms to be selected
+// these symptoms can be adjusted as needed
+
 import { Step } from "@/app/types/assessment";
 
 export function getSymptomList() {
 
     
     // list for symptom pages
+    /* 
+    pattern: 
+    {step: "one of the category steps mentioned in symptomCategoryList.ts",
+    symptoms:
+        [
+        { symptomName: "this text will show up on the button, must be easy to understand", schmerzen: this will define if a painscale pops up when selected, symptomValue: "the information passed to the backend, this should be as precise as possible",  snomedCode: "the fitting snomed code to the symptomValue text" },
+        { symptomName: "nextSymptom easy description", schmerzen: true, symptomValue: "nextSymptom precise description", snomedCode: "next snomed code" },
+        ]
+    },
+    */
     const symptomList: {
     step: Step;
     symptoms: {

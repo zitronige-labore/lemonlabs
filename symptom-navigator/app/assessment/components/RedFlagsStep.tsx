@@ -15,6 +15,9 @@ import { SosModal } from "./SosModal";
 */
 import type { RedFlags } from "../../types/assessment";
 
+// import of objects that also contain button text
+import { redFlagCheckboxes} from "../medicalLogic/redFlagCheckboxes";
+
 type RedFlagsStepProps = {
   redFlags: RedFlags;
 
@@ -57,71 +60,16 @@ export function RedFlagsStep({
           Warnzeichen
         </legend>
 
-        <label className={assessmentStyles.label}>
-          <input
-            type="checkbox"
-            checked={redFlags.chestPain}
-            onChange={(event) =>
-              updateRedFlag("chestPain", event.target.checked)
-            }
-          />
-          Starke Brustschmerzen
-        </label>
-
-        <label className={assessmentStyles.label}>
-          <input
-            type="checkbox"
-            checked={redFlags.breathingProblems}
-            onChange={(event) =>
-              updateRedFlag("breathingProblems", event.target.checked)
-            }
-          />
-          Atemnot oder starke Atemprobleme
-        </label>
-
-        <label className={assessmentStyles.label}>
-          <input
-            type="checkbox"
-            checked={redFlags.unconsciousness}
-            onChange={(event) =>
-              updateRedFlag("unconsciousness", event.target.checked)
-            }
-          />
-          Bewusstlosigkeit oder starke Benommenheit
-        </label>
-
-        <label className={assessmentStyles.label}>
-          <input
-            type="checkbox"
-            checked={redFlags.severeBleeding}
-            onChange={(event) =>
-              updateRedFlag("severeBleeding", event.target.checked)
-            }
-          />
-          Starke Blutung
-        </label>
-
-        <label className={assessmentStyles.label}>
-          <input
-            type="checkbox"
-            checked={redFlags.strokeSymptoms}
-            onChange={(event) =>
-              updateRedFlag("strokeSymptoms", event.target.checked)
-            }
-          />
-          Lähmung, Sprachstörung oder Verdacht auf Schlaganfall
-        </label>
-
-        <label className={assessmentStyles.label}>
-          <input
-            type="checkbox"
-            checked={redFlags.highFeverConfusion}
-            onChange={(event) =>
-              updateRedFlag("highFeverConfusion", event.target.checked)
-            }
-          />
-          Hohes Fieber mit Verwirrtheit
-        </label>
+        {redFlagCheckboxes.map(({ key, label }) => (
+          <label key={key} className={assessmentStyles.label}>
+            <input
+              type="checkbox"
+              checked={redFlags[key]}
+              onChange={(event) => updateRedFlag(key, event.target.checked)}
+            />
+            {label}
+          </label>
+        ))}
 
         <label className={assessmentStyles.label}>
           <input
