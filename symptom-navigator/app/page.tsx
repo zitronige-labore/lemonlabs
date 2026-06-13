@@ -296,6 +296,8 @@ export default function Home() {
     );
     setStep(nextStep);
   }
+
+  // function to track progress
   function getStepProgress(step: Step): number {
     switch (step) {
       case "redflags":
