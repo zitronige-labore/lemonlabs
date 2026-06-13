@@ -474,6 +474,33 @@ export default function Home() {
     setCopyPainScale({});
     setNoRedFlags(false);
     setHighestAssessmentProgress(0);
+    setCheckInfoActive(false);
+    setAdditionalData({
+    medication: "",
+    conditions: "",
+    duration: "",
+
+    allergies: "",
+
+    temperature: "",
+    worsening: "",
+
+    weight: "",
+    height: "",
+
+    breastfeeding: "",
+
+    extraInfo: "",
+  });
+  setBasisData({
+    age: "",
+    gender: "",
+    pregnancy: "",
+  });
+  setAiAnswer(null),
+  setCaseId("");
+  setRedFlagScanPositive(false);
+  setRedFlagScanResult([]);
   }
 
 
