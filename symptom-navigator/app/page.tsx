@@ -525,6 +525,7 @@ export default function Home() {
           console.error("Error saving data into db:", error);
         }
         triesLeft--;
+        console.log("Try fetching Ai answer: ", (3-triesLeft))
       }
     }
 
