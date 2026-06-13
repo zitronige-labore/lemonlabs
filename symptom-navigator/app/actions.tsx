@@ -86,10 +86,13 @@ export async function saveFormData(formData: FormData) {
     const extraInfo = formData.get("extraInfo") as string;
     console.log("extrainfo: ", extraInfo)
 
-    // symptoms (prewritten, raw Text)
+    // symptoms (prewritten, raw Text), getting list as string, splitting into list and parsing as json
+    // json format made from name/text, painscale and bodyregion
+
+    // for prewritten symptoms
     const selectedSymptoms = formData.get("selectedSymptoms") as string;
     const symptomList = selectedSymptoms.split("|||");
-    console.log(symptomList)
+
     let symptomListJson = [];
     if (symptomList[0]!="") {
       for(let i = 0; i<symptomList.length; i++) {
@@ -97,9 +100,16 @@ export async function saveFormData(formData: FormData) {
       }
     }
 
+    //test log for prewritten symptomList
+    console.log("test SymptomList:", symptomList, "filled?", (symptomListJson[0]!='' && symptomListJson[0]!=null && symptomListJson[0]!=undefined));
+
+
     const symptomText = formData.get("symptomText") as string;
     const symptomTextList = symptomText.split("|||");
+
+    // log for raw text symptomlist
     console.log("test RawSymptomList:", symptomTextList, "filled?", (symptomTextList[0]!='' && symptomTextList[0]!=null && symptomTextList[0]!=undefined));
+    
     let symptomTextListJson = [];
     if (symptomTextList[0]!="") {
       for(let i = 0; i<symptomTextList.length; i++) {
@@ -107,9 +117,7 @@ export async function saveFormData(formData: FormData) {
       }
     }
 
-    //test log
-    console.log("test SymptomList:", symptomList, "filled?", (symptomListJson[0]!='' && symptomListJson[0]!=null && symptomListJson[0]!=undefined));
-    console.log("test:", formData.toString());
+    
 
     // create timestamp
     const timestamp = new Date();
@@ -191,8 +199,8 @@ export async function saveFormData(formData: FormData) {
 
 
     // test logs
-    console.log("Formulardaten in DB gespeichert");
-    console.log("DB Rückgabe:", dbReturn);
+    console.log("Formdata saved in DB");
+    console.log("DB return:", dbReturn);
 
 
     return caseId.toString();
@@ -368,10 +376,10 @@ export async function deleteDataOnAccessCode(accessCode: string) {
   // deleting if case exists
   if (caseId.rows.length > 0) {
     await deleteCaseData(caseId.rows[0].case_id);
-    console.log("Daten für Fall mit access code " + accessCode + " wurden gelöscht.");
+    console.log("Data for case with access code " + accessCode + " have been deleted.");
     return true;
   } else {
-    console.log("Kein Fall mit access code " + accessCode + " gefunden.");
+    console.log("No case with access code " + accessCode + " found.");
     return false;
   }
 
@@ -392,8 +400,8 @@ export async function accessDataWithAccessCode(accessCode: string) {
   // returning data if case exists
   if (caseId.rows.length > 0) {
     const data = await getUserDataFromDB(caseId.rows[0].case_id);
-    console.log("Daten für Fall mit access code " + accessCode + " wurden abgerufen.");
-    console.log("Abgerufene Daten:", data);
+    console.log("Data for case with access code " + accessCode + " has been recieved.");
+    console.log("recieved data: ", data);
     return data;
   } else {
     console.log("Kein Fall mit access code " + accessCode + " gefunden.");
@@ -524,11 +532,13 @@ export async function sendDataToAi(basisData?: BasisData, additionalData?: Addit
   // define promt
   const prompt = await buildAiPrompt(data)
 
-  console.log("promt: ", prompt, "case data: ", data.caseData, 
+  console.log("case data used for promt: ", 
+    data.caseData, 
     "additionalInfo: ", data.additionalInfoData, 
     "symptoms: ", data.symptomData, "text symptoms: ", data.textSymptomData, 
     "conditions: ", data.conditionsData.conditions, "allergies: ", data.allergyData.allergies, 
-    "medication: ", data.medicationData.medication)
+    "medication: ", data.medicationData.medication, 
+    "promt: ", prompt)
 
   // JSON schema for ai answer (looks weird because it used to be xml (yes there was a reason for that too, it was not just because I felt like it))
   const format = aiAnswerFormat;
