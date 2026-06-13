@@ -538,7 +538,7 @@ export async function sendDataToAi(basisData?: BasisData, additionalData?: Addit
     "symptoms: ", data.symptomData, "text symptoms: ", data.textSymptomData, 
     "conditions: ", data.conditionsData.conditions, "allergies: ", data.allergyData.allergies, 
     "medication: ", data.medicationData.medication, 
-    "promt: ", prompt)
+    "\npromt: ", prompt)
 
   // JSON schema for ai answer (looks weird because it used to be xml (yes there was a reason for that too, it was not just because I felt like it))
   const format = aiAnswerFormat;
@@ -681,7 +681,7 @@ export async function buildAiPrompt(
     - Schmerzskala (painscale) und Koerperregion (bodyregion) pro Symptom
     - Falls die Koerperregion nicht zur Symptombeschreibung passt, ignoriere sie
     ${JSON.stringify(data.textSymptomData, null, 2)}
-  - null-Eintraege und leere Listen ueberall ignorieren
+  - null-Eintraege und leere Listen sind nicht angegeben worden
 
   Erstelle basierend auf diesen Daten:
   1. eine Einschaetzung der Dringlichkeit auf einer Skala von 1 bis 5

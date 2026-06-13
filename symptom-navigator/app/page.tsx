@@ -170,8 +170,6 @@ export default function Home() {
     age: "",
     gender: "",
     pregnancy: "",
-    duration: "",
-    intensity: "0",
   });
 
   /*
