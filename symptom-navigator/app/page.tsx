@@ -31,6 +31,7 @@ import { LoadingPopup } from "./assessment/components/LoadingPopup";
 import { ManageDataStep } from "./assessment/components/ManageDataStep";
 import { CheckInfo } from "./assessment/components/CheckInfo";
 import { OtherStep } from "./assessment/components/OtherStep";
+import { RedFlagPositive } from "./assessment/components/RedFlagScanPositive";
 
 import { Question } from "@phosphor-icons/react";
 
@@ -715,10 +716,15 @@ export default function Home() {
 
       {/* SOS ausloesen */}
       {redFlagScanPositive && (
+        <>
         <SosModal
-        isOpen={redFlagScanPositive}
-        onClose={() => setRedFlagScanPositive(false)}
+          isOpen={redFlagScanPositive}
+          onClose={() => setRedFlagScanPositive(false)}
         />
+        <RedFlagScanPositive
+          
+        />
+        </>
       )}
 
 
