@@ -5,6 +5,7 @@
 
 // importy of steps from category list
 import { categoryTargetSteps } from "../assessment/utils/makeStepFromSymptomCategory";
+import { RedFlags } from "../assessment/medicalLogic/redFlagCheckboxes";
 
 export type subregionCategory =
   | SubRegion
@@ -118,14 +119,7 @@ export type SubRegion =
   die auf einen medizinischen Notfall
   hinweisen können.
 */
-export type RedFlags = {
-  chestPain: boolean;
-  breathingProblems: boolean;
-  unconsciousness: boolean;
-  severeBleeding: boolean;
-  strokeSymptoms: boolean;
-  highFeverConfusion: boolean;
-};
+export type { RedFlags } from "../assessment/medicalLogic/redFlagCheckboxes";
 
 /*
   Speichert allgemeine Angaben der Nutzerin
