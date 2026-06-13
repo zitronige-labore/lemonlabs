@@ -816,12 +816,58 @@ export async function mapNameToSnomed(name: string) {
 export async function fhirExample(caseId: string) {
   
   // get all needed data from db
-  const userData = getUserDataFromDB(caseId);
-  const aiData = getAiDataFromDB(caseId);
+  const userData = await getUserDataFromDB(caseId);
+  const aiData = await getAiDataFromDB(caseId);
   
   // example for getting a snomed code
   const snomedCode = mapNameToSnomed(
     "Verzerrtsehen: Gerade Linien (z. B. Fliesenbaufugen, Textzeilen) erscheinen verbogen, wellig oder verzerrt (Hinweis auf Makulaerkrankung)."
   )
 
+  // example for accesssing a specific part of db data
+
+  // einzelnen wert ansprechen
+  // const ageOnItsOwn = userData.caseData[0]?.age;
+  // einfach das ganze objekt uebernehmen, db rueckgaben enthalten immer objekte mit spaltenname: inhalt, deswegen {}, statt []
+  // so kann mann dann auf alle inhalte zugreifen
+  // const {sex, age, pregnancy, date} = userData.caseData[0] ?? {};
+  // so kann man die dann ansprechen
+  // const gender = sex;
+
+
+  // mapping fuer alle daten
+  // caseData
+  const { sex, age, pregnancy, date } = userData.caseData[0] ?? {};
+
+  // additionalInfoData
+  const { weight, height, temperature, duration, worsening, breastfeeding, extraInfo } = userData.additionalInfoData[0] ?? {};
+
+  // allergyData (string liste)
+  const { allergies } = userData.allergyData ?? {};
+
+  // medicationData (string liste)
+  const { medication } = userData.medicationData ?? {};
+
+  // conditionsData (string liste)
+  const { conditions } = userData.conditionsData ?? {};
+
+  // symptomData (list of prewritten symptoms)
+  const symptoms = userData.symptomData.map(
+    ({ name_de, painscale, bodyregion }: { name_de: string; painscale: number | null; bodyregion: string | null }) => ({
+      name_de,
+      painscale,
+      bodyregion,
+    })
+  );
+  // accessing example:
+  const nameOfFistSymptom = symptoms[0].name_de;
+
+  // textSymptomData (list of self written symptoms)
+  const textSymptoms = userData.textSymptomData.map(
+  ({ raw_symptoms, painscale, bodyregion }: { raw_symptoms: string; painscale: number | null; bodyregion: string | null }) => ({
+    raw_symptoms,
+    painscale,
+    bodyregion,
+  })
+);
 }
