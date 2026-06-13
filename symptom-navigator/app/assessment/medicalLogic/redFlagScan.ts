@@ -6,11 +6,12 @@ export async function redFlagScan(
     subRegion: SubRegion,
     symptomList: string[],
     textSymptomList: string[],
-) {
+): Promise<[boolean, string[]]> 
+{
     
     if(basisData.age === "23") {
-        return true;
+        return [true, ["Alter: 23"]];
     }
 
-    return false;
+    return [false, ["keine Redflags gefunden"]];
 }
