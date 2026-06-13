@@ -2,14 +2,25 @@
 "use server"
 
 import { getSymptomList } from "./assessment/medicalLogic/SymptomLists"; // for snomed mapping
-import { Step } from "./types/assessment"; // needed type
+import { Step, AdditionalData, BasisData } from "./types/assessment"; // needed type
 import { connectionPool } from "./dbs/db"; // for database queries
 import { cookies } from 'next/headers' // for cookies
 import { parseString } from 'xml2js'; // for xml
-import { AdditionalData, BasisData } from "./types/assessment";
+
 
 // function to save form data in variables and query to write to the db
 // formData is used instead of passing different data types to stay as close as possible to the default behaviour of a form action
+/**
+ * Arguments: caseId (string) - die case_id des Falls
+ * Returns: object with
+ *  - caseData: Array<{sex, age, pregnancy, date}>
+ *  - symptomData: Array<{name_de, painscale, bodyregion}>
+ *  - textSymptomData: Array<{raw_symptoms, painscale, bodyregion}>
+ *  - additionalInfoData: Array<{weight, height, temperature, duration, worsening, breastfeeding, extraInfo}>
+ *  - allergyData: {allergies: string[]}
+ *  - medicationData: {medication: string[]}
+ *  - conditionsData: {conditions: string[]}
+ */
 export async function saveFormData(formData: FormData) {
 
     // form data is saved in variables and converted to the correct type
@@ -209,6 +220,13 @@ export async function saveFormData(formData: FormData) {
 
 
 // function to write information into db if there is no certain length of the list
+/**
+ * Arguments:
+ *  - list (string[]) - list of values (e.g. allergies, medication, conditions)
+ *  - nameOfCategory (string) - category name for the "category" column (e.g. "allergy")
+ *  - case_id (BigInteger) - id of the associated case
+ * Returns: void - no return value, only writes to the DB
+ */
 export async function insertListIntoSymptomsNoCertainCount(list: string[], nameOfCategory: string, case_id: BigInteger) {
 
   for(const element of list) {
@@ -229,7 +247,18 @@ export async function insertListIntoSymptomsNoCertainCount(list: string[], nameO
 
 
 
-// function to get case data
+// function to get case data from db
+/**
+ * Arguments: caseId (string) - the case_id of the case
+ * Returns: object with
+ *  - caseData: Array<{sex, age, pregnancy, date}>
+ *  - symptomData: Array<{name_de, painscale, bodyregion}>
+ *  - textSymptomData: Array<{raw_symptoms, painscale, bodyregion}>
+ *  - additionalInfoData: Array<{weight, height, temperature, duration, worsening, breastfeeding, extraInfo}>
+ *  - allergyData: {allergies: string[]}
+ *  - medicationData: {medication: string[]}
+ *  - conditionsData: {conditions: string[]}
+ */
 export async function getUserDataFromDB(caseId: string) {
 
 
@@ -294,7 +323,12 @@ export async function getUserDataFromDB(caseId: string) {
 
 
 
+
 // function to get ai data from db
+/**
+ * Arguments: caseId (string) - the case_id of the case
+ * Returns: Array<{urgency_level, advice_text, suspicion1...5, probability1...5}> - rows from the recommendations table (empty if no AI response exists yet)
+ */
 export async function getAiDataFromDB(caseId: string) {
   const aiData = await connectionPool.query(`
     SELECT urgency_level, advice_text, suspicion1, suspicion2, suspicion3, suspicion4, suspicion5, probability1, probability2, probability3, probability4, probability5
@@ -310,6 +344,10 @@ export async function getAiDataFromDB(caseId: string) {
 
 
 // function to delete all data relating to a case
+/**
+ * Arguments: caseId (string) - the case_id of the case to delete
+ * Returns: void - deletes all related entries from cases, raw_text_symptoms, case_symptoms, details_no_certain_count, additional_information, recommendations
+ */
 export async function deleteCaseData(caseId: string) {
 
 
@@ -363,6 +401,10 @@ export async function deleteCaseData(caseId: string) {
 
 
 // deleting data when recieving access code
+/**
+ * Arguments: accessCode (string) - the access code of the case
+ * Returns: boolean - true if a case was found and deleted, otherwise false
+ */
 export async function deleteDataOnAccessCode(accessCode: string) {
 
   // DB query to get case id from access code
@@ -386,7 +428,11 @@ export async function deleteDataOnAccessCode(accessCode: string) {
 }
 
 
-// accessing data via access code
+// accessing case data via access code
+/**
+ * Arguments: accessCode (string) - the access code of the case
+ * Returns: object in the same format as getUserDataFromDB() (see above), or null if no case with this code exists
+ */
 export async function accessDataWithAccessCode(accessCode: string) {
 
   // DB query to get case id from access code
@@ -409,6 +455,13 @@ export async function accessDataWithAccessCode(accessCode: string) {
   }
 }
 
+
+
+// accessing ai data via access code
+/**
+ * Arguments: accessCode (string) - the access code of the case
+ * Returns: array in the same format as getAiDataFromDB() (see above), or null if no case with this code exists
+ */
 export async function accessAiDataWithAccessCode(accessCode: string) {
 
     // DB query to get case id from access code
@@ -436,9 +489,13 @@ export async function accessAiDataWithAccessCode(accessCode: string) {
 
 
 // deleting after certain time (7 days in case of product backlog specification)
+/**
+ * Arguments: none
+ * Returns: void - deletes all cases older than daysUntilDelete days (currently 7)
+ */
 export async function deleteOldCases() {
 
-  const daysUntilDelete = 0; // change this to 7 later
+  const daysUntilDelete = 7; // change this to 7 later
 
   const cutoff = new Date(
     Date.now() - daysUntilDelete * 24 * 60 * 60 * 1000
@@ -463,6 +520,13 @@ export async function deleteOldCases() {
 
 
 // helper function to get details without count as proper format
+/**
+ * Arguments:
+ *  - category (string) - value of the "category" column (e.g. "allergy", "medication", "condition")
+ *  - listName (string) - desired key name in the returned object
+ *  - case_id (string) - the case_id of the case
+ * Returns: { [listName]: string[] } - object with a dynamic key whose value is an array of "detail" values
+ */
 export async function getDetailsNoCertainCount(category: string, listName: string, case_id: string) {
   
   const DataList = await connectionPool.query(`
@@ -483,6 +547,10 @@ export async function getDetailsNoCertainCount(category: string, listName: strin
 
 
 // function to get access code
+/**
+ * Arguments: caseId (string) - the case_id of the case
+ * Returns: string - the access_code of the case (assumes case_id exists; no null check)
+ */
 export async function getAccessCode(caseId: string) {
   
 
@@ -503,6 +571,16 @@ export async function getAccessCode(caseId: string) {
 
 
 // function to send and recieve promt/response from ollama, same concept for the argument as getDBData above
+/**
+ * Arguments (all optional):
+ *  - basisData (BasisData)
+ *  - additionalData (AdditionalData)
+ *  - symptomText (string[])
+ *  - selectedymptoms (string[])
+ *  - caseId (string)
+ * Behavior: if basisData, additionalData, symptomText, and selectedymptoms are all present, the prompt is built directly from them (cache path); otherwise data is read from the DB via caseId.
+ * Returns: the full AI result object (result, format per aiAnswerFormat: { assessment: { urgency, urgencyText, suspicions: {suspicion1..5}, nextSteps } }), or undefined on error/missing data. Also writes the result to the recommendations table.
+ */
 export async function sendDataToAi(basisData?: BasisData, additionalData?: AdditionalData, symptomText?: string[], selectedymptoms?: string[], caseId?: string) {
 
 
@@ -624,6 +702,14 @@ export async function sendDataToAi(basisData?: BasisData, additionalData?: Addit
 
 
 // function to build one type of data construct for the ai to proccess
+/**
+ * Arguments (all optional, but all required for a result):
+ *  - basisData (BasisData)
+ *  - additionalData (AdditionalData)
+ *  - symptomText (string[])
+ *  - selectedymptoms (string[])
+ * Returns: object in the same format as getUserDataFromDB() (caseData, symptomData, textSymptomData, additionalInfoData, allergyData, medicationData, conditionsData), or null if any argument is missing
+ */
 export async function buildUnifiedData(
   basisData?: BasisData,
   additionalData?: AdditionalData,
@@ -657,6 +743,10 @@ export async function buildUnifiedData(
 
 
 // building prompt
+/**
+ * Arguments: data - object in the format of getUserDataFromDB() or buildUnifiedData() (non-null)
+ * Returns: string - the finished prompt text for the AI
+ */
 export async function buildAiPrompt(
   data: NonNullable<
     Awaited<ReturnType<typeof buildUnifiedData>>
@@ -800,6 +890,10 @@ return prompt;
 
 
 // function to map snomed code to symptom name
+/**
+ * Arguments: name (string) - the symptomValue of a symptom
+ * Returns: string - the corresponding SNOMED code, or null if no matching symptom was found
+ */
 export async function mapNameToSnomed(name: string) {
 
   // list for symptom pages
