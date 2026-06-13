@@ -14,6 +14,7 @@ import assessmentStyles from "./assessment/Assessment.module.css";
 
 import { useSaveForm } from "./useSaveForm";
 import { sendDataToAi } from "./actions";
+import { redFlagScan } from "./assessment/medicalLogic/redFlagScan";
 
 import SelectMoreSymptoms from "./assessment/components/SelectMoreSymptomsStep";
 import { AdditionalInfoStep } from "./assessment/components/AdditionalInfoStep";
@@ -45,6 +46,7 @@ import type {
 } from "./types/assessment";
 
 import { emptyRedFlags } from "./assessment/utils/assessmentData";
+import { SosModal } from "./assessment/components/SosModal";
 
 export default function Home() {
   /*
@@ -120,6 +122,9 @@ export default function Home() {
 
   // state in case form should be started in offline mode
   const [startFormOffline, setStartFormOffline] = useState<boolean>(false)
+
+  // state to check if redFlag scan was positive
+  const [redFlagScanPositive, setRedFlagScanPositive] = useState<boolean>(false);
 
 
   // event listener to check if user goes offline or comes back online
@@ -493,6 +498,14 @@ export default function Home() {
     let id;
     let triesLeft = 3;
 
+    try {
+      if(await redFlagScan) {
+        setRedFlagScanPositive(true)
+      }
+    }
+    catch (error) {
+      console.error("Error doing redflag scan", error);
+    }
     
     try {
       id = await handleSaveForm();
@@ -697,6 +710,16 @@ export default function Home() {
           )}
         </AssessmentLayout>
       )}
+
+
+      {/* SOS ausloesen */}
+      {redFlagScanPositive && (
+        <SosModal
+        isOpen={redFlagScanPositive}
+        onClose={() => setRedFlagScanPositive(false)}
+        />
+      )}
+
 
       {/* Globaler Tutorial Button */}
       <button
