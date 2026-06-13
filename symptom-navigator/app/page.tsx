@@ -14,6 +14,7 @@ import assessmentStyles from "./assessment/Assessment.module.css";
 
 import { useSaveForm } from "./useSaveForm";
 import { sendDataToAi } from "./actions";
+import { redFlagScan } from "./assessment/medicalLogic/redFlagScan";
 
 import SelectMoreSymptoms from "./assessment/components/SelectMoreSymptomsStep";
 import { AdditionalInfoStep } from "./assessment/components/AdditionalInfoStep";
@@ -30,6 +31,7 @@ import { LoadingPopup } from "./assessment/components/LoadingPopup";
 import { ManageDataStep } from "./assessment/components/ManageDataStep";
 import { CheckInfo } from "./assessment/components/CheckInfo";
 import { OtherStep } from "./assessment/components/OtherStep";
+import { RedFlagPositivePopUp } from "./assessment/components/RedFlagScanPositivePopUp";
 
 import { Question } from "@phosphor-icons/react";
 
@@ -45,6 +47,7 @@ import type {
 } from "./types/assessment";
 
 import { emptyRedFlags } from "./assessment/utils/assessmentData";
+import { SosModal } from "./assessment/components/SosModal";
 
 export default function Home() {
   /*
@@ -121,6 +124,11 @@ export default function Home() {
   // state in case form should be started in offline mode
   const [startFormOffline, setStartFormOffline] = useState<boolean>(false)
 
+  // state to check if redFlag scan was positive
+  const [redFlagScanPositive, setRedFlagScanPositive] = useState<boolean>(false);
+
+  // state to save redflags detected by red flag scan 
+  const [redFlagScanResult, setRedFlagScanResult] = useState<string[]>([]);
 
   // event listener to check if user goes offline or comes back online
   useEffect(() => {
@@ -493,6 +501,17 @@ export default function Home() {
     let id;
     let triesLeft = 3;
 
+
+    try {
+      const redFlagScanResultLokal = await redFlagScan(basisData, additionalData, selectedSubRegion!, selectedSymptoms, symptomText)
+      if(redFlagScanResultLokal[0]) {
+        setRedFlagScanPositive(true)
+        setRedFlagScanResult(redFlagScanResultLokal[1])
+      }
+    }
+    catch (error) {
+      console.error("Error doing redflag scan", error);
+    }
     
     try {
       id = await handleSaveForm();
@@ -512,6 +531,7 @@ export default function Home() {
           console.error("Error saving data into db:", error);
         }
         triesLeft--;
+        console.log("Try fetching Ai answer: ", (3-triesLeft))
       }
     }
 
@@ -697,6 +717,17 @@ export default function Home() {
           )}
         </AssessmentLayout>
       )}
+
+
+      {/* SOS ausloesen */}
+      {redFlagScanPositive && (
+        <RedFlagPositivePopUp
+          redFlagScanResult={redFlagScanResult}
+          isOpen={redFlagScanPositive}
+          onClose={() => setRedFlagScanPositive(false)}
+        />
+      )}
+
 
       {/* Globaler Tutorial Button */}
       <button
