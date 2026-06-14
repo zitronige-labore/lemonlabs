@@ -81,6 +81,17 @@ export function getSubRegions(
   }
 }
 
+
+/**
+ * Converts coded DB values into human-readable strings for display.
+ * @param data - object in the format of getUserDataFromDB() (non-null)
+ * @returns [
+ *   geschlecht: 'männlich' | 'weiblich' | 'divers' | undefined,
+ *   schwangerschaft: 'ja' | 'nein' | 'nicht angegeben',
+ *   stillzeit: 'ja' | 'nein' | 'nicht angegeben',
+ *   worsening: 'ja' | 'nein' | undefined
+ * ]
+ */
 export function makeDBDataReadable(data: any)
 {
    // convert coded values to be read by users where necessary

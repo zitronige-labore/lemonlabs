@@ -130,6 +130,4 @@ export type BasisData = {
   age: string;
   gender: string;
   pregnancy: string;
-  duration: string;
-  intensity: string;
 };

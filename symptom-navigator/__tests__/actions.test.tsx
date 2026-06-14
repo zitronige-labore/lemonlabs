@@ -1154,32 +1154,32 @@ describe("with cache data (basisData, additionalData, symptomText, selectedympto
     );
   });
 
-  it("returns undefined if the AI-API throws an error", async () => {
+  it("rejects with the error if the AI-API throws an Error object", async () => {
     mockFetch.mockRejectedValueOnce(new Error("Network Error"));
 
-    const result = await sendDataToAi(
-      basisData,
-      additionalData,
-      sampleSymptomText,
-      sampleSelectedSymptoms,
-      "19"
-    );
-
-    expect(result).toBeUndefined();
+    await expect(
+      sendDataToAi(
+        basisData,
+        additionalData,
+        sampleSymptomText,
+        sampleSelectedSymptoms,
+        "19"
+      )
+    ).rejects.toThrow("Network Error");
   });
 
-  it("returns undefined when the AI-API returns a string error", async () => {
+  it("rejects with the string error if the AI-API returns a string error", async () => {
     mockFetch.mockRejectedValueOnce("einfacher string fehler");
 
-    const result = await sendDataToAi(
-      basisData,
-      additionalData,
-      sampleSymptomText,
-      sampleSelectedSymptoms,
-      "19"
-    );
-
-    expect(result).toBeUndefined();
+    await expect(
+      sendDataToAi(
+        basisData,
+        additionalData,
+        sampleSymptomText,
+        sampleSelectedSymptoms,
+        "19"
+      )
+    ).rejects.toBe("einfacher string fehler");
   });
 });
 

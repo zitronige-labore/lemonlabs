@@ -2,117 +2,26 @@
 "use server"
 
 import { getSymptomList } from "./assessment/medicalLogic/SymptomLists"; // for snomed mapping
-import { Step } from "./types/assessment"; // needed type
+import { Step, AdditionalData, BasisData } from "./types/assessment"; // needed type
 import { connectionPool } from "./dbs/db"; // for database queries
-import { cookies } from 'next/headers' // for cookies
-import { parseString } from 'xml2js'; // for xml
-import { AdditionalData, BasisData } from "./types/assessment";
 
-// function to save form data in variables and query to write to the db
-// formData is used instead of passing different data types to stay as close as possible to the default behaviour of a form action
+
+
+/**
+ * Saves form data in variables and writes them to the DB.
+ * formData is used instead of passing different data types to stay as close as possible to the default behaviour of a form action.
+ * @param formData - FormData object containing all form fields
+ * @returns Promise<string> - the case_id of the newly created case as string
+ */
 export async function saveFormData(formData: FormData) {
 
-    // form data is saved in variables and converted to the correct type
+    
+    // parsing formdata to right format
+    const {age, sex, pregnancy, weight, height, medicationList, conditionList, allergyList, temperatureFloat, 
+      duration, worseningBool, breastfeedingBool, extraInfo, symptomListJson, symptomTextListJson, timestamp,
+      symptomList, symptomTextList} 
+      = parseFormDataToDbUsable(formData)
 
-
-    // age
-    const age = parseInt(formData.get("age") as string);
-
-    //sex
-    const sexString = formData.get("gender") as string;
-    let sex = '';
-    if (sexString === "weiblich") {
-        sex = 'w';
-    } else if (sexString === "männlich") {
-        sex = 'm';
-    } else if (sexString === "divers") {
-        sex = 'd';
-    }
-
-    //pregnancy
-    let pregnancy = false;
-    if (formData.get("pregnancy") === "ja") {
-        pregnancy = true;
-    }
-
-    //weight
-    const weight = parseInt(formData.get("weight") as string);
-
-    // height
-    const height = parseInt(formData.get("height") as string); 
-
-    // medication
-    const medication = formData.get("medication") as string;
-    const medicationList = medication.split(",").map(s => s.trim()).filter(s => s !== "");;
-    console.log("medicationList: ", medicationList)
-
-    // conditions
-    const conditions = formData.get("conditions") as string;
-    const conditionList = conditions.split(",").map(s => s.trim()).filter(s => s !== "");;
-
-    // allergies
-    const allergies = formData.get("allergies") as string;
-    const allergyList = allergies.split(",").map(s => s.trim()).filter(s => s !== "");;
-
-    // temperature
-    const temperature = formData.get("temperature") as string;
-    const temperatureFloat = parseFloat(temperature.replace(",", "."));
-
-    // duration
-    const duration = parseInt(formData.get("duration") as string);
-
-    // worsening
-    const worsening = formData.get("worsening") as string;
-    let worseningBool = null;
-    if(worsening == "ja") {
-      worseningBool = true; 
-    }
-    else if(worsening == "nein") {
-      worseningBool = false;
-    }
-    console.log("worsening: ", worseningBool)
-
-    // breastfeeding
-    const breastfeeding = formData.get("breastfeeding") as string;
-    let breastfeedingBool = null;
-    if(breastfeeding === "ja") {
-      breastfeedingBool = true; 
-    }
-    else if(breastfeeding === "nein") {
-      breastfeedingBool = false;
-    }
-    console.log("breastfeeding: ", breastfeedingBool)
-
-    const extraInfo = formData.get("extraInfo") as string;
-    console.log("extrainfo: ", extraInfo)
-
-    // symptoms (prewritten, raw Text)
-    const selectedSymptoms = formData.get("selectedSymptoms") as string;
-    const symptomList = selectedSymptoms.split("|||");
-    console.log(symptomList)
-    let symptomListJson = [];
-    if (symptomList[0]!="") {
-      for(let i = 0; i<symptomList.length; i++) {
-        symptomListJson[i] = JSON.parse(symptomList[i])
-      }
-    }
-
-    const symptomText = formData.get("symptomText") as string;
-    const symptomTextList = symptomText.split("|||");
-    console.log("test RawSymptomList:", symptomTextList, "filled?", (symptomTextList[0]!='' && symptomTextList[0]!=null && symptomTextList[0]!=undefined));
-    let symptomTextListJson = [];
-    if (symptomTextList[0]!="") {
-      for(let i = 0; i<symptomTextList.length; i++) {
-        symptomTextListJson[i] = JSON.parse(symptomTextList[i])
-      }
-    }
-
-    //test log
-    console.log("test SymptomList:", symptomList, "filled?", (symptomListJson[0]!='' && symptomListJson[0]!=null && symptomListJson[0]!=undefined));
-    console.log("test:", formData.toString());
-
-    // create timestamp
-    const timestamp = new Date();
 
     // writing data into db and returning id for later use
     const dbReturn = await connectionPool.query(
@@ -191,8 +100,8 @@ export async function saveFormData(formData: FormData) {
 
 
     // test logs
-    console.log("Formulardaten in DB gespeichert");
-    console.log("DB Rückgabe:", dbReturn);
+    console.log("Formdata saved in DB");
+    console.log("DB return:", dbReturn);
 
 
     return caseId.toString();
@@ -200,7 +109,140 @@ export async function saveFormData(formData: FormData) {
 
 
 
-// function to write information into db if there is no certain length of the list
+
+/**
+ * Truns formdata into correct format to save to db.
+ * @param @param formData - FormData object containing all form fields
+ * @returns Promise<{ age, sex, pregnancy, weight, height, medicationList, ... }> - parsed data
+ */
+function parseFormDataToDbUsable(formData: FormData) {
+  
+  // form data is saved in variables and converted to the correct type
+
+
+    // age
+    const age = parseInt(formData.get("age") as string);
+
+    //sex
+    const sexString = formData.get("gender") as string;
+    let sex = '';
+    if (sexString === "weiblich") {
+        sex = 'w';
+    } else if (sexString === "männlich") {
+        sex = 'm';
+    } else if (sexString === "divers") {
+        sex = 'd';
+    }
+
+    //pregnancy
+    let pregnancy = false;
+    if (formData.get("pregnancy") === "ja") {
+        pregnancy = true;
+    }
+
+    //weight
+    const weight = parseInt(formData.get("weight") as string);
+
+    // height
+    const height = parseInt(formData.get("height") as string); 
+
+    // medication
+    const medication = formData.get("medication") as string;
+    const medicationList = medication.split(",").map(s => s.trim()).filter(s => s !== "");;
+    console.log("medicationList: ", medicationList)
+
+    // conditions
+    const conditions = formData.get("conditions") as string;
+    const conditionList = conditions.split(",").map(s => s.trim()).filter(s => s !== "");;
+
+    // allergies
+    const allergies = formData.get("allergies") as string;
+    const allergyList = allergies.split(",").map(s => s.trim()).filter(s => s !== "");;
+
+    // temperature
+    const temperature = formData.get("temperature") as string;
+    const temperatureFloat = parseFloat(temperature.replace(",", "."));
+
+    // duration
+    const duration = parseInt(formData.get("duration") as string);
+
+    // worsening
+    const worsening = formData.get("worsening") as string;
+    let worseningBool = null;
+    if(worsening == "ja") {
+      worseningBool = true; 
+    }
+    else if(worsening == "nein") {
+      worseningBool = false;
+    }
+    console.log("worsening: ", worseningBool)
+
+    // breastfeeding
+    const breastfeeding = formData.get("breastfeeding") as string;
+    let breastfeedingBool = null;
+    if(breastfeeding === "ja") {
+      breastfeedingBool = true; 
+    }
+    else if(breastfeeding === "nein") {
+      breastfeedingBool = false;
+    }
+    console.log("breastfeeding: ", breastfeedingBool)
+
+    const extraInfo = formData.get("extraInfo") as string;
+    console.log("extrainfo: ", extraInfo)
+
+    // symptoms (prewritten, raw Text), getting list as string, splitting into list and parsing as json
+    // json format made from name/text, painscale and bodyregion
+
+    // for prewritten symptoms
+    const selectedSymptoms = formData.get("selectedSymptoms") as string;
+    const symptomList = selectedSymptoms.split("|||");
+
+    let symptomListJson = [];
+    if (symptomList[0]!="") {
+      for(let i = 0; i<symptomList.length; i++) {
+        symptomListJson[i] = JSON.parse(symptomList[i])
+      }
+    }
+
+    //test log for prewritten symptomList
+    console.log("test SymptomList:", symptomList, "filled?", (symptomListJson[0]!='' && symptomListJson[0]!=null && symptomListJson[0]!=undefined));
+
+
+    const symptomText = formData.get("symptomText") as string;
+    const symptomTextList = symptomText.split("|||");
+
+    // log for raw text symptomlist
+    console.log("test RawSymptomList:", symptomTextList, "filled?", (symptomTextList[0]!='' && symptomTextList[0]!=null && symptomTextList[0]!=undefined));
+    
+    let symptomTextListJson = [];
+    if (symptomTextList[0]!="") {
+      for(let i = 0; i<symptomTextList.length; i++) {
+        symptomTextListJson[i] = JSON.parse(symptomTextList[i])
+      }
+    }
+
+    
+
+    // create timestamp
+    const timestamp = new Date();
+
+
+  return { age, sex, pregnancy, weight, height, medicationList, conditionList, allergyList, temperatureFloat, 
+    duration, worseningBool, breastfeedingBool, extraInfo, symptomListJson, symptomTextListJson, timestamp,
+  symptomList, symptomTextList};
+}
+
+
+
+
+/**
+ * Writes a list of values into the DB if there is no certain length of the list.
+ * @param list - list of values (e.g. allergies, medication, conditions)
+ * @param nameOfCategory - category name for the "category" column (e.g. "allergy")
+ * @param case_id - id of the associated case
+ * @returns Promise<void> - no return value, only writes to the DB
+ */
 export async function insertListIntoSymptomsNoCertainCount(list: string[], nameOfCategory: string, case_id: BigInteger) {
 
   for(const element of list) {
@@ -221,7 +263,40 @@ export async function insertListIntoSymptomsNoCertainCount(list: string[], nameO
 
 
 
-// function to get case data
+/**
+ * Gets case data from the DB.
+ * @param caseId - the case_id of the case
+ * @returns Promise<{
+ *   caseData: Array<{
+ *     sex: 'w' | 'm' | 'd',
+ *     age: number,
+ *     pregnancy: boolean,
+ *     date: Date
+ *   }>,
+ *   symptomData: Array<{
+ *     name_de: string,
+ *     painscale: number | null,
+ *     bodyregion: string | null
+ *   }>,
+ *   textSymptomData: Array<{
+ *     raw_symptoms: string,
+ *     painscale: number | null,
+ *     bodyregion: string | null
+ *   }>,
+ *   additionalInfoData: Array<{
+ *     weight: number | null,
+ *     height: number | null,
+ *     temperature: number | null,
+ *     duration: number | null,
+ *     worsening: boolean | null,
+ *     breastfeeding: boolean | null,
+ *     extraInfo: string | null
+ *   }>,
+ *   allergyData: { allergies: string[] },
+ *   medicationData: { medication: string[] },
+ *   conditionsData: { conditions: string[] }
+ * }>
+ */
 export async function getUserDataFromDB(caseId: string) {
 
 
@@ -286,7 +361,25 @@ export async function getUserDataFromDB(caseId: string) {
 
 
 
-// function to get ai data from db
+
+/**
+ * Gets AI data from the DB.
+ * @param caseId - the case_id of the case
+ * @returns Promise<Array<{
+ *   urgency_level: number,        // 1–5
+ *   advice_text: string,
+ *   suspicion1: string,
+ *   suspicion2: string,
+ *   suspicion3: string,
+ *   suspicion4: string,
+ *   suspicion5: string,
+ *   probability1: number | null,  // 0–100, already scaled by parseProb
+ *   probability2: number | null,
+ *   probability3: number | null,
+ *   probability4: number | null,
+ *   probability5: number | null
+ * }>> - rows from the recommendations table (empty array if no AI response exists yet)
+ */
 export async function getAiDataFromDB(caseId: string) {
   const aiData = await connectionPool.query(`
     SELECT urgency_level, advice_text, suspicion1, suspicion2, suspicion3, suspicion4, suspicion5, probability1, probability2, probability3, probability4, probability5
@@ -301,7 +394,11 @@ export async function getAiDataFromDB(caseId: string) {
 
 
 
-// function to delete all data relating to a case
+/**
+ * Deletes all data relating to a case.
+ * @param caseId - the case_id of the case to delete
+ * @returns Promise<void> - deletes all related entries from cases, raw_text_symptoms, case_symptoms, details_no_certain_count, additional_information, recommendations
+ */
 export async function deleteCaseData(caseId: string) {
 
 
@@ -354,7 +451,11 @@ export async function deleteCaseData(caseId: string) {
 
 
 
-// deleting data when recieving access code
+/**
+ * Deletes data when receiving an access code.
+ * @param accessCode - the access code of the case
+ * @returns Promise<boolean> - true if a case was found and deleted, otherwise false
+ */
 export async function deleteDataOnAccessCode(accessCode: string) {
 
   // DB query to get case id from access code
@@ -368,17 +469,21 @@ export async function deleteDataOnAccessCode(accessCode: string) {
   // deleting if case exists
   if (caseId.rows.length > 0) {
     await deleteCaseData(caseId.rows[0].case_id);
-    console.log("Daten für Fall mit access code " + accessCode + " wurden gelöscht.");
+    console.log("Data for case with access code " + accessCode + " have been deleted.");
     return true;
   } else {
-    console.log("Kein Fall mit access code " + accessCode + " gefunden.");
+    console.log("No case with access code " + accessCode + " found.");
     return false;
   }
 
 }
 
 
-// accessing data via access code
+/**
+ * Accesses case data via access code.
+ * @param accessCode - the access code of the case
+ * @returns Promise<object|null> - object in the same format as getUserDataFromDB(), or null if no case with this code exists
+ */
 export async function accessDataWithAccessCode(accessCode: string) {
 
   // DB query to get case id from access code
@@ -392,8 +497,8 @@ export async function accessDataWithAccessCode(accessCode: string) {
   // returning data if case exists
   if (caseId.rows.length > 0) {
     const data = await getUserDataFromDB(caseId.rows[0].case_id);
-    console.log("Daten für Fall mit access code " + accessCode + " wurden abgerufen.");
-    console.log("Abgerufene Daten:", data);
+    console.log("Data for case with access code " + accessCode + " has been recieved.");
+    console.log("recieved data: ", data);
     return data;
   } else {
     console.log("Kein Fall mit access code " + accessCode + " gefunden.");
@@ -401,6 +506,13 @@ export async function accessDataWithAccessCode(accessCode: string) {
   }
 }
 
+
+
+/**
+ * Accesses AI data via access code.
+ * @param accessCode - the access code of the case
+ * @returns Promise<Array|null> - array in the same format as getAiDataFromDB(), or null if no case with this code exists
+ */
 export async function accessAiDataWithAccessCode(accessCode: string) {
 
     // DB query to get case id from access code
@@ -427,10 +539,13 @@ export async function accessAiDataWithAccessCode(accessCode: string) {
 
 
 
-// deleting after certain time (7 days in case of product backlog specification)
+/**
+ * Deletes cases older than a certain time (7 days as per product backlog specification).
+ * @returns Promise<void> - deletes all cases older than daysUntilDelete days (currently 7)
+ */
 export async function deleteOldCases() {
 
-  const daysUntilDelete = 0; // change this to 7 later
+  const daysUntilDelete = 7; // change this to 7 later
 
   const cutoff = new Date(
     Date.now() - daysUntilDelete * 24 * 60 * 60 * 1000
@@ -454,7 +569,13 @@ export async function deleteOldCases() {
 
 
 
-// helper function to get details without count as proper format
+/**
+ * Helper function to get details without certain count in proper format.
+ * @param category - value of the "category" column (e.g. "allergy", "medication", "condition")
+ * @param listName - desired key name in the returned object
+ * @param case_id - the case_id of the case
+ * @returns Promise<{ [listName]: string[] }> - object with a dynamic key whose value is an array of "detail" values
+ */
 export async function getDetailsNoCertainCount(category: string, listName: string, case_id: string) {
   
   const DataList = await connectionPool.query(`
@@ -474,7 +595,11 @@ export async function getDetailsNoCertainCount(category: string, listName: strin
 
 
 
-// function to get access code
+/**
+ * Gets the access code for a case.
+ * @param caseId - the case_id of the case
+ * @returns Promise<string> - the access_code of the case (assumes case_id exists; no null check)
+ */
 export async function getAccessCode(caseId: string) {
   
 
@@ -494,7 +619,30 @@ export async function getAccessCode(caseId: string) {
 
 
 
-// function to send and recieve promt/response from ollama, same concept for the argument as getDBData above
+/**
+ * Sends data to the AI and receives a response.
+ * If basisData, additionalData, symptomText, and selectedymptoms are all present,
+ * the prompt is built directly from them (cache path); otherwise data is read from the DB via caseId.
+ * @param basisData - (optional) BasisData
+ * @param additionalData - (optional) AdditionalData
+ * @param symptomText - (optional) string[]
+ * @param selectedymptoms - (optional) string[]
+ * @param caseId - (optional) string
+ * @returns Promise<{
+ *   assessment: {
+ *     urgency: number,            // 1–5
+ *     urgencyText: string,
+ *     suspicions: {
+ *       suspicion1: { reasonForSuspicion1: string, probability1: number },
+ *       suspicion2: { reasonForSuspicion2: string, probability2: number },
+ *       suspicion3: { reasonForSuspicion3: string, probability3: number },
+ *       suspicion4: { reasonForSuspicion4: string, probability4: number },
+ *       suspicion5: { reasonForSuspicion5: string, probability5: number }
+ *     },
+ *     nextSteps: string
+ *   }
+ * } | undefined> - undefined on error or missing data. Also writes the result to the recommendations table.
+ */
 export async function sendDataToAi(basisData?: BasisData, additionalData?: AdditionalData, symptomText?: string[], selectedymptoms?: string[], caseId?: string) {
 
 
@@ -524,11 +672,13 @@ export async function sendDataToAi(basisData?: BasisData, additionalData?: Addit
   // define promt
   const prompt = await buildAiPrompt(data)
 
-  console.log("promt: ", prompt, "case data: ", data.caseData, 
+  console.log("case data used for promt: ", 
+    data.caseData, 
     "additionalInfo: ", data.additionalInfoData, 
     "symptoms: ", data.symptomData, "text symptoms: ", data.textSymptomData, 
     "conditions: ", data.conditionsData.conditions, "allergies: ", data.allergyData.allergies, 
-    "medication: ", data.medicationData.medication)
+    "medication: ", data.medicationData.medication, 
+    "\npromt: ", prompt)
 
   // JSON schema for ai answer (looks weird because it used to be xml (yes there was a reason for that too, it was not just because I felt like it))
   const format = aiAnswerFormat;
@@ -605,6 +755,7 @@ export async function sendDataToAi(basisData?: BasisData, additionalData?: Addit
   } catch (error) {
     console.error('Fehler details:', JSON.stringify(error, null, 2));
     console.error('Fehler message:', error instanceof Error ? error.message : error);
+    throw error;
   }
 }
 
@@ -613,7 +764,30 @@ export async function sendDataToAi(basisData?: BasisData, additionalData?: Addit
 
 
 
-// function to build one type of data construct for the ai to proccess
+/**
+ * Builds one unified data construct for the AI to process.
+ * @param basisData - (optional) BasisData
+ * @param additionalData - (optional) AdditionalData
+ * @param symptomText - (optional) string[]
+ * @param selectedymptoms - (optional) string[]
+ * @returns Promise<{
+ *   caseData: BasisData,
+ *   symptomData: string[],
+ *   textSymptomData: string[],
+ *   additionalInfoData: {
+ *     duration: number | null,
+ *     temperature: number | null,
+ *     worsening: boolean | null,
+ *     weight: number | null,
+ *     height: number | null,
+ *     breastfeeding: boolean | null,
+ *     extraInfo: string | null
+ *   },
+ *   allergyData: { allergies: string[] },
+ *   medicationData: { medication: string[] },
+ *   conditionsData: { conditions: string[] }
+ * } | null> - null if any argument is missing
+ */
 export async function buildUnifiedData(
   basisData?: BasisData,
   additionalData?: AdditionalData,
@@ -646,7 +820,11 @@ export async function buildUnifiedData(
 
 
 
-// building prompt
+/**
+ * Builds the prompt for the AI.
+ * @param data - object in the format of getUserDataFromDB() or buildUnifiedData() (non-null)
+ * @returns Promise<string> - the finished prompt text for the AI
+ */
 export async function buildAiPrompt(
   data: NonNullable<
     Awaited<ReturnType<typeof buildUnifiedData>>
@@ -671,7 +849,7 @@ export async function buildAiPrompt(
     - Schmerzskala (painscale) und Koerperregion (bodyregion) pro Symptom
     - Falls die Koerperregion nicht zur Symptombeschreibung passt, ignoriere sie
     ${JSON.stringify(data.textSymptomData, null, 2)}
-  - null-Eintraege und leere Listen ueberall ignorieren
+  - null-Eintraege und leere Listen sind nicht angegeben worden
 
   Erstelle basierend auf diesen Daten:
   1. eine Einschaetzung der Dringlichkeit auf einer Skala von 1 bis 5
@@ -789,7 +967,11 @@ return prompt;
 
 
 
-// function to map snomed code to symptom name
+/**
+ * Maps a symptom value to its SNOMED code.
+ * @param name - the symptomValue of a symptom
+ * @returns Promise<string|null> - the corresponding SNOMED code, or null if no matching symptom was found
+ */
 export async function mapNameToSnomed(name: string) {
 
   // list for symptom pages

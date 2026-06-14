@@ -1,3 +1,5 @@
+// this component is meant for showing an emergency popup if the redflag scan has detected anything and showing the reason
+
 import homeStyles from "../../Home.module.css";
 
 type RedFlagPositivePopUpProps = {
