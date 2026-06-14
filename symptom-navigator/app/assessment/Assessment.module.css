@@ -372,7 +372,7 @@ textarea.input {
 
 .bodyWrapper {
   width: 100%;
-  max-width: 340px;
+  max-width: 480px;
   margin: var(--space-3) auto;
   background: var(--surface);
   border: 1px solid var(--border);
@@ -507,7 +507,7 @@ textarea.input {
   }
 
   .bodyWrapper {
-    max-width: 320px;
+    max-width: 100%;
     padding: 12px;
   }
 
