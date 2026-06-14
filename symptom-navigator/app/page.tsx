@@ -544,7 +544,7 @@ export default function Home() {
       id = await handleSaveForm();
       setCaseId(id)
     } catch (error) {
-      console.error("Error fetching AI response:", error);
+      console.error("Error saving data into db:", error);
     }
 
     // since ai answer goes wring sometimes, up to 3 tries are allowed
@@ -555,10 +555,10 @@ export default function Home() {
         triesLeft = 0;
       } catch (error) {
         if(triesLeft!>0) {
-          console.error("Error saving data into db:", error);
+          console.error("Error fetching AI response::", error);
         }
         triesLeft--;
-        console.log("Try fetching Ai answer: ", (3-triesLeft))
+        console.error("Try fetching Ai answer: ", (3-triesLeft))
       }
     }
 

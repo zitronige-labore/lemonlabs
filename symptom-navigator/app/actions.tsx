@@ -755,6 +755,7 @@ export async function sendDataToAi(basisData?: BasisData, additionalData?: Addit
   } catch (error) {
     console.error('Fehler details:', JSON.stringify(error, null, 2));
     console.error('Fehler message:', error instanceof Error ? error.message : error);
+    throw error;
   }
 }
 
