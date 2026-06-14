@@ -387,7 +387,7 @@ textarea.input {
 }
 
 .bodyPart {
-  fill: rgba(27, 51, 78, 0.14);
+  fill: rgba(27, 51, 78, 0.26);
   stroke: var(--text-muted);
   stroke-width: 1.5;
   cursor: pointer;
@@ -398,7 +398,7 @@ textarea.input {
 }
 
 .bodyPart:hover {
-  fill: rgba(27, 51, 78, 0.26);
+  fill: rgba(27, 51, 78, 0.14);
   stroke: var(--primary);
 }
 
