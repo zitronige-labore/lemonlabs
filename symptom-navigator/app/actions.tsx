@@ -4,8 +4,7 @@
 import { getSymptomList } from "./assessment/medicalLogic/SymptomLists"; // for snomed mapping
 import { Step, AdditionalData, BasisData } from "./types/assessment"; // needed type
 import { connectionPool } from "./dbs/db"; // for database queries
-import { cookies } from 'next/headers' // for cookies
-import { parseString } from 'xml2js'; // for xml
+
 
 
 /**
@@ -16,7 +15,109 @@ import { parseString } from 'xml2js'; // for xml
  */
 export async function saveFormData(formData: FormData) {
 
-    // form data is saved in variables and converted to the correct type
+    
+    // parsing formdata to right format
+    const {age, sex, pregnancy, weight, height, medicationList, conditionList, allergyList, temperatureFloat, 
+      duration, worseningBool, breastfeedingBool, extraInfo, symptomListJson, symptomTextListJson, timestamp,
+      symptomList, symptomTextList} 
+      = parseFormDataToDbUsable(formData)
+
+
+    // writing data into db and returning id for later use
+    const dbReturn = await connectionPool.query(
+        `
+        Insert into cases (age, sex, pregnancy, date)
+        VALUES ($1, $2, $3, $4)
+
+        returning case_id, access_code;
+        `,
+        [age, sex, pregnancy, timestamp]
+    );
+
+    const caseId = dbReturn.rows[0].case_id;
+
+
+    // writing additional info into db
+
+    // insert for singular values
+    await connectionPool.query(
+        `
+        Insert into additional_information 
+        (case_id, weight, height, temperature, duration, 
+        worsening, breastfeeding, extrainfo)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8);
+        `,
+        [caseId, weight || null, height || null, temperatureFloat|| null, duration|| null, 
+        worseningBool, breastfeedingBool, extraInfo|| null]
+    );
+
+
+    // insert for multiple values
+
+    // allergies
+    await insertListIntoSymptomsNoCertainCount(allergyList, "allergy", caseId);
+
+    // medication
+    await insertListIntoSymptomsNoCertainCount(medicationList, "medication", caseId);
+
+    // conditions
+    await insertListIntoSymptomsNoCertainCount(conditionList, "condition", caseId);
+
+
+    // writing raw text symptoms in db
+    let raw_id = null;
+    if(symptomTextList[0]!='' && symptomTextList[0]!=null && symptomTextList[0]!=undefined){
+      for(let i=0; i<(symptomTextList.length); i++) {
+        raw_id = await connectionPool.query(
+            `
+            insert into raw_text_symptoms (raw_symptoms)
+            VALUES ($1)
+            returning raw_id;
+            `,
+            [symptomTextListJson[i].text_symptom]
+        );
+
+        await connectionPool.query(
+            `
+            insert into case_symptoms (raw_id, case_id, painscale, bodyregion)
+            VALUES ($1, $2, $3, $4)
+            `,
+            [raw_id.rows[0].raw_id, caseId, symptomTextListJson[i].painscale, symptomTextListJson[i].bodyregion || null]
+        );
+      }
+    }
+
+    // writing prewritten symptoms into case_symptoms
+    if(symptomListJson[0]!='' && symptomListJson[0]!=null && symptomListJson[0]!=undefined){
+      for(let i=0; i<symptomList.length; i++) {
+        await connectionPool.query(
+          `INSERT INTO case_symptoms (name_de, case_id, bodyregion, painscale) 
+          VALUES ($1, $2, $3, $4)`,
+          [symptomListJson[i].name, caseId, symptomListJson[i].bodyRegion, symptomListJson[i].painscale]
+        );
+      }
+    }
+
+
+    // test logs
+    console.log("Formdata saved in DB");
+    console.log("DB return:", dbReturn);
+
+
+    return caseId.toString();
+}
+
+
+
+
+/**
+ * Truns formdata into correct format to save to db.
+ * @param @param formData - FormData object containing all form fields
+ * @returns Promise<{ age, sex, pregnancy, weight, height, medicationList, ... }> - parsed data
+ */
+function parseFormDataToDbUsable(formData: FormData) {
+  
+  // form data is saved in variables and converted to the correct type
 
 
     // age
@@ -126,89 +227,12 @@ export async function saveFormData(formData: FormData) {
     // create timestamp
     const timestamp = new Date();
 
-    // writing data into db and returning id for later use
-    const dbReturn = await connectionPool.query(
-        `
-        Insert into cases (age, sex, pregnancy, date)
-        VALUES ($1, $2, $3, $4)
 
-        returning case_id, access_code;
-        `,
-        [age, sex, pregnancy, timestamp]
-    );
-
-    const caseId = dbReturn.rows[0].case_id;
-
-
-    // writing additional info into db
-
-    // insert for singular values
-    await connectionPool.query(
-        `
-        Insert into additional_information 
-        (case_id, weight, height, temperature, duration, 
-        worsening, breastfeeding, extrainfo)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8);
-        `,
-        [caseId, weight || null, height || null, temperatureFloat|| null, duration|| null, 
-        worseningBool, breastfeedingBool, extraInfo|| null]
-    );
-
-
-    // insert for multiple values
-
-    // allergies
-    await insertListIntoSymptomsNoCertainCount(allergyList, "allergy", caseId);
-
-    // medication
-    await insertListIntoSymptomsNoCertainCount(medicationList, "medication", caseId);
-
-    // conditions
-    await insertListIntoSymptomsNoCertainCount(conditionList, "condition", caseId);
-
-
-    // writing raw text symptoms in db
-    let raw_id = null;
-    if(symptomTextList[0]!='' && symptomTextList[0]!=null && symptomTextList[0]!=undefined){
-      for(let i=0; i<(symptomTextList.length); i++) {
-        raw_id = await connectionPool.query(
-            `
-            insert into raw_text_symptoms (raw_symptoms)
-            VALUES ($1)
-            returning raw_id;
-            `,
-            [symptomTextListJson[i].text_symptom]
-        );
-
-        await connectionPool.query(
-            `
-            insert into case_symptoms (raw_id, case_id, painscale, bodyregion)
-            VALUES ($1, $2, $3, $4)
-            `,
-            [raw_id.rows[0].raw_id, caseId, symptomTextListJson[i].painscale, symptomTextListJson[i].bodyregion || null]
-        );
-      }
-    }
-
-    // writing prewritten symptoms into case_symptoms
-    if(symptomListJson[0]!='' && symptomListJson[0]!=null && symptomListJson[0]!=undefined){
-      for(let i=0; i<symptomList.length; i++) {
-        await connectionPool.query(
-          `INSERT INTO case_symptoms (name_de, case_id, bodyregion, painscale) 
-          VALUES ($1, $2, $3, $4)`,
-          [symptomListJson[i].name, caseId, symptomListJson[i].bodyRegion, symptomListJson[i].painscale]
-        );
-      }
-    }
-
-
-    // test logs
-    console.log("Formdata saved in DB");
-    console.log("DB return:", dbReturn);
-
-
-    return caseId.toString();
+  return { age, sex, pregnancy, weight, height, medicationList, conditionList, allergyList, temperatureFloat, 
+    duration, worseningBool, breastfeedingBool, extraInfo, symptomListJson, symptomTextListJson, timestamp,
+  symptomList, symptomTextList};
 }
+
 
 
 
