@@ -155,7 +155,7 @@ export function BodyRegionStep({
         </p>
 
         <svg
-          viewBox="0 0 3508 4961"
+          viewBox="900 500 1700 3950"
           className={assessmentStyles.bodyMap}
           role="img"
           aria-label="Interaktive Körperkarte zur Auswahl der Körperregion"
@@ -238,8 +238,8 @@ export function BodyRegionStep({
           )}
 
           <InfoBox
-            x={160}
-            y={320}
+            x={250}
+            y={900}
             width={880}
             height={480}
             region="Psyche"
@@ -248,9 +248,9 @@ export function BodyRegionStep({
 
           <InfoBox
             x={2400}
-            y={320}
-            width={960}
-            height={576}
+            y={900}
+            width={880}
+            height={480}
             region="Allgemein (ganzer Körper)"
             title="Allgemein"
             subtitle="Körper"
