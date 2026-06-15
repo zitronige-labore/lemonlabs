@@ -477,7 +477,7 @@ export async function getCaseIdFromAccessCode(accessCode: string) {
     `,
     [accessCode]
   );
-  return caseId;
+  return caseId.rows[0].case_id;
 }
 
 
@@ -1280,7 +1280,11 @@ if (height) {
  * @param fhirBundle Das zu sendende FHIR-Bundle Objekt
  */
 
-export async function sendToHapiFhir(fhirBundle: any): Promise<boolean> {
+export async function sendToHapiFhir(accessCode: string): Promise<boolean> {
+
+  const caseId = await getCaseIdFromAccessCode(accessCode);
+  const fhirBundle = await fhirExample(caseId);
+
   if (!fhirBundle) {
     console.error("Senden abgebrochen: Kein FHIR-Bundle übergeben.");
     return false;

@@ -248,9 +248,9 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
                                 <button
                                     type="button"
                                     className={assessmentStyles.secondaryButton}
-                                    onClick={() => async () => {
-                                        const fhirAnswerSuccess = await sendToHapiFhir(await fhirExample(await getCaseIdFromAccessCode(code)))
-                                        setFhirSent(fhirAnswerSuccess)
+                                    onClick={async () => {
+                                        const fhirAnswerSuccess = await sendToHapiFhir(code);
+                                        setFhirSent(fhirAnswerSuccess);
                                     }}
                                 >
                                     fhir bundle an hapi server schicken
