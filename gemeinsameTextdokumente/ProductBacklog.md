@@ -49,15 +49,10 @@ Als Nutzer möchte ich bei Schmerzen die Stärke auf der Schmerzskala (1-10) ang
 **Priorität:** niedrig  
 
 ### FA 010 – Eingaben bearbeiten
-Als Nutzer möchte ich meine Eingaben ändern können, damit ich Fehler korrigieren kann.  
+Als Nutzer möchte ich meine Eingaben ändern können, damit ich Fehler korrigieren kann. 
 **Akzeptanzkriterium:** Bereits eingegebene Basisdaten, sowie gewählte Symptome sind editierbar, Änderungen werden gespeichert  
 **Priorität:** hoch  
-
-### FA 011 – Eingaben zurücksetzen
-Als Nutzer möchte ich alle meine Eingaben löschen können, damit ich den Einschätzungsprozess neu beginnen kann.  
-**Akzeptanzkriterium:** Alle Eingaben können mit einer Aktion (Klick auf Button) gelöscht werden, Bestätigung wird angezeigt  
-**Priorität:** mittel  
-
+ 
 ### FA 012 – Eingaben validieren
 Als System sollen Eingaben überprüft werden, damit fehlerhafte oder unvollständige Daten erkannt werden.  
 **Akzeptanzkriterium:** Pflichtfelder müssen ausgefüllt werden, Datentypen müssen übereinstimmen, fehlerhafte Eingaben werden erkannt, Zahlen liegen in einem realistischen Bereich (Alter bis 130, Gewicht bis 600kg), Fehlermeldungen werden angezeigt  
@@ -72,6 +67,11 @@ Als Nutzer möchte ich Zusatzangaben machen können, damit ich eine genauere Ein
 Als Nutzer möchte ich Zusatzangaben überspringen können, falls ich diese nicht mitteilen will oder es sehr eilig habe.  
 **Akzeptanzkriterium:** Zusatzangaben sind als optional gekennzeichnet, Schritt kann übersprungen werden  
 **Priorität:** mittel  
+
+### FA 015 – 
+Als Nutzer möchte ich Zusatzangaben überspringen können, falls ich diese nicht mitteilen will oder es sehr eilig habe.  
+**Akzeptanzkriterium:** Zusatzangaben sind als optional gekennzeichnet, Schritt kann übersprungen werden  
+**Priorität:** mittel 
 
 ## Epic: Symptomeinschätzung (hohe Priorität)
 Ziel: Bewertung der eingegebenen Daten zur Bestimmung der Dringlichkeit und Ableitung konkreter Maßnahmen.
@@ -195,11 +195,7 @@ Als Nutzer möchte ich Daten offline speichern können, um auch ohne Internet an
 Als Nutzer möchte ich meine Eingaben (Symptome, Basisdaten, Zusatzangaben) vor dem Absenden überprüfen können.  
 **Akzeptanzkriterium:** Zusammenfassung aller eingegebenen Informationen wird vor dem Absenden angezeigt, Änderungen sind direkt möglich   
 **Priorität:** hoch  
-
-### FA 037 – Freitext zusammenfassen
-Als Nutzer möchte ich eine verständliche Zusammenfassung meines Freitextes sehen und gegebenen Falles meinen Text neu schreiben, damit "Missverständnisse" bei der Automatisierten Auswertung minimiert werden.  
-**Akzeptanzkriterium:** Zusammenfassung wird angezeigt, Text kann neu geschrieben werden, um andere Zusammenfassung zu erhalten  
-**Priorität:** mittel  
+ 
 
 ### FA 038 – Begründung anzeigen
 Als Nutzer möchte ich verstehen, warum eine Einschätzung getroffen wurde, damit ich eine eventuelle Fehleinschätzung potentiell erkennen kann.  
@@ -283,22 +279,12 @@ Als Nutzer möchte ich zwischen hellem und dunklem Design wählen können, damit
 ### FA 053 – Anleitung im Offline-Modus anzeigen
 Als Nutzer möchte ich auch ohne Internet eine Anleitung nutzen können, damit ich die Anwendung verstehe.  
 **Akzeptanzkriterium:** Anleitung ist offline abrufbar  
-**Priorität:** niedrig 
+**Priorität:** niedrig  
 
-### FA 054 – Sprache einstellen
-Als Nutzer möchte ich die Sprache der Anwendung ändern können, damit ich sie besser verstehe.  
-**Akzeptanzkriterium:** mindestens zwei Sprachen auswählbar, Auswahl wird gespeichert und beim nächsten Start wiederverwendet  
-**Priorität:** niedrig 
-
-### FA 055 – KI-Unterstützung bei der Symptomsuche
-Als Nutzer möchte ich bei der Eingabe von Symptomen durch eine KI unterstützt werden, damit ich passende Symptome schneller finde.  
-**Akzeptanzkriterium:** Während der Eingabe werden Vorschläge angezeigt, Vorschläge basieren auf Nutzereingaben, Auswahl ist möglich  
-**Priorität:** hoch 
-
-### FA 056 – Bildverarbeitung
-Als Nutzer möchte ich relevante Bilder hochladen können, sodass diese dem Einschätzungsprozess zu gute kommen können.  
-**Akzeptanzkriterium:** bei der Symptomeingabe können auch Bilder hochgeladen werden
-**Priorität:** niedrig 
+### FA 000 – Button kopieren anzeigen beim Zugriffscode
+Als Nutzer möchte ich meinen generierten Zugriffscode mit einem Button kopieren, damit ich problemlos meine Daten abrufen kann.  
+**Akzeptanzkriterium:** Button ist sichtbar und verständlich makiert  
+**Priorität:** niedrig
 
 ### NFA 001 – Intuitive Bedienbarkeit
 Als Nutzer möchte ich die Anwendung einfach bedienen können, damit ich sie ohne lange Einarbeitung nutzen kann.  
@@ -319,11 +305,6 @@ Als Nutzer möchte ich schnelle Reaktionszeiten, damit die Nutzung der Website e
 Als Nutzer möchte ich Inhalte gut lesen können, damit ich die Anwendung unabhängig von Einschränkungen nutzen kann.  
 **Akzeptanzkriterium:** ausreichende Kontraste sind vorhanden, Texte sind gut lesbar, Anwendung ist mit Screenreadern nutzbar  
 **Priorität:** mittel  
-
-### FA 057 – Schriftgröße anpassen
-Als Nutzer möchte ich die Schriftgröße der Anwendung anpassen können, damit ich Inhalte besser lesen kann.  
-**Akzeptanzkriterium:** Schriftgröße kann vergrößert und verkleinert werden, Anpassung wirkt sich auf alle Texte aus, Einstellung bleibt gespeichert  
-**Priorität:** mittel
 
 ### NFA 005 – Barrierearme Bedienbarkeit
 Als Nutzer möchte ich die Anwendung auch mit einfachen Eingaben bedienen können, damit ich sie unabhängig von meinen Fähigkeiten nutzen kann.  
