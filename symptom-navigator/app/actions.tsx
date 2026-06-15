@@ -1035,14 +1035,13 @@ export async function fhirExample(caseId: string): Promise<any> {
     })
   );
 
-  // Ummapping für Temperatur, da dein Code temperatureFloat erwartet
   const temperatureFloat = temperature;
 
-  // HIER FEHLTEN DIE VARIABLEN-DEKLARATIONEN (FEHLER 1 BEHOBEN):
+
   const fhirEntries: any[] = [];
   const patientRef = "urn:uuid:patient-1";
 
-  // A. Patienten-Anker (Minimaler Container)
+  // Patienten-Anker 
   fhirEntries.push({
     fullUrl: patientRef,
     resource: {
@@ -1052,7 +1051,7 @@ export async function fhirExample(caseId: string): Promise<any> {
     }
   });
 
-  // B. Demografie als Observations 
+  // Demografie als Observations 
   
   // Geburtsgeschlecht (LOINC: 76689-9)
   if (sex) {
@@ -1091,7 +1090,7 @@ export async function fhirExample(caseId: string): Promise<any> {
   }
 
   // Schwangerschaftsstatus (LOINC: 82810-3)
-  if (pregnancy !== undefined && sex === "w") {
+  if (pregnancy !== undefined && sex !== "m") {
     fhirEntries.push({
       resource: {
         resourceType: "Observation",
@@ -1101,6 +1100,22 @@ export async function fhirExample(caseId: string): Promise<any> {
         valueCodeableConcept: {
           coding: [{ system: "http://snomed.info/sct", code: pregnancy ? "77386006" : "60001007", display: pregnancy ? "Schwanger" : "Nicht schwanger" }],
           text: pregnancy ? "Patientin ist schwanger" : "Patientin ist nicht schwanger"
+        }
+      }
+    });
+  }
+
+    //Stillzeit
+  if (breastfeeding !== undefined && sex !== "m") {
+    fhirEntries.push({
+      resource: {
+        resourceType: "Observation",
+        status: "final",
+        subject: { reference: patientRef },
+        code: { coding: [{ system: "http://loinc.org", code: "63895-7", display: "Breastfeeding status" }] },
+        valueCodeableConcept: {
+          coding: [{ system: "http://snomed.info/sct", code: breastfeeding ? "69840006" : "106311005", display: breastfeeding ? "Stillend" : "Nicht stillend" }],
+          text: breastfeeding ? "Patientin ist stillend" : "Patientin ist nicht stillend"
         }
       }
     });
@@ -1195,6 +1210,35 @@ if (height) {
         subject: { reference: patientRef },
         code: { coding: [{ system: "http://loinc.org", code: "64141-5", display: "Duration of symptoms" }] },
         valueQuantity: { value: duration, unit: "d", system: "http://unitsofmeasure.org", code: "d" }
+      }
+    });
+  }
+
+
+  //Symptomverschlimmerung als Observation
+  if (worsening !== undefined) {
+    fhirEntries.push({
+      resource: {
+        resourceType: "Observation",
+        status: "final",
+        subject: { reference: patientRef},
+        code: { coding: [{ system:"http://loinc.org", code: "88724-0", display: "Symptom worsening status" }]},
+        valueCodeableConcept: {
+          text: worsening ? "Symptome haben sich verschlimmert" : "Symptome haben sich nicht verschlimmert"
+      }
+    } 
+    })
+  }
+
+   // Freitext für extraInfo als Observation
+  if (extraInfo) {
+    fhirEntries.push({
+      resource: {
+        resourceType: "Observation",
+        status: "final",
+        subject: { reference: patientRef },
+        code: { coding: [{ system: "http://local-terminology.de/extra-info", code: "extra-info", display: "Zusätzliche Patientennotiz" }] },
+        valueString: extraInfo
       }
     });
   }
