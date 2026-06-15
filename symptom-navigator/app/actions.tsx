@@ -117,7 +117,7 @@ export async function saveFormData(formData: FormData) {
         allergyList,
         medicationList,
         conditionList,
-        symptomList // Übergibt strukturierte Symptomliste
+        symptomListJson // Übergibt strukturierte Symptomliste
       );
 
       // 2. An den HAPI FHIR Server senden (asynchron im Hintergrund)
