@@ -269,12 +269,7 @@ Als Nutzer möchte ich die Anwendung offline nutzen können, damit ich im Falle 
 ### FA 051 – Installierbarkeit
 Als Nutzer möchte ich die Anwendung installieren können, damit ich sie be Bedarf einfacher aufrufen kann.  
 **Akzeptanzkriterium:** Installation über Browser möglich  
-**Priorität:** niedrig  
-
-### FA 052 – Dark Mode einstellen
-Als Nutzer möchte ich zwischen hellem und dunklem Design wählen können, damit ich die Anwendung angenehmer nutzen kann.  
-**Akzeptanzkriterium:** Umschaltung zwischen hell und dunkel möglich  
-**Priorität:** niedrig  
+**Priorität:** niedrig    
 
 ### FA 053 – Anleitung im Offline-Modus anzeigen
 Als Nutzer möchte ich auch ohne Internet eine Anleitung nutzen können, damit ich die Anwendung verstehe.  
