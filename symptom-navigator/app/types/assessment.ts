@@ -131,3 +131,23 @@ export type BasisData = {
   gender: string;
   pregnancy: string;
 };
+
+
+export type SymptomSelectionList = {
+    step: Step;
+    symptoms: {
+    symptomName: string;
+    schmerzen: boolean;
+    symptomValue: string;
+    snomedCode: string;
+    }[];
+    }[];
+
+
+  export type SymptomCategoryList = {
+  step: Step;
+  categories: {
+    category: string;
+    step: Step;
+    }[];
+  }[];

@@ -2,7 +2,7 @@
 // this list can be adjusted to change the categories leading to the specific symptoms
 
 
-import { Step } from "@/app/types/assessment";
+import { Step, SymptomCategoryList } from "@/app/types/assessment";
 
 export function getSymptomCategoryList(gender: string) {
 
@@ -20,13 +20,7 @@ export function getSymptomCategoryList(gender: string) {
         { category: "more categories can be added here", step: "aussenOhr" }
       ]
     },*/
-  const categoryList: {
-  step: Step;
-  categories: {
-    category: string;
-    step: Step;
-    }[];
-  }[] = 
+  const categoryList: SymptomCategoryList = 
     [
     {step: "Ohren",
     categories:[

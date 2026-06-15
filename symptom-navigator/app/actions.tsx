@@ -2,7 +2,7 @@
 "use server"
 
 import { getSymptomList } from "./assessment/medicalLogic/SymptomLists"; // for snomed mapping
-import { Step, AdditionalData, BasisData } from "./types/assessment"; // needed type
+import { Step, AdditionalData, BasisData, SymptomSelectionList } from "./types/assessment"; // needed type
 import { connectionPool } from "./dbs/db"; // for database queries
 
 
@@ -1006,7 +1006,6 @@ return prompt;
  * @param name - the symptomValue of a symptom
  * @returns Promise<string|null> - the corresponding SNOMED code, or null if no matching symptom was found
  */
-
 export async function mapNameToSnomed(name: string) {
   if (!name) return null;
   const symptomList = getSymptomList() as any[];
@@ -1021,7 +1020,11 @@ export async function mapNameToSnomed(name: string) {
   return null;
 }
 
-// 
+/**
+ * Maps a symptom value to its SNOMED code.
+ * @param caseId - case id 
+ * @returns Promise<{resourceType, type, entry> - fhir
+ */
 export async function fhirExample(caseId: string): Promise<any> {
   
   // Daten aus der Datenbank geholt
@@ -1328,6 +1331,7 @@ if (height) {
 /**
  * Sendet ein generiertes FHIR-Bundle an den HAPI FHIR Test-Server.
  * @param accessCode der access code des zu sendenden cases
+ * @returns Promise<boolean>
  */
 
 export async function sendToHapiFhir(accessCode: string): Promise<boolean> {
