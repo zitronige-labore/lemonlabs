@@ -1,7 +1,7 @@
 import type { Step } from "../../types/assessment";
 import assessmentStyles from "../Assessment.module.css";
 import { makeDBDataReadable } from "../utils/assessmentData";
-import { accessDataWithAccessCode, deleteDataOnAccessCode, accessAiDataWithAccessCode } from "../../actions";
+import { accessDataWithAccessCode, deleteDataOnAccessCode, accessAiDataWithAccessCode, getCaseIdFromAccessCode, sendToHapiFhir, fhirExample } from "../../actions";
 import { useState } from "react";
 import { downloadTxt, downloadPdf, type AssessmentExportData } from "../utils/exportUtils";
 
@@ -16,6 +16,7 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
     const [data, setData] = useState<any | null>(null);
     const [aiData, setAiData] = useState<any | null>(null);
     const [code, setCode] = useState<string>("");
+    const [fhirSent, setFhirSent] = useState<number>(0);
 
     //state to store validation errors for uuid-code
     const [codeError, setCodeError] = useState("");
@@ -243,6 +244,34 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
                                 >
                                     txt herunterladen
                                 </button>
+
+                                <button
+                                    type="button"
+                                    className={assessmentStyles.secondaryButton}
+                                    onClick={async () => {
+                                        const fhirAnswerSuccess = await sendToHapiFhir(code);
+                                        if(fhirAnswerSuccess) {
+                                            setFhirSent(1);
+                                        }
+                                        else {
+                                            setFhirSent(2)
+                                        }
+                                    }}
+                                >
+                                    fhir bundle an hapi server schicken
+                                </button>
+
+                                {fhirSent===1 && (
+                                    <p>
+                                        fhir bundle wurde erfolgreich gesendet
+                                    </p>
+                                )}
+
+                                {fhirSent===2 && (
+                                    <p>
+                                        fhir bundle konnte nicht gesendet werden
+                                    </p>
+                                )}
                             </div>
                         </>
                     )}
