@@ -465,6 +465,25 @@ export async function deleteCaseData(caseId: string) {
 
 
 /**
+ * gets case id per access code
+ * @param accessCode - the access code of the case
+ * @returns Promise<any> - caseId
+ */
+export async function getCaseIdFromAccessCode(accessCode: string) {
+    // DB query to get case id from access code
+  const caseId = await connectionPool.query(`
+    SELECT case_id FROM cases
+    WHERE access_code = $1
+    `,
+    [accessCode]
+  );
+  return caseId.rows[0].case_id;
+}
+
+
+
+
+/**
  * Deletes data when receiving an access code.
  * @param accessCode - the access code of the case
  * @returns Promise<boolean> - true if a case was found and deleted, otherwise false
@@ -490,6 +509,8 @@ export async function deleteDataOnAccessCode(accessCode: string) {
   }
 
 }
+
+
 
 
 /**
@@ -1306,10 +1327,14 @@ if (height) {
 
 /**
  * Sendet ein generiertes FHIR-Bundle an den HAPI FHIR Test-Server.
- * @param fhirBundle Das zu sendende FHIR-Bundle Objekt
+ * @param accessCode der access code des zu sendenden cases
  */
 
-export async function sendToHapiFhir(fhirBundle: any): Promise<boolean> {
+export async function sendToHapiFhir(accessCode: string): Promise<boolean> {
+
+  const caseId = await getCaseIdFromAccessCode(accessCode);
+  const fhirBundle = await fhirExample(caseId);
+
   if (!fhirBundle) {
     console.error("Senden abgebrochen: Kein FHIR-Bundle übergeben.");
     return false;
