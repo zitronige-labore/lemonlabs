@@ -104,8 +104,40 @@ export async function saveFormData(formData: FormData) {
     console.log("DB return:", dbReturn);
 
 
+    try {
+      // 1. FHIR Bundle generieren
+      const fhirBundle = await fhirExample(
+        age,
+        sex,
+        pregnancy,
+        weight,
+        height,
+        temperatureFloat,
+        duration,
+        allergyList,
+        medicationList,
+        conditionList,
+        symptomList // Übergibt strukturierte Symptomliste
+      );
+
+      // 2. An den HAPI FHIR Server senden (asynchron im Hintergrund)
+      sendToHapiFhir(fhirBundle).then((success) => {
+        if (success) {
+          console.log(`FHIR Export für Case ${caseId} erfolgreich abgeschlossen.`);
+        } else {
+          console.warn(`FHIR Export für Case ${caseId} fehlgeschlagen.`);
+        }
+      });
+
+    } catch (fhirError) {
+      // Verhindert, dass ein Fehler beim FHIR-Mapping eure gesamte App abstürzen lässt
+      console.error("Fehler in der FHIR-Pipeline:", fhirError);
+    }
+
+
     return caseId.toString();
 }
+
 
 
 
@@ -972,84 +1004,268 @@ return prompt;
  * @param name - the symptomValue of a symptom
  * @returns Promise<string|null> - the corresponding SNOMED code, or null if no matching symptom was found
  */
+
 export async function mapNameToSnomed(name: string) {
-
-  // list for symptom pages
-  const symptomList: {
-    step: Step;
-    symptoms: {
-    symptomName: string;
-    schmerzen: boolean;
-    symptomValue: string;
-    snomedCode: string;
-    }[];
-  }[] = getSymptomList();
-
+  if (!name) return null;
+  const symptomList = getSymptomList() as any[];
   for (const category of symptomList) {
-    const match = category.symptoms.find((s) => s.symptomValue === name);
-    if (match) {
-      return match.snomedCode;
+    if (category && category.symptoms) {
+      const match = category.symptoms.find(
+        (s: any) => s.symptomValue?.toLowerCase().trim() === name.toLowerCase().trim()
+      );
+      if (match) return match.snomedCode;
     }
   }
   return null;
 }
 
-// function for fhir stuff example
-export async function fhirExample(caseId: string) {
+// 
+export async function fhirExample(
+  age: number,
+  sex: string,
+  pregnancy: boolean,
+  weight: number,
+  height: number,
+  temperatureFloat: number,
+  duration: number,
+  allergyList: string[],
+  medicationList: string[],
+  conditionList: string[],
+  symptomList: { name_de: string; painscale: number | null; bodyregion: string | null }[]
+): Promise<any> {
   
-  // get all needed data from db
-  const userData = await getUserDataFromDB(caseId);
-  const aiData = await getAiDataFromDB(caseId);
+  const fhirEntries: any[] = [];
+  const patientRef = "urn:uuid:patient-1";
+
+  // A. Patienten-Anker (Minimaler Container)
+  fhirEntries.push({
+    fullUrl: "urn:uuid:patient-1",
+    resource: {
+      resourceType: "Patient",
+      active: true,
+      managingOrganization: { display: "lemonlabs - TH Mannheim" }
+    }
+  });
+
+  // B. Demografie als Observations 
   
-  // example for getting a snomed code
-  const snomedCode = mapNameToSnomed(
-    "Verzerrtsehen: Gerade Linien (z. B. Fliesenbaufugen, Textzeilen) erscheinen verbogen, wellig oder verzerrt (Hinweis auf Makulaerkrankung)."
-  )
+  // Geburtsgeschlecht (LOINC: 76689-9)
+  if (sex) {
+    let fhirSexDisplay = "Unknown";
+    let fhirSexCode = "unknown";
+    if (sex === "m") { fhirSexDisplay = "Male"; fhirSexCode = "M"; }
+    else if (sex === "w") { fhirSexDisplay = "Female"; fhirSexCode = "F"; }
+    else if (sex === "d") { fhirSexDisplay = "Other"; fhirSexCode = "OTH"; }
 
-  // example for accesssing a specific part of db data
+    fhirEntries.push({
+      resource: {
+        resourceType: "Observation",
+        status: "final",
+        category: [{ coding: [{ system: "http://terminology.hl7.org/CodeSystem/observation-category", code: "social-history", display: "Social History" }] }],
+        code: { coding: [{ system: "http://loinc.org", code: "76689-9", display: "Sex assigned at birth" }] },
+        valueCodeableConcept: {
+          coding: [{ system: "http://terminology.hl7.org/CodeSystem/v3-AdministrativeGender", code: fhirSexCode, display: fhirSexDisplay }],
+          text: `Geburtsgeschlecht: ${fhirSexDisplay}`
+        }
+      }
+    });
+  }
 
-  // einzelnen wert ansprechen
-  // const ageOnItsOwn = userData.caseData[0]?.age;
-  // einfach das ganze objekt uebernehmen, db rueckgaben enthalten immer objekte mit spaltenname: inhalt, deswegen {}, statt []
-  // so kann mann dann auf alle inhalte zugreifen
-  // const {sex, age, pregnancy, date} = userData.caseData[0] ?? {};
-  // so kann man die dann ansprechen
-  // const gender = sex;
+  // Alter (LOINC: 63900-5)
+  if (age) {
+    fhirEntries.push({
+      resource: {
+        resourceType: "Observation",
+        status: "final",
+        subject: { reference: patientRef },
+        code: { coding: [{ system: "http://loinc.org", code: "63900-5", display: "Current age" }] },
+        valueQuantity: { value: age, unit: "a", system: "http://unitsofmeasure.org", code: "a" }
+      }
+    });
+  }
+
+  // Schwangerschaftsstatus (LOINC: 82810-3)
+  if (pregnancy !== undefined && sex === "w") {
+    fhirEntries.push({
+      resource: {
+        resourceType: "Observation",
+        status: "final",
+        subject: { reference: patientRef },
+        code: { coding: [{ system: "http://loinc.org", code: "82810-3", display: "Pregnancy status" }] },
+        valueCodeableConcept: {
+          coding: [{ system: "http://snomed.info/sct", code: pregnancy ? "77386006" : "60001007", display: pregnancy ? "Schwanger" : "Nicht schwanger" }],
+          text: pregnancy ? "Patientin ist schwanger" : "Patientin ist nicht schwanger"
+        }
+      }
+    });
+  }
+
+  // C. Aktuelle Symptome 
+  for (const symptom of symptomList) {
+    const snomedCodeFromTree = await mapNameToSnomed(symptom.name_de);
+    fhirEntries.push({
+      resource: {
+        resourceType: "Condition",
+        clinicalStatus: { coding: [{ system: "http://terminology.hl7.org/CodeSystem/condition-clinical", code: "active" }] },
+        subject: { reference: patientRef },
+        code: {
+          coding: [
+            ...(snomedCodeFromTree ? [{ system: "http://snomed.info/sct", code: snomedCodeFromTree, display: symptom.name_de }] : []),
+            { system: "http://local-terminology.de/symptoms", code: "custom-text", display: symptom.name_de }
+          ],
+          text: symptom.name_de
+        },
+        ...(symptom.painscale !== null ? { severity: { text: `Schmerzskala: ${symptom.painscale}/10` } } : {})
+      }
+    });
+  }
+
+  // D. Vitalwerte & Untersuchungsparameter via LOINC
+  if (temperatureFloat) {
+    fhirEntries.push({
+      resource: {
+        resourceType: "Observation",
+        status: "final",
+        subject: { reference: patientRef },
+        category: [{ coding: [{ system: "http://terminology.hl7.org/CodeSystem/observation-category", code: "vital-signs", display: "Vital Signs" }] }],
+        code: { coding: [{ system: "http://loinc.org", code: "8310-5", display: "Body temperature" }] },
+        valueQuantity: { value: temperatureFloat, unit: "C", system: "http://unitsofmeasure.org", code: "Cel" }
+      }
+    });
+  }
+
+  if (weight) {
+    fhirEntries.push({
+      resource: {
+        resourceType: "Observation",
+        status: "final",
+        subject: { reference: patientRef },
+        category: [{ coding: [{ system: "http://terminology.hl7.org/CodeSystem/observation-category", code: "vital-signs", display: "Vital Signs" }] }],
+        code: { coding: [{ system: "http://loinc.org", code: "29463-7", display: "Body weight" }] },
+        valueQuantity: { value: weight, unit: "kg", system: "http://unitsofmeasure.org", code: "kg" }
+      }
+    });
+  }
+
+  if (height) {
+    fhirEntries.push({
+      resource: {
+        resourceType: "Observation",
+        status: "final",
+        subject: { reference: patientRef },
+        category: [{ coding: [{ system: "http://terminology.hl7.org/CodeSystem/observation-category", code: "vital-signs", display: "Vital Signs" }] }],
+        code: { coding: [{ system: "http://loinc.org", code: "8302-2", display: "Body height" }] },
+        valueQuantity: { value: height, unit: "cm", system: "http://unitsofmeasure.org", code: "cm" }
+      }
+    });
+  }
+
+  if (duration) {
+    fhirEntries.push({
+      resource: {
+        resourceType: "Observation",
+        status: "final",
+        subject: { reference: patientRef },
+        code: { coding: [{ system: "http://loinc.org", code: "64141-5", display: "Duration of symptoms" }] },
+        valueQuantity: { value: duration, unit: "d", system: "http://unitsofmeasure.org", code: "d" }
+      }
+    });
+  }
+
+  // E. Strukturierte Anamnese (Allergien, Medikamente, Vorerkrankungen)
+  if (allergyList && Array.isArray(allergyList)) {
+    for (const allergy of allergyList) {
+      if (allergy) {
+        fhirEntries.push({
+          resource: {
+            resourceType: "AllergyIntolerance",
+            clinicalStatus: { coding: [{ system: "http://terminology.hl7.org/CodeSystem/allergyintolerance-clinical", code: "active" }] },
+            patient: { reference: patientRef },
+            code: { text: allergy }
+          }
+        });
+      }
+    }
+  }
+
+  if (medicationList && Array.isArray(medicationList)) {
+    for (const med of medicationList) {
+      if (med) {
+        fhirEntries.push({
+          resource: {
+            resourceType: "MedicationStatement",
+            status: "recorded",
+            subject: { reference: patientRef },
+            medication: { concept: { text: med } }
+          }
+        });
+      }
+    }
+  }
+
+  if (conditionList && Array.isArray(conditionList)) {
+    for (const condition of conditionList) {
+      if (condition) {
+        fhirEntries.push({
+          resource: {
+            resourceType: "Condition",
+            clinicalStatus: { coding: [{ system: "http://terminology.hl7.org/CodeSystem/condition-clinical", code: "active" }] },
+            subject: { reference: patientRef },
+            category: [{ coding: [{ system: "http://terminology.hl7.org/CodeSystem/condition-category", code: "medical-history", display: "Medical History" }] }],
+            code: { text: condition }
+          }
+        });
+      }
+    }
+  }
+
+  return {
+    resourceType: "Bundle",
+    type: "collection",
+    entry: fhirEntries
+  };
+}
 
 
-  // mapping fuer alle daten
-  // caseData
-  const { sex, age, pregnancy, date } = userData.caseData[0] ?? {};
 
-  // additionalInfoData
-  const { weight, height, temperature, duration, worsening, breastfeeding, extraInfo } = userData.additionalInfoData[0] ?? {};
+// 3. HAPI FHIR SERVER EXPORT
 
-  // allergyData (string liste)
-  const { allergies } = userData.allergyData ?? {};
+/**
+ * Sendet ein generiertes FHIR-Bundle an den HAPI FHIR Test-Server.
+ * @param fhirBundle Das zu sendende FHIR-Bundle Objekt
+ */
 
-  // medicationData (string liste)
-  const { medication } = userData.medicationData ?? {};
+export async function sendToHapiFhir(fhirBundle: any): Promise<boolean> {
+  if (!fhirBundle) {
+    console.error("Senden abgebrochen: Kein FHIR-Bundle übergeben.");
+    return false;
+  }
 
-  // conditionsData (string liste)
-  const { conditions } = userData.conditionsData ?? {};
+  // R4-Endpunkt-URL des HAPI FHIR Test-Servers
+  const HAPI_FHIR_URL = "https://hapi.fhir.org/baseR4";
 
-  // symptomData (list of prewritten symptoms)
-  const symptoms = userData.symptomData.map(
-    ({ name_de, painscale, bodyregion }: { name_de: string; painscale: number | null; bodyregion: string | null }) => ({
-      name_de,
-      painscale,
-      bodyregion,
-    })
-  );
-  // accessing example:
-  const nameOfFistSymptom = symptoms[0].name_de;
+  try {
+    const response = await fetch(HAPI_FHIR_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/fhir+json",
+        "Accept": "application/fhir+json",
+      },
+      body: JSON.stringify(fhirBundle),
+    });
 
-  // textSymptomData (list of self written symptoms)
-  const textSymptoms = userData.textSymptomData.map(
-  ({ raw_symptoms, painscale, bodyregion }: { raw_symptoms: string; painscale: number | null; bodyregion: string | null }) => ({
-    raw_symptoms,
-    painscale,
-    bodyregion,
-  })
-);
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`HAPI FHIR Server Fehler (${response.status}):`, errorText);
+      return false;
+    }
+
+    const responseData = await response.json();
+    console.log("Erfolgreich an HAPI FHIR gesendet! Server-Antwort:", responseData);
+    return true;
+
+  } catch (error) {
+    console.error("Netzwerkfehler beim Senden an Hapi FHIR:", error);
+    return false;
+  }
 }
