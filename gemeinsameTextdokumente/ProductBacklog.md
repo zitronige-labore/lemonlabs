@@ -339,29 +339,24 @@ Als Nutzer möchte ich Inhalte durch Icons unterstützt sehen, damit ich Informa
 **Akzeptanzkriterium:** wichtige Funktionen (bis jetzt bekannt: Benutzeranleitungsbutton, Angaben zu Geschlecht, Navigationsbuttons auf der Homepage) werden durch verständliche Icons ergänzt  
 **Priorität:** niedrig  
  
-## Epic: Interoperabilität (hohe Priorität) 
+## Epic: Interoperabilität (hohe Priorität)  
 
-### FA 057 – FHIR-Kompatibilität
-Als Nutzer möchte ich meine Daten an Krankenhäuser weitergeben können, damit medizinische Einrichtungen diese ohne Probleme weiterverarbeiten können. 
-**Akzeptanzkriterium:** Daten werden in einem FHIR-konformen Format bereitgestellt  
-**Priorität:** mittel  
-
-### FA 058 – SNOMED-CT-Codes für vorgegebene Symptome einfügen
+### FA 057 – SNOMED-CT-Codes für vorgegebene Symptome einfügen
 Als System möchte ich vordefinierten Symptomen SNOMED-CT-Codes zuordnen, damit Symptome standardisiert gespeichert und in FHIR-konformen Formaten exportiert werden können.    
 **Akzeptanzkriterium:** Jedem vordefinierten Symptom ist genau ein SNOMED-CT-Code zugeordnet, Die Zuordnungen sind in der medizinischen Logik hinterlegt, Die Codes werden beim FHIR-Export verwendet  
 **Priorität:** mittel 
 
-### FA 059 – FHIR-Kompatibilität für Symptome
+### FA 058 – FHIR-Kompatibilität für Symptome
 Als Nutzer möchte ich meine Symptome an Krankenhäuser weitergeben können, damit medizinische Einrichtungen diese ohne Probleme weiterverarbeiten können.    
 **Akzeptanzkriterium:** Daten werden in einem FHIR-konformen Format bereitgestellt  
 **Priorität:** mittel 
 
-### FA 060 – FHIR-Kompatibilität für Basisangaben
+### FA 059 – FHIR-Kompatibilität für Basisangaben
 Als Nutzer möchte ich meine Basisdaten an Krankenhäuser weitergeben können, damit medizinische Einrichtungen diese ohne Probleme weiterverarbeiten können.    
 **Akzeptanzkriterium:** Daten werden in einem FHIR-konformen Format bereitgestellt  
 **Priorität:** mittel 
 
-### FA 061 – FHIR-Kompatibilität für Zusatzangaben
+### FA 060 – FHIR-Kompatibilität für Zusatzangaben
 Als Nutzer möchte ich meine Zusatzangaben an Krankenhäuser weitergeben können, damit medizinische Einrichtungen diese ohne Probleme weiterverarbeiten können.    
 **Akzeptanzkriterium:** Daten werden in einem FHIR-konformen Format bereitgestellt  
 **Priorität:** mittel 
