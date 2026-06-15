@@ -16,6 +16,7 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
     const [data, setData] = useState<any | null>(null);
     const [aiData, setAiData] = useState<any | null>(null);
     const [code, setCode] = useState<string>("");
+    const [fhirSent, setFhirSent] = useState<boolean>(false)
 
     //state to store validation errors for uuid-code
     const [codeError, setCodeError] = useState("");
@@ -247,10 +248,19 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
                                 <button
                                     type="button"
                                     className={assessmentStyles.secondaryButton}
-                                    onClick={() => async () => await sendToHapiFhir(await fhirExample(await getCaseIdFromAccessCode(code)))}
+                                    onClick={() => async () => {
+                                        const fhirAnswerSuccess = await sendToHapiFhir(await fhirExample(await getCaseIdFromAccessCode(code)))
+                                        setFhirSent(fhirAnswerSuccess)
+                                    }}
                                 >
                                     fhir bundle an hapi server schicken
                                 </button>
+
+                                {fhirSent && (
+                                    <p>
+                                        fhir bundle wurde erfolgreich gesendet
+                                    </p>
+                                )}
                             </div>
                         </>
                     )}
