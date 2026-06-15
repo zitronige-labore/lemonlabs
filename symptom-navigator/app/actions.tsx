@@ -1003,14 +1003,14 @@ export async function mapNameToSnomed(name: string) {
 // 
 export async function fhirExample(caseId: string): Promise<any> {
   
-  // daten aus der datenbank geholt
+  // Daten aus der Datenbank geholt
   const userData = await getUserDataFromDB(caseId);
   if (!userData || !userData.caseData || userData.caseData.length === 0) {
     console.error("Keine Daten für FHIR-Export in der DB gefunden.");
     return null;
   }
 
-  // übrnommen von franziska
+  // Übernommen von Franziska
   const { sex, age, pregnancy, date } = userData.caseData[0] ?? {};
   const { weight, height, temperature, duration, worsening, breastfeeding, extraInfo } = userData.additionalInfoData[0] ?? {};
   const { allergies } = userData.allergyData ?? {};
@@ -1035,8 +1035,15 @@ export async function fhirExample(caseId: string): Promise<any> {
     })
   );
 
+  // Ummapping für Temperatur, da dein Code temperatureFloat erwartet
+  const temperatureFloat = temperature;
+
+  // HIER FEHLTEN DIE VARIABLEN-DEKLARATIONEN (FEHLER 1 BEHOBEN):
+  const fhirEntries: any[] = [];
+  const patientRef = "urn:uuid:patient-1";
+
   // A. Patienten-Anker (Minimaler Container)
- fhirEntries.push({
+  fhirEntries.push({
     fullUrl: patientRef,
     resource: {
       resourceType: "Patient",
@@ -1068,8 +1075,9 @@ export async function fhirExample(caseId: string): Promise<any> {
         }
       }
     });
+  }
 
-  // Alter (LOINC: 63900-5)
+ // Alter (LOINC: 63900-5)
   if (age) {
     fhirEntries.push({
       resource: {
@@ -1098,8 +1106,7 @@ export async function fhirExample(caseId: string): Promise<any> {
     });
   }
 
-  //gegebene Symptome
-
+  // Gegebene Symptome
   for (const symptom of symptoms) {
     const snomedCodeFromTree = await mapNameToSnomed(symptom.name_de);
     fhirEntries.push({
@@ -1119,7 +1126,7 @@ export async function fhirExample(caseId: string): Promise<any> {
     });
   }
 
-  //Freitext Symptome
+  // Freitext Symptome
   for (const tSymptom of textSymptoms) {
     const snomedCodeFromTree = await mapNameToSnomed(tSymptom.raw_symptoms);
     fhirEntries.push({
@@ -1179,6 +1186,7 @@ if (height) {
     });
   }
 
+
   if (duration) {
     fhirEntries.push({
       resource: {
@@ -1191,8 +1199,8 @@ if (height) {
     });
   }
 
-  // E. Strukturierte Anamnese (Allergien, Medikamente, Vorerkrankungen)
- if (allergies && Array.isArray(allergies)) {
+// E. Strukturierte Anamnese (Allergien, Medikamente, Vorerkrankungen)
+  if (allergies && Array.isArray(allergies)) {
     for (const allergy of allergies) {
       if (allergy) {
         fhirEntries.push({
@@ -1257,7 +1265,6 @@ export async function sendToHapiFhir(fhirBundle: any): Promise<boolean> {
     return false;
   }
 
-  // R4-Endpunkt-URL des HAPI FHIR Test-Servers
   const HAPI_FHIR_URL = "https://hapi.fhir.org/baseR4";
 
   try {
@@ -1285,3 +1292,4 @@ export async function sendToHapiFhir(fhirBundle: any): Promise<boolean> {
     return false;
   }
 }
+
