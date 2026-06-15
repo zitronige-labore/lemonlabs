@@ -103,40 +103,21 @@ export async function saveFormData(formData: FormData) {
     console.log("Formdata saved in DB");
     console.log("DB return:", dbReturn);
 
-
-    try {
-      // 1. FHIR Bundle generieren
-      const fhirBundle = await fhirExample(
-        age,
-        sex,
-        pregnancy,
-        weight,
-        height,
-        temperatureFloat,
-        duration,
-        allergyList,
-        medicationList,
-        conditionList,
-        symptomListJson // Übergibt strukturierte Symptomliste
-      );
-
-      // 2. An den HAPI FHIR Server senden (asynchron im Hintergrund)
-      sendToHapiFhir(fhirBundle).then((success) => {
-        if (success) {
-          console.log(`FHIR Export für Case ${caseId} erfolgreich abgeschlossen.`);
-        } else {
-          console.warn(`FHIR Export für Case ${caseId} fehlgeschlagen.`);
+   try {
+      // Wir übergeben ganz einfach nur die ID als String!
+      fhirExample(caseId.toString()).then((fhirBundle) => {
+        if (fhirBundle) {
+          sendToHapiFhir(fhirBundle).then((success) => {
+            if (success) console.log(`FHIR Export für Case ${caseId} erfolgreich.`);
+          });
         }
       });
-
     } catch (fhirError) {
-      // Verhindert, dass ein Fehler beim FHIR-Mapping eure gesamte App abstürzen lässt
       console.error("Fehler in der FHIR-Pipeline:", fhirError);
     }
-
-
     return caseId.toString();
 }
+
 
 
 
@@ -1020,26 +1001,43 @@ export async function mapNameToSnomed(name: string) {
 }
 
 // 
-export async function fhirExample(
-  age: number,
-  sex: string,
-  pregnancy: boolean,
-  weight: number,
-  height: number,
-  temperatureFloat: number,
-  duration: number,
-  allergyList: string[],
-  medicationList: string[],
-  conditionList: string[],
-  symptomList: { name_de: string; painscale: number | null; bodyregion: string | null }[]
-): Promise<any> {
+export async function fhirExample(caseId: string): Promise<any> {
   
-  const fhirEntries: any[] = [];
-  const patientRef = "urn:uuid:patient-1";
+  // daten aus der datenbank geholt
+  const userData = await getUserDataFromDB(caseId);
+  if (!userData || !userData.caseData || userData.caseData.length === 0) {
+    console.error("Keine Daten für FHIR-Export in der DB gefunden.");
+    return null;
+  }
+
+  // übrnommen von franziska
+  const { sex, age, pregnancy, date } = userData.caseData[0] ?? {};
+  const { weight, height, temperature, duration, worsening, breastfeeding, extraInfo } = userData.additionalInfoData[0] ?? {};
+  const { allergies } = userData.allergyData ?? {};
+  const { medication } = userData.medicationData ?? {};
+  const { conditions } = userData.conditionsData ?? {};
+
+  // Liste der gegebenen Symptome
+  const symptoms = userData.symptomData.map(
+    ({ name_de, painscale, bodyregion }: { name_de: string; painscale: number | null; bodyregion: string | null }) => ({
+      name_de,
+      painscale,
+      bodyregion,
+    })
+  );
+
+  // Liste der Freitext Symptome 
+  const textSymptoms = userData.textSymptomData.map(
+    ({ raw_symptoms, painscale, bodyregion }: { raw_symptoms: string; painscale: number | null; bodyregion: string | null }) => ({
+      raw_symptoms,
+      painscale,
+      bodyregion,
+    })
+  );
 
   // A. Patienten-Anker (Minimaler Container)
-  fhirEntries.push({
-    fullUrl: "urn:uuid:patient-1",
+ fhirEntries.push({
+    fullUrl: patientRef,
     resource: {
       resourceType: "Patient",
       active: true,
@@ -1061,6 +1059,7 @@ export async function fhirExample(
       resource: {
         resourceType: "Observation",
         status: "final",
+        subject: { reference: patientRef },
         category: [{ coding: [{ system: "http://terminology.hl7.org/CodeSystem/observation-category", code: "social-history", display: "Social History" }] }],
         code: { coding: [{ system: "http://loinc.org", code: "76689-9", display: "Sex assigned at birth" }] },
         valueCodeableConcept: {
@@ -1069,7 +1068,6 @@ export async function fhirExample(
         }
       }
     });
-  }
 
   // Alter (LOINC: 63900-5)
   if (age) {
@@ -1100,8 +1098,9 @@ export async function fhirExample(
     });
   }
 
-  // C. Aktuelle Symptome 
-  for (const symptom of symptomList) {
+  //gegebene Symptome
+
+  for (const symptom of symptoms) {
     const snomedCodeFromTree = await mapNameToSnomed(symptom.name_de);
     fhirEntries.push({
       resource: {
@@ -1116,6 +1115,26 @@ export async function fhirExample(
           text: symptom.name_de
         },
         ...(symptom.painscale !== null ? { severity: { text: `Schmerzskala: ${symptom.painscale}/10` } } : {})
+      }
+    });
+  }
+
+  //Freitext Symptome
+  for (const tSymptom of textSymptoms) {
+    const snomedCodeFromTree = await mapNameToSnomed(tSymptom.raw_symptoms);
+    fhirEntries.push({
+      resource: {
+        resourceType: "Condition",
+        clinicalStatus: { coding: [{ system: "http://terminology.hl7.org/CodeSystem/condition-clinical", code: "active" }] },
+        subject: { reference: patientRef },
+        code: {
+          coding: [
+            ...(snomedCodeFromTree ? [{ system: "http://snomed.info/sct", code: snomedCodeFromTree, display: tSymptom.raw_symptoms }] : []),
+            { system: "http://local-terminology.de/symptoms", code: "free-text", display: tSymptom.raw_symptoms }
+          ],
+          text: tSymptom.raw_symptoms
+        },
+        ...(tSymptom.painscale !== null ? { severity: { text: `Schmerzskala: ${tSymptom.painscale}/10` } } : {})
       }
     });
   }
@@ -1147,7 +1166,7 @@ export async function fhirExample(
     });
   }
 
-  if (height) {
+if (height) {
     fhirEntries.push({
       resource: {
         resourceType: "Observation",
@@ -1173,8 +1192,8 @@ export async function fhirExample(
   }
 
   // E. Strukturierte Anamnese (Allergien, Medikamente, Vorerkrankungen)
-  if (allergyList && Array.isArray(allergyList)) {
-    for (const allergy of allergyList) {
+ if (allergies && Array.isArray(allergies)) {
+    for (const allergy of allergies) {
       if (allergy) {
         fhirEntries.push({
           resource: {
@@ -1188,8 +1207,8 @@ export async function fhirExample(
     }
   }
 
-  if (medicationList && Array.isArray(medicationList)) {
-    for (const med of medicationList) {
+  if (medication && Array.isArray(medication)) {
+    for (const med of medication) {
       if (med) {
         fhirEntries.push({
           resource: {
@@ -1203,8 +1222,8 @@ export async function fhirExample(
     }
   }
 
-  if (conditionList && Array.isArray(conditionList)) {
-    for (const condition of conditionList) {
+  if (conditions && Array.isArray(conditions)) {
+    for (const condition of conditions) {
       if (condition) {
         fhirEntries.push({
           resource: {
@@ -1225,9 +1244,6 @@ export async function fhirExample(
     entry: fhirEntries
   };
 }
-
-
-
 // 3. HAPI FHIR SERVER EXPORT
 
 /**
