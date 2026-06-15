@@ -465,6 +465,25 @@ export async function deleteCaseData(caseId: string) {
 
 
 /**
+ * gets case id per access code
+ * @param accessCode - the access code of the case
+ * @returns Promise<any> - caseId
+ */
+export async function getCaseIdFromAccessCode(accessCode: string) {
+    // DB query to get case id from access code
+  const caseId = await connectionPool.query(`
+    SELECT case_id FROM cases
+    WHERE access_code = $1
+    `,
+    [accessCode]
+  );
+  return caseId;
+}
+
+
+
+
+/**
  * Deletes data when receiving an access code.
  * @param accessCode - the access code of the case
  * @returns Promise<boolean> - true if a case was found and deleted, otherwise false
@@ -490,6 +509,8 @@ export async function deleteDataOnAccessCode(accessCode: string) {
   }
 
 }
+
+
 
 
 /**
