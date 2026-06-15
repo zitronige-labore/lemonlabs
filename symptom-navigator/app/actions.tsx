@@ -1292,8 +1292,14 @@ if (height) {
 
   return {
     resourceType: "Bundle",
-    type: "collection",
-    entry: fhirEntries
+    type: "batch",
+    entry: fhirEntries.map(entry => ({
+      ...entry,
+      request: {
+        method: "POST",
+        url: entry.resource.resourceType
+      }
+    }))
   };
 }
 // 3. HAPI FHIR SERVER EXPORT
