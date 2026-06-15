@@ -1277,7 +1277,7 @@ if (height) {
 
 /**
  * Sendet ein generiertes FHIR-Bundle an den HAPI FHIR Test-Server.
- * @param fhirBundle Das zu sendende FHIR-Bundle Objekt
+ * @param accessCode der access code des zu sendenden cases
  */
 
 export async function sendToHapiFhir(accessCode: string): Promise<boolean> {
