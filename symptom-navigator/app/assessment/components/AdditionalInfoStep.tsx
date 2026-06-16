@@ -13,6 +13,14 @@ import assessmentStyles from "../Assessment.module.css";
 */
 import type { AdditionalData, Step } from "../../types/assessment";
 
+import {
+  validateWeight,
+  validateHeight,
+  validateTemperature,
+  validateDuration,
+  validateListFormat
+} from "../utils/validationUtils";
+
 type AdditionalInfoStepProps = {
   additionalData: AdditionalData;
   setAdditionalData: (data: AdditionalData) => void;
@@ -34,9 +42,6 @@ export function AdditionalInfoStep({
   const [heightError, setHeightError] = useState("");
   const [temperatureError, setTemperatureError] = useState("");
   const [durationError, setDurationError] = useState("");
-
-
-  const Pattern = /^[^,]+(,[^,]+)*$/;
 
   const medicationValue =
     additionalData.medication || "";
@@ -68,9 +73,8 @@ export function AdditionalInfoStep({
               });
             }}
             onBlur={(event) => {
-              const value = event.target.value.trim();
-
-              if (value === "" || Pattern.test(value)) {
+              const value = event.target.value;
+              if (validateListFormat(value)) {
                 setInputError("");
               } else {
                 setInputError(
@@ -94,21 +98,8 @@ export function AdditionalInfoStep({
               setAdditionalData({
                 ...additionalData,
                 weight: value,
-
               });
-              const weight = Number(value);
-              if (value === "") {
-                setWeightError("");
-              } else if (
-                weight <= 0 ||
-                weight > 600 ||
-                !Number.isInteger(weight)
-              ) {
-                setWeightError("Bitte geben Sie ein gültiges Gewicht ein.")
-              }
-              else {
-                setWeightError("");
-              }
+              setWeightError(validateWeight(value));
             }
             } placeholder="Zum Beispiel: 72 kg"
           />
@@ -129,27 +120,12 @@ export function AdditionalInfoStep({
             value={additionalData.height}
             onChange={(event) => {
               const value = event.target.value;
-
               setAdditionalData({
                 ...additionalData,
                 height: value,
-
               });
-              const height = Number(value);
-              if (value === "") {
-                setHeightError("");
-              } else if (
-                height < 40
-                || height > 300
-                || !Number.isInteger(height)
-              ) {
-                setHeightError("Bitte geben Sie ein gültige Körpergröße ein.")
-              }
-              else {
-                setHeightError("");
-              }
+              setHeightError(validateHeight(value));
             }
-
             } placeholder="Zum Beispiel: 175 cm"
           />
           {heightError && (
@@ -255,25 +231,12 @@ export function AdditionalInfoStep({
             step="0.01"
             value={additionalData.temperature}
             onChange={(event) => {
-
               const value = event.target.value;
-
               setAdditionalData({
                 ...additionalData,
                 temperature: value,
               });
-              const temperature = Number(value);
-              if (value === "") {
-                setTemperatureError("");
-              } else if (
-                temperature < 30
-                || temperature > 45
-              ) {
-                setTemperatureError("Bitte geben Sie ein gültige Körpertemperatur ein.")
-              }
-              else {
-                setTemperatureError("");
-              }
+              setTemperatureError(validateTemperature(value));
             }}
             placeholder="Zum Beispiel: 38,5 °C"
           />
@@ -295,25 +258,11 @@ export function AdditionalInfoStep({
             value={additionalData.duration}
             onChange={(event) => {
               const value = event.target.value;
-
               setAdditionalData({
                 ...additionalData,
                 duration: value,
-              })
-
-              const duration = Number(value);
-              if (value === "") {
-                setDurationError("");
-              } else if (
-                duration < 0 ||
-                duration > 365 ||
-                !Number.isInteger(duration)
-              ) {
-                setDurationError("Bitte geben Sie ein gültige Anzahl an Tagen ein.")
-              }
-              else {
-                setDurationError("");
-              }
+              });
+              setDurationError(validateDuration(value));
             }
             } placeholder="Zum Beispiel: 2"
           />

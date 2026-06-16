@@ -7,14 +7,17 @@ import assessmentStyles from "../Assessment.module.css";
 
 // import to show access code
 import { getAccessCode } from "../../actions";
-import { downloadTxt, downloadPdf, type AssessmentExportData } from "../utils/exportUtils";
+import { downloadTxt, downloadPdf } from "../utils/exportUtils";
 
 import type {
   AdditionalData,
   BasisData,
 } from "../../types/assessment";
-
-
+import {
+  buildExportData,
+  parseSymptomName,
+  parseSymptomText
+} from "../utils/resultUtils";
 
 type ResultStepProps = {
   basisData: BasisData;
@@ -66,46 +69,6 @@ export function ResultStep({
       displayedAdditionalData.conditions.length > 0
       ? displayedAdditionalData.conditions
       : "Keine Angabe";
-
-
-  // build export files
-  function buildExportData(): AssessmentExportData {
-    return {
-      alter: displayedBasisData.age || "Keine Angabe",
-      geschlecht: displayedBasisData.gender || "Keine Angabe",
-      schwangerschaft: displayedBasisData.pregnancy || "Keine Angabe",
-      stillzeit: displayedAdditionalData.breastfeeding || "Keine Angabe",
-      worsening: displayedAdditionalData.worsening || undefined,
-      groesse: displayedAdditionalData.height ? `${displayedAdditionalData.height} cm` : "Keine Angabe",
-      gewicht: displayedAdditionalData.weight ? `${displayedAdditionalData.weight} kg` : "Keine Angabe",
-      temperatur: displayedAdditionalData.temperature || "Keine Angabe",
-      dauer: displayedAdditionalData.duration || "Keine Angabe",
-      medikation: displayedAdditionalData.medication || "Keine Angabe",
-      allergien: displayedAdditionalData.allergies || "Keine Angabe",
-      vorerkrankungen: displayedAdditionalData.conditions || "Keine Angabe",
-      symptome: displayedSelectedSymptoms.length > 0
-        ? displayedSelectedSymptoms.map(s => { try { return JSON.parse(s).name; } catch { return s; } }).join(", ")
-        : "",
-      textSymptome: displayedSymptomText.length > 0
-        ? displayedSymptomText.map(s => { try { return JSON.parse(s).text_symptom; } catch { return s; } }).join(", ")
-        : "",
-      datum: new Date().toLocaleString(),
-      dringlichkeit: aiAnswer?.assessment?.urgency?.toString() || "Keine Angabe",
-      handlungsempfehlung: aiAnswer?.assessment?.nextSteps || "Keine Angabe",
-      vermutungen: suspicions
-        ? [1,2,3,4,5].map(i => {
-            const s = suspicions[`suspicion${i}`];
-            if (!s) return null;
-            const reasonKey = Object.keys(s).find(k => k.toLowerCase().includes("reason"));
-            const probKey = Object.keys(s).find(k => k.toLowerCase().includes("probability"));
-            return {
-              text: reasonKey ? s[reasonKey] : "Keine Angabe",
-              wahrscheinlichkeit: probKey && s[probKey] ? `${s[probKey]}` : "Keine Angabe",
-            };
-          }).filter(Boolean) as AssessmentExportData["vermutungen"]
-        : [],
-    };
-  }
 
 
   useEffect(() => {
@@ -482,14 +445,14 @@ export function ResultStep({
             <button
               type="button"
               className={assessmentStyles.secondaryButton}
-              onClick={() => downloadPdf(buildExportData())}
+              onClick={() => downloadPdf(buildExportData(basisData, additionalData, symptomText, selectedSymptoms, aiAnswer))}
             >
               pdf herunterladen
             </button>
             <button
               type="button"
               className={assessmentStyles.secondaryButton}
-              onClick={() => downloadTxt(buildExportData())}
+              onClick={() => downloadTxt(buildExportData(basisData, additionalData, symptomText, selectedSymptoms, aiAnswer))}
             >
               txt herunterladen
             </button>
