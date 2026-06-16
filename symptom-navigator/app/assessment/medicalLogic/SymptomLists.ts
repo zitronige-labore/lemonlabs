@@ -1,7 +1,7 @@
 // this file contains the symptoms to be selected
 // these symptoms can be adjusted as needed
 
-import { Step } from "@/app/types/assessment";
+import { Step, SymptomSelectionList } from "@/app/types/assessment";
 
 export function getSymptomList() {
 
@@ -17,15 +17,7 @@ export function getSymptomList() {
         ]
     },
     */
-    const symptomList: {
-    step: Step;
-    symptoms: {
-    symptomName: string;
-    schmerzen: boolean;
-    symptomValue: string;
-    snomedCode: string;
-    }[];
-    }[] = 
+    const symptomList: SymptomSelectionList = 
     [
     {step: "aussenOhr",
     symptoms:

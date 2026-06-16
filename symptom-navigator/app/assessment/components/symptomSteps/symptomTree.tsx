@@ -14,7 +14,7 @@ import SymptomCategory from "./symptomCategory";
 import type { Dispatch, SetStateAction } from "react";
 
 // import needed types
-import { Step, SubRegion, BasisData  } from "../../../types/assessment";
+import { Step, SubRegion, BasisData, SymptomCategoryList, SymptomSelectionList  } from "../../../types/assessment";
 import { getSymptomList } from "../../medicalLogic/SymptomLists";
 import { getSymptomCategoryList } from "../../medicalLogic/symptomCategoryList";
 
@@ -52,25 +52,11 @@ export default function SymptomTree({
 
 
   // list for category pages
-  const categoryList: {
-  step: Step;
-  categories: {
-    category: string;
-    step: Step;
-    }[];
-  }[] = getSymptomCategoryList(gender)
+  const categoryList: SymptomCategoryList = getSymptomCategoryList(gender)
 
 
   // list for symptom pages
-  const symptomList: {
-    step: Step;
-    symptoms: {
-    symptomName: string;
-    schmerzen: boolean;
-    symptomValue: string;
-    snomedCode: string;
-    }[];
-  }[] = getSymptomList();
+  const symptomList: SymptomSelectionList = getSymptomList();
 
   return (
 
