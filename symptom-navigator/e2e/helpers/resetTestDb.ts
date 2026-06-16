@@ -2,7 +2,7 @@ import { Pool } from 'pg';
 require('dotenv').config();
 
 const pool = new Pool({
-  connectionString: "postgres://sguedek:123456789@127.0.0.1:5432/testlemonlabs_db",
+  connectionString: "postgres://postgres:123@127.0.0.1:5432/testlemonlabs_db",
 });
 
 export async function resetDb() {
