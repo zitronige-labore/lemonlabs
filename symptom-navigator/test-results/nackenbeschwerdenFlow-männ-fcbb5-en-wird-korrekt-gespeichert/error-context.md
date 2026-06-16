@@ -6,45 +6,53 @@
 
 # Test info
 
-- Name: assessment2.spec.ts >> männlicher Patient mit Nackenbeschwerden wird korrekt gespeichert
-- Location: e2e/assessment2.spec.ts:15:5
+- Name: nackenbeschwerdenFlow.spec.ts >> männlicher Patient mit Nackenbeschwerden wird korrekt gespeichert
+- Location: e2e/nackenbeschwerdenFlow.spec.ts:15:5
 
 # Error details
 
 ```
-Error: expect(locator).toBeVisible() failed
+Error: expect(received).toBe(expected) // Object.is equality
 
-Locator: getByText(/Dringlichkeitsstufe/)
-Expected: visible
-Timeout: 60000ms
-Error: element(s) not found
-
-Call log:
-  - Expect "toBeVisible" with timeout 60000ms
-  - waiting for getByText(/Dringlichkeitsstufe/)
-
+Expected: 42
+Received: 28
 ```
 
+# Page snapshot
+
 ```yaml
-- main:
-  - heading "Ersteinschätzung" [level=1]
-  - paragraph: Die KI Auswertung ist fehlgeschlagen
-  - button "KI-Begründung anzeigen"
-  - paragraph: "Ihr persönlicher Zugangscode:"
-  - paragraph: 7d0dbf3a-e149-4598-8c2f-757830d7d7d6
-  - button "Kopieren"
-  - paragraph: Mit diesem Code können Sie Ihre Daten später wieder abrufen.
-  - paragraph: Ihre Angaben wurden erfasst.
-  - button "Gespeicherte Daten anzeigen"
-  - separator
-  - button "Zur Startseite"
-  - button "Kontakt"
-  - button "Datenschutz"
-  - button "Support"
-  - button "Impressum"
-  - button "Tutorial öffnen":
-    - img
-- alert
+- generic [active] [ref=e1]:
+  - main [ref=e2]:
+    - generic [ref=e3]:
+      - heading "Ersteinschätzung" [level=1] [ref=e4]
+      - generic [ref=e8]:
+        - generic [ref=e10]:
+          - paragraph [ref=e11]:
+            - text: "Dringlichkeitsstufe:"
+            - strong [ref=e12]: "3"
+            - text: ": Zeitnahe medizinische Abklärung erforderlich"
+          - paragraph [ref=e13]: "Handlungsempfehlung: Bitte suchen Sie zeitnah einen Arzt auf, damit die Ursache Ihrer starken Nackensteifigkeit und Bewegungseinschränkung gefunden und behandelt werden kann."
+          - link "Ärzte in der Umgebung finden" [ref=e14] [cursor=pointer]:
+            - /url: https://www.google.com/maps/search/%C3%84rzte+in+der+Umgebung
+        - button "KI-Begründung anzeigen" [ref=e15] [cursor=pointer]
+        - generic [ref=e16]:
+          - paragraph [ref=e17]: "Ihr persönlicher Zugangscode:"
+          - generic [ref=e18]:
+            - paragraph [ref=e19]: ba238f82-5e7d-45a3-84fc-7743a5a5d31e
+            - button "Kopieren" [ref=e20] [cursor=pointer]
+          - paragraph [ref=e21]: Mit diesem Code können Sie Ihre Daten später wieder abrufen.
+        - paragraph [ref=e22]: Ihre Angaben wurden erfasst.
+        - button "Gespeicherte Daten anzeigen" [ref=e23] [cursor=pointer]
+        - separator [ref=e24]
+        - button "Zur Startseite" [ref=e25] [cursor=pointer]
+    - generic [ref=e26]:
+      - button "Kontakt" [ref=e27] [cursor=pointer]
+      - button "Datenschutz" [ref=e28] [cursor=pointer]
+      - button "Support" [ref=e29] [cursor=pointer]
+      - button "Impressum" [ref=e30] [cursor=pointer]
+    - button "Tutorial öffnen" [ref=e31] [cursor=pointer]:
+      - img [ref=e32]
+  - alert [ref=e34]
 ```
 
 # Test source
@@ -126,13 +134,13 @@ Call log:
   74  |   // wait for AI result
   75  |   await expect(
   76  |     page.getByText(/Dringlichkeitsstufe/)
-> 77  |   ).toBeVisible({ timeout: 60_000 });
-      |     ^ Error: expect(locator).toBeVisible() failed
+  77  |   ).toBeVisible({ timeout: 60_000 });
   78  | 
   79  |   // assert case was written to the database
   80  |   const dbCase = await getCaseFromDb();
   81  |   expect(dbCase).not.toBeNull();
-  82  |   expect(dbCase.age).toBe(42);
+> 82  |   expect(dbCase.age).toBe(42);
+      |                      ^ Error: expect(received).toBe(expected) // Object.is equality
   83  |   expect(dbCase.sex).toBe("m");
   84  |   expect(dbCase.pregnancy).toBe(false);
   85  | 
