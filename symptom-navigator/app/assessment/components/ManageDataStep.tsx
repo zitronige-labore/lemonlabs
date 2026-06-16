@@ -1,7 +1,7 @@
 import type { Step } from "../../types/assessment";
 import assessmentStyles from "../Assessment.module.css";
 import { makeDBDataReadable } from "../utils/assessmentData";
-import { accessDataWithAccessCode, deleteDataOnAccessCode, accessAiDataWithAccessCode, getCaseIdFromAccessCode, sendToHapiFhir, fhirExample } from "../../actions";
+import { accessDataWithAccessCode, deleteDataOnAccessCode, accessAiDataWithAccessCode, getCaseIdFromAccessCode, sendFhirToServer, buildFhirBundle } from "../../actions";
 import { useState } from "react";
 import { downloadTxt, downloadPdf, type AssessmentExportData } from "../utils/exportUtils";
 
@@ -249,7 +249,7 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
                                     type="button"
                                     className={assessmentStyles.secondaryButton}
                                     onClick={async () => {
-                                        const fhirAnswerSuccess = await sendToHapiFhir(code);
+                                        const fhirAnswerSuccess = await sendFhirToServer(code);
                                         if(fhirAnswerSuccess) {
                                             setFhirSent(1);
                                         }
