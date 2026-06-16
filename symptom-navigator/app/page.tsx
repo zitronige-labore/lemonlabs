@@ -48,6 +48,15 @@ import type {
 
 import { emptyRedFlags } from "./assessment/utils/assessmentData";
 import { SosModal } from "./assessment/components/SosModal";
+import {
+  formularSteps,
+  getStepProgress,
+  getUpdatedSymptoms,
+  getUpdatedSymptomText,
+  calculateHasEmergency,
+  calculateNewHighestProgress,
+  isRegionSelectionComplete,
+} from "./assessment/utils/pageLogic";
 
 export default function Home() {
   /*
@@ -255,9 +264,7 @@ export default function Home() {
 
         stepRef.current = zielStep;
         setHighestAssessmentProgress((previousProgress) =>
-          zielStep === "start" || zielStep === "hinweise"
-            ? 0
-            : Math.max(previousProgress, getStepProgress(zielStep))
+          calculateNewHighestProgress(previousProgress, zielStep)
         );
         setStep(zielStep);
       }
@@ -290,9 +297,7 @@ export default function Home() {
     stepRef.current = nextStep;
     history.pushState({ step: nextStep }, "", "#" + nextStep);
     setHighestAssessmentProgress((previousProgress) =>
-      nextStep === "start" || nextStep === "hinweise"
-        ? 0
-        : Math.max(previousProgress, getStepProgress(nextStep))
+      calculateNewHighestProgress(previousProgress, nextStep)
     );
     setStep(nextStep);
   }

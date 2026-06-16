@@ -22,13 +22,7 @@ export type AssessmentExportData = {
   vermutungen: { text: string; wahrscheinlichkeit: string }[];
 };
 
-
-/**
- * Generates a plain text file from the assessment data and triggers a download.
- * @param d - AssessmentExportData object containing all data to export
- * @returns void - triggers a browser download of "assessment.txt"
- */
-export function downloadTxt(d: AssessmentExportData) {
+export function formatAssessmentTxt(d: AssessmentExportData): string {
   const rows: string[] = [];
 
   rows.push("Daten\n");
@@ -65,7 +59,11 @@ export function downloadTxt(d: AssessmentExportData) {
 
   rows.push(`\nDaten erfasst am: ${d.datum}`);
 
-  const text = rows.join("\n");
+  return rows.join("\n");
+}
+
+export function downloadTxt(d: AssessmentExportData) {
+  const text = formatAssessmentTxt(d);
   const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
@@ -75,14 +73,7 @@ export function downloadTxt(d: AssessmentExportData) {
   URL.revokeObjectURL(url);
 }
 
-
-
-/**
- * Generates a PDF file from the assessment data and triggers a download.
- * @param d - AssessmentExportData object containing all data to export
- * @returns void - triggers a browser download of "assessment.pdf"
- */
-export function downloadPdf(d: AssessmentExportData) {
+export function formatAssessmentPdfTable(d: AssessmentExportData): string[][] {
   const tableBody: string[][] = [];
 
   tableBody.push(["Alter", d.alter]);
@@ -108,6 +99,12 @@ export function downloadPdf(d: AssessmentExportData) {
     tableBody.push(["Wahrscheinlichkeit", v.wahrscheinlichkeit]);
   });
   tableBody.push(["Daten erfasst am", d.datum]);
+
+  return tableBody;
+}
+
+export function downloadPdf(d: AssessmentExportData) {
+  const tableBody = formatAssessmentPdfTable(d);
 
   const doc = new jsPDF();
   doc.setFontSize(16);
