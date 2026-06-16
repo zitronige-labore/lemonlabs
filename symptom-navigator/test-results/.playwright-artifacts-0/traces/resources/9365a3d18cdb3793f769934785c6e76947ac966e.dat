@@ -1,0 +1,77 @@
+------WebKitFormBoundary40uE43G9Yjo4QQoN
+Content-Disposition: form-data; name="1_age"
+
+30
+------WebKitFormBoundary40uE43G9Yjo4QQoN
+Content-Disposition: form-data; name="1_gender"
+
+weiblich
+------WebKitFormBoundary40uE43G9Yjo4QQoN
+Content-Disposition: form-data; name="1_pregnancy"
+
+nein
+------WebKitFormBoundary40uE43G9Yjo4QQoN
+Content-Disposition: form-data; name="1_selectedSymptoms"
+
+{"name": "Räusperzwang: Ständiger Drang, den Hals freizumachen", "bodyRegion": "Hals", "painscale": null}
+------WebKitFormBoundary40uE43G9Yjo4QQoN
+Content-Disposition: form-data; name="1_symptomText"
+
+
+------WebKitFormBoundary40uE43G9Yjo4QQoN
+Content-Disposition: form-data; name="1_selectedMainRegion"
+
+Hals & Nacken
+------WebKitFormBoundary40uE43G9Yjo4QQoN
+Content-Disposition: form-data; name="1_selectedSubRegion"
+
+Hals
+------WebKitFormBoundary40uE43G9Yjo4QQoN
+Content-Disposition: form-data; name="1_medication"
+
+
+------WebKitFormBoundary40uE43G9Yjo4QQoN
+Content-Disposition: form-data; name="1_weight"
+
+
+------WebKitFormBoundary40uE43G9Yjo4QQoN
+Content-Disposition: form-data; name="1_height"
+
+
+------WebKitFormBoundary40uE43G9Yjo4QQoN
+Content-Disposition: form-data; name="1_breastfeeding"
+
+
+------WebKitFormBoundary40uE43G9Yjo4QQoN
+Content-Disposition: form-data; name="1_conditions"
+
+
+------WebKitFormBoundary40uE43G9Yjo4QQoN
+Content-Disposition: form-data; name="1_allergies"
+
+
+------WebKitFormBoundary40uE43G9Yjo4QQoN
+Content-Disposition: form-data; name="1_temperature"
+
+
+------WebKitFormBoundary40uE43G9Yjo4QQoN
+Content-Disposition: form-data; name="1_duration"
+
+
+------WebKitFormBoundary40uE43G9Yjo4QQoN
+Content-Disposition: form-data; name="1_worsening"
+
+
+------WebKitFormBoundary40uE43G9Yjo4QQoN
+Content-Disposition: form-data; name="1_extraInfo"
+
+
+------WebKitFormBoundary40uE43G9Yjo4QQoN
+Content-Disposition: form-data; name="1_redFlags"
+
+[object Object]
+------WebKitFormBoundary40uE43G9Yjo4QQoN
+Content-Disposition: form-data; name="0"
+
+["$K1"]
+------WebKitFormBoundary40uE43G9Yjo4QQoN--

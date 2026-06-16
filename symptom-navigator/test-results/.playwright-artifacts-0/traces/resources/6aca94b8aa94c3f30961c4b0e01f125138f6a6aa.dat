@@ -1,0 +1,77 @@
+------WebKitFormBoundaryktFIO7F7U70naj6b
+Content-Disposition: form-data; name="1_age"
+
+60
+------WebKitFormBoundaryktFIO7F7U70naj6b
+Content-Disposition: form-data; name="1_gender"
+
+männlich
+------WebKitFormBoundaryktFIO7F7U70naj6b
+Content-Disposition: form-data; name="1_pregnancy"
+
+
+------WebKitFormBoundaryktFIO7F7U70naj6b
+Content-Disposition: form-data; name="1_selectedSymptoms"
+
+{"name": "Tinnitus: Pfeifen, Brummen, Rauschen, Zischen, Hämmern", "bodyRegion": "Ohren", "painscale": null}
+------WebKitFormBoundaryktFIO7F7U70naj6b
+Content-Disposition: form-data; name="1_symptomText"
+
+
+------WebKitFormBoundaryktFIO7F7U70naj6b
+Content-Disposition: form-data; name="1_selectedMainRegion"
+
+Kopf & Gesicht
+------WebKitFormBoundaryktFIO7F7U70naj6b
+Content-Disposition: form-data; name="1_selectedSubRegion"
+
+Ohren
+------WebKitFormBoundaryktFIO7F7U70naj6b
+Content-Disposition: form-data; name="1_medication"
+
+
+------WebKitFormBoundaryktFIO7F7U70naj6b
+Content-Disposition: form-data; name="1_weight"
+
+
+------WebKitFormBoundaryktFIO7F7U70naj6b
+Content-Disposition: form-data; name="1_height"
+
+
+------WebKitFormBoundaryktFIO7F7U70naj6b
+Content-Disposition: form-data; name="1_breastfeeding"
+
+
+------WebKitFormBoundaryktFIO7F7U70naj6b
+Content-Disposition: form-data; name="1_conditions"
+
+
+------WebKitFormBoundaryktFIO7F7U70naj6b
+Content-Disposition: form-data; name="1_allergies"
+
+
+------WebKitFormBoundaryktFIO7F7U70naj6b
+Content-Disposition: form-data; name="1_temperature"
+
+
+------WebKitFormBoundaryktFIO7F7U70naj6b
+Content-Disposition: form-data; name="1_duration"
+
+
+------WebKitFormBoundaryktFIO7F7U70naj6b
+Content-Disposition: form-data; name="1_worsening"
+
+
+------WebKitFormBoundaryktFIO7F7U70naj6b
+Content-Disposition: form-data; name="1_extraInfo"
+
+
+------WebKitFormBoundaryktFIO7F7U70naj6b
+Content-Disposition: form-data; name="1_redFlags"
+
+[object Object]
+------WebKitFormBoundaryktFIO7F7U70naj6b
+Content-Disposition: form-data; name="0"
+
+["$K1"]
+------WebKitFormBoundaryktFIO7F7U70naj6b--

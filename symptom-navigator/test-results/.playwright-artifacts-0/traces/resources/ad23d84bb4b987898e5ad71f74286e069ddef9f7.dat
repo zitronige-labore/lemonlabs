@@ -1,0 +1,77 @@
+------WebKitFormBoundaryEpRzktxkpB87Mjop
+Content-Disposition: form-data; name="1_age"
+
+25
+------WebKitFormBoundaryEpRzktxkpB87Mjop
+Content-Disposition: form-data; name="1_gender"
+
+männlich
+------WebKitFormBoundaryEpRzktxkpB87Mjop
+Content-Disposition: form-data; name="1_pregnancy"
+
+
+------WebKitFormBoundaryEpRzktxkpB87Mjop
+Content-Disposition: form-data; name="1_selectedSymptoms"
+
+{"name": "Juckreiz im Gehörgang: Starkes Jucken, oft verbunden mit Schuppung", "bodyRegion": "Ohren", "painscale": null}
+------WebKitFormBoundaryEpRzktxkpB87Mjop
+Content-Disposition: form-data; name="1_symptomText"
+
+
+------WebKitFormBoundaryEpRzktxkpB87Mjop
+Content-Disposition: form-data; name="1_selectedMainRegion"
+
+Kopf & Gesicht
+------WebKitFormBoundaryEpRzktxkpB87Mjop
+Content-Disposition: form-data; name="1_selectedSubRegion"
+
+Ohren
+------WebKitFormBoundaryEpRzktxkpB87Mjop
+Content-Disposition: form-data; name="1_medication"
+
+
+------WebKitFormBoundaryEpRzktxkpB87Mjop
+Content-Disposition: form-data; name="1_weight"
+
+
+------WebKitFormBoundaryEpRzktxkpB87Mjop
+Content-Disposition: form-data; name="1_height"
+
+
+------WebKitFormBoundaryEpRzktxkpB87Mjop
+Content-Disposition: form-data; name="1_breastfeeding"
+
+
+------WebKitFormBoundaryEpRzktxkpB87Mjop
+Content-Disposition: form-data; name="1_conditions"
+
+
+------WebKitFormBoundaryEpRzktxkpB87Mjop
+Content-Disposition: form-data; name="1_allergies"
+
+
+------WebKitFormBoundaryEpRzktxkpB87Mjop
+Content-Disposition: form-data; name="1_temperature"
+
+
+------WebKitFormBoundaryEpRzktxkpB87Mjop
+Content-Disposition: form-data; name="1_duration"
+
+
+------WebKitFormBoundaryEpRzktxkpB87Mjop
+Content-Disposition: form-data; name="1_worsening"
+
+
+------WebKitFormBoundaryEpRzktxkpB87Mjop
+Content-Disposition: form-data; name="1_extraInfo"
+
+
+------WebKitFormBoundaryEpRzktxkpB87Mjop
+Content-Disposition: form-data; name="1_redFlags"
+
+[object Object]
+------WebKitFormBoundaryEpRzktxkpB87Mjop
+Content-Disposition: form-data; name="0"
+
+["$K1"]
+------WebKitFormBoundaryEpRzktxkpB87Mjop--

@@ -22,6 +22,12 @@ export type AssessmentExportData = {
   vermutungen: { text: string; wahrscheinlichkeit: string }[];
 };
 
+
+/**
+ * Generates a plain text file from the assessment data and triggers a download.
+ * @param d - AssessmentExportData object containing all data to export
+ * @returns void - triggers a browser download of "assessment.txt"
+ */
 export function downloadTxt(d: AssessmentExportData) {
   const rows: string[] = [];
 
@@ -69,6 +75,13 @@ export function downloadTxt(d: AssessmentExportData) {
   URL.revokeObjectURL(url);
 }
 
+
+
+/**
+ * Generates a PDF file from the assessment data and triggers a download.
+ * @param d - AssessmentExportData object containing all data to export
+ * @returns void - triggers a browser download of "assessment.pdf"
+ */
 export function downloadPdf(d: AssessmentExportData) {
   const tableBody: string[][] = [];
 

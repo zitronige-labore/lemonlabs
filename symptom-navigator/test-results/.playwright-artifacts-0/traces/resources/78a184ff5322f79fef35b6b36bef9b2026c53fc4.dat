@@ -1,0 +1,77 @@
+------WebKitFormBoundaryp1VbQ90K7oCQBPzt
+Content-Disposition: form-data; name="1_age"
+
+45
+------WebKitFormBoundaryp1VbQ90K7oCQBPzt
+Content-Disposition: form-data; name="1_gender"
+
+männlich
+------WebKitFormBoundaryp1VbQ90K7oCQBPzt
+Content-Disposition: form-data; name="1_pregnancy"
+
+
+------WebKitFormBoundaryp1VbQ90K7oCQBPzt
+Content-Disposition: form-data; name="1_selectedSymptoms"
+
+{"name": "Kaffeesatz-Erbrechen: Dunkles, krümeliges Erbrochenes (Sofortiger Notfall!).", "bodyRegion": "Oberbauch", "painscale": 8}
+------WebKitFormBoundaryp1VbQ90K7oCQBPzt
+Content-Disposition: form-data; name="1_symptomText"
+
+
+------WebKitFormBoundaryp1VbQ90K7oCQBPzt
+Content-Disposition: form-data; name="1_selectedMainRegion"
+
+Bauch
+------WebKitFormBoundaryp1VbQ90K7oCQBPzt
+Content-Disposition: form-data; name="1_selectedSubRegion"
+
+Oberbauch
+------WebKitFormBoundaryp1VbQ90K7oCQBPzt
+Content-Disposition: form-data; name="1_medication"
+
+
+------WebKitFormBoundaryp1VbQ90K7oCQBPzt
+Content-Disposition: form-data; name="1_weight"
+
+
+------WebKitFormBoundaryp1VbQ90K7oCQBPzt
+Content-Disposition: form-data; name="1_height"
+
+
+------WebKitFormBoundaryp1VbQ90K7oCQBPzt
+Content-Disposition: form-data; name="1_breastfeeding"
+
+
+------WebKitFormBoundaryp1VbQ90K7oCQBPzt
+Content-Disposition: form-data; name="1_conditions"
+
+
+------WebKitFormBoundaryp1VbQ90K7oCQBPzt
+Content-Disposition: form-data; name="1_allergies"
+
+
+------WebKitFormBoundaryp1VbQ90K7oCQBPzt
+Content-Disposition: form-data; name="1_temperature"
+
+
+------WebKitFormBoundaryp1VbQ90K7oCQBPzt
+Content-Disposition: form-data; name="1_duration"
+
+
+------WebKitFormBoundaryp1VbQ90K7oCQBPzt
+Content-Disposition: form-data; name="1_worsening"
+
+
+------WebKitFormBoundaryp1VbQ90K7oCQBPzt
+Content-Disposition: form-data; name="1_extraInfo"
+
+
+------WebKitFormBoundaryp1VbQ90K7oCQBPzt
+Content-Disposition: form-data; name="1_redFlags"
+
+[object Object]
+------WebKitFormBoundaryp1VbQ90K7oCQBPzt
+Content-Disposition: form-data; name="0"
+
+["$K1"]
+------WebKitFormBoundaryp1VbQ90K7oCQBPzt--

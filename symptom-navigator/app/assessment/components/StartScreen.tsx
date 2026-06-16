@@ -8,12 +8,14 @@ type StartScreenProps = {
   resetProcess: () => void;
   setStep: (step: Step) => void;
   isOffline: boolean;
+  setStartFormOffline: (startFormOffline: boolean) => void;
 };
 
 export function StartScreen({
   onStartAssessment,
   resetProcess,
   setStep,
+  setStartFormOffline,
   isOffline,
 }: StartScreenProps) {
   const [showSos, setShowSos] = useState(false);
@@ -64,9 +66,22 @@ export function StartScreen({
                   onClick={() => {
                     onStartAssessment();
                     resetProcess();
+                    setStartFormOffline(false)
                   }}
                 >
                   Warnzeichen erkennen
+                </button>
+
+                <button
+                  type="button"
+                  className={homeStyles.primaryButton}
+                  onClick={() => {
+                    onStartAssessment();
+                    resetProcess();
+                    setStartFormOffline(true)
+                  }}
+                >
+                  Ersteinschätzung von Symptomen offline starten
                 </button>
               </>
             )}

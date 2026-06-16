@@ -1,7 +1,7 @@
 import type { Step } from "../../types/assessment";
 import assessmentStyles from "../Assessment.module.css";
 import { makeDBDataReadable } from "../utils/assessmentData";
-import { accessDataWithAccessCode, deleteDataOnAccessCode, accessAiDataWithAccessCode } from "../../actions";
+import { accessDataWithAccessCode, deleteDataOnAccessCode, accessAiDataWithAccessCode, getCaseIdFromAccessCode, sendFhirToServer, buildFhirBundle } from "../../actions";
 import { useState } from "react";
 import { downloadTxt, downloadPdf, type AssessmentExportData } from "../utils/exportUtils";
 
@@ -16,7 +16,13 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
     const [data, setData] = useState<any | null>(null);
     const [aiData, setAiData] = useState<any | null>(null);
     const [code, setCode] = useState<string>("");
+    const [fhirSent, setFhirSent] = useState<number>(0);
 
+    //state to store validation errors for uuid-code
+    const [codeError, setCodeError] = useState("");
+
+    //pattern for validation uuid code
+    const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
     // convert coded values to be read by users where necessary
     const [geschlecht, schwangerschaft, stillzeit, worsening] = makeDBDataReadable(data);
@@ -41,14 +47,14 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
             datum: data?.caseData?.[0]?.date ? new Date(data.caseData[0].date).toLocaleString() : "Keine Angabe",
             dringlichkeit: aiData?.[0]?.urgency_level?.toString() || "Keine Angabe",
             handlungsempfehlung: aiData?.[0]?.advice_text || "Keine Angabe",
-            vermutungen: [1,2,3,4,5]
-            .map(i => ({
-                text: aiData?.[0]?.[`suspicion${i}`] || "",
-                wahrscheinlichkeit: aiData?.[0]?.[`probability${i}`] != null ? `${aiData[0][`probability${i}`]}%` : "Keine Angabe",
-            }))
-            .filter(v => v.text),
+            vermutungen: [1, 2, 3, 4, 5]
+                .map(i => ({
+                    text: aiData?.[0]?.[`suspicion${i}`] || "",
+                    wahrscheinlichkeit: aiData?.[0]?.[`probability${i}`] != null ? `${aiData[0][`probability${i}`]}%` : "Keine Angabe",
+                }))
+                .filter(v => v.text),
         };
-        }
+    }
 
     return (
         <div className={assessmentStyles.resultBox}>
@@ -63,8 +69,24 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
                     type="text"
                     placeholder="Code hier eingeben"
                     className={assessmentStyles.input}
-                    onChange={(e) => setCode(e.target.value.trim())}
-                />
+                    onChange={(e) => {
+                        const value = e.target.value.trim();
+                        setCode(value);
+
+                        if (value === "") {
+                            setCodeError("");
+                        } else if (!uuidPattern.test(value)) {
+                            setCodeError("Bitte geben Sie einen gültigen Code ein.")
+                        } else {
+                            setCodeError("");
+                        }
+                    }}/>
+                {codeError && (
+                        <p className={assessmentStyles.errorText}>
+                            {codeError}
+                        </p>
+                    )
+                    }
                 <div className={assessmentStyles.buttonGroup}>
                     <button
                         type="button"
@@ -84,7 +106,7 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
                         Löschen
                     </button>
                 </div>
-        </div>
+            </div>
 
             {data && (
                 <>
@@ -93,7 +115,7 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
                     <div className={assessmentStyles.fieldset}>
                         <p>Geschlecht: <strong>{geschlecht || "Keine Angabe"}</strong></p>
                         <p>Alter: <strong>{data?.caseData?.[0]?.age || "Keine Angabe"}</strong></p>
-                        {geschlecht !== "männlich"  && (
+                        {geschlecht !== "männlich" && (
                             <p>Schwanger: <strong>{schwangerschaft}</strong></p>
                         )}
                         {geschlecht !== "männlich" && (
@@ -171,59 +193,87 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
                     )}
 
                     {aiData && aiData[0] && (
-                    <>
-                        <div className={assessmentStyles.fieldset}>
-                            <p className={assessmentStyles.selectedText}>KI-Einschätzung</p>
-                            {aiData[0].urgency_level && (
-                                <p>Dringlichkeitsstufe: <strong>{aiData[0].urgency_level}</strong></p>
-                            )}
-                            {aiData[0].advice_text && (
-                                <p>Handlungsempfehlung: <strong>{aiData[0].advice_text}</strong></p>
-                            )}
-                        </div>
-
-
-                        <div className={assessmentStyles.fieldset}>
-                            <p className={assessmentStyles.selectedText}>Vermutungen</p>
-                            {[1, 2, 3, 4, 5].map((n) => {
-                                const suspicion = aiData[0][`suspicion${n}`];
-                                const probability = aiData[0][`probability${n}`];
-                                if (!suspicion) return null;
-                                return (
-                                    <div key={n} className={assessmentStyles.fieldset}>
-                                        Vermutung {n}: <strong>{suspicion}</strong><br />
-                                        {probability != null && (
-                                            <p>Wahrscheinlichkeit: <strong>{probability}%</strong></p>
-                                        )}
-                                    </div>
-                                );
-                            })}
-                        </div>
-
-                        {data?.caseData?.[0]?.date && (
+                        <>
                             <div className={assessmentStyles.fieldset}>
-                                <p>Daten erfasst am: <strong>{new Date(data.caseData[0].date).toLocaleString()}</strong></p>
+                                <p className={assessmentStyles.selectedText}>KI-Einschätzung</p>
+                                {aiData[0].urgency_level && (
+                                    <p>Dringlichkeitsstufe: <strong>{aiData[0].urgency_level}</strong></p>
+                                )}
+                                {aiData[0].advice_text && (
+                                    <p>Handlungsempfehlung: <strong>{aiData[0].advice_text}</strong></p>
+                                )}
                             </div>
-                        )}
 
-                        <div className={assessmentStyles.buttonGroup}>
-                            <button
-                                type="button"
-                                className={assessmentStyles.secondaryButton}
-                                onClick={() => downloadPdf(buildExportData())}
-                            >
-                                pdf herunterladen
-                            </button>
 
-                            <button
-                                type="button"
-                                className={assessmentStyles.secondaryButton}
-                                onClick={() => downloadTxt(buildExportData())}
-                            >
-                                txt herunterladen
-                            </button>
-                        </div>
-                    </>
+                            <div className={assessmentStyles.fieldset}>
+                                <p className={assessmentStyles.selectedText}>Vermutungen</p>
+                                {[1, 2, 3, 4, 5].map((n) => {
+                                    const suspicion = aiData[0][`suspicion${n}`];
+                                    const probability = aiData[0][`probability${n}`];
+                                    if (!suspicion) return null;
+                                    return (
+                                        <div key={n} className={assessmentStyles.fieldset}>
+                                            Vermutung {n}: <strong>{suspicion}</strong><br />
+                                            {probability != null && (
+                                                <p>Wahrscheinlichkeit: <strong>{probability}%</strong></p>
+                                            )}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+
+                            {data?.caseData?.[0]?.date && (
+                                <div className={assessmentStyles.fieldset}>
+                                    <p>Daten erfasst am: <strong>{new Date(data.caseData[0].date).toLocaleString()}</strong></p>
+                                </div>
+                            )}
+
+                            <div className={assessmentStyles.buttonGroup}>
+                                <button
+                                    type="button"
+                                    className={assessmentStyles.secondaryButton}
+                                    onClick={() => downloadPdf(buildExportData())}
+                                >
+                                    pdf herunterladen
+                                </button>
+
+                                <button
+                                    type="button"
+                                    className={assessmentStyles.secondaryButton}
+                                    onClick={() => downloadTxt(buildExportData())}
+                                >
+                                    txt herunterladen
+                                </button>
+
+                                <button
+                                    type="button"
+                                    className={assessmentStyles.secondaryButton}
+                                    onClick={async () => {
+                                        const fhirAnswerSuccess = await sendFhirToServer(code);
+                                        if(fhirAnswerSuccess) {
+                                            setFhirSent(1);
+                                        }
+                                        else {
+                                            setFhirSent(2)
+                                        }
+                                    }}
+                                >
+                                    fhir bundle an hapi server schicken
+                                </button>
+
+                                {fhirSent===1 && (
+                                    <p>
+                                        fhir bundle wurde erfolgreich gesendet
+                                    </p>
+                                )}
+
+                                {fhirSent===2 && (
+                                    <p>
+                                        fhir bundle konnte nicht gesendet werden
+                                    </p>
+                                )}
+                            </div>
+                        </>
                     )}
                 </>
             )}

@@ -14,6 +14,7 @@ import assessmentStyles from "./assessment/Assessment.module.css";
 
 import { useSaveForm } from "./useSaveForm";
 import { sendDataToAi } from "./actions";
+import { redFlagScan } from "./assessment/medicalLogic/redFlagScan";
 
 import SelectMoreSymptoms from "./assessment/components/SelectMoreSymptomsStep";
 import { AdditionalInfoStep } from "./assessment/components/AdditionalInfoStep";
@@ -30,6 +31,7 @@ import { LoadingPopup } from "./assessment/components/LoadingPopup";
 import { ManageDataStep } from "./assessment/components/ManageDataStep";
 import { CheckInfo } from "./assessment/components/CheckInfo";
 import { OtherStep } from "./assessment/components/OtherStep";
+import { RedFlagPositivePopUp } from "./assessment/components/RedFlagScanPositivePopUp";
 
 import { Question } from "@phosphor-icons/react";
 
@@ -45,6 +47,7 @@ import type {
 } from "./types/assessment";
 
 import { emptyRedFlags } from "./assessment/utils/assessmentData";
+import { SosModal } from "./assessment/components/SosModal";
 
 export default function Home() {
   /*
@@ -118,6 +121,14 @@ export default function Home() {
   // state to check if offline
   const [isOffline, setIsOffline] = useState<boolean>(false);
 
+  // state in case form should be started in offline mode
+  const [startFormOffline, setStartFormOffline] = useState<boolean>(false)
+
+  // state to check if redFlag scan was positive
+  const [redFlagScanPositive, setRedFlagScanPositive] = useState<boolean>(false);
+
+  // state to save redflags detected by red flag scan 
+  const [redFlagScanResult, setRedFlagScanResult] = useState<string[]>([]);
 
   // event listener to check if user goes offline or comes back online
   useEffect(() => {
@@ -162,8 +173,6 @@ export default function Home() {
     age: "",
     gender: "",
     pregnancy: "",
-    duration: "",
-    intensity: "0",
   });
 
   /*
@@ -287,6 +296,8 @@ export default function Home() {
     );
     setStep(nextStep);
   }
+
+  // function to track progress
   function getStepProgress(step: Step): number {
     switch (step) {
       case "redflags":
@@ -465,6 +476,33 @@ export default function Home() {
     setCopyPainScale({});
     setNoRedFlags(false);
     setHighestAssessmentProgress(0);
+    setCheckInfoActive(false);
+    setAdditionalData({
+    medication: "",
+    conditions: "",
+    duration: "",
+
+    allergies: "",
+
+    temperature: "",
+    worsening: "",
+
+    weight: "",
+    height: "",
+
+    breastfeeding: "",
+
+    extraInfo: "",
+  });
+  setBasisData({
+    age: "",
+    gender: "",
+    pregnancy: "",
+  });
+  setAiAnswer(null),
+  setCaseId("");
+  setRedFlagScanPositive(false);
+  setRedFlagScanResult([]);
   }
 
 
@@ -487,14 +525,41 @@ export default function Home() {
 
     setIsLoading(true);
 
-    try {
-      const id = await handleSaveForm();
-      setCaseId(id)
+    let id;
+    let triesLeft = 3;
 
-      const aiAnswer = await sendDataToAi(id);
-      setAiAnswer(aiAnswer);
+
+    try {
+      const redFlagScanResultLokal = await redFlagScan(basisData, additionalData, selectedSubRegion!, selectedSymptoms, symptomText)
+      if(redFlagScanResultLokal[0]) {
+        setRedFlagScanPositive(true)
+        setRedFlagScanResult(redFlagScanResultLokal[1])
+      }
+    }
+    catch (error) {
+      console.error("Error doing redflag scan", error);
+    }
+    
+    try {
+      id = await handleSaveForm();
+      setCaseId(id)
     } catch (error) {
-      console.error("Error saving form or fetching AI response:", error);
+      console.error("Error saving data into db:", error);
+    }
+
+    // since ai answer goes wring sometimes, up to 3 tries are allowed
+    while(triesLeft>0) {
+      try {
+        const aiAnswer = await sendDataToAi(basisData, additionalData, symptomText, selectedSymptoms, id);
+        setAiAnswer(aiAnswer);
+        triesLeft = 0;
+      } catch (error) {
+        if(triesLeft!>0) {
+          console.error("Error fetching AI response::", error);
+        }
+        triesLeft--;
+        console.error("Try fetching Ai answer: ", (3-triesLeft))
+      }
     }
 
     setIsLoading(false);
@@ -518,6 +583,7 @@ export default function Home() {
           resetProcess={resetProcess}
           setStep={goToStep}
           isOffline={isOffline}
+          setStartFormOffline={setStartFormOffline}
         />
       )}
 
@@ -570,7 +636,9 @@ export default function Home() {
               updateRedFlag={updateRedFlag}
               selectNoRedFlags={selectNoRedFlags}
               onContinue={() => goToStep("basisStart")}
+              setStep={goToStep}
               isOffline={isOffline}
+              startFormOffline={startFormOffline}
             />
           )}
 
@@ -677,6 +745,17 @@ export default function Home() {
           )}
         </AssessmentLayout>
       )}
+
+
+      {/* SOS ausloesen */}
+      {redFlagScanPositive && (
+        <RedFlagPositivePopUp
+          redFlagScanResult={redFlagScanResult}
+          isOpen={redFlagScanPositive}
+          onClose={() => setRedFlagScanPositive(false)}
+        />
+      )}
+
 
       {/* Globaler Tutorial Button */}
       <button
