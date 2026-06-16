@@ -105,9 +105,9 @@ export async function saveFormData(formData: FormData) {
 
    try {
       // Wir übergeben ganz einfach nur die ID als String!
-      fhirExample(caseId.toString()).then((fhirBundle) => {
+      buildFhirBundle(caseId.toString()).then((fhirBundle) => {
         if (fhirBundle) {
-          sendToHapiFhir(fhirBundle).then((success) => {
+          sendFhirToServer(fhirBundle).then((success) => {
             if (success) console.log(`FHIR Export für Case ${caseId} erfolgreich.`);
           });
         }
@@ -1025,7 +1025,7 @@ export async function mapNameToSnomed(name: string) {
  * @param caseId - case id 
  * @returns Promise<{resourceType, type, entry> - fhir
  */
-export async function fhirExample(caseId: string): Promise<any> {
+export async function buildFhirBundle(caseId: string): Promise<any> {
   
   // Daten aus der Datenbank geholt
   const userData = await getUserDataFromDB(caseId);
@@ -1334,17 +1334,17 @@ if (height) {
  * @returns Promise<boolean>
  */
 
-export async function sendToHapiFhir(accessCode: string): Promise<boolean> {
+export async function sendFhirToServer(accessCode: string): Promise<boolean> {
 
   const caseId = await getCaseIdFromAccessCode(accessCode);
-  const fhirBundle = await fhirExample(caseId);
+  const fhirBundle = await buildFhirBundle(caseId);
 
   if (!fhirBundle) {
     console.error("Senden abgebrochen: Kein FHIR-Bundle übergeben.");
     return false;
   }
 
-  const HAPI_FHIR_URL = "https://hapi.fhir.org/baseR4";
+  const HAPI_FHIR_URL = process.env.FHIR_SERVER_URL!;
 
   try {
     const response = await fetch(HAPI_FHIR_URL, {
