@@ -9,7 +9,7 @@
     "lint": "eslint",
     "test": "jest",
     "test:watch": "jest --watch",
-    "dev:test": "cross-env POSTGRES_URL=postgres://sguedek:123456789@127.0.0.1:5432/testlemonlabs_db next dev",
+    "dev:test": "cross-env POSTGRES_URL=postgres://postgres:123@127.0.0.1:5432/testlemonlabs_db next dev",
     "test:e2e": "npx playwright test",
     "test:e2e:ui": "npx playwright test --ui"
   },
