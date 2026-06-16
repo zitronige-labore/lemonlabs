@@ -57,7 +57,7 @@ export default function SymptomSelection({
     <>
     <fieldset className={assessmentStyles.fieldset}>
       <legend className={assessmentStyles.legend}>
-        Wählen Sie Ihre Symptome
+        Wählen Sie die Symptome
       </legend>
 
       {/* one box for every symptom */}

@@ -54,7 +54,7 @@ export function AdditionalInfoStep({
         </legend>
 
         <label className={assessmentStyles.formLabel}>
-          Nehmen Sie aktuell Medikamente ein?
+          Einnahme von Medikamenten
 
           <input
             className={assessmentStyles.input}
@@ -247,7 +247,7 @@ export function AdditionalInfoStep({
         </label>
 
         <label className={assessmentStyles.formLabel}>
-          Haben Sie Ihre Temperatur gemessen?
+          Haben Sie Temperatur gemessen?
 
           <input
             className={assessmentStyles.input}
@@ -287,7 +287,7 @@ export function AdditionalInfoStep({
         </label>
 
         <label className={assessmentStyles.formLabel}>
-          Seit wie vielen Tagen haben Sie die Beschwerden?
+          Seit wie vielen Tagen bestehen die Beschwerden?
 
           <input
             className={assessmentStyles.input}
