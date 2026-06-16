@@ -92,8 +92,16 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
                         type="button"
                         className={assessmentStyles.continueButton}
                         onClick={async () => {
-                            setData(await accessDataWithAccessCode(code));
-                            setAiData(await accessAiDataWithAccessCode(code));
+                            const result = await accessDataWithAccessCode(code);  // erst holen
+                            if (result === null) {
+                                setCodeError("Dieser Code hat keine Daten hinterlegt");
+                                setData(null);
+                                setAiData(null);
+                            } else {
+                                setCodeError("");
+                                setData(result);
+                                setAiData(await accessAiDataWithAccessCode(code));
+                            }
                         }}
                     >
                         Abrufen
