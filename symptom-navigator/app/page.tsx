@@ -636,6 +636,7 @@ export default function Home() {
               updateRedFlag={updateRedFlag}
               selectNoRedFlags={selectNoRedFlags}
               onContinue={() => goToStep("basisStart")}
+              setStep={goToStep}
               isOffline={isOffline}
               startFormOffline={startFormOffline}
             />
