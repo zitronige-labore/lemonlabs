@@ -13,7 +13,7 @@ import { SosModal } from "./SosModal";
 /*
   Import des Typs für medizinische Warnzeichen.
 */
-import type { RedFlags } from "../../types/assessment";
+import type { RedFlags, Step } from "../../types/assessment";
 
 // import of objects that also contain button text
 import { redFlagCheckboxes} from "../medicalLogic/redFlagCheckboxes";
@@ -34,6 +34,7 @@ type RedFlagsStepProps = {
   selectNoRedFlags: (checked: boolean) => void;
 
   onContinue: () => void;
+  setStep: (step: Step) => void;
 };
 
 export function RedFlagsStep({
@@ -44,6 +45,7 @@ export function RedFlagsStep({
   updateRedFlag,
   selectNoRedFlags,
   onContinue,
+  setStep,
   isOffline,
 }: RedFlagsStepProps) {
   const [showSos, setShowSos] = useState(false);
@@ -120,9 +122,13 @@ export function RedFlagsStep({
         </button>
       )}
       {!hasEmergency && isOffline && specificallyNoEmergency && !startFormOffline && (
-        <p>
-          Im Offline Modus geht es hier nicht weiter. Sobald eine Internetverbindung besteht, können Sie hier Symptome angeben aus auswerten lassen.
-        </p>
+        <button
+          type="button"
+          className={assessmentStyles.primaryButton}
+          onClick={() => setStep("start")}
+        >
+          Zurück zur Startseite
+        </button>
       )}
     </>
   );
