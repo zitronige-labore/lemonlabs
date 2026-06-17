@@ -9,6 +9,7 @@ import type {
   AdditionalData,
   BasisData,
   Step,
+  MedicationEntry
 } from "../../types/assessment";
 
 type SavedAssessmentData = {
@@ -226,7 +227,7 @@ export function CheckInfo({
           <p className={assessmentStyles.selectedText}>Zusatzangaben</p>
 
           <p>
-            Medikamente: <strong>{medicationValue}</strong>
+            Medikamente: <strong>{medicationValue.name}</strong>
           </p>
 
           <p>

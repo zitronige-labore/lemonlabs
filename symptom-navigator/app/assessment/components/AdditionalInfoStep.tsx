@@ -134,12 +134,15 @@ export function AdditionalInfoStep({
                   value={entry.frequencyPerDay}
                   onChange={(e) => updateMedication(index, "frequencyPerDay", e.target.value)}
                 />
+                <label>
+                  seit wann
                 <input
                   className={assessmentStyles.input}
-                  placeholder="Seit wann (z. B. 3 Tage)"
+                  type="date"
                   value={entry.since}
                   onChange={(e) => updateMedication(index, "since", e.target.value)}
                 />
+                </label>
                 {(additionalData.medication?.length?? 0) > 1 && (
                   <button
                     type="button"
