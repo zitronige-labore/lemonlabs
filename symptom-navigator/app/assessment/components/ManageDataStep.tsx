@@ -170,10 +170,12 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
                     {(data?.medicationData || data?.allergyData || data?.conditionsData) && (
                         <div className={assessmentStyles.fieldset}>
                             <p className={assessmentStyles.selectedText}>Zusatzangaben</p>
+
+                            <p>Medikamente:</p>
                             {data?.medicationData?.length > 0 && (
                                 data.medicationData.map((medication: {medication: string, frequency_per_day: number, taken_since: string}, i: number) => (
                                     <div key={i} className={assessmentStyles.fieldset}>
-                                        Bezeichnung: <strong>{medication.medication}</strong><br />
+                                        Medikament: <strong>{medication.medication}</strong><br />
                                         Wie oft pro Tag: <strong>{medication.frequency_per_day || "nicht angegeben"}</strong><br />
                                         Seit wann: <strong>{new Date(medication.taken_since).toLocaleDateString()  || "nicht angegeben"}</strong>
                                     </div>
