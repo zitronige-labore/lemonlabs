@@ -227,14 +227,14 @@ export function CheckInfo({
           <p className={assessmentStyles.selectedText}>Zusatzangaben</p>
 
           <p>
-            Medikamente
+            Medikamente:
           </p>
-          
+
           {additionalData.medication && additionalData.medication.length > 0 ? (
           <ul>
             {additionalData.medication.map((m, i) => (
               <li key={i}>
-                <strong>{m.name}</strong> - {m.frequencyPerDay} - seit {m.since}
+                <strong>{m.name} - {m.frequencyPerDay} pro Tag - seit {m.since} </strong>
               </li>
             ))}
           </ul>
@@ -250,6 +250,20 @@ export function CheckInfo({
             Allergien:{" "}
             <strong>
               {additionalData.allergies || "Keine Angabe"}
+            </strong>
+          </p>
+
+          <p>
+            Alkoholische Getraenke pro Woche:{" "}
+            <strong>
+              {additionalData.alcoholPerWeek || "Keine Angabe"}
+            </strong>
+          </p>
+
+          <p>
+            Zigaretten pro Tag:{" "}
+            <strong>
+              {additionalData.cigarettesPerDay || "Keine Angabe"}
             </strong>
           </p>
 

@@ -124,7 +124,7 @@ export function AdditionalInfoStep({
               <div key={index} className={assessmentStyles.listEntry}>
                 <input
                   className={assessmentStyles.input}
-                  placeholder="Medikament (z. B. Ibuprofen)"
+                  placeholder="Medikament und Dosis (z. B. Ibuprofen 400mg)"
                   value={entry.name}
                   onChange={(e) => updateMedication(index, "name", e.target.value)}
                 />
