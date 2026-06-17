@@ -227,8 +227,20 @@ export function CheckInfo({
           <p className={assessmentStyles.selectedText}>Zusatzangaben</p>
 
           <p>
-            Medikamente: <strong>{medicationValue.name}</strong>
+            Medikamente
           </p>
+          
+          {additionalData.medication && additionalData.medication.length > 0 ? (
+          <ul>
+            {additionalData.medication.map((m, i) => (
+              <li key={i}>
+                <strong>{m.name}</strong> - {m.frequencyPerDay} - seit {m.since}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <strong>Keine Angabe</strong>
+        )}
 
           <p>
             Vorerkrankungen: <strong>{conditionsValue}</strong>

@@ -365,9 +365,16 @@ export async function getUserDataFromDB(caseId: string) {
     [caseId]
   );
 
-  const allergyData = await getDetailsNoCertainCount("allergy", "allergies", caseId)
+  const medicationData = await connectionPool.query(`
+    SELECT medication, taken_since, frequency_per_day
+    FROM medication
+    WHERE case_id = $1
+    ;
+    `,
+    [caseId]
+  );
 
-  const medicationData = await getDetailsNoCertainCount("medication", "medication", caseId)
+  const allergyData = await getDetailsNoCertainCount("allergy", "allergies", caseId)
 
   const conditionsData = await getDetailsNoCertainCount("condition", "conditions", caseId)
 
@@ -379,7 +386,7 @@ export async function getUserDataFromDB(caseId: string) {
   textSymptomData: textSymptomData.rows,
   additionalInfoData: additionalInfoData.rows,
   allergyData,
-  medicationData,
+  medicationData: medicationData.rows,
   conditionsData
   }
 
