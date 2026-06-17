@@ -27,6 +27,18 @@ export function AdditionalInfoStep({
   const [cigarettesError, setCigarettesError] = useState("");
   const [alcoholError, setAlcoholError] = useState("");
   const [medicationError, setMedicationError] = useState<Record<number, string>>({});
+  const [medicationNameError, setMedicationNameError] =useState<Record<number, string>>({});
+
+
+  const noErrors =
+    Object.values(medicationError).every(error => error === "") &&
+    Object.values(medicationNameError).every(error => error === "") &&
+    cigarettesError === "" &&
+    alcoholError === "" &&
+    weightError === "" &&
+    heightError === "" &&
+    temperatureError === "" &&
+    durationError === "";
 
 
   function updateMedication(index: number, field: keyof MedicationEntry, value: string) {
@@ -132,7 +144,23 @@ export function AdditionalInfoStep({
                   placeholder="z. B. Ibuprofen 400mg"
                   value={entry.name}
                   onChange={(e) => updateMedication(index, "name", e.target.value)}
+                  onBlur={(e) => {
+                    const value = e.target.value;
+
+                    setMedicationNameError(prev => ({
+                      ...prev,
+                      [index]:
+                        value !== "" && !/\d/.test(value)
+                          ? "Bitte geben Sie auch die Dosis an (z. B. 400 mg)."
+                          : ""
+                    }));
+                  }}
                 />
+                {medicationNameError[index] && (
+                  <p className={assessmentStyles.errorText}>
+                    {medicationNameError[index]}
+                  </p>
+                )}
                 </label>
 
                 <label>
@@ -521,9 +549,12 @@ export function AdditionalInfoStep({
       </fieldset>
 
       <div className={assessmentStyles.quickSelect}>
-        {!checkInfoActive ? (
+        {
+        !checkInfoActive
+         ? (
           <button
             type="button"
+            disabled={!noErrors}
             className={assessmentStyles.primaryButton}
             onClick={() => setStep("checkInfo")}
           >
