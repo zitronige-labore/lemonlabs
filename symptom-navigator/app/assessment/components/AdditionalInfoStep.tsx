@@ -113,7 +113,7 @@ export function AdditionalInfoStep({
               })
             }
           />
-          Ich nehme Medikamente ein
+          Einnahme von Medikamenten
         </label>
 
         {additionalData.hasMedication && (
@@ -219,7 +219,7 @@ export function AdditionalInfoStep({
               setAdditionalData({ ...additionalData, smokescigarettes: e.target.checked, cigarettesPerDay: "" })
             }
           />
-          Ich rauche Zigaretten
+          Zigaretten
         </label>
 
         {additionalData.smokescigarettes && (
@@ -248,7 +248,7 @@ export function AdditionalInfoStep({
               setAdditionalData({ ...additionalData, drinksAlcohol: e.target.checked, alcoholPerWeek: "" })
             }
           />
-          Ich trinke Alkohol
+          Alkohol
         </label>
 
         {additionalData.drinksAlcohol && (
@@ -283,7 +283,7 @@ export function AdditionalInfoStep({
               })
             }
           />
-          Es liegen Vorerkrankungen vor
+          Es liegen Allergien vor
         </label>
 
         {additionalData.hasAllergies && (
