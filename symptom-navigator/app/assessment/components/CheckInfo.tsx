@@ -226,9 +226,42 @@ export function CheckInfo({
 
           <p className={assessmentStyles.selectedText}>Zusatzangaben</p>
 
+
+          <p>
+            Größe:{" "}
+            <strong>
+              {additionalData.height || "Keine Angabe"}
+            </strong>
+          </p>
+
+          <p>
+            Gewicht:{" "}
+            <strong>
+              {additionalData.weight || "Keine Angabe"}
+            </strong>
+          </p>
+
+          <p>
+            Beschwerden bestehen seit (in Tagen):{" "}
+            <strong>
+              {additionalData.duration || "Keine Angabe"}
+            </strong>
+          </p>
+
+          {basisData.gender !== "männlich" && (
+          
+          <p>
+            Stillzeit:{" "}
+            <strong>
+              {additionalData.breastfeeding || "Keine Angabe"}
+            </strong>
+          </p>
+          )}
+
           <p>
             Medikamente:
           </p>
+
 
           {additionalData.medication && additionalData.medication.length > 0 ? (
           <ul>
@@ -268,7 +301,7 @@ export function CheckInfo({
           </p>
 
           <p>
-            Fieber:{" "}
+            Temperatur:{" "}
             <strong>
               {additionalData.temperature || "Keine Angabe"}
             </strong>

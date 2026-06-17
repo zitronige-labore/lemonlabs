@@ -24,6 +24,9 @@ export function AdditionalInfoStep({
   const [heightError, setHeightError] = useState("");
   const [temperatureError, setTemperatureError] = useState("");
   const [durationError, setDurationError] = useState("");
+  const [cigarettesError, setCigarettesError] = useState("");
+  const [alcoholError, setAlcoholError] = useState("");
+  const [medicationError, setMedicationError] = useState<Record<number, string>>({});
 
 
   function updateMedication(index: number, field: keyof MedicationEntry, value: string) {
@@ -122,18 +125,49 @@ export function AdditionalInfoStep({
           <div className={assessmentStyles.expandedSection}>
             {additionalData.medication?.map((entry, index) => (
               <div key={index} className={assessmentStyles.listEntry}>
+                <label> 
+                  Medikament und Dosis
                 <input
                   className={assessmentStyles.input}
-                  placeholder="Medikament und Dosis (z. B. Ibuprofen 400mg)"
+                  placeholder="z. B. Ibuprofen 400mg"
                   value={entry.name}
                   onChange={(e) => updateMedication(index, "name", e.target.value)}
                 />
+                </label>
+
+                <label>
+                  Wie oft am Tag
                 <input
                   className={assessmentStyles.input}
-                  placeholder="Wie oft am Tag (z. B. 2)"
+                  placeholder="(z. B. 2)"
+                  type="number"
+                  min={0}
+                  step={1}
                   value={entry.frequencyPerDay}
-                  onChange={(e) => updateMedication(index, "frequencyPerDay", e.target.value)}
+                  onChange={(e) => {
+                    const value = e.target.value;
+
+                    updateMedication(index, "frequencyPerDay", value);
+
+                    const n = Number(value);
+
+                    setMedicationError({
+                      ...medicationError,
+                      [index]:
+                        value !== "" &&
+                        (!Number.isInteger(n) || n < 0)
+                          ? "Bitte gültige Einnahme pro Tag eingeben."
+                          : "",
+                    });
+                  }}
                 />
+                {medicationError[index] && (
+                  <p className={assessmentStyles.errorText}>
+                    {medicationError[index]}
+                  </p>
+                )}
+                </label>
+
                 <label>
                   seit wann
                 <input
@@ -234,12 +268,28 @@ export function AdditionalInfoStep({
               <input
                 className={assessmentStyles.input}
                 type="number"
+                min={0}
+                step={1}
                 placeholder="z. B. 10"
                 value={additionalData.cigarettesPerDay}
-                onChange={(e) =>
-                  setAdditionalData({ ...additionalData, cigarettesPerDay: e.target.value })
-                }
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setAdditionalData({ ...additionalData, cigarettesPerDay: value });
+                  const n = Number(value);
+
+                setCigarettesError(
+                  value !== "" &&
+                  (!Number.isInteger(n) || n < 0 || n > 200)
+                    ? "Bitte gültige Anzahl Zigaretten eingeben."
+                    : ""
+                );
+                }}
               />
+              {cigarettesError && (
+                <p className={assessmentStyles.errorText}>
+                  {cigarettesError}
+                </p>
+              )}
             </label>
           </div>
         )}
@@ -263,12 +313,33 @@ export function AdditionalInfoStep({
               <input
                 className={assessmentStyles.input}
                 type="number"
+                min={0}
+                step={1}
                 placeholder="z. B. 3"
                 value={additionalData.alcoholPerWeek}
-                onChange={(e) =>
-                  setAdditionalData({ ...additionalData, alcoholPerWeek: e.target.value })
-                }
+                onChange={(e) => {
+                  const value = e.target.value;
+
+                  setAdditionalData({
+                    ...additionalData,
+                    alcoholPerWeek: value,
+                  });
+
+                  const n = Number(value);
+
+                  setAlcoholError(
+                    value !== "" &&
+                    (!Number.isInteger(n) || n < 0 || n > 100)
+                      ? "Bitte gültige Anzahl Getränke eingeben."
+                      : ""
+                  );
+                }}
               />
+              {alcoholError && (
+                <p className={assessmentStyles.errorText}>
+                  {alcoholError}
+                </p>
+              )}
             </label>
           </div>
         )}

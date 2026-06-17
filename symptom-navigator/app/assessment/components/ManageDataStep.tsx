@@ -42,6 +42,8 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
             medikation: data?.medicationData?.medication?.join(", ") || "Keine Angabe",
             allergien: data?.allergyData?.allergies?.join(", ") || "Keine Angabe",
             vorerkrankungen: data?.conditionsData?.conditions?.join(", ") || "Keine Angabe",
+            alkoholkonsum: data?.additionalInfoData?.[0]?.alcoholPerWeek || "Keine Angabe",
+            zigaretten: data?.additionalInfoData?.[0]?.cigarettesPerDay || "Keine Angabe",
             symptome: data?.symptomData?.[0]?.name_de ? data.symptomData.map((s: any) => s.name_de).join(", ") : "",
             textSymptome: data?.textSymptomData?.[0]?.raw_symptoms || "",
             datum: data?.caseData?.[0]?.date ? new Date(data.caseData[0].date).toLocaleString() : "Keine Angabe",
@@ -198,11 +200,38 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
                             {worsening && (
                                 <p>Symptome werden schlimmer: <strong>{worsening}</strong></p>
                             )}
+                            {data.additionalInfoData?.[0]?.cigarettes_per_day != null && (
+                            <p>
+                                Zigaretten pro Tag:{" "}
+                                <strong>{data.additionalInfoData[0].cigarettes_per_day}</strong>
+                            </p>
+                            )}
+                            {data.additionalInfoData?.[0]?.alcohol_per_week != null && (
+                            <p>
+                                Alkoholische Getränke pro Woche:{" "}
+                                <strong>{data.additionalInfoData[0].alcohol_per_week}</strong>
+                            </p>
+                            )}
                             {data?.additionalInfoData?.[0]?.other_info && (
                                 <p>Sonstige Angaben: <strong>{data.additionalInfoData[0].other_info}</strong></p>
                             )}
 
-                            {data?.additionalInfoData?.[0]?.other_info == null && data?.additionalInfoData?.[0]?.height == null && data?.additionalInfoData?.[0]?.weight == null && data?.additionalInfoData?.[0]?.temperature == null && data?.additionalInfoData?.[0]?.duration == null && worsening === undefined && (<p>Keine Zusatzangaben vorhanden</p>)}
+                            {!(
+                            data?.additionalInfoData?.[0]?.other_info ||
+                            data?.additionalInfoData?.[0]?.height ||
+                            data?.additionalInfoData?.[0]?.weight ||
+                            data?.additionalInfoData?.[0]?.temperature ||
+                            data?.additionalInfoData?.[0]?.duration ||
+                            data?.additionalInfoData?.[0]?.alcohol_per_week ||
+                            data?.additionalInfoData?.[0]?.cigarettes_per_day ||
+                            (data?.allergyData?.allergies?.length > 0) ||
+                            (data?.conditionsData?.conditions?.length > 0) ||
+                            (data?.medicationData?.length > 0) ||
+                            worsening
+                            ) && (
+                            <p>Keine Zusatzangaben vorhanden</p>
+                            )}
+
                         </div>
                     )}
 
