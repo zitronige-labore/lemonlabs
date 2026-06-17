@@ -477,6 +477,80 @@ textarea.input {
   text-decoration: underline;
 }
 
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  cursor: pointer;
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.checkboxLabel input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+
+.expandedSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3) 0 var(--space-3) var(--space-3);
+  border-left: 3px solid var(--primary);
+  margin-bottom: var(--space-3);
+}
+
+.listEntry {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.listEntry .input {
+  flex: 1;
+  min-width: 140px;
+}
+
+.addButton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  background: none;
+  border: 1px dashed var(--primary);
+  color: var(--primary);
+  border-radius: var(--radius);
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: background 0.15s;
+  align-self: flex-start;
+}
+
+.addButton:hover {
+  background: color-mix(in srgb, var(--primary) 8%, transparent);
+}
+
+.removeButton {
+  background: none;
+  border: none;
+  color: var(--error, #c0392b);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: var(--radius);
+  flex-shrink: 0;
+}
+
+.removeButton:hover {
+  background: color-mix(in srgb, var(--error, #c0392b) 10%, transparent);
+}
+
 @keyframes hintArrowBounce {
   0%,
   100% {

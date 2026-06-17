@@ -2,6 +2,8 @@ import assessmentStyles from "../Assessment.module.css";
 import type { AdditionalData, MedicationEntry, Step } from "../../types/assessment";
 import { useState } from "react";
 
+
+
 type AdditionalInfoStepProps = {
   additionalData: AdditionalData;
   setAdditionalData: (data: AdditionalData) => void;
@@ -98,11 +100,11 @@ export function AdditionalInfoStep({
       <fieldset className={assessmentStyles.fieldset}>
         <legend className={assessmentStyles.legend}>Zusatzangaben</legend>
 
-        {/* ── Medikamente ── */}
+        {/* medication*/}
         <label className={assessmentStyles.checkboxLabel}>
           <input
             type="checkbox"
-            checked={additionalData.hasMedication}
+            checked={additionalData.hasMedication ?? false}
             onChange={(e) =>
               setAdditionalData({
                 ...additionalData,
@@ -160,11 +162,11 @@ export function AdditionalInfoStep({
           </div>
         )}
 
-        {/* ── Vorerkrankungen ── */}
+        {/* conditions*/}
         <label className={assessmentStyles.checkboxLabel}>
           <input
             type="checkbox"
-            checked={additionalData.hasConditions}
+            checked={additionalData.hasConditions ?? false}
             onChange={(e) =>
               setAdditionalData({
                 ...additionalData,
@@ -210,11 +212,11 @@ export function AdditionalInfoStep({
           </div>
         )}
 
-        {/* ── Zigaretten ── */}
+        {/* cigarettes */}
         <label className={assessmentStyles.checkboxLabel}>
           <input
             type="checkbox"
-            checked={additionalData.smokescigarettes}
+            checked={additionalData.smokescigarettes ?? false}
             onChange={(e) =>
               setAdditionalData({ ...additionalData, smokescigarettes: e.target.checked, cigarettesPerDay: "" })
             }
@@ -239,11 +241,11 @@ export function AdditionalInfoStep({
           </div>
         )}
 
-        {/* ── Alkohol ── */}
+        {/* alcohol*/}
         <label className={assessmentStyles.checkboxLabel}>
           <input
             type="checkbox"
-            checked={additionalData.drinksAlcohol}
+            checked={additionalData.drinksAlcohol ?? false}
             onChange={(e) =>
               setAdditionalData({ ...additionalData, drinksAlcohol: e.target.checked, alcoholPerWeek: "" })
             }
@@ -268,11 +270,11 @@ export function AdditionalInfoStep({
           </div>
         )}
 
-        {/* Allergien*/}
+        {/* allergies */}
         <label className={assessmentStyles.checkboxLabel}>
           <input
             type="checkbox"
-            checked={additionalData.hasAllergies}
+            checked={additionalData.hasAllergies ?? false}
             onChange={(e) =>
               setAdditionalData({
                 ...additionalData,
@@ -318,7 +320,7 @@ export function AdditionalInfoStep({
           </div>
         )}
 
-        {/* ── Gewicht ── */}
+        {/* weight */}
         <label className={assessmentStyles.formLabel}>
           Gewicht in kg
           <input
@@ -337,7 +339,7 @@ export function AdditionalInfoStep({
           {weightError && <p className={assessmentStyles.errorText}>{weightError}</p>}
         </label>
 
-        {/* ── Größe ── */}
+        {/* height */}
         <label className={assessmentStyles.formLabel}>
           Größe in cm
           <input
@@ -356,7 +358,7 @@ export function AdditionalInfoStep({
           {heightError && <p className={assessmentStyles.errorText}>{heightError}</p>}
         </label>
 
-        {/* ── Stillzeit ── */}
+        {/* breastfeeding*/}
         <label className={assessmentStyles.formLabel}>
           Stillzeit
           <select
@@ -373,7 +375,7 @@ export function AdditionalInfoStep({
           </select>
         </label>
 
-        {/* ── Temperatur ── */}
+        {/* temperature */}
         <label className={assessmentStyles.formLabel}>
           Haben Sie Temperatur gemessen?
           <input
@@ -393,7 +395,7 @@ export function AdditionalInfoStep({
           {temperatureError && <p className={assessmentStyles.errorText}>{temperatureError}</p>}
         </label>
 
-        {/* ── Beschwerdedauer ── */}
+        {/* duration */}
         <label className={assessmentStyles.formLabel}>
           Seit wie vielen Tagen bestehen die Beschwerden?
           <input
@@ -412,7 +414,7 @@ export function AdditionalInfoStep({
           {durationError && <p className={assessmentStyles.errorText}>{durationError}</p>}
         </label>
 
-        {/* ── Verschlimmerung ── */}
+        {/* worsening */}
         <label className={assessmentStyles.formLabel}>
           Werden die Beschwerden stärker?
           <select
@@ -429,7 +431,7 @@ export function AdditionalInfoStep({
           </select>
         </label>
 
-        {/* ── Sonstiges ── */}
+        {/* extraInfo */}
         <label className={assessmentStyles.formLabel}>
           Gibt es weitere wichtige Informationen?
           <textarea
