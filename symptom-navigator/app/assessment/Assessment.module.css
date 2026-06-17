@@ -372,7 +372,7 @@ textarea.input {
 
 .bodyWrapper {
   width: 100%;
-  max-width: 340px;
+  max-width: 480px;
   margin: var(--space-3) auto;
   background: var(--surface);
   border: 1px solid var(--border);
@@ -387,7 +387,7 @@ textarea.input {
 }
 
 .bodyPart {
-  fill: rgba(27, 51, 78, 0.14);
+  fill: rgba(27, 51, 78, 0.26);
   stroke: var(--text-muted);
   stroke-width: 1.5;
   cursor: pointer;
@@ -398,7 +398,7 @@ textarea.input {
 }
 
 .bodyPart:hover {
-  fill: rgba(27, 51, 78, 0.26);
+  fill: rgba(27, 51, 78, 0.14);
   stroke: var(--primary);
 }
 
@@ -507,7 +507,7 @@ textarea.input {
   }
 
   .bodyWrapper {
-    max-width: 320px;
+    max-width: 100%;
     padding: 12px;
   }
 

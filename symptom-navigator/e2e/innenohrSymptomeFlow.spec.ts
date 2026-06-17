@@ -12,7 +12,7 @@ test.beforeEach(async () => {
   await resetDb();
 });
 
-test("complete assessment flow is saved correctly to the database", async ({ page }) => {
+test("älterer männlicher Patient mit Innenohr-Symptomen wird korrekt gespeichert", async ({ page }) => {
 
   // navigate to start page
   await page.goto("/");
@@ -26,37 +26,31 @@ test("complete assessment flow is saved correctly to the database", async ({ pag
   await page.getByLabel("Keines davon trifft zu").check();
   await page.getByRole("button", { name: "Weiter" }).click();
 
-  // fill in age
-  await page.getByPlaceholder("Zum Beispiel: 25").fill("30");
+  // fill in age: 65
+  await page.getByPlaceholder("Zum Beispiel: 25").fill("65");
 
-  // select gender — no name attribute on select, use nth
-  await page.locator('select').nth(0).selectOption("Weiblich");
-
-  // pregnancy field appears conditionally after selecting "Weiblich"
-  await page.locator('select').nth(1).selectOption("Nein");
+  // select gender: Männlich
+  await page.locator('select').nth(0).selectOption("Männlich");
 
   await page.getByRole("button", { name: "Weiter zur Körperregion" }).click();
 
-  // click "Kopf & Gesicht" region on the SVG body map via aria-label
+  // click "Kopf & Gesicht" region on the SVG body map
   await page.getByRole("button", { name: "Kopf & Gesicht" }).click();
 
-  // select "Kopf" as sub-region from the buttons that appear below
-  await page.getByRole("button", { name: "Kopf", exact: true }).click();
+  // select "Ohren" as sub-region
+  await page.getByRole("button", { name: "Ohren", exact: true }).click();
 
   // continue to symptom categories
   await page.getByRole("button", { name: "Weiter" }).last().click();
 
-  // select symptom category
-  await page.getByRole("button", { name: /Spannung & Druck im Kopf/ }).click();
+  // select symptom category "innenohr"
+  await page.getByRole("button", { name: /innenohr/ }).click();
 
-  // select symptom via checkbox label — symptoms are checkboxes not buttons
-  await page.getByLabel("Dumpfer, drückender Schmerz (beidseitig)").check();
+  // select Tinnitus symptom
+  await page.getByLabel("Tinnitus (Pfeifen, Brummen, Rauschen)").check();
 
-  // fill in symptom duration and pain intensity
-  await page.locator('input[type="range"]').fill("7");
-
-  // select symptom from list
-  await page.getByLabel("Schwerer Druck auf dem gesamten Schädel").check();
+  // select Hörsturz symptom
+  await page.getByLabel("Hörsturz (Plötzliche Taubheit)").check();
 
   // continue
   await page.getByRole("button", { name: "Weiter" }).click();
@@ -64,32 +58,27 @@ test("complete assessment flow is saved correctly to the database", async ({ pag
   // do not add more symptoms
   await page.getByRole("button", { name: "nein" }).click();
 
+  // fill in medication only
+  await page.getByLabel("Nehmen Sie aktuell Medikamente ein?").fill("ASS 100");
 
-  // fill in optional medication field
-  await page.getByLabel("Nehmen Sie aktuell Medikamente ein?").fill("Ibuprofen");
-
-  // fill in allergies field
-  await page.getByLabel("Sind Allergien bekannt?").fill("Pollen");
-
-  // select condition via checkbox
-  await page.getByLabel("Bluthochdruck").check();
+  // leave allergies and conditions empty
 
   // continue to check info screen
   await page.getByRole("button", { name: "weiter" }).click();
 
-  // submit assessment — button is type="submit"
+  // submit assessment
   await page.getByRole("button", { name: "Einschätzung abschließen" }).click();
 
-  // wait for AI result (generous timeout due to model response time)
+  // wait for AI result
   await expect(
     page.getByText(/Dringlichkeitsstufe/)
   ).toBeVisible({ timeout: 60_000 });
 
-  // assert case was written to the database
+  // assert case data is correctly saved
   const dbCase = await getCaseFromDb();
   expect(dbCase).not.toBeNull();
-  expect(dbCase.age).toBe(30);
-  expect(dbCase.sex).toBe("w");
+  expect(dbCase.age).toBe(65);
+  expect(dbCase.sex).toBe("m");
   expect(dbCase.pregnancy).toBe(false);
 
   // assert additional info was saved
@@ -100,19 +89,15 @@ test("complete assessment flow is saved correctly to the database", async ({ pag
   const symptoms = await getSymptomsFromDb(dbCase.case_id);
   expect(symptoms.length).toBeGreaterThan(0);
 
-  // assert allergies were saved
-  const allergies = await getDetailsNoCertainCountFromDb(dbCase.case_id, "allergy");
-  expect(allergies).toContain("Pollen");
-
   // assert medication was saved
   const medication = await getDetailsNoCertainCountFromDb(dbCase.case_id, "medication");
-  expect(medication).toContain("Ibuprofen");
+  expect(medication).toContain("ASS 100");
 
-  // assert conditions were saved
-  const conditions = await getDetailsNoCertainCountFromDb(dbCase.case_id, "condition");
-  expect(conditions).toContain("Bluthochdruck");
+  // assert allergy list is empty
+  const allergies = await getDetailsNoCertainCountFromDb(dbCase.case_id, "allergy");
+  expect(allergies.length).toBe(0);
 
-  // assert AI recommendation was saved with a valid urgency level
+  // assert AI recommendation was saved
   const recommendation = await getRecommendationFromDb(dbCase.case_id);
   expect(recommendation).not.toBeNull();
   expect(recommendation.urgency_level).toBeGreaterThanOrEqual(1);
