@@ -44,8 +44,11 @@ CREATE TABLE details_no_certain_count (
 CREATE TABLE medication (
 	case_id INTEGER,
 	medication VARCHAR(25),
+	dose INTEGER,
+	unit VARCHAR(5),
 	taken_since DATE,
-	frequency_per_day INTEGER
+	frequency INTEGER,
+	frequency_unit VARCHAR(15)
 );
 
 CREATE TABLE symptom_catalog (
