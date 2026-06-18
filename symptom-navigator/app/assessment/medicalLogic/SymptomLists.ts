@@ -19,6 +19,48 @@ export function getSymptomList() {
     */
     const symptomList: SymptomSelectionList = 
     [
+    {step: "psycheEnergie",
+    symptoms:
+        [
+        { symptomName: "Anhaltende Erschöpfung", schmerzen: false, symptomValue: "Gefühl von extremer Müdigkeit, die auch durch Schlaf nicht gebessert wird.",  snomedCode: "TODO" },
+        { symptomName: "Antriebslosigkeit", schmerzen: false, symptomValue: "Massive Überwindung nötig, um einfachste Dinge (Essen, Aufstehen) zu tun.", snomedCode: "TODO" },
+        { symptomName: "Innere Erstarrung", schmerzen: false, symptomValue: "Gefühl, emotional leer oder wie versteinert zu sein; keine Gefühlsregungen mehr.", snomedCode: "TODO"},
+        ]
+    },
+     {step: "psycheStimmung",
+    symptoms:
+        [
+        { symptomName: "Niedergeschlagenheit", schmerzen: false, symptomValue: "Tiefes Gefühl von Traurigkeit oder Sinnlosigkeit über einen langen Zeitraum.",  snomedCode: "TODO" },
+        { symptomName: "Interessenverlust", schmerzen: false, symptomValue: "Dinge, die früher wichtig waren, fühlen sich jetzt völlig gleichgültig an.", snomedCode: "TODO" },
+        { symptomName: "Starke Selbstzweifel", schmerzen: false, symptomValue: "Ständige Gedanken über eigene Fehler oder Minderwertigkeit.", snomedCode: "TODO"},
+        ]
+    },
+     {step: "psycheAngst",
+    symptoms:
+        [
+        { symptomName: "Plötzliches Herzrasen", schmerzen: false, symptomValue: "Anfallartige Episoden mit Todesangst, Schweißausbrüchen und Atemnot.",  snomedCode: "TODO" },
+        { symptomName: "Innere Unruhe", schmerzen: false, symptomValue: "Ein Gefühl von ständiger Getriebenheit oder unter Strom stehen.", snomedCode: "TODO" },
+        { symptomName: "Gedankenkreisen", schmerzen: false, symptomValue: "Unfähigkeit, das Grübeln über Probleme oder Sorgen zu stoppen.", snomedCode: "TODO"},
+        ]
+    },
+    {step: "psycheWahrnehmung",
+    symptoms:
+        [
+        { symptomName: "Konzentrationsmangel", schmerzen: false, symptomValue: "Konzentrationsstörungen mit Schwierigkeiten, Gesprächen oder Tätigkeiten über längere Zeit zu folgen.",  snomedCode: "TODO" },
+        { symptomName: "Veränderte Wahrnehmung", schmerzen: false, symptomValue: "Gefühl, dass die Umwelt oder man selbst \"fremd\" oder \"unwirklich\" erscheint.", snomedCode: "TODO" },
+        ]
+    },
+     {step: "psycheKrise",
+    symptoms:
+        [
+        { symptomName: "Selbstverletzungsgedanken", schmerzen: false, symptomValue: "Der wiederkehrende Drang, sich selbst körperlichen Schmerz oder Schaden zuzufügen.",  snomedCode: "TODO" },
+        { symptomName: "Suizidgedanken", schmerzen: false, symptomValue: "Konkrete Pläne oder der Wunsch, das eigene Leben zu beenden.", snomedCode: "TODO" },
+        { symptomName: "Realitätsverlust", schmerzen: false, symptomValue: "Hören von Stimmen oder Sehen von Dingen, die andere nicht wahrnehmen.", snomedCode: "TODO"},
+        { symptomName: "Akute Verwirrtheit", schmerzen: false, symptomValue: "Plötzliches Nicht-Wissen, wer man ist, welches Datum wir haben oder wo man sich befindet.", snomedCode: "TODO"},
+        { symptomName: "Fremdgefährdung", schmerzen: false, symptomValue: "Der Impuls oder das Vorhaben, anderen Menschen körperlich zu schaden.", snomedCode: "TODO"},
+    
+    ]
+    },
     {step: "aussenOhr",
     symptoms:
         [
@@ -447,14 +489,6 @@ export function getSymptomList() {
             { symptomName: "Plötzliche, große blaue Flecken ohne Stoßen", schmerzen: false, symptomValue: "Plötzliches Auftreten von großen, blauen Flecken am Körper, ohne dass man sich gestoßen oder verletzt hat", snomedCode: "247511005" }
         ]
         },
-        {step: "Psyche",
-        symptoms:
-        [
-            { symptomName: "Panikattacke", schmerzen: false, symptomValue: "Panikattacke: Plötzliche, intensive Angstgefühle, die zu körperlichen Symptomen wie Herzrasen, Schweißausbrüchen und Atemnot führen.", snomedCode: "19342001" },
-            { symptomName: "Halluzinationen", schmerzen: false, symptomValue: "Halluzinationen: Wahrnehmung von Dingen, die nicht existieren, oft begleitet von Verwirrtheit und Angst.", snomedCode: "23101004" },
-            { symptomName: "Stimmungsschwankungen", schmerzen: false, symptomValue: "Stimmungsschwankungen: Schwankende Stimmungen, die den Alltag beeinträchtigen", snomedCode: "18963009" }
-        ]
-        }
     ]
 
     return symptomList;
