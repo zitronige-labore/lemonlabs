@@ -1,0 +1,97 @@
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+
+DROP TABLE IF EXISTS recommendations CASCADE;
+DROP TABLE IF EXISTS case_symptoms CASCADE;
+DROP TABLE IF EXISTS symptom_catalog CASCADE;
+DROP TABLE IF EXISTS cases CASCADE;
+DROP TABLE IF EXISTS redflag_scan CASCADE;
+DROP TABLE IF EXISTS details_no_certain_count CASCADE;
+DROP TABLE IF EXISTS raw_text_symptoms CASCADE;
+DROP TABLE IF EXISTS additional_information CASCADE;
+DROP TABLE IF EXISTS medication CASCADE;
+DROP TABLE IF EXISTS recommendations CASCADE;
+
+CREATE TABLE cases (
+	case_id SERIAL PRIMARY KEY,
+	age INTEGER,
+	sex CHAR(1),
+	date TIMESTAMP,
+	pregnancy BOOLEAN,
+	access_code UUID DEFAULT gen_random_uuid()
+);
+
+CREATE TABLE additional_information (
+	case_id INTEGER,
+	weight INTEGER,
+	height INTEGER,
+	temperature REAL,
+	duration INTEGER,
+	cigarettes_per_day INTEGER,
+	alcohol_per_week INTEGER,
+	worsening BOOLEAN,
+	breastfeeding BOOLEAN,
+	extraInfo VARCHAR
+);
+
+
+CREATE TABLE details_no_certain_count (
+	case_id INTEGER,
+	category VARCHAR(25),
+	detail VARCHAR(25)
+);
+
+
+CREATE TABLE medication (
+	case_id INTEGER,
+	medication VARCHAR(25),
+	taken_since DATE,
+	frequency_per_day INTEGER
+);
+
+CREATE TABLE symptom_catalog (
+	symptom_id SERIAL PRIMARY KEY,
+	name_de VARCHAR(255) NOT NULL UNIQUE,
+	snomed_code VARCHAR(50) UNIQUE,
+	is_red_flag BOOLEAN DEFAULT FALSE
+);
+
+INSERT INTO symptom_catalog (name_de, snomed_code, is_red_flag)
+VALUES ('Besitz einer Katze', '1234', false);
+
+CREATE TABLE redflag_scan (
+  	redflag_id SERIAL PRIMARY KEY,
+	redflag_name VARCHAR(100)
+);
+
+
+CREATE TABLE raw_text_symptoms (
+	raw_id SERIAL PRIMARY KEY,
+	raw_symptoms VARCHAR(500)
+);
+
+CREATE TABLE case_symptoms ( 
+	case_id INTEGER,
+	name_de VARCHAR,
+	raw_id INTEGER,
+	painscale INTEGER,
+	bodyRegion VARCHAR
+);
+
+CREATE TABLE recommendations (
+	rec_id SERIAL PRIMARY KEY,
+	case_id INTEGER UNIQUE REFERENCES cases(case_id) ON DELETE CASCADE,
+	urgency_level INTEGER,
+	advice_text TEXT,
+	suspicion1 TEXT,
+	suspicion2 TEXT,
+	suspicion3 TEXT,
+	suspicion4 TEXT,
+	suspicion5 TEXT,
+	probability1 INTEGER,
+	probability2 INTEGER,
+	probability3 INTEGER,
+	probability4 INTEGER,
+	probability5 INTEGER,
+	context_data JSONB,
+	fhir_json JSONB
+);
