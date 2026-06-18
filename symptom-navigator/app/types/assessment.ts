@@ -164,6 +164,9 @@ categories: {
 
 export type MedicationEntry = {
   name: string;
-  frequencyPerDay: string;
+  dose: string;
+  unit: string; 
+  frequency: string;
+  frequencyUnit: string;
   since: string;
 };

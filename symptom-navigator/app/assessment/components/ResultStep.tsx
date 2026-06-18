@@ -59,7 +59,7 @@ export function ResultStep({
 
   const medicationValue =
     displayedAdditionalData.medication?.map(
-      (medication) => `Medikation: ${medication.name}, Einnahmen pro Tag: ${medication.frequencyPerDay}, Seit wann: ${medication.since}`
+      (medication) => `Medikation: ${medication.name} ${medication.dose} ${medication.unit}, Einnahmen pro ${medication.frequencyUnit}: ${medication.frequency}, Seit wann: ${medication.since}`
     );
 
   const conditionsValue =
@@ -542,7 +542,7 @@ export function ResultStep({
             <ul>
               {additionalData.medication.map((m, i) => (
                 <li key={i}>
-                  <strong>{m.name} - {m.frequencyPerDay} pro Tag - seit {m.since}</strong>
+                  <strong>{m.name} {m.dose} {m.unit} - {m.frequency} pro {m.frequencyUnit} - seit {m.since}</strong>
                 </li>
               ))}
             </ul>

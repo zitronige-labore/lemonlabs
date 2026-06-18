@@ -267,7 +267,7 @@ export function CheckInfo({
           <ul>
             {additionalData.medication.map((m, i) => (
               <li key={i}>
-                <strong>{m.name} - {m.frequencyPerDay} pro Tag - seit {m.since} </strong>
+                <strong>{m.name} {m.dose} {m.unit} - {m.frequency} pro {m.frequencyUnit} - seit {m.since} </strong>
               </li>
             ))}
           </ul>

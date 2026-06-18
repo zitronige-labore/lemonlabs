@@ -26,13 +26,13 @@ export function AdditionalInfoStep({
   const [durationError, setDurationError] = useState("");
   const [cigarettesError, setCigarettesError] = useState("");
   const [alcoholError, setAlcoholError] = useState("");
-  const [medicationError, setMedicationError] = useState<Record<number, string>>({});
-  const [medicationNameError, setMedicationNameError] =useState<Record<number, string>>({});
+  const [doseError, setDoseError] = useState<Record<number, string>>({});
+  const [frequencyError, setFrequencyError] =useState<Record<number, string>>({});
 
 
   const noErrors =
-    Object.values(medicationError).every(error => error === "") &&
-    Object.values(medicationNameError).every(error => error === "") &&
+    Object.values(frequencyError).every(error => error === "") &&
+    Object.values(frequencyError).every(error => error === "") &&
     cigarettesError === "" &&
     alcoholError === "" &&
     weightError === "" &&
@@ -49,16 +49,11 @@ export function AdditionalInfoStep({
   }
 
   function addMedication() {
-  setAdditionalData({...additionalData, medication: [
+    setAdditionalData({...additionalData, medication: [
       ...(additionalData.medication ?? []),
-      {
-        name: "",
-        frequencyPerDay: "",
-        since: ""
-      }
-    ]
-  });
-}
+      { name: "", dose: "", unit: "", frequency: "", frequencyUnit: "", since: "" }
+    ]});
+  }
 
   function removeMedication(index: number) {
     setAdditionalData({
@@ -125,7 +120,7 @@ export function AdditionalInfoStep({
                 ...additionalData,
                 hasMedication: e.target.checked,
                 medication: e.target.checked && additionalData.medication?.length === 0
-                  ? [{ name: "", frequencyPerDay: "", since: "" }]
+                  ? [{ name: "", dose: "", unit: "", frequency: "", frequencyUnit: "", since: "" }]
                   : additionalData.medication
               })
             }
@@ -133,91 +128,111 @@ export function AdditionalInfoStep({
           Einnahme von Medikamenten
         </label>
 
-        {additionalData.hasMedication && (
-          <div className={assessmentStyles.expandedSection}>
-            {additionalData.medication?.map((entry, index) => (
-              <div key={index} className={assessmentStyles.listEntry}>
-                <label> 
-                  Medikament und Dosis
-                <input
-                  className={assessmentStyles.input}
-                  placeholder="z. B. Ibuprofen 400mg"
-                  value={entry.name}
-                  onChange={(e) => updateMedication(index, "name", e.target.value)}
-                  onBlur={(e) => {
-                    const value = e.target.value;
+        {additionalData.medication?.map((entry, index) => (
+          <div key={index} className={assessmentStyles.listEntry}>
+            <label>
+              Medikament
+              <input
+                className={assessmentStyles.input}
+                placeholder="z. B. Ibuprofen"
+                value={entry.name}
+                onChange={(e) => updateMedication(index, "name", e.target.value)}
+              />
+            </label>
 
-                    setMedicationNameError(prev => ({
-                      ...prev,
-                      [index]:
-                        value !== "" && !/\d/.test(value)
-                          ? "Bitte geben Sie auch die Dosis an (z. B. 400 mg)."
-                          : ""
-                    }));
-                  }}
-                />
-                {medicationNameError[index] && (
-                  <p className={assessmentStyles.errorText}>
-                    {medicationNameError[index]}
-                  </p>
-                )}
-                </label>
+            <label>
+              Dosis
+              <input
+                className={assessmentStyles.input}
+                type="number"
+                min={0}
+                placeholder="z. B. 400"
+                value={entry.dose}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  updateMedication(index, "dose", value);
+                  const n = Number(value);
+                  setDoseError(prev => ({
+                    ...prev,
+                    [index]: value !== "" && (!Number.isFinite(n) || n < 0)
+                      ? "Bitte eine gültige Dosis angeben." : ""
+                  }));
+                }}
+              />
+              {doseError[index] && <p className={assessmentStyles.errorText}>{doseError[index]}</p>}
+            </label>
 
-                <label>
-                  Wie oft am Tag
-                <input
-                  className={assessmentStyles.input}
-                  placeholder="(z. B. 2)"
-                  type="number"
-                  min={0}
-                  step={1}
-                  value={entry.frequencyPerDay}
-                  onChange={(e) => {
-                    const value = e.target.value;
+            <label>
+              Einheit
+              <select
+                className={assessmentStyles.input}
+                value={entry.unit}
+                onChange={(e) => updateMedication(index, "unit", e.target.value)}
+              >
+                <option value="">Bitte auswählen</option>
+                <option value="mg">mg</option>
+                <option value="g">g</option>
+                <option value="µg">µg</option>
+                <option value="ml">ml</option>
+                <option value="IE">IE</option>
+                <option value="Tropfen">Tropfen</option>
+                <option value="Stück">Stück</option>
+              </select>
+            </label>
 
-                    updateMedication(index, "frequencyPerDay", value);
+            <label>
+              Wie oft
+              <input
+                className={assessmentStyles.input}
+                type="number"
+                min={0}
+                step={1}
+                placeholder="z. B. 3"
+                value={entry.frequency}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  updateMedication(index, "frequency", value);
+                  const n = Number(value);
+                  setFrequencyError(prev => ({
+                    ...prev,
+                    [index]: value !== "" && (!Number.isInteger(n) || n < 0)
+                      ? "Bitte gültige Einnahmehäufigkeit angeben." : ""
+                  }));
+                }}
+              />
+              {frequencyError[index] && <p className={assessmentStyles.errorText}>{frequencyError[index]}</p>}
+            </label>
 
-                    const n = Number(value);
+            <label>
+              pro
+              <select
+                className={assessmentStyles.input}
+                value={entry.frequencyUnit}
+                onChange={(e) => updateMedication(index, "frequencyUnit", e.target.value)}
+              >
+                <option value="">Bitte auswählen</option>
+                <option value="Tag">Tag</option>
+                <option value="Woche">Woche</option>
+                <option value="Monat">Monat</option>
+                <option value="Bedarf">Bedarf</option>
+              </select>
+            </label>
 
-                    setMedicationError({
-                      ...medicationError,
-                      [index]:
-                        value !== "" &&
-                        (!Number.isInteger(n) || n < 0)
-                          ? "Bitte gültige Einnahme pro Tag eingeben."
-                          : "",
-                    });
-                  }}
-                />
-                {medicationError[index] && (
-                  <p className={assessmentStyles.errorText}>
-                    {medicationError[index]}
-                  </p>
-                )}
-                </label>
+            <label>
+              seit wann
+              <input
+                className={assessmentStyles.input}
+                type="date"
+                value={entry.since}
+                onChange={(e) => updateMedication(index, "since", e.target.value)}
+              />
+            </label>
 
-                <label>
-                  seit wann
-                <input
-                  className={assessmentStyles.input}
-                  type="date"
-                  value={entry.since}
-                  onChange={(e) => updateMedication(index, "since", e.target.value)}
-                />
-                </label>
-                {(additionalData.medication?.length?? 0) > 1 && (
-                  <button
-                    type="button"
-                    className={assessmentStyles.removeButton}
-                    onClick={() => removeMedication(index)}
-                    aria-label="Medikament entfernen"
-                  >
-                    ✕
-                  </button>
-                )}
-              </div>
-            ))}
-            <button
+            {(additionalData.medication?.length ?? 0) > 1 && (
+              <button type="button" className={assessmentStyles.removeButton}
+                onClick={() => removeMedication(index)} aria-label="Medikament entfernen">✕</button>
+            )}
+            <button 
               type="button"
               className={assessmentStyles.addButton}
               onClick={addMedication}
@@ -225,7 +240,7 @@ export function AdditionalInfoStep({
               + Medikament hinzufügen
             </button>
           </div>
-        )}
+        ))}
 
         {/* conditions*/}
         <label className={assessmentStyles.checkboxLabel}>

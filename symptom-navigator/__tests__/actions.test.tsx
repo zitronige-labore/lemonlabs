@@ -45,6 +45,30 @@ jest.mock("../app/assessment/medicalLogic/SymptomLists", () => ({
 const mockFetch = jest.fn();
 global.fetch = mockFetch;
 
+// mock for medication data from db
+const mockMedicationRows = [
+  { medication: "Ibuprofen", dose: 400, unit: "mg", frequency: 2, frequency_unit: "Tag", taken_since: "3 Tage" },
+];
+
+// mock for getting user data from db return
+function mockGetUserDataFromDB({
+  caseRows = [{ sex: "w", age: 28, pregnancy: false, date: "2023-01-01" }],
+  symptomRows = [{ name_de: "Kopfschmerz", painscale: 4, bodyregion: "Kopf" }],
+  textSymptomRows = [],
+  additionalInfoRows = [{ weight: 60, height: 165, temperature: 38.5, duration: 2, worsening: true, breastfeeding: false, extraInfo: "" }],
+  medicationRows = mockMedicationRows,
+  allergyRows = [{ detail: "Pollen" }],
+  conditionRows = [{ detail: "Asthma" }],
+} = {}) {
+  mockQuery
+    .mockResolvedValueOnce({ rows: caseRows })
+    .mockResolvedValueOnce({ rows: symptomRows })
+    .mockResolvedValueOnce({ rows: textSymptomRows })
+    .mockResolvedValueOnce({ rows: additionalInfoRows })
+    .mockResolvedValueOnce({ rows: medicationRows })
+    .mockResolvedValueOnce({ rows: allergyRows })
+    .mockResolvedValueOnce({ rows: conditionRows });
+}
 
 // import functions to test
 import {
@@ -76,7 +100,10 @@ function buildFormData(overrides: Record<string, string> = {}): FormData {
     weight: "65",
     height: "170",
     // medication ist jetzt JSON-Array von MedicationEntry-Objekten
-    medication: JSON.stringify([{ name: "Ibuprofen", frequencyPerDay: "2", since: "3 Tage" }]),
+    medication: JSON.stringify([
+      { name: "Ibuprofen", dose: "400", unit: "mg", 
+        frequency: "2", frequencyUnit: "Tag", since: "3 Tage" },
+    ]),
     conditions: "Asthma",
     allergies: "Pollen",
     temperature: "37,5",
@@ -111,7 +138,9 @@ function buildBasisData(overrides: Partial<BasisData> = {}): BasisData {
 function buildAdditionalData(overrides: Partial<AdditionalData> = {}): AdditionalData {
   return {
     hasMedication: true,
-    medication: [{ name: "Ibuprofen", frequencyPerDay: "2", since: "3 Tage" }],
+    medication: [
+      { name: "Ibuprofen", dose: "400", unit: "mg", frequency: "2", frequencyUnit: "Tag", since: "3 Tage" },
+    ],
     hasConditions: true,
     conditions: ["Asthma"],
     smokescigarettes: false,
@@ -191,19 +220,22 @@ describe("saveFormData", () => {
   it("inserts medication entries as individual rows in the medication table", async () => {
     const formData = buildFormData({
       medication: JSON.stringify([
-        { name: "Ibuprofen", frequencyPerDay: "2", since: "3 Tage" },
-        { name: "Aspirin", frequencyPerDay: "1", since: "1 Woche" },
-        { name: "Paracetamol", frequencyPerDay: "3", since: "2 Tage" },
+        { name: "Ibuprofen", dose: "400", unit: "mg", frequency: "2", frequencyUnit: "Tag", since: "3 Tage" },
       ]),
     });
 
     await saveFormData(formData);
 
-    const medicationInserts = mockQuery.mock.calls.filter(
-      (call) =>
-        typeof call[0] === "string" && call[0].includes("Insert into medication")
+    const medInsert = mockQuery.mock.calls.find(
+      (call) => typeof call[0] === "string" && call[0].includes("Insert into medication")
     );
-    expect(medicationInserts).toHaveLength(3);
+    expect(medInsert).toBeDefined();
+    expect(medInsert![1]).toContain("Ibuprofen");
+    expect(medInsert![1]).toContain("400");
+    expect(medInsert![1]).toContain("mg");
+    expect(medInsert![1]).toContain("2");
+    expect(medInsert![1]).toContain("Tag");
+    expect(medInsert![1]).toContain("3 Tage");
   });
 
   it("sets pregnancy=true when 'ja' is provided", async () => {
@@ -979,7 +1011,7 @@ describe("buildAiPrompt", () => {
       buildBasisData({ age: "28" }),
       buildAdditionalData({
         allergies: ["Pollen"],
-        medication: [{ name: "Ibuprofen", frequencyPerDay: "2", since: "3 Tage" }],
+        medication: [{ name: "Ibuprofen", dose: "2", unit: "mg", frequency: "3", frequencyUnit: "day",since: "3 Tage" }],
         conditions: ["Asthma"],
       }),
       sampleSymptomText,

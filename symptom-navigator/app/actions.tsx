@@ -65,10 +65,10 @@ export async function saveFormData(formData: FormData) {
       await connectionPool.query(
           `
           Insert into medication 
-          (case_id, medication, frequency_per_day ,taken_since)
-          VALUES ($1, $2, $3, $4);
+          (case_id, medication, dose, unit, frequency, frequency_unit, taken_since)
+          VALUES ($1, $2, $3, $4, $5, $6, $7);
           `,
-          [caseId, medicationList[i].name, medicationList[i].frequencyPerDay, medicationList[i].since]
+          [caseId, medicationList[i].name, medicationList[i].dose, medicationList[i].unit, medicationList[i].frequency, medicationList[i].frequencyUnit, medicationList[i].since]
       );
     }
 
@@ -366,7 +366,7 @@ export async function getUserDataFromDB(caseId: string) {
   );
 
   const medicationData = await connectionPool.query(`
-    SELECT medication, taken_since, frequency_per_day
+    SELECT medication, dose, unit, taken_since, frequency, frequency_unit
     FROM medication
     WHERE case_id = $1
     ;

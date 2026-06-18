@@ -25,7 +25,7 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
     const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
     // convert coded values to be read by users where necessary
-    const [geschlecht, schwangerschaft, stillzeit, worsening] = makeDBDataReadable(data);
+    const [geschlecht, schwangerschaft, stillzeit, worsening, medication] = makeDBDataReadable(data);
 
     // building txt and pdf
     function buildExportData(): AssessmentExportData {
@@ -39,7 +39,7 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
             gewicht: data?.additionalInfoData?.[0]?.weight ? `${data.additionalInfoData[0].weight} kg` : "Keine Angabe",
             temperatur: data?.additionalInfoData?.[0]?.temperature ? `${data.additionalInfoData[0].temperature} °C` : "Keine Angabe",
             dauer: data?.additionalInfoData?.[0]?.duration ? `${data.additionalInfoData[0].duration} Tage` : "Keine Angabe",
-            medikation: data?.medicationData?.medication?.join(", ") || "Keine Angabe",
+            medikation: medication.join(", ") || "Keine Angabe",
             allergien: data?.allergyData?.allergies?.join(", ") || "Keine Angabe",
             vorerkrankungen: data?.conditionsData?.conditions?.join(", ") || "Keine Angabe",
             alkoholkonsum: data?.additionalInfoData?.[0]?.alcoholPerWeek || "Keine Angabe",
@@ -172,12 +172,10 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
                             <p className={assessmentStyles.selectedText}>Zusatzangaben</p>
 
                             <p>Medikamente:</p>
-                            {data?.medicationData?.length > 0 && (
-                                data.medicationData.map((medication: {medication: string, frequency_per_day: number, taken_since: string}, i: number) => (
+                            {medication.length > 0 && (
+                                medication.map((m: string, i: number) => (
                                     <div key={i} className={assessmentStyles.fieldset}>
-                                        Medikament: <strong>{medication.medication}</strong><br />
-                                        Wie oft pro Tag: <strong>{medication.frequency_per_day || "nicht angegeben"}</strong><br />
-                                        Seit wann: <strong>{new Date(medication.taken_since).toLocaleDateString()  || "nicht angegeben"}</strong>
+                                        {m}
                                     </div>
                                 ))
                             )}
@@ -273,53 +271,25 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
                                 </div>
                             )}
 
-                            <div className={assessmentStyles.buttonGroup}>
-                                <button
-                                    type="button"
-                                    className={assessmentStyles.secondaryButton}
-                                    onClick={() => downloadPdf(buildExportData())}
-                                >
-                                    pdf herunterladen
-                                </button>
-
-                                <button
-                                    type="button"
-                                    className={assessmentStyles.secondaryButton}
-                                    onClick={() => downloadTxt(buildExportData())}
-                                >
-                                    txt herunterladen
-                                </button>
-
-                                <button
-                                    type="button"
-                                    className={assessmentStyles.secondaryButton}
-                                    onClick={async () => {
-                                        const fhirAnswerSuccess = await sendFhirToServer(code);
-                                        if(fhirAnswerSuccess) {
-                                            setFhirSent(1);
-                                        }
-                                        else {
-                                            setFhirSent(2)
-                                        }
-                                    }}
-                                >
-                                    fhir bundle an hapi server schicken
-                                </button>
-
-                                {fhirSent===1 && (
-                                    <p>
-                                        fhir bundle wurde erfolgreich gesendet
-                                    </p>
-                                )}
-
-                                {fhirSent===2 && (
-                                    <p>
-                                        fhir bundle konnte nicht gesendet werden
-                                    </p>
-                                )}
-                            </div>
                         </>
                     )}
+                    <div className={assessmentStyles.buttonGroup}>
+                        <button
+                            type="button"
+                            className={assessmentStyles.secondaryButton}
+                            onClick={() => downloadPdf(buildExportData())}
+                        >
+                            pdf herunterladen
+                        </button>
+
+                        <button
+                            type="button"
+                            className={assessmentStyles.secondaryButton}
+                            onClick={() => downloadTxt(buildExportData())}
+                        >
+                            txt herunterladen
+                        </button>
+                    </div>
                 </>
             )}
         </div>
