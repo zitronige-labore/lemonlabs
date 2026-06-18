@@ -1,4 +1,4 @@
-import type { Step } from "../../types/assessment";
+import type { MedicationEntry, Step } from "../../types/assessment";
 import assessmentStyles from "../Assessment.module.css";
 import { makeDBDataReadable } from "../utils/assessmentData";
 import { accessDataWithAccessCode, deleteDataOnAccessCode, accessAiDataWithAccessCode, getCaseIdFromAccessCode, sendFhirToServer, buildFhirBundle } from "../../actions";
@@ -25,7 +25,7 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
     const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
     // convert coded values to be read by users where necessary
-    const [geschlecht, schwangerschaft, stillzeit, worsening] = makeDBDataReadable(data);
+    const [geschlecht, schwangerschaft, stillzeit, worsening, medication] = makeDBDataReadable(data);
 
     // building txt and pdf
     function buildExportData(): AssessmentExportData {
@@ -39,9 +39,11 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
             gewicht: data?.additionalInfoData?.[0]?.weight ? `${data.additionalInfoData[0].weight} kg` : "Keine Angabe",
             temperatur: data?.additionalInfoData?.[0]?.temperature ? `${data.additionalInfoData[0].temperature} °C` : "Keine Angabe",
             dauer: data?.additionalInfoData?.[0]?.duration ? `${data.additionalInfoData[0].duration} Tage` : "Keine Angabe",
-            medikation: data?.medicationData?.medication?.join(", ") || "Keine Angabe",
+            medikation: medication.join(", ") || "Keine Angabe",
             allergien: data?.allergyData?.allergies?.join(", ") || "Keine Angabe",
             vorerkrankungen: data?.conditionsData?.conditions?.join(", ") || "Keine Angabe",
+            alkoholkonsum: data?.additionalInfoData?.[0]?.alcoholPerWeek || "Keine Angabe",
+            zigaretten: data?.additionalInfoData?.[0]?.cigarettesPerDay || "Keine Angabe",
             symptome: data?.symptomData?.[0]?.name_de ? data.symptomData.map((s: any) => s.name_de).join(", ") : "",
             textSymptome: data?.textSymptomData?.[0]?.raw_symptoms || "",
             datum: data?.caseData?.[0]?.date ? new Date(data.caseData[0].date).toLocaleString() : "Keine Angabe",
@@ -168,8 +170,14 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
                     {(data?.medicationData || data?.allergyData || data?.conditionsData) && (
                         <div className={assessmentStyles.fieldset}>
                             <p className={assessmentStyles.selectedText}>Zusatzangaben</p>
-                            {data?.medicationData?.medication[0] && (
-                                <p>Medikation: <strong>{data.medicationData.medication?.join(", ")}</strong></p>
+
+                            <p>Medikamente:</p>
+                            {medication.length > 0 && (
+                                medication.map((m: string, i: number) => (
+                                    <div key={i} className={assessmentStyles.fieldset}>
+                                        {m}
+                                    </div>
+                                ))
                             )}
                             {data?.allergyData?.allergies[0] && (
                                 <p>Allergien: <strong>{data.allergyData.allergies?.join(", ")}</strong></p>
@@ -192,11 +200,38 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
                             {worsening && (
                                 <p>Symptome werden schlimmer: <strong>{worsening}</strong></p>
                             )}
+                            {data.additionalInfoData?.[0]?.cigarettes_per_day != null && (
+                            <p>
+                                Zigaretten pro Tag:{" "}
+                                <strong>{data.additionalInfoData[0].cigarettes_per_day}</strong>
+                            </p>
+                            )}
+                            {data.additionalInfoData?.[0]?.alcohol_per_week != null && (
+                            <p>
+                                Alkoholische Getränke pro Woche:{" "}
+                                <strong>{data.additionalInfoData[0].alcohol_per_week}</strong>
+                            </p>
+                            )}
                             {data?.additionalInfoData?.[0]?.other_info && (
                                 <p>Sonstige Angaben: <strong>{data.additionalInfoData[0].other_info}</strong></p>
                             )}
 
-                            {data?.additionalInfoData?.[0]?.other_info == null && data?.additionalInfoData?.[0]?.height == null && data?.additionalInfoData?.[0]?.weight == null && data?.additionalInfoData?.[0]?.temperature == null && data?.additionalInfoData?.[0]?.duration == null && worsening === undefined && (<p>Keine Zusatzangaben vorhanden</p>)}
+                            {!(
+                            data?.additionalInfoData?.[0]?.other_info ||
+                            data?.additionalInfoData?.[0]?.height ||
+                            data?.additionalInfoData?.[0]?.weight ||
+                            data?.additionalInfoData?.[0]?.temperature ||
+                            data?.additionalInfoData?.[0]?.duration ||
+                            data?.additionalInfoData?.[0]?.alcohol_per_week ||
+                            data?.additionalInfoData?.[0]?.cigarettes_per_day ||
+                            (data?.allergyData?.allergies?.length > 0) ||
+                            (data?.conditionsData?.conditions?.length > 0) ||
+                            (data?.medicationData?.length > 0) ||
+                            worsening
+                            ) && (
+                            <p>Keine Zusatzangaben vorhanden</p>
+                            )}
+
                         </div>
                     )}
 
@@ -236,53 +271,25 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
                                 </div>
                             )}
 
-                            <div className={assessmentStyles.buttonGroup}>
-                                <button
-                                    type="button"
-                                    className={assessmentStyles.secondaryButton}
-                                    onClick={() => downloadPdf(buildExportData())}
-                                >
-                                    pdf herunterladen
-                                </button>
-
-                                <button
-                                    type="button"
-                                    className={assessmentStyles.secondaryButton}
-                                    onClick={() => downloadTxt(buildExportData())}
-                                >
-                                    txt herunterladen
-                                </button>
-
-                                <button
-                                    type="button"
-                                    className={assessmentStyles.secondaryButton}
-                                    onClick={async () => {
-                                        const fhirAnswerSuccess = await sendFhirToServer(code);
-                                        if(fhirAnswerSuccess) {
-                                            setFhirSent(1);
-                                        }
-                                        else {
-                                            setFhirSent(2)
-                                        }
-                                    }}
-                                >
-                                    fhir bundle an hapi server schicken
-                                </button>
-
-                                {fhirSent===1 && (
-                                    <p>
-                                        fhir bundle wurde erfolgreich gesendet
-                                    </p>
-                                )}
-
-                                {fhirSent===2 && (
-                                    <p>
-                                        fhir bundle konnte nicht gesendet werden
-                                    </p>
-                                )}
-                            </div>
                         </>
                     )}
+                    <div className={assessmentStyles.buttonGroup}>
+                        <button
+                            type="button"
+                            className={assessmentStyles.secondaryButton}
+                            onClick={() => downloadPdf(buildExportData())}
+                        >
+                            pdf herunterladen
+                        </button>
+
+                        <button
+                            type="button"
+                            className={assessmentStyles.secondaryButton}
+                            onClick={() => downloadTxt(buildExportData())}
+                        >
+                            txt herunterladen
+                        </button>
+                    </div>
                 </>
             )}
         </div>

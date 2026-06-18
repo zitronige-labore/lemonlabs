@@ -180,14 +180,24 @@ export default function Home() {
     Diese Angaben sind nicht verpflichtend.
   */
   const [additionalData, setAdditionalData] = useState<AdditionalData>({
-    medication: "",
-    conditions: "",
-    duration: "",
-
-    allergies: "",
+    medication: [],
+    hasMedication: false,
+  
+    conditions: [],
+    hasConditions: false,
+  
+    allergies: [],
+    hasAllergies: false,
+  
+    cigarettesPerDay: "",
+    smokescigarettes: false,
+  
+    alcoholPerWeek: "",
+    drinksAlcohol: false,
 
     temperature: "",
     worsening: "",
+    duration: "",
 
     weight: "",
     height: "",
@@ -478,14 +488,24 @@ export default function Home() {
     setHighestAssessmentProgress(0);
     setCheckInfoActive(false);
     setAdditionalData({
-    medication: "",
-    conditions: "",
-    duration: "",
-
-    allergies: "",
+    medication: [],
+    hasMedication: false,
+  
+    conditions: [],
+    hasConditions: false,
+  
+    allergies: [],
+    hasAllergies: false,
+  
+    cigarettesPerDay: "",
+    smokescigarettes: false,
+  
+    alcoholPerWeek: "",
+    drinksAlcohol: false,
 
     temperature: "",
     worsening: "",
+    duration: "",
 
     weight: "",
     height: "",

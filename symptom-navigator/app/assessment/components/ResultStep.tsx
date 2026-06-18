@@ -58,8 +58,9 @@ export function ResultStep({
   const urgency = Number(aiAnswer?.assessment?.urgency);
 
   const medicationValue =
-    displayedAdditionalData.medication ||
-    "Keine Angabe";
+    displayedAdditionalData.medication?.map(
+      (medication) => `Medikation: ${medication.name} ${medication.dose} ${medication.unit}, Einnahmen pro ${medication.frequencyUnit}: ${medication.frequency}, Seit wann: ${medication.since}`
+    );
 
   const conditionsValue =
     displayedAdditionalData.conditions &&
@@ -80,9 +81,11 @@ export function ResultStep({
       gewicht: displayedAdditionalData.weight ? `${displayedAdditionalData.weight} kg` : "Keine Angabe",
       temperatur: displayedAdditionalData.temperature || "Keine Angabe",
       dauer: displayedAdditionalData.duration || "Keine Angabe",
-      medikation: displayedAdditionalData.medication || "Keine Angabe",
-      allergien: displayedAdditionalData.allergies || "Keine Angabe",
-      vorerkrankungen: displayedAdditionalData.conditions || "Keine Angabe",
+      medikation: medicationValue?.join(",") || "Keine Angabe",
+      allergien: displayedAdditionalData.allergies.join(",") || "Keine Angabe",
+      vorerkrankungen: displayedAdditionalData.conditions.join(",") || "Keine Angabe",
+      alkoholkonsum: displayedAdditionalData.alcoholPerWeek || "Keine Angabe",
+      zigaretten: displayedAdditionalData.cigarettesPerDay || "Keine Angabe",
       symptome: displayedSelectedSymptoms.length > 0
         ? displayedSelectedSymptoms.map(s => { try { return JSON.parse(s).name; } catch { return s; } }).join(", ")
         : "",
@@ -501,8 +504,52 @@ export function ResultStep({
           <p className={assessmentStyles.selectedText}>Zusatzangaben</p>
 
           <p>
-            Medikamente: <strong>{medicationValue}</strong>
+            Größe:{" "}
+            <strong>
+              {additionalData.height || "Keine Angabe"}
+            </strong>
           </p>
+
+          <p>
+            Gewicht:{" "}
+            <strong>
+              {additionalData.weight || "Keine Angabe"}
+            </strong>
+          </p>
+
+          <p>
+            Beschwerden bestehen seit (in Tagen):{" "}
+            <strong>
+              {additionalData.duration || "Keine Angabe"}
+            </strong>
+          </p>
+
+          {basisData.gender !== "männlich" && (
+          
+          <p>
+            Stillzeit:{" "}
+            <strong>
+              {additionalData.breastfeeding || "Keine Angabe"}
+            </strong>
+          </p>
+          )}
+
+          <p>
+            Medikamente:
+          </p>
+
+          {additionalData.medication && additionalData.medication.length > 0 ? (
+            <ul>
+              {additionalData.medication.map((m, i) => (
+                <li key={i}>
+                  <strong>{m.name} {m.dose} {m.unit} - {m.frequency} pro {m.frequencyUnit} - seit {m.since}</strong>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <strong>Keine Angabe</strong>
+          )}
+
 
           <p>
             Vorerkrankungen: <strong>{conditionsValue}</strong>
@@ -519,6 +566,20 @@ export function ResultStep({
             Fieber:{" "}
             <strong>
               {displayedAdditionalData.temperature || "Keine Angabe"}
+            </strong>
+          </p>
+
+          <p>
+            Alkoholische Getraenke pro Woche:{" "}
+            <strong>
+              {displayedAdditionalData.alcoholPerWeek || "Keine Angabe"}
+            </strong>
+          </p>
+
+          <p>
+            Zigaretten pro Tag:{" "}
+            <strong>
+              {displayedAdditionalData.cigarettesPerDay || "Keine Angabe"}
             </strong>
           </p>
 

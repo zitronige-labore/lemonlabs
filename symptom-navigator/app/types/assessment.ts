@@ -44,11 +44,20 @@ export type Step =
   Zusatzangaben der Nutzerin oder des Nutzers.
 */
 export type AdditionalData = {
-  medication?: string;
+  medication?: MedicationEntry[];
+  hasMedication: boolean;
 
-  conditions: string;
+  conditions: string[];
+  hasConditions: boolean;
 
-  allergies: string;
+  allergies: string[];
+  hasAllergies: boolean;
+
+  cigarettesPerDay: string;
+  smokescigarettes: boolean;
+
+  alcoholPerWeek: string;
+  drinksAlcohol: boolean;
 
   temperature: string;
   duration: string;
@@ -144,10 +153,20 @@ export type SymptomSelectionList = {
     }[];
 
 
-  export type SymptomCategoryList = {
+export type SymptomCategoryList = {
+step: Step;
+categories: {
+  category: string;
   step: Step;
-  categories: {
-    category: string;
-    step: Step;
-    }[];
   }[];
+}[];
+
+
+export type MedicationEntry = {
+  name: string;
+  dose: string;
+  unit: string; 
+  frequency: string;
+  frequencyUnit: string;
+  since: string;
+};

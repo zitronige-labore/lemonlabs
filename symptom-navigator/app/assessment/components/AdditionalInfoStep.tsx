@@ -1,17 +1,10 @@
-/*
-  Import von useState für lokale Validierungsfehler.
-*/
+"use client";
+
+import assessmentStyles from "../Assessment.module.css";
+import type { AdditionalData, MedicationEntry, Step } from "../../types/assessment";
 import { useState } from "react";
 
-/*
-  Import der CSS-Module für den Assessment-Bereich.
-*/
-import assessmentStyles from "../Assessment.module.css";
 
-/*
-  Import des Typs für die optionalen Zusatzangaben.
-*/
-import type { AdditionalData, Step } from "../../types/assessment";
 
 type AdditionalInfoStepProps = {
   additionalData: AdditionalData;
@@ -28,18 +21,135 @@ export function AdditionalInfoStep({
   setStep,
   checkInfoActive
 }: AdditionalInfoStepProps) {
-  const [inputError, setInputError] = useState("");
 
   const [weightError, setWeightError] = useState("");
   const [heightError, setHeightError] = useState("");
   const [temperatureError, setTemperatureError] = useState("");
   const [durationError, setDurationError] = useState("");
+  const [cigarettesError, setCigarettesError] = useState("");
+  const [alcoholError, setAlcoholError] = useState("");
+  const [doseError, setDoseError] = useState<Record<number, string>>({});
+  const [frequencyError, setFrequencyError] =useState<Record<number, string>>({});
 
 
-  const Pattern = /^[^,]+(,[^,]+)*$/;
+  const noErrors =
+    Object.values(frequencyError).every(error => error === "") &&
+    Object.values(frequencyError).every(error => error === "") &&
+    cigarettesError === "" &&
+    alcoholError === "" &&
+    weightError === "" &&
+    heightError === "" &&
+    temperatureError === "" &&
+    durationError === "" &&
+    // check if added data has been filled
+    (!additionalData.hasMedication || (additionalData.medication ?? []).every(entry =>
+    entry.name.trim() !== "" &&
+    entry.dose.trim() !== "" &&
+    entry.unit !== "" &&
+    entry.frequency.trim() !== "" &&
+    entry.frequencyUnit !== ""
+  )) &&
+  (!additionalData.hasConditions ||
+    additionalData.conditions.every(c => c.trim() !== "")) &&
+  (!additionalData.smokescigarettes ||
+    additionalData.cigarettesPerDay.trim() !== "") &&
+  (!additionalData.drinksAlcohol ||
+    additionalData.alcoholPerWeek.trim() !== "") &&
+  (!additionalData.hasAllergies ||
+    additionalData.allergies.every(a => a.trim() !== ""));
 
-  const medicationValue =
-    additionalData.medication || "";
+
+  function getValidationHint(): string | null {
+    if (additionalData.hasMedication) {
+      const incomplete = (additionalData.medication ?? []).some(entry =>
+        entry.name.trim() === "" ||
+        entry.dose.trim() === "" ||
+        entry.unit === "" ||
+        entry.frequency.trim() === "" ||
+        entry.frequencyUnit === ""
+      );
+      if (incomplete) return "Bitte alle Pflichtfelder der Medikamente ausfüllen oder leere Einträge entfernen..";
+    }
+    if (additionalData.hasConditions && additionalData.conditions.some(c => c.trim() === ""))
+      return "Bitte alle Vorerkrankungen ausfüllen oder leere Einträge entfernen.";
+    if (additionalData.smokescigarettes && additionalData.cigarettesPerDay.trim() === "")
+      return "Bitte Anzahl Zigaretten pro Tag angeben oder leere Einträge entfernen..";
+    if (additionalData.drinksAlcohol && additionalData.alcoholPerWeek.trim() === "")
+      return "Bitte Anzahl Getränke pro Woche angeben oder leere Einträge entfernen.";
+    if (additionalData.hasAllergies && additionalData.allergies.some(a => a.trim() === ""))
+      return "Bitte alle Allergien ausfüllen oder leere Einträge entfernen.";
+    if (Object.values(doseError).some(e => e !== ""))
+      return "Bitte eine gültige Dosis angeben.";
+    if (Object.values(frequencyError).some(e => e !== ""))
+      return "Bitte eine gültige Einnahmehäufigkeit angeben.";
+    if (cigarettesError) return cigarettesError;
+    if (alcoholError) return alcoholError;
+    if (weightError) return weightError;
+    if (heightError) return heightError;
+    if (temperatureError) return temperatureError;
+    if (durationError) return durationError;
+    return null;
+  }
+
+  function updateMedication(index: number, field: keyof MedicationEntry, value: string) {
+    const updated = additionalData.medication?.map((entry, i) =>
+      i === index ? { ...entry, [field]: value } : entry
+    );
+    setAdditionalData({ ...additionalData, medication: updated });
+  }
+
+  function addMedication() {
+    setAdditionalData({...additionalData, medication: [
+      ...(additionalData.medication ?? []),
+      { name: "", dose: "", unit: "", frequency: "", frequencyUnit: "", since: "" }
+    ]});
+  }
+
+  function removeMedication(index: number) {
+    setAdditionalData({
+      ...additionalData,
+      medication: additionalData.medication?.filter((_, i) => i !== index)
+    });
+  }
+
+  function updateCondition(index: number, value: string) {
+    const updated = additionalData.conditions.map((c, i) => i === index ? value : c);
+    setAdditionalData({ ...additionalData, conditions: updated });
+  }
+
+  function addCondition() {
+    setAdditionalData({
+      ...additionalData,
+      conditions: [...additionalData.conditions, ""]
+    });
+  }
+
+  function removeCondition(index: number) {
+    setAdditionalData({
+      ...additionalData,
+      conditions: additionalData.conditions.filter((_, i) => i !== index)
+    });
+  }
+
+  function updateAllergy(index: number, value: string) {
+    const updated = additionalData.allergies.map((c, i) => i === index ? value : c);
+    setAdditionalData({ ...additionalData, allergies: updated });
+  }
+
+  function addAllergy() {
+    setAdditionalData({
+      ...additionalData,
+      allergies: [...additionalData.allergies, ""]
+    });
+  }
+
+  function removeAllergy(index: number) {
+    setAdditionalData({
+      ...additionalData,
+      allergies: additionalData.allergies.filter((_, i) => i !== index)
+    });
+  }
+
 
   return (
     <>
@@ -49,128 +159,409 @@ export function AdditionalInfoStep({
       </p>
 
       <fieldset className={assessmentStyles.fieldset}>
-        <legend className={assessmentStyles.legend}>
-          Zusatzangaben
-        </legend>
+        <legend className={assessmentStyles.legend}>Zusatzangaben</legend>
 
-        <label className={assessmentStyles.formLabel}>
-          Einnahme von Medikamenten
-
+        {/* medication*/}
+        <label className={assessmentStyles.checkboxLabel}>
           <input
-            className={assessmentStyles.input}
-            value={medicationValue}
-            onChange={(event) => {
-              const value = event.target.value;
-
+            type="checkbox"
+            checked={additionalData.hasMedication ?? false}
+            onChange={(e) =>
               setAdditionalData({
                 ...additionalData,
-                medication: value
-              });
-            }}
-            onBlur={(event) => {
-              const value = event.target.value.trim();
-
-              if (value === "" || Pattern.test(value)) {
-                setInputError("");
-              } else {
-                setInputError(
-                  "Bitte schreiben als: Medikament1, Medikament2, ..."
-                );
-              }
-            }}
-            placeholder="Zum Beispiel: Ibuprofen, Blutdruckmedikamente..."
+                hasMedication: e.target.checked,
+                medication: e.target.checked && additionalData.medication?.length === 0
+                  ? [{ name: "", dose: "", unit: "", frequency: "", frequencyUnit: "", since: "" }]
+                  : additionalData.medication
+              })
+            }
           />
+          Einnahme von Medikamenten
         </label>
 
+        {additionalData.hasMedication && (
+          <div className={assessmentStyles.expandedSection}>
+            {additionalData.medication?.map((entry, index) => (
+              <div key={index} className={assessmentStyles.medicationEntry}>
+                {(additionalData.medication?.length ?? 0) > 1 && (
+                  <button
+                    type="button"
+                    className={assessmentStyles.removeButton}
+                    onClick={() => removeMedication(index)}
+                    aria-label="Medikament entfernen"
+                  >✕</button>
+                )}
+
+                <label className={assessmentStyles.fullWidth}>
+                  Medikament*
+                  <input
+                    className={assessmentStyles.input}
+                    placeholder="z. B. Ibuprofen"
+                    value={entry.name}
+                    required
+                    onChange={(e) => updateMedication(index, "name", e.target.value)}
+                  />
+                </label>
+
+                <label>
+                  Dosis*
+                  <input
+                    className={assessmentStyles.input}
+                    type="number"
+                    min={0}
+                    step={1}
+                    required
+                    placeholder="z. B. 400"
+                    value={entry.dose}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      updateMedication(index, "dose", value);
+                      const n = Number(value);
+                      setDoseError(prev => ({
+                        ...prev,
+                        [index]: value !== "" && (!Number.isFinite(n) || !Number.isInteger(n) || n < 0)
+                          ? "Bitte eine gültige Dosis angeben." : ""
+                      }));
+                    }}
+                  />
+                  {doseError[index] && <p className={assessmentStyles.errorText}>{doseError[index]}</p>}
+                </label>
+
+                <label>
+                  Einheit*
+                  <select
+                    required
+                    className={assessmentStyles.input}
+                    value={entry.unit}
+                    onChange={(e) => updateMedication(index, "unit", e.target.value)}
+                  >
+                    <option value="">Bitte auswählen</option>
+                    <option value="mg">mg</option>
+                    <option value="g">g</option>
+                    <option value="µg">µg</option>
+                    <option value="ml">ml</option>
+                    <option value="IE">IE</option>
+                    <option value="Tropfen">Tropfen</option>
+                    <option value="Stück">Stück</option>
+                  </select>
+                </label>
+
+                <label>
+                  Wie oft*
+                  <input
+                    className={assessmentStyles.input}
+                    required
+                    type="number"
+                    min={0}
+                    step={1}
+                    placeholder="z. B. 3"
+                    value={entry.frequency}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      updateMedication(index, "frequency", value);
+                      const n = Number(value);
+                      setFrequencyError(prev => ({
+                        ...prev,
+                        [index]: value !== "" && (!Number.isInteger(n) || n < 0)
+                          ? "Bitte gültige Einnahmehäufigkeit angeben." : ""
+                      }));
+                    }}
+                  />
+                  {frequencyError[index] && <p className={assessmentStyles.errorText}>{frequencyError[index]}</p>}
+                </label>
+
+                <label>
+                  pro*
+                  <select
+                    required
+                    className={assessmentStyles.input}
+                    value={entry.frequencyUnit}
+                    onChange={(e) => updateMedication(index, "frequencyUnit", e.target.value)}
+                  >
+                    <option value="">Bitte auswählen</option>
+                    <option value="Tag">Tag</option>
+                    <option value="Woche">Woche</option>
+                    <option value="Monat">Monat</option>
+                    <option value="Bedarf">Bedarf</option>
+                  </select>
+                </label>
+
+                <label className={assessmentStyles.fullWidth}>
+                  seit wann*
+                  <input
+                    required
+                    className={assessmentStyles.input}
+                    type="date"
+                    value={entry.since}
+                    onChange={(e) => updateMedication(index, "since", e.target.value)}
+                  />
+                </label>
+              </div>
+            ))}
+
+            <button
+              type="button"
+              className={assessmentStyles.addButton}
+              onClick={addMedication}
+            >
+              + Medikament hinzufügen
+            </button>
+          </div>
+        )}
+
+        {/* conditions*/}
+        <label className={assessmentStyles.checkboxLabel}>
+          <input
+            type="checkbox"
+            checked={additionalData.hasConditions ?? false}
+            onChange={(e) =>
+              setAdditionalData({
+                ...additionalData,
+                hasConditions: e.target.checked,
+                conditions: e.target.checked && additionalData.conditions.length === 0
+                  ? [""]
+                  : additionalData.conditions
+              })
+            }
+          />
+          Es liegen Vorerkrankungen vor
+        </label>
+
+        {additionalData.hasConditions && (
+          <div className={assessmentStyles.expandedSection}>
+            {additionalData.conditions.map((condition, index) => (
+              <div key={index} className={assessmentStyles.listEntry}>
+                <label>
+                *
+                <input
+                  className={assessmentStyles.input}
+                  placeholder="Vorerkrankung (z. B. Diabetes, Bluthochdruck)"
+                  value={condition}
+                  onChange={(e) => updateCondition(index, e.target.value)}
+                />
+                </label>
+                {additionalData.conditions.length > 1 && (
+                  <button
+                    type="button"
+                    className={assessmentStyles.removeButton}
+                    onClick={() => removeCondition(index)}
+                    aria-label="Vorerkrankung entfernen"
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
+            ))}
+            <button
+              type="button"
+              className={assessmentStyles.addButton}
+              onClick={addCondition}
+            >
+              + Vorerkrankung hinzufügen
+            </button>
+          </div>
+        )}
+
+        {/* cigarettes */}
+        <label className={assessmentStyles.checkboxLabel}>
+          <input
+            type="checkbox"
+            checked={additionalData.smokescigarettes ?? false}
+            onChange={(e) =>
+              setAdditionalData({ ...additionalData, smokescigarettes: e.target.checked, cigarettesPerDay: "" })
+            }
+          />
+          Zigaretten
+        </label>
+
+        {additionalData.smokescigarettes && (
+          <div className={assessmentStyles.expandedSection}>
+            <label className={assessmentStyles.formLabel}>
+              Wie viele Zigaretten pro Tag?
+              <label>
+              *
+              <input
+                className={assessmentStyles.input}
+                type="number"
+                min={0}
+                step={1}
+                placeholder="z. B. 10"
+                value={additionalData.cigarettesPerDay}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setAdditionalData({ ...additionalData, cigarettesPerDay: value });
+                  const n = Number(value);
+
+                setCigarettesError(
+                  value !== "" &&
+                  (!Number.isInteger(n) || n < 0 || n > 200)
+                    ? "Bitte gültige Anzahl Zigaretten eingeben."
+                    : ""
+                );
+                }}
+              />
+              {cigarettesError && (
+                <p className={assessmentStyles.errorText}>
+                  {cigarettesError}
+                </p>
+              )}
+            </label>
+            </label>
+          </div>
+        )}
+
+        {/* alcohol*/}
+        <label className={assessmentStyles.checkboxLabel}>
+          <input
+            type="checkbox"
+            checked={additionalData.drinksAlcohol ?? false}
+            onChange={(e) =>
+              setAdditionalData({ ...additionalData, drinksAlcohol: e.target.checked, alcoholPerWeek: "" })
+            }
+          />
+          Alkohol
+        </label>
+
+        {additionalData.drinksAlcohol && (
+          <div className={assessmentStyles.expandedSection}>
+            <label className={assessmentStyles.formLabel}>
+              Wie viele alkoholische Getränke pro Woche?
+              <label>
+              *
+              <input
+                className={assessmentStyles.input}
+                type="number"
+                min={0}
+                step={1}
+                placeholder="z. B. 3"
+                value={additionalData.alcoholPerWeek}
+                onChange={(e) => {
+                  const value = e.target.value;
+
+                  setAdditionalData({
+                    ...additionalData,
+                    alcoholPerWeek: value,
+                  });
+
+                  const n = Number(value);
+
+                  setAlcoholError(
+                    value !== "" &&
+                    (!Number.isInteger(n) || n < 0 || n > 100)
+                      ? "Bitte gültige Anzahl Getränke eingeben."
+                      : ""
+                  );
+                }}
+              />
+              {alcoholError && (
+                <p className={assessmentStyles.errorText}>
+                  {alcoholError}
+                </p>
+              )}
+            </label>
+            </label>
+          </div>
+        )}
+
+        {/* allergies */}
+        <label className={assessmentStyles.checkboxLabel}>
+          <input
+            type="checkbox"
+            checked={additionalData.hasAllergies ?? false}
+            onChange={(e) =>
+              setAdditionalData({
+                ...additionalData,
+                hasAllergies: e.target.checked,
+                allergies: e.target.checked && additionalData.allergies.length === 0
+                  ? [""]
+                  : additionalData.allergies
+              })
+            }
+          />
+          Es liegen Allergien vor
+        </label>
+
+        {additionalData.hasAllergies && (
+          <div className={assessmentStyles.expandedSection}>
+            {additionalData.allergies.map((allergy, index) => (
+              <div key={index} className={assessmentStyles.listEntry}>
+                <label>
+                *
+                <input
+                  className={assessmentStyles.input}
+                  placeholder="Allergien z.B. Pollen, Penicillin..."
+                  value={allergy}
+                  onChange={(e) => updateAllergy(index, e.target.value)}
+                />
+                {additionalData.allergies.length > 1 && (
+                  <button
+                    type="button"
+                    className={assessmentStyles.removeButton}
+                    onClick={() => removeAllergy(index)}
+                    aria-label="Allergie entfernen"
+                  >
+                    ✕
+                  </button>
+                )}
+                </label>
+              </div>
+            ))}
+            <button
+              type="button"
+              className={assessmentStyles.addButton}
+              onClick={addAllergy}
+            >
+              + Allergie hinzufügen
+            </button>
+          </div>
+        )}
+
+        {/* weight */}
         <label className={assessmentStyles.formLabel}>
           Gewicht in kg
-
           <input
             className={assessmentStyles.input}
             type="number"
             value={additionalData.weight}
-            onChange={(event) => {
-              const value = event.target.value;
-              setAdditionalData({
-                ...additionalData,
-                weight: value,
-
-              });
-              const weight = Number(value);
-              if (value === "") {
-                setWeightError("");
-              } else if (
-                weight <= 0 ||
-                weight > 600 ||
-                !Number.isInteger(weight)
-              ) {
-                setWeightError("Bitte geben Sie ein gültiges Gewicht ein.")
-              }
-              else {
-                setWeightError("");
-              }
-            }
-            } placeholder="Zum Beispiel: 72 kg"
+            onChange={(e) => {
+              const value = e.target.value;
+              setAdditionalData({ ...additionalData, weight: value });
+              const n = Number(value);
+              setWeightError(value !== "" && (n <= 0 || n > 600 || !Number.isInteger(n))
+                ? "Bitte geben Sie ein gültiges Gewicht ein." : "");
+            }}
+            placeholder="z. B. 72"
           />
-          {weightError && (
-            <p className={assessmentStyles.errorText}>
-              {weightError}
-            </p>
-          )}
-
+          {weightError && <p className={assessmentStyles.errorText}>{weightError}</p>}
         </label>
 
+        {/* height */}
         <label className={assessmentStyles.formLabel}>
           Größe in cm
-
           <input
             className={assessmentStyles.input}
             type="number"
             value={additionalData.height}
-            onChange={(event) => {
-              const value = event.target.value;
-
-              setAdditionalData({
-                ...additionalData,
-                height: value,
-
-              });
-              const height = Number(value);
-              if (value === "") {
-                setHeightError("");
-              } else if (
-                height < 40
-                || height > 300
-                || !Number.isInteger(height)
-              ) {
-                setHeightError("Bitte geben Sie ein gültige Körpergröße ein.")
-              }
-              else {
-                setHeightError("");
-              }
-            }
-
-            } placeholder="Zum Beispiel: 175 cm"
+            onChange={(e) => {
+              const value = e.target.value;
+              setAdditionalData({ ...additionalData, height: value });
+              const n = Number(value);
+              setHeightError(value !== "" && (n < 40 || n > 300 || !Number.isInteger(n))
+                ? "Bitte geben Sie eine gültige Körpergröße ein." : "");
+            }}
+            placeholder="z. B. 175"
           />
-          {heightError && (
-            <p className={assessmentStyles.errorText}>
-              {heightError}
-            </p>
-          )}
-
+          {heightError && <p className={assessmentStyles.errorText}>{heightError}</p>}
         </label>
 
+        {/* breastfeeding*/}
         <label className={assessmentStyles.formLabel}>
           Stillzeit
-
           <select
             className={assessmentStyles.input}
             value={additionalData.breastfeeding}
-            onChange={(event) =>
-              setAdditionalData({
-                ...additionalData,
-                breastfeeding: event.target.value,
-              })
+            onChange={(e) =>
+              setAdditionalData({ ...additionalData, breastfeeding: e.target.value })
             }
           >
             <option value="">Bitte auswählen</option>
@@ -180,163 +571,53 @@ export function AdditionalInfoStep({
           </select>
         </label>
 
-        <div className={assessmentStyles.formLabel}>
-          Sind Vorerkrankungen bekannt?
-
-          {[
-            "Diabetes Typ 1",
-            "Diabetes Typ 2",
-            "Bluthochdruck",
-            "Herzkrankheit",
-            "Asthma",
-          ].map((condition) => (
-            <label key={condition} className={assessmentStyles.label}>
-              <input
-                type="checkbox"
-                checked={additionalData.conditions.includes(condition)}
-                onChange={() =>
-                  setAdditionalData({
-                    ...additionalData,
-                    conditions: additionalData.conditions.includes(condition)
-                      ? additionalData.conditions.replace(`${condition},`, "")
-                      : additionalData.conditions + condition + ",",
-                  })
-                }
-              />
-
-              {condition}
-            </label>
-          ))}
-        </div>
-
-        <label className={assessmentStyles.formLabel}>
-          Sind Allergien bekannt?
-
-          <input
-            className={assessmentStyles.input}
-            type="text"
-            maxLength={120}
-            value={additionalData.allergies}
-            onChange={(event) => {
-              const value = event.target.value;
-
-              setAdditionalData({
-                ...additionalData,
-                allergies: value,
-              });
-            }}
-            onBlur={(event) => {
-              const value = event.target.value.trim();
-
-              if (value === "" || Pattern.test(value)) {
-                setInputError("");
-              } else {
-                setInputError(
-                  "Bitte schreiben als: Allergie1, Allergie2, ..."
-                );
-              }
-            }}
-            placeholder="Zum Beispiel: Medikamente, Lebensmittel, Pollen..."
-          />
-
-          {inputError && (
-            <p className={assessmentStyles.errorText}>
-              {inputError}
-            </p>
-          )}
-        </label>
-
+        {/* temperature */}
         <label className={assessmentStyles.formLabel}>
           Haben Sie Temperatur gemessen?
-
           <input
             className={assessmentStyles.input}
             type="number"
-            step="0.01"
+            step="0.1"
             value={additionalData.temperature}
-            onChange={(event) => {
-
-              const value = event.target.value;
-
-              setAdditionalData({
-                ...additionalData,
-                temperature: value,
-              });
-              const temperature = Number(value);
-              if (value === "") {
-                setTemperatureError("");
-              } else if (
-                temperature < 30
-                || temperature > 45
-              ) {
-                setTemperatureError("Bitte geben Sie ein gültige Körpertemperatur ein.")
-              }
-              else {
-                setTemperatureError("");
-              }
+            onChange={(e) => {
+              const value = e.target.value;
+              setAdditionalData({ ...additionalData, temperature: value });
+              const n = Number(value);
+              setTemperatureError(value !== "" && (n < 30 || n > 45)
+                ? "Bitte geben Sie eine gültige Körpertemperatur ein." : "");
             }}
-            placeholder="Zum Beispiel: 38,5 °C"
+            placeholder="z. B. 38.5"
           />
-
-          {temperatureError && (
-            <p className={assessmentStyles.errorText}>
-              {temperatureError}
-            </p>
-          )}
-
+          {temperatureError && <p className={assessmentStyles.errorText}>{temperatureError}</p>}
         </label>
 
+        {/* duration */}
         <label className={assessmentStyles.formLabel}>
           Seit wie vielen Tagen bestehen die Beschwerden?
-
           <input
             className={assessmentStyles.input}
             type="number"
             value={additionalData.duration}
-            onChange={(event) => {
-              const value = event.target.value;
-
-              setAdditionalData({
-                ...additionalData,
-                duration: value,
-              })
-
-              const duration = Number(value);
-              if (value === "") {
-                setDurationError("");
-              } else if (
-                duration < 0 ||
-                duration > 365 ||
-                !Number.isInteger(duration)
-              ) {
-                setDurationError("Bitte geben Sie ein gültige Anzahl an Tagen ein.")
-              }
-              else {
-                setDurationError("");
-              }
-            }
-            } placeholder="Zum Beispiel: 2"
+            onChange={(e) => {
+              const value = e.target.value;
+              setAdditionalData({ ...additionalData, duration: value });
+              const n = Number(value);
+              setDurationError(value !== "" && (n < 0 || n > 365 || !Number.isInteger(n))
+                ? "Bitte geben Sie eine gültige Anzahl an Tagen ein." : "");
+            }}
+            placeholder="z. B. 2"
           />
-
-            {durationError && (
-            <p className={assessmentStyles.errorText}>
-              {durationError}
-            </p>
-          )}
-
+          {durationError && <p className={assessmentStyles.errorText}>{durationError}</p>}
         </label>
 
+        {/* worsening */}
         <label className={assessmentStyles.formLabel}>
           Werden die Beschwerden stärker?
-
           <select
             className={assessmentStyles.input}
             value={additionalData.worsening}
-            onChange={(event) =>
-              setAdditionalData({
-                ...additionalData,
-                worsening: event.target.value,
-              })
+            onChange={(e) =>
+              setAdditionalData({ ...additionalData, worsening: e.target.value })
             }
           >
             <option value="">Bitte auswählen</option>
@@ -346,37 +627,42 @@ export function AdditionalInfoStep({
           </select>
         </label>
 
+        {/* extraInfo */}
         <label className={assessmentStyles.formLabel}>
           Gibt es weitere wichtige Informationen?
-
           <textarea
             className={assessmentStyles.input}
             maxLength={500}
             value={additionalData.extraInfo}
-            onChange={(event) =>
-              setAdditionalData({
-                ...additionalData,
-                extraInfo: event.target.value,
-              })
+            onChange={(e) =>
+              setAdditionalData({ ...additionalData, extraInfo: e.target.value })
             }
-            placeholder="Zum Beispiel: Kontakt zu erkrankten Personen, kürzliche Reise, Unfall..."
+            placeholder="z. B. Kontakt zu erkrankten Personen, kürzliche Reise, Unfall..."
           />
         </label>
       </fieldset>
 
       <div className={assessmentStyles.quickSelect}>
-        {!checkInfoActive && (
+        {
+        !checkInfoActive
+         ? (
+          <>
           <button
             type="button"
+            disabled={!noErrors}
             className={assessmentStyles.primaryButton}
-            onClick={() => {
-              setStep("checkInfo");
-            }}
+            onClick={() => setStep("checkInfo")}
           >
             weiter
           </button>
-        )}
-        {checkInfoActive && (
+
+            {!noErrors && (
+              <p className={assessmentStyles.errorText}>
+                {getValidationHint()}
+              </p>
+            )}
+          </>
+        ) : (
           <button
             type="button"
             className={assessmentStyles.secondaryButton}

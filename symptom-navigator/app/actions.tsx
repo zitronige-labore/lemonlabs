@@ -2,7 +2,7 @@
 "use server"
 
 import { getSymptomList } from "./assessment/medicalLogic/SymptomLists"; // for snomed mapping
-import { Step, AdditionalData, BasisData, SymptomSelectionList } from "./types/assessment"; // needed type
+import { Step, AdditionalData, BasisData, SymptomSelectionList, MedicationEntry } from "./types/assessment"; // needed type
 import { connectionPool } from "./dbs/db"; // for database queries
 
 
@@ -19,7 +19,7 @@ export async function saveFormData(formData: FormData) {
     // parsing formdata to right format
     const {age, sex, pregnancy, weight, height, medicationList, conditionList, allergyList, temperatureFloat, 
       duration, worseningBool, breastfeedingBool, extraInfo, symptomListJson, symptomTextListJson, timestamp,
-      symptomList, symptomTextList} 
+      symptomList, symptomTextList, alcoholPerWeek, cigarettesPerDay} 
       = parseFormDataToDbUsable(formData)
 
 
@@ -44,11 +44,11 @@ export async function saveFormData(formData: FormData) {
         `
         Insert into additional_information 
         (case_id, weight, height, temperature, duration, 
-        worsening, breastfeeding, extrainfo)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8);
+        worsening, breastfeeding, extrainfo, cigarettes_per_day, alcohol_per_week)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);
         `,
         [caseId, weight || null, height || null, temperatureFloat|| null, duration|| null, 
-        worseningBool, breastfeedingBool, extraInfo|| null]
+        worseningBool, breastfeedingBool, extraInfo|| null, cigarettesPerDay || null, alcoholPerWeek || null]
     );
 
 
@@ -56,13 +56,22 @@ export async function saveFormData(formData: FormData) {
 
     // allergies
     await insertListIntoSymptomsNoCertainCount(allergyList, "allergy", caseId);
-
-    // medication
-    await insertListIntoSymptomsNoCertainCount(medicationList, "medication", caseId);
-
+    
     // conditions
     await insertListIntoSymptomsNoCertainCount(conditionList, "condition", caseId);
 
+    // medication
+    for(let i = 0; i < medicationList.length; i++) {
+      await connectionPool.query(
+          `
+          Insert into medication 
+          (case_id, medication, dose, unit, frequency, frequency_unit, taken_since)
+          VALUES ($1, $2, $3, $4, $5, $6, $7);
+          `,
+          [caseId, medicationList[i].name || null, medicationList[i].dose || null , medicationList[i].unit || null, 
+          medicationList[i].frequency || null, medicationList[i].frequencyUnit || null, medicationList[i].since || null]
+      );
+    }
 
     // writing raw text symptoms in db
     let raw_id = null;
@@ -161,8 +170,13 @@ function parseFormDataToDbUsable(formData: FormData) {
 
     // medication
     const medication = formData.get("medication") as string;
-    const medicationList = medication.split(",").map(s => s.trim()).filter(s => s !== "");;
-    console.log("medicationList: ", medicationList)
+    const medicationList = JSON.parse(medication)
+
+    // alcohol
+    const alcoholPerWeek = parseInt(formData.get("alcoholPerWeek") as string)
+
+    // smoking
+    const cigarettesPerDay = parseInt(formData.get("cigarettesPerDay") as string)
 
     // conditions
     const conditions = formData.get("conditions") as string;
@@ -243,7 +257,7 @@ function parseFormDataToDbUsable(formData: FormData) {
 
   return { age, sex, pregnancy, weight, height, medicationList, conditionList, allergyList, temperatureFloat, 
     duration, worseningBool, breastfeedingBool, extraInfo, symptomListJson, symptomTextListJson, timestamp,
-  symptomList, symptomTextList};
+  symptomList, symptomTextList, alcoholPerWeek, cigarettesPerDay};
 }
 
 
@@ -344,7 +358,7 @@ export async function getUserDataFromDB(caseId: string) {
   );
 
   const additionalInfoData = await connectionPool.query(`
-    SELECT weight, height, temperature, duration, worsening, breastfeeding, extraInfo
+    SELECT weight, height, temperature, duration, worsening, breastfeeding, extraInfo, cigarettes_per_day, alcohol_per_week 
     FROM additional_information
     WHERE case_id = $1
     ;
@@ -352,9 +366,16 @@ export async function getUserDataFromDB(caseId: string) {
     [caseId]
   );
 
-  const allergyData = await getDetailsNoCertainCount("allergy", "allergies", caseId)
+  const medicationData = await connectionPool.query(`
+    SELECT medication, dose, unit, taken_since, frequency, frequency_unit
+    FROM medication
+    WHERE case_id = $1
+    ;
+    `,
+    [caseId]
+  );
 
-  const medicationData = await getDetailsNoCertainCount("medication", "medication", caseId)
+  const allergyData = await getDetailsNoCertainCount("allergy", "allergies", caseId)
 
   const conditionsData = await getDetailsNoCertainCount("condition", "conditions", caseId)
 
@@ -366,7 +387,7 @@ export async function getUserDataFromDB(caseId: string) {
   textSymptomData: textSymptomData.rows,
   additionalInfoData: additionalInfoData.rows,
   allergyData,
-  medicationData,
+  medicationData: medicationData.rows,
   conditionsData
   }
 
@@ -449,6 +470,13 @@ export async function deleteCaseData(caseId: string) {
 
   await connectionPool.query(`
     DELETE FROM additional_information
+    WHERE case_id = $1
+  `,
+  [caseId]
+  );
+
+  await connectionPool.query(`
+    DELETE FROM medication
     WHERE case_id = $1
   `,
   [caseId]
@@ -844,6 +872,8 @@ export async function buildUnifiedData(
       height: additionalData.height,
       breastfeeding: additionalData.breastfeeding,
       extraInfo: additionalData.extraInfo,
+      cigarettesPerDay: additionalData.cigarettesPerDay,
+    alcoholPerWeek: additionalData.alcoholPerWeek,
     },
     allergyData: { allergies: additionalData.allergies },
     medicationData: { medication: additionalData.medication },
@@ -870,7 +900,9 @@ export async function buildAiPrompt(
   - Alter, Geschlecht, Schwangerschaft:
   ${JSON.stringify(data.caseData, null, 2)}
   - Optional: Gewicht (kg), Groesse (cm), Koerpertemperatur (°C), Symptomdauer (Tage), 
-  Verschlimmerung, Stillzeit, Allergien, Vorerkrankungen, Medikamente:
+  Verschlimmerung, Stillzeit, Allergien, alkoholische Getraenke pro Woche, Zigaretten am Tag, 
+  Vorerkrankungen, Medikamente (bestehend aus Medikamentenname, dosis, einheit, wie oft ist die Einnahme, 
+  pro welchem Zeitraum, seit wann wird das Medikament genommen):
   ${JSON.stringify(data.additionalInfoData, null, 2)}
   ${JSON.stringify(data.allergyData, null, 2)}
   ${JSON.stringify(data.conditionsData, null, 2)}

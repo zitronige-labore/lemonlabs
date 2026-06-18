@@ -9,6 +9,7 @@ import type {
   AdditionalData,
   BasisData,
   Step,
+  MedicationEntry
 } from "../../types/assessment";
 
 type SavedAssessmentData = {
@@ -225,9 +226,54 @@ export function CheckInfo({
 
           <p className={assessmentStyles.selectedText}>Zusatzangaben</p>
 
+
           <p>
-            Medikamente: <strong>{medicationValue}</strong>
+            Größe:{" "}
+            <strong>
+              {additionalData.height || "Keine Angabe"}
+            </strong>
           </p>
+
+          <p>
+            Gewicht:{" "}
+            <strong>
+              {additionalData.weight || "Keine Angabe"}
+            </strong>
+          </p>
+
+          <p>
+            Beschwerden bestehen seit (in Tagen):{" "}
+            <strong>
+              {additionalData.duration || "Keine Angabe"}
+            </strong>
+          </p>
+
+          {basisData.gender !== "männlich" && (
+          
+          <p>
+            Stillzeit:{" "}
+            <strong>
+              {additionalData.breastfeeding || "Keine Angabe"}
+            </strong>
+          </p>
+          )}
+
+          <p>
+            Medikamente:
+          </p>
+
+
+          {additionalData.medication && additionalData.medication.length > 0 ? (
+          <ul>
+            {additionalData.medication.map((m, i) => (
+              <li key={i}>
+                <strong>{m.name} {m.dose} {m.unit} - {m.frequency} pro {m.frequencyUnit} - seit {m.since} </strong>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <strong>Keine Angabe</strong>
+        )}
 
           <p>
             Vorerkrankungen: <strong>{conditionsValue}</strong>
@@ -241,7 +287,21 @@ export function CheckInfo({
           </p>
 
           <p>
-            Fieber:{" "}
+            Alkoholische Getraenke pro Woche:{" "}
+            <strong>
+              {additionalData.alcoholPerWeek || "Keine Angabe"}
+            </strong>
+          </p>
+
+          <p>
+            Zigaretten pro Tag:{" "}
+            <strong>
+              {additionalData.cigarettesPerDay || "Keine Angabe"}
+            </strong>
+          </p>
+
+          <p>
+            Temperatur:{" "}
             <strong>
               {additionalData.temperature || "Keine Angabe"}
             </strong>

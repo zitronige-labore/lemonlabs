@@ -1,31 +1,6 @@
-// import placeholder
-type AdditionalData = {
-  medication?: string;
-
-  conditions: string;
-
-  allergies: string;
-
-  temperature: string;
-  duration: string;
-  worsening: string;
-
-  weight: string;
-  height: string;
-
-  breastfeeding: string;
-
-  extraInfo: string;
-};
+import { AdditionalData, BasisData, MedicationEntry } from "@/app/types/assessment";
 
 
-type BasisData = {
-  age: string;
-  gender: string;
-  pregnancy: string;
-  duration: string;
-  intensity: string;
-};
 
 // mocks
 
@@ -70,6 +45,30 @@ jest.mock("../app/assessment/medicalLogic/SymptomLists", () => ({
 const mockFetch = jest.fn();
 global.fetch = mockFetch;
 
+// mock for medication data from db
+const mockMedicationRows = [
+  { medication: "Ibuprofen", dose: 400, unit: "mg", frequency: 2, frequency_unit: "Tag", taken_since: "3 Tage" },
+];
+
+// mock for getting user data from db return
+function mockGetUserDataFromDB({
+  caseRows = [{ sex: "w", age: 28, pregnancy: false, date: "2023-01-01" }],
+  symptomRows = [{ name_de: "Kopfschmerz", painscale: 4, bodyregion: "Kopf" }],
+  textSymptomRows = [],
+  additionalInfoRows = [{ weight: 60, height: 165, temperature: 38.5, duration: 2, worsening: true, breastfeeding: false, extraInfo: "" }],
+  medicationRows = mockMedicationRows,
+  allergyRows = [{ detail: "Pollen" }],
+  conditionRows = [{ detail: "Asthma" }],
+} = {}) {
+  mockQuery
+    .mockResolvedValueOnce({ rows: caseRows })
+    .mockResolvedValueOnce({ rows: symptomRows })
+    .mockResolvedValueOnce({ rows: textSymptomRows })
+    .mockResolvedValueOnce({ rows: additionalInfoRows })
+    .mockResolvedValueOnce({ rows: medicationRows })
+    .mockResolvedValueOnce({ rows: allergyRows })
+    .mockResolvedValueOnce({ rows: conditionRows });
+}
 
 // import functions to test
 import {
@@ -100,7 +99,11 @@ function buildFormData(overrides: Record<string, string> = {}): FormData {
     pregnancy: "nein",
     weight: "65",
     height: "170",
-    medication: "Ibuprofen, Aspirin",
+    // medication ist jetzt JSON-Array von MedicationEntry-Objekten
+    medication: JSON.stringify([
+      { name: "Ibuprofen", dose: "400", unit: "mg", 
+        frequency: "2", frequencyUnit: "Tag", since: "3 Tage" },
+    ]),
     conditions: "Asthma",
     allergies: "Pollen",
     temperature: "37,5",
@@ -108,6 +111,8 @@ function buildFormData(overrides: Record<string, string> = {}): FormData {
     worsening: "ja",
     breastfeeding: "nein",
     extraInfo: "Kein weiterer Hinweis",
+    alcoholPerWeek: "2",
+    cigarettesPerDay: "0",
     selectedSymptoms: "",
     symptomText: "",
     ...overrides,
@@ -126,17 +131,24 @@ function buildBasisData(overrides: Partial<BasisData> = {}): BasisData {
     age: "28",
     gender: "weiblich",
     pregnancy: "nein",
-    duration: "2",
-    intensity: "4",
     ...overrides,
   };
 }
 
 function buildAdditionalData(overrides: Partial<AdditionalData> = {}): AdditionalData {
   return {
-    medication: "Ibuprofen",
-    conditions: "Asthma",
-    allergies: "Pollen",
+    hasMedication: true,
+    medication: [
+      { name: "Ibuprofen", dose: "400", unit: "mg", frequency: "2", frequencyUnit: "Tag", since: "3 Tage" },
+    ],
+    hasConditions: true,
+    conditions: ["Asthma"],
+    smokescigarettes: false,
+    cigarettesPerDay: "",
+    drinksAlcohol: false,
+    alcoholPerWeek: "",
+    allergies: ["Pollen"],
+    hasAllergies: true,
     temperature: "38.5",
     duration: "2",
     worsening: "ja",
@@ -147,6 +159,7 @@ function buildAdditionalData(overrides: Partial<AdditionalData> = {}): Additiona
     ...overrides,
   };
 }
+
 
 const sampleSelectedSymptoms = [
   JSON.stringify({ name: "Kopfschmerz", bodyRegion: "Kopf", painscale: 4 }),
@@ -204,6 +217,27 @@ describe("saveFormData", () => {
     expect(firstCall[1]).toContain("d");
   });
 
+  it("inserts medication entries as individual rows in the medication table", async () => {
+    const formData = buildFormData({
+      medication: JSON.stringify([
+        { name: "Ibuprofen", dose: "400", unit: "mg", frequency: "2", frequencyUnit: "Tag", since: "3 Tage" },
+      ]),
+    });
+
+    await saveFormData(formData);
+
+    const medInsert = mockQuery.mock.calls.find(
+      (call) => typeof call[0] === "string" && call[0].includes("Insert into medication")
+    );
+    expect(medInsert).toBeDefined();
+    expect(medInsert![1]).toContain("Ibuprofen");
+    expect(medInsert![1]).toContain("400");
+    expect(medInsert![1]).toContain("mg");
+    expect(medInsert![1]).toContain("2");
+    expect(medInsert![1]).toContain("Tag");
+    expect(medInsert![1]).toContain("3 Tage");
+  });
+
   it("sets pregnancy=true when 'ja' is provided", async () => {
     const formData = buildFormData({ gender: "weiblich", pregnancy: "ja" });
 
@@ -213,19 +247,6 @@ describe("saveFormData", () => {
     expect(firstCall[1]).toContain(true);
   });
 
-  it("parses the comma-separated list of medications correctly (trims whitespace)", async () => {
-    const formData = buildFormData({
-      medication: " Ibuprofen , Aspirin , Paracetamol ",
-    });
-
-    await saveFormData(formData);
-
-    const medicationCalls = mockQuery.mock.calls.filter(
-      (call) =>
-        Array.isArray(call[1]) && call[1].includes("medication")
-    );
-    expect(medicationCalls).toHaveLength(3);
-  });
 
   it("processes empty selectedSymptoms and symptomText without errors", async () => {
     const formData = buildFormData({ selectedSymptoms: "", symptomText: "" });
@@ -509,13 +530,13 @@ describe("getUserDataFromDB", () => {
 
   it("returns an object with all expected fields", async () => {
   mockQuery
-    .mockResolvedValueOnce({ rows: [{ sex: "w", age: 25, pregnancy: false, date: "2023-01-01" }] })
-    .mockResolvedValueOnce({ rows: [{ name_de: "Kopfschmerz", painscale: 3, bodyregion: "Kopf" }] })
-    .mockResolvedValueOnce({ rows: [{ raw_symptoms: "Bauchschmerzen", painscale: 5, bodyregion: "Bauch" }] })
-    .mockResolvedValueOnce({ rows: [{ weight: 60, height: 165, temperature: 38.5, duration: 2, worsening: true, breastfeeding: false, extraInfo: "" }] })
-    .mockResolvedValueOnce({ rows: [{ detail: "Pollen" }] })
-    .mockResolvedValueOnce({ rows: [{ detail: "Ibuprofen" }] })
-    .mockResolvedValueOnce({ rows: [{ detail: "Asthma" }] });
+  .mockResolvedValueOnce({ rows: [{ sex: "w", age: 25, pregnancy: false, date: "2023-01-01" }] })
+  .mockResolvedValueOnce({ rows: [{ name_de: "Kopfschmerz", painscale: 3, bodyregion: "Kopf" }] })
+  .mockResolvedValueOnce({ rows: [{ raw_symptoms: "Bauchschmerzen", painscale: 5, bodyregion: "Bauch" }] })
+  .mockResolvedValueOnce({ rows: [{ weight: 60, height: 165, temperature: 38.5, duration: 2, worsening: true, breastfeeding: false, extraInfo: "" }] })
+  .mockResolvedValueOnce({ rows: [{ medication: "Ibuprofen", frequency_per_day: "2", taken_since: "3 Tage" }] }) // medication
+  .mockResolvedValueOnce({ rows: [{ detail: "Pollen" }] })   // allergies
+  .mockResolvedValueOnce({ rows: [{ detail: "Asthma" }] });  // conditions
 
   const result = await getUserDataFromDB("1");
 
@@ -524,19 +545,19 @@ describe("getUserDataFromDB", () => {
   expect(result.textSymptomData).toEqual([{ raw_symptoms: "Bauchschmerzen", painscale: 5, bodyregion: "Bauch" }]);
   expect(result.additionalInfoData).toEqual([{ weight: 60, height: 165, temperature: 38.5, duration: 2, worsening: true, breastfeeding: false, extraInfo: "" }]);
   expect(result.allergyData).toEqual({ allergies: ["Pollen"] });
-  expect(result.medicationData).toEqual({ medication: ["Ibuprofen"] });
-  expect(result.conditionsData).toEqual({ conditions: ["Asthma"] });
+expect(result.medicationData).toEqual([{ medication: "Ibuprofen", frequency_per_day: "2", taken_since: "3 Tage" }]);
+expect(result.conditionsData).toEqual({ conditions: ["Asthma"] });
 });
 
   it("returns allergies correctly as an array in the format { allergies: [...] }", async () => {
     mockQuery
-      .mockResolvedValueOnce({ rows: [] })
-      .mockResolvedValueOnce({ rows: [] })
-      .mockResolvedValueOnce({ rows: [] })
-      .mockResolvedValueOnce({ rows: [] })
-      .mockResolvedValueOnce({ rows: [{ detail: "Pollen" }, { detail: "Nüsse" }] })
-      .mockResolvedValueOnce({ rows: [] })
-      .mockResolvedValueOnce({ rows: [] });
+    .mockResolvedValueOnce({ rows: [] }) // cases
+    .mockResolvedValueOnce({ rows: [] }) // case_symptoms
+    .mockResolvedValueOnce({ rows: [] }) // raw_text_symptoms
+    .mockResolvedValueOnce({ rows: [] }) // additional_information
+    .mockResolvedValueOnce({ rows: [] }) // medication
+    .mockResolvedValueOnce({ rows: [{ detail: "Pollen" }, { detail: "Nüsse" }] }) // allergies
+    .mockResolvedValueOnce({ rows: [] }); // conditions
 
     const result = await getUserDataFromDB("1");
 
@@ -609,10 +630,10 @@ describe("deleteCaseData", () => {
     mockQuery.mockResolvedValue({ rows: [] });
   });
 
-  it("executes exactly 6 DELETE-Queries", async () => {
+  it("executes exactly 7 DELETE-Queries", async () => {
     await deleteCaseData("42");
 
-    expect(mockQuery).toHaveBeenCalledTimes(6);
+    expect(mockQuery).toHaveBeenCalledTimes(7);
     const allSql = mockQuery.mock.calls.map((call) => call[0] as string);
       expect(allSql.some((sql) => sql.includes("DELETE FROM"))).toBe(true);
     });
@@ -630,6 +651,7 @@ describe("deleteCaseData", () => {
     expect(deletedTables).toContain("details_no_certain_count");
     expect(deletedTables).toContain("additional_information");
     expect(deletedTables).toContain("recommendations");
+    expect(deletedTables).toContain("medication");
   });
 
   it("passes the caseId to all queries", async () => {
@@ -801,8 +823,8 @@ describe("deleteOldCases", () => {
 
     await deleteOldCases();
 
-    // 1 SELECT + 6 DELETE * 2 cases = 13
-    expect(mockQuery.mock.calls.length).toBe(13);
+    // 1 SELECT + 7 DELETE * 2 cases = 15
+    expect(mockQuery.mock.calls.length).toBe(15);
   });
 
   it("does not perform any DELETEs when no old cases exist", async () => {
@@ -933,7 +955,7 @@ expect(result!.symptomData.some((s: string) => s.includes("Kopfschmerz"))).toBe(
 expect(result!.textSymptomData.some((s: string) => s.includes("Ich blute"))).toBe(true)
 
 expect(result!.allergyData.allergies).toContain("Pollen");
-expect(result!.medicationData.medication).toContain("Ibuprofen");
+expect(result!.medicationData?.medication?.some((m: { name: string }) => m.name === "Ibuprofen")).toBe(true);
 expect(result!.conditionsData.conditions).toContain("Asthma");
   });
 
@@ -984,17 +1006,20 @@ expect(result!.conditionsData.conditions).toContain("Asthma");
 
 
 describe("buildAiPrompt", () => {
-  it("includes data from caseData, additionalInfoData and symptoms in the prompt", async() => {
+  it("includes data from caseData, additionalInfoData and symptoms in the prompt", async () => {
     const data = await buildUnifiedData(
       buildBasisData({ age: "28" }),
-      buildAdditionalData({ allergies: "Pollen", medication: "Ibuprofen", conditions: "Asthma" }),
+      buildAdditionalData({
+        allergies: ["Pollen"],
+        medication: [{ name: "Ibuprofen", dose: "2", unit: "mg", frequency: "3", frequencyUnit: "day",since: "3 Tage" }],
+        conditions: ["Asthma"],
+      }),
       sampleSymptomText,
       sampleSelectedSymptoms
     )!;
 
-    if(data!=null) {
+    if (data != null) {
       const prompt = await buildAiPrompt(data);
-    
 
       expect(prompt).toContain("28");
       expect(prompt).toContain("Pollen");
