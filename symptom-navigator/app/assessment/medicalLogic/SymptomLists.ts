@@ -22,42 +22,44 @@ export function getSymptomList() {
     {step: "psycheEnergie",
     symptoms:
         [
-        { symptomName: "Anhaltende Erschöpfung", schmerzen: false, symptomValue: "Gefühl von extremer Müdigkeit, die auch durch Schlaf nicht gebessert wird.",  snomedCode: "TODO" },
-        { symptomName: "Antriebslosigkeit", schmerzen: false, symptomValue: "Massive Überwindung nötig, um einfachste Dinge (Essen, Aufstehen) zu tun.", snomedCode: "TODO" },
-        { symptomName: "Innere Erstarrung", schmerzen: false, symptomValue: "Gefühl, emotional leer oder wie versteinert zu sein; keine Gefühlsregungen mehr.", snomedCode: "TODO"},
+        { symptomName: "Anhaltende Erschöpfung", schmerzen: false, symptomValue: "Anhaltende Erschöpfung: Gefühl von extremer Müdigkeit, die auch durch Schlaf nicht gebessert wird.",  snomedCode: "TODO" },
+        { symptomName: "Antriebslosigkeit", schmerzen: false, symptomValue: "Antriebslosigkeit: Massive Überwindung nötig, um einfachste Dinge (Essen, Aufstehen) zu tun.", snomedCode: "TODO" },
+        { symptomName: "Innere Erstarrung", schmerzen: false, symptomValue: "Innere Erstarrung: Gefühl, emotional leer oder wie versteinert zu sein; keine Gefühlsregungen mehr.", snomedCode: "TODO"},
         ]
     },
      {step: "psycheStimmung",
     symptoms:
         [
-        { symptomName: "Niedergeschlagenheit", schmerzen: false, symptomValue: "Tiefes Gefühl von Traurigkeit oder Sinnlosigkeit über einen langen Zeitraum.",  snomedCode: "TODO" },
-        { symptomName: "Interessenverlust", schmerzen: false, symptomValue: "Dinge, die früher wichtig waren, fühlen sich jetzt völlig gleichgültig an.", snomedCode: "TODO" },
-        { symptomName: "Starke Selbstzweifel", schmerzen: false, symptomValue: "Ständige Gedanken über eigene Fehler oder Minderwertigkeit.", snomedCode: "TODO"},
-        ]
+        { symptomName: "Niedergeschlagenheit", schmerzen: false, symptomValue: "Niedergeschlagenheit: Tiefes Gefühl von Traurigkeit oder Sinnlosigkeit über einen langen Zeitraum.",  snomedCode: "TODO" },
+        { symptomName: "Interessenverlust", schmerzen: false, symptomValue: "Interessenverlust: Dinge, die früher wichtig waren, fühlen sich jetzt völlig gleichgültig an.", snomedCode: "TODO" },
+        { symptomName: "Starke Selbstzweifel", schmerzen: false, symptomValue: "Starke Selbstzweifel: Ständige Gedanken über eigene Fehler oder Minderwertigkeit.", snomedCode: "TODO"},
+        { symptomName: "Stimmungsschwankungen", schmerzen: false, symptomValue: "Stimmungsschwankungen: Häufige oder starke Wechsel der Stimmung innerhalb kurzer Zeit, ohne erkennbaren Auslöser, den Alltag beeinträchtigen.", snomedCode: "TODO"},
+
+    ]
     },
      {step: "psycheAngst",
     symptoms:
         [
-        { symptomName: "Plötzliches Herzrasen", schmerzen: false, symptomValue: "Anfallartige Episoden mit Todesangst, Schweißausbrüchen und Atemnot.",  snomedCode: "TODO" },
-        { symptomName: "Innere Unruhe", schmerzen: false, symptomValue: "Ein Gefühl von ständiger Getriebenheit oder unter Strom stehen.", snomedCode: "TODO" },
-        { symptomName: "Gedankenkreisen", schmerzen: false, symptomValue: "Unfähigkeit, das Grübeln über Probleme oder Sorgen zu stoppen.", snomedCode: "TODO"},
+        { symptomName: "Plötzliches Herzrasen", schmerzen: false, symptomValue: "Plötzliches Herzrasen: Anfallartige Episoden mit Todesangst, Schweißausbrüchen und Atemnot.",  snomedCode: "TODO" },
+        { symptomName: "Innere Unruhe", schmerzen: false, symptomValue: "Innere Unruhe: Ein Gefühl von ständiger Getriebenheit oder unter Strom stehen.", snomedCode: "TODO" },
+        { symptomName: "Gedankenkreisen", schmerzen: false, symptomValue: "Gedankenkreisen: Unfähigkeit, das Grübeln über Probleme oder Sorgen zu stoppen.", snomedCode: "TODO"},
         ]
     },
     {step: "psycheWahrnehmung",
     symptoms:
         [
-        { symptomName: "Konzentrationsmangel", schmerzen: false, symptomValue: "Konzentrationsstörungen mit Schwierigkeiten, Gesprächen oder Tätigkeiten über längere Zeit zu folgen.",  snomedCode: "TODO" },
-        { symptomName: "Veränderte Wahrnehmung", schmerzen: false, symptomValue: "Gefühl, dass die Umwelt oder man selbst \"fremd\" oder \"unwirklich\" erscheint.", snomedCode: "TODO" },
+        { symptomName: "Konzentrationsmangel", schmerzen: false, symptomValue: "Konzentrationsmangel: Konzentrationsstörungen mit Schwierigkeiten, Gesprächen oder Tätigkeiten über längere Zeit zu folgen.",  snomedCode: "TODO" },
+        { symptomName: "Veränderte Wahrnehmung", schmerzen: false, symptomValue: "Veränderte Wahrnehmung: Gefühl, dass die Umwelt oder man selbst \"fremd\" oder \"unwirklich\" erscheint.", snomedCode: "TODO" },
         ]
     },
      {step: "psycheKrise",
     symptoms:
         [
-        { symptomName: "Selbstverletzungsgedanken", schmerzen: false, symptomValue: "Der wiederkehrende Drang, sich selbst körperlichen Schmerz oder Schaden zuzufügen.",  snomedCode: "TODO" },
-        { symptomName: "Suizidgedanken", schmerzen: false, symptomValue: "Konkrete Pläne oder der Wunsch, das eigene Leben zu beenden.", snomedCode: "TODO" },
-        { symptomName: "Realitätsverlust", schmerzen: false, symptomValue: "Hören von Stimmen oder Sehen von Dingen, die andere nicht wahrnehmen.", snomedCode: "TODO"},
-        { symptomName: "Akute Verwirrtheit", schmerzen: false, symptomValue: "Plötzliches Nicht-Wissen, wer man ist, welches Datum wir haben oder wo man sich befindet.", snomedCode: "TODO"},
-        { symptomName: "Fremdgefährdung", schmerzen: false, symptomValue: "Der Impuls oder das Vorhaben, anderen Menschen körperlich zu schaden.", snomedCode: "TODO"},
+        { symptomName: "Selbstverletzungsgedanken", schmerzen: false, symptomValue: "Selbstverletzungsgedanken: Der wiederkehrende Drang, sich selbst körperlichen Schmerz oder Schaden zuzufügen.",  snomedCode: "TODO" },
+        { symptomName: "Suizidgedanken", schmerzen: false, symptomValue: "Suizidgedanken: Konkrete Pläne oder der Wunsch, das eigene Leben zu beenden.", snomedCode: "TODO" },
+        { symptomName: "Realitätsverlust", schmerzen: false, symptomValue: "Realitätsverlust: Hören von Stimmen oder Sehen von Dingen, die andere nicht wahrnehmen.", snomedCode: "TODO"},
+        { symptomName: "Akute Verwirrtheit", schmerzen: false, symptomValue: "Akute Verwirrtheit: Plötzliches Nicht-Wissen, wer man ist, welches Datum wir haben oder wo man sich befindet.", snomedCode: "TODO"},
+        { symptomName: "Fremdgefährdung", schmerzen: false, symptomValue: "Fremdgefährdung: Der Impuls oder das Vorhaben, anderen Menschen körperlich zu schaden.", snomedCode: "TODO"},
     
     ]
     },
