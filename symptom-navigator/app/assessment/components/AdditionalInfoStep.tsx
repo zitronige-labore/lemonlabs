@@ -1,3 +1,5 @@
+"use client";
+
 import assessmentStyles from "../Assessment.module.css";
 import type { AdditionalData, MedicationEntry, Step } from "../../types/assessment";
 import { useState } from "react";
@@ -38,8 +40,56 @@ export function AdditionalInfoStep({
     weightError === "" &&
     heightError === "" &&
     temperatureError === "" &&
-    durationError === "";
+    durationError === "" &&
+    // check if added data has been filled
+    (!additionalData.hasMedication || (additionalData.medication ?? []).every(entry =>
+    entry.name.trim() !== "" &&
+    entry.dose.trim() !== "" &&
+    entry.unit !== "" &&
+    entry.frequency.trim() !== "" &&
+    entry.frequencyUnit !== ""
+  )) &&
+  (!additionalData.hasConditions ||
+    additionalData.conditions.every(c => c.trim() !== "")) &&
+  (!additionalData.smokescigarettes ||
+    additionalData.cigarettesPerDay.trim() !== "") &&
+  (!additionalData.drinksAlcohol ||
+    additionalData.alcoholPerWeek.trim() !== "") &&
+  (!additionalData.hasAllergies ||
+    additionalData.allergies.every(a => a.trim() !== ""));
 
+
+  function getValidationHint(): string | null {
+    if (additionalData.hasMedication) {
+      const incomplete = (additionalData.medication ?? []).some(entry =>
+        entry.name.trim() === "" ||
+        entry.dose.trim() === "" ||
+        entry.unit === "" ||
+        entry.frequency.trim() === "" ||
+        entry.frequencyUnit === ""
+      );
+      if (incomplete) return "Bitte alle Pflichtfelder der Medikamente ausfüllen oder leere Einträge entfernen..";
+    }
+    if (additionalData.hasConditions && additionalData.conditions.some(c => c.trim() === ""))
+      return "Bitte alle Vorerkrankungen ausfüllen oder leere Einträge entfernen.";
+    if (additionalData.smokescigarettes && additionalData.cigarettesPerDay.trim() === "")
+      return "Bitte Anzahl Zigaretten pro Tag angeben oder leere Einträge entfernen..";
+    if (additionalData.drinksAlcohol && additionalData.alcoholPerWeek.trim() === "")
+      return "Bitte Anzahl Getränke pro Woche angeben oder leere Einträge entfernen.";
+    if (additionalData.hasAllergies && additionalData.allergies.some(a => a.trim() === ""))
+      return "Bitte alle Allergien ausfüllen oder leere Einträge entfernen.";
+    if (Object.values(doseError).some(e => e !== ""))
+      return "Bitte eine gültige Dosis angeben.";
+    if (Object.values(frequencyError).some(e => e !== ""))
+      return "Bitte eine gültige Einnahmehäufigkeit angeben.";
+    if (cigarettesError) return cigarettesError;
+    if (alcoholError) return alcoholError;
+    if (weightError) return weightError;
+    if (heightError) return heightError;
+    if (temperatureError) return temperatureError;
+    if (durationError) return durationError;
+    return null;
+  }
 
   function updateMedication(index: number, field: keyof MedicationEntry, value: string) {
     const updated = additionalData.medication?.map((entry, i) =>
@@ -100,6 +150,7 @@ export function AdditionalInfoStep({
     });
   }
 
+
   return (
     <>
       <p className={assessmentStyles.optionalHint}>
@@ -142,22 +193,24 @@ export function AdditionalInfoStep({
                 )}
 
                 <label className={assessmentStyles.fullWidth}>
-                  Medikament
+                  Medikament*
                   <input
                     className={assessmentStyles.input}
                     placeholder="z. B. Ibuprofen"
                     value={entry.name}
+                    required
                     onChange={(e) => updateMedication(index, "name", e.target.value)}
                   />
                 </label>
 
                 <label>
-                  Dosis
+                  Dosis*
                   <input
                     className={assessmentStyles.input}
                     type="number"
                     min={0}
                     step={1}
+                    required
                     placeholder="z. B. 400"
                     value={entry.dose}
                     onChange={(e) => {
@@ -175,8 +228,9 @@ export function AdditionalInfoStep({
                 </label>
 
                 <label>
-                  Einheit
+                  Einheit*
                   <select
+                    required
                     className={assessmentStyles.input}
                     value={entry.unit}
                     onChange={(e) => updateMedication(index, "unit", e.target.value)}
@@ -193,9 +247,10 @@ export function AdditionalInfoStep({
                 </label>
 
                 <label>
-                  Wie oft
+                  Wie oft*
                   <input
                     className={assessmentStyles.input}
+                    required
                     type="number"
                     min={0}
                     step={1}
@@ -216,8 +271,9 @@ export function AdditionalInfoStep({
                 </label>
 
                 <label>
-                  pro
+                  pro*
                   <select
+                    required
                     className={assessmentStyles.input}
                     value={entry.frequencyUnit}
                     onChange={(e) => updateMedication(index, "frequencyUnit", e.target.value)}
@@ -231,8 +287,9 @@ export function AdditionalInfoStep({
                 </label>
 
                 <label className={assessmentStyles.fullWidth}>
-                  seit wann
+                  seit wann*
                   <input
+                    required
                     className={assessmentStyles.input}
                     type="date"
                     value={entry.since}
@@ -274,12 +331,15 @@ export function AdditionalInfoStep({
           <div className={assessmentStyles.expandedSection}>
             {additionalData.conditions.map((condition, index) => (
               <div key={index} className={assessmentStyles.listEntry}>
+                <label>
+                *
                 <input
                   className={assessmentStyles.input}
                   placeholder="Vorerkrankung (z. B. Diabetes, Bluthochdruck)"
                   value={condition}
                   onChange={(e) => updateCondition(index, e.target.value)}
                 />
+                </label>
                 {additionalData.conditions.length > 1 && (
                   <button
                     type="button"
@@ -318,6 +378,8 @@ export function AdditionalInfoStep({
           <div className={assessmentStyles.expandedSection}>
             <label className={assessmentStyles.formLabel}>
               Wie viele Zigaretten pro Tag?
+              <label>
+              *
               <input
                 className={assessmentStyles.input}
                 type="number"
@@ -344,6 +406,7 @@ export function AdditionalInfoStep({
                 </p>
               )}
             </label>
+            </label>
           </div>
         )}
 
@@ -363,6 +426,8 @@ export function AdditionalInfoStep({
           <div className={assessmentStyles.expandedSection}>
             <label className={assessmentStyles.formLabel}>
               Wie viele alkoholische Getränke pro Woche?
+              <label>
+              *
               <input
                 className={assessmentStyles.input}
                 type="number"
@@ -394,6 +459,7 @@ export function AdditionalInfoStep({
                 </p>
               )}
             </label>
+            </label>
           </div>
         )}
 
@@ -419,6 +485,8 @@ export function AdditionalInfoStep({
           <div className={assessmentStyles.expandedSection}>
             {additionalData.allergies.map((allergy, index) => (
               <div key={index} className={assessmentStyles.listEntry}>
+                <label>
+                *
                 <input
                   className={assessmentStyles.input}
                   placeholder="Allergien z.B. Pollen, Penicillin..."
@@ -435,6 +503,7 @@ export function AdditionalInfoStep({
                     ✕
                   </button>
                 )}
+                </label>
               </div>
             ))}
             <button
@@ -577,6 +646,7 @@ export function AdditionalInfoStep({
         {
         !checkInfoActive
          ? (
+          <>
           <button
             type="button"
             disabled={!noErrors}
@@ -585,6 +655,13 @@ export function AdditionalInfoStep({
           >
             weiter
           </button>
+
+            {!noErrors && (
+              <p className={assessmentStyles.errorText}>
+                {getValidationHint()}
+              </p>
+            )}
+          </>
         ) : (
           <button
             type="button"
