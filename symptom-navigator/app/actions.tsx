@@ -68,7 +68,8 @@ export async function saveFormData(formData: FormData) {
           (case_id, medication, dose, unit, frequency, frequency_unit, taken_since)
           VALUES ($1, $2, $3, $4, $5, $6, $7);
           `,
-          [caseId, medicationList[i].name, medicationList[i].dose, medicationList[i].unit, medicationList[i].frequency, medicationList[i].frequencyUnit, medicationList[i].since]
+          [caseId, medicationList[i].name || null, medicationList[i].dose || null , medicationList[i].unit || null, 
+          medicationList[i].frequency || null, medicationList[i].frequencyUnit || null, medicationList[i].since || null]
       );
     }
 
@@ -899,7 +900,9 @@ export async function buildAiPrompt(
   - Alter, Geschlecht, Schwangerschaft:
   ${JSON.stringify(data.caseData, null, 2)}
   - Optional: Gewicht (kg), Groesse (cm), Koerpertemperatur (°C), Symptomdauer (Tage), 
-  Verschlimmerung, Stillzeit, Allergien, alkoholische Getraenke pro Woche, Zigaretten am Tag, Vorerkrankungen, Medikamente:
+  Verschlimmerung, Stillzeit, Allergien, alkoholische Getraenke pro Woche, Zigaretten am Tag, 
+  Vorerkrankungen, Medikamente (bestehend aus Medikamentenname, dosis, einheit, wie oft ist die Einnahme, 
+  pro welchem Zeitraum, seit wann wird das Medikament genommen):
   ${JSON.stringify(data.additionalInfoData, null, 2)}
   ${JSON.stringify(data.allergyData, null, 2)}
   ${JSON.stringify(data.conditionsData, null, 2)}
