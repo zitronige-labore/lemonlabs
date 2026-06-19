@@ -36,6 +36,14 @@
 - Teststrategie festlegen: Wie testen wir?
 - Testnutzer organisieren  
 
+## Review 3
+- Offline gut dargestellt
+- Medikamente: dosis, wie oft, ausbauen eventuell oder rausnehmen
+- Fhir Button: für wen ist das? Funktionalität ausbauen ohne Button, automatisches abschicken findet er gut
+- Bei Präsentation mit dem handy zusätzlich vorstellen
+- armen sinnvoll wäre in rechts und links zu teilen
+
+  
 # Design Dokument
 
 - entspricht inhaltlich genau den Erwartungen an das Konzept
