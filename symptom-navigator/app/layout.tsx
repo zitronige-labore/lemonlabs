@@ -53,6 +53,15 @@ export const metadata: Metadata = {
   title: "MediGuide",
   description: "Ersteinschätzung von Symptomen",
   manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "MediGuide",
+  },
+  icons: {
+    icon: "/images/lemonlabslogo_blue.png?v=2",
+    apple: "/images/lemonlabslogo_blue.png?v=4",
+  },
 };
 
 /*
