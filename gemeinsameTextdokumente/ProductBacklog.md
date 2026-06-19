@@ -199,7 +199,7 @@ Als Nutzer möchte ich, dass meine Eingaben während einer Sitzung gespeichert w
 **Priorität:** mittel   
 
 ### FA 038 – Offline-Speicherung
-Als Nutzer möchte ich die Anwendung offline starten können, um auch ohne Internet Symptome anklicken zu können, sobald ich wieder mit dem Internet verbunden bin kann ich meine Daten zur KI-Auswertung übermitteln.  
+Als Nutzer möchte ich die Eingabe von Angaben zur Auswertung offline starten können.  
 **Akzeptanzkriterium:** Synchronisation erfolgt später  
 **Priorität:** niedrig 
 
@@ -280,7 +280,7 @@ Als Nutzer möchte ich zu jeder Seite Hilfestellung angeboten bekommen, um Unkla
 **Priorität:** hoch  
 
 ### FA 053 – Offline-Modus
-Als Nutzer möchte ich die Anwendung offline nutzen können, damit ich im Falle keiner Internetverbindung trotzdem eine allgemeinere Handlungsempfehlung erhalten kann.  
+Als Nutzer möchte ich die Anwendung offline starten können, um auch ohne Internet Symptome anklicken zu können, sobald ich wieder mit dem Internet verbunden bin kann ich meine Daten zur KI-Auswertung übermitteln.  
 **Akzeptanzkriterium:** Ersatzfunktionen sind offline verfügbar  
 **Priorität:** niedrig  
  
