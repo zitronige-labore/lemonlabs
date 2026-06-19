@@ -131,8 +131,8 @@ Als Nutzer möchte ich bei kritischen Symptomen einen klaren Notfallhinweis erha
 **Priorität:** hoch  
 
 ### FA 025 – SOS-Button anzeigen
-Als Nutzer möchte ich jederzeit einen SOS-Button sehen, damit ich im Notfall schnell handeln kann.  
-**Akzeptanzkriterium:** Button ist auf allen Seiten sichtbar und hervorgehoben  
+Als Nutzer möchte ich einen SOS-Button deutlich erkennbar sehen, damit ich im Notfall schnell handeln kann.  
+**Akzeptanzkriterium:** Button ist auf Seiten sichtbar und hervorgehoben, sobald Ersteinschätzung beginnt nicht mehr sichtbar    
 **Priorität:** hoch  
 
 ### FA 026 – Notrufempfehlung anzeigen
@@ -199,7 +199,7 @@ Als Nutzer möchte ich, dass meine Eingaben während einer Sitzung gespeichert w
 **Priorität:** mittel   
 
 ### FA 038 – Offline-Speicherung
-Als Nutzer möchte ich Daten offline speichern können, um auch ohne Internet angegebene Daten später abrufen zu können.  
+Als Nutzer möchte ich die Anwendung offline starten können, um auch ohne Internet Symptome anklicken zu können, sobald ich wieder mit dem Internet verbunden bin kann ich meine Daten zur KI-Auswertung übermitteln.  
 **Akzeptanzkriterium:** Synchronisation erfolgt später  
 **Priorität:** niedrig 
 
