@@ -1,37 +1,36 @@
 import { useState } from "react";
 
-/*
-  Import der CSS-Module für den Assessment-Bereich.
-*/
 import assessmentStyles from "../Assessment.module.css";
 
 import type {
   AdditionalData,
   BasisData,
   Step,
-  MedicationEntry
 } from "../../types/assessment";
-
-type SavedAssessmentData = {
-  basisData?: BasisData;
-  additionalData?: AdditionalData;
-  symptomText?: string[];
-  selectedSymptoms?: string[];
-};
 
 type CheckInfoProps = {
   basisData: BasisData;
   additionalData: AdditionalData;
-
   symptomText: string[];
   selectedSymptoms: string[];
-
   setStep: (step: Step) => void;
   removeSymptomText: (symptom: string) => void;
   toggleSymptom: (symptom: string) => void;
   setCheckInfoActive: (active: boolean) => void;
   isOffline: boolean;
 };
+
+function displayValue(value: unknown) {
+  if (Array.isArray(value)) {
+    return value.length > 0 ? value.join(", ") : "Keine Angabe";
+  }
+
+  if (value === null || value === undefined || value === "") {
+    return "Keine Angabe";
+  }
+
+  return String(value);
+}
 
 export function CheckInfo({
   basisData,
@@ -46,96 +45,137 @@ export function CheckInfo({
 }: CheckInfoProps) {
   const [showSavedData, setShowSavedData] = useState(false);
 
-  /*
-    Bevorzugt werden die strukturierten Daten aus der Datenbank.
-    Falls diese noch nicht vorhanden sind, nutzt die ResultPage weiterhin
-    die bisherigen Props aus dem lokalen State.
-  */
+  const renderDataRow = (
+    label: string,
+    value: unknown,
+    wide = false,
+  ) => (
+    <div
+      className={`${assessmentStyles.dataRow} ${
+        wide ? assessmentStyles.dataRowWide : ""
+      }`}
+    >
+      <span className={assessmentStyles.dataLabel}>{label}</span>
+      <strong className={assessmentStyles.dataValue}>
+        {displayValue(value)}
+      </strong>
+    </div>
+  );
 
+  const renderSymptomList = (
+    entries: string[],
+    kind: "text" | "selected",
+  ) => {
+    if (!entries.length) {
+      return <strong className={assessmentStyles.dataValue}>Keine Angabe</strong>;
+    }
 
-  const medicationValue =
-    additionalData.medication ||
-    "Keine Angabe";
+    return (
+      <ul className={assessmentStyles.dataList}>
+        {entries.map((entry, index) => {
+          try {
+            const parsed = JSON.parse(entry);
+            const title =
+              kind === "text"
+                ? parsed.text_symptom || "Beschwerde"
+                : parsed.name || "Symptom";
 
-  const conditionsValue =
-    additionalData.conditions &&
-      additionalData.conditions.length > 0
-      ? additionalData.conditions
-      : "Keine Angabe";
+            return (
+              <li key={index} className={assessmentStyles.dataListItem}>
+                <p className={assessmentStyles.dataListItemHeader}>{title}</p>
+                <div className={assessmentStyles.dataListItemGrid}>
+                  {parsed.bodyregion && (
+                    <div>
+                      <span className={assessmentStyles.dataLabel}>
+                        Körperregion
+                      </span>
+                      <strong className={assessmentStyles.dataValue}>
+                        {parsed.bodyregion}
+                      </strong>
+                    </div>
+                  )}
+                  {parsed.painscale != null && (
+                    <div>
+                      <span className={assessmentStyles.dataLabel}>
+                        Schmerzstärke
+                      </span>
+                      <strong className={assessmentStyles.dataValue}>
+                        {parsed.painscale}
+                      </strong>
+                    </div>
+                  )}
+                </div>
+                <button
+                  type="button"
+                  className={assessmentStyles.secondaryButton}
+                  onClick={() =>
+                    kind === "text"
+                      ? removeSymptomText(entry)
+                      : toggleSymptom(entry)
+                  }
+                >
+                  {kind === "text" ? "Eintrag entfernen" : "Symptom entfernen"}
+                </button>
+              </li>
+            );
+          } catch {
+            return (
+              <li key={index} className={assessmentStyles.dataListItem}>
+                <strong className={assessmentStyles.dataValue}>{entry}</strong>
+              </li>
+            );
+          }
+        })}
+      </ul>
+    );
+  };
 
-  
+  const renderMedicationList = () => {
+    if (!additionalData.medication?.length) {
+      return <strong className={assessmentStyles.dataValue}>Keine Angabe</strong>;
+    }
 
-  const symptomTextValue =
-    symptomText && symptomText.length > 0 ?
-      (
-        <ul>
-          {symptomText.map((s, i) => {
-            try {
-              const parsed = JSON.parse(s);
-              return (
-                <li key={i} className={assessmentStyles.fieldset}>
-                  Bezeichnung: {parsed.text_symptom} <br></br>
-                  {parsed.bodyregion && <> Körperregion: {parsed.bodyregion}</>}<br></br>
-                  {parsed.painscale != null && <> Schmerzstärke: {parsed.painscale}</>}
-                  <button
-                    type="button"
-                    className={assessmentStyles.secondaryButton}
-                    onClick={() => {
-                      removeSymptomText(s);
+    return (
+      <ul className={assessmentStyles.dataList}>
+        {additionalData.medication.map((medication, index) => (
+          <li key={index} className={assessmentStyles.dataListItem}>
+            <p className={assessmentStyles.dataListItemHeader}>
+              {medication.name || "Medikament"}
+            </p>
+            <div className={assessmentStyles.dataListItemGrid}>
+              <div>
+                <span className={assessmentStyles.dataLabel}>Dosis</span>
+                <strong className={assessmentStyles.dataValue}>
+                  {displayValue(`${medication.dose} ${medication.unit}`.trim())}
+                </strong>
+              </div>
+              <div>
+                <span className={assessmentStyles.dataLabel}>Häufigkeit</span>
+                <strong className={assessmentStyles.dataValue}>
+                  {displayValue(
+                    `${medication.frequency} pro ${medication.frequencyUnit}`.trim(),
+                  )}
+                </strong>
+              </div>
+              <div>
+                <span className={assessmentStyles.dataLabel}>Seit</span>
+                <strong className={assessmentStyles.dataValue}>
+                  {displayValue(medication.since)}
+                </strong>
+              </div>
+            </div>
+          </li>
+        ))}
+      </ul>
+    );
+  };
 
-                    }}
-                  >
-                    Eintrag entfernen
-                  </button>
-                </li>
-              );
-            } catch {
-              return <li key={i}>{s}</li>;
-            }
-          })}
-        </ul>
-      )
-      : "Keine Angabe";
-
-  const selectedSymptomsValue =
-    selectedSymptoms && selectedSymptoms.length > 0 ?
-      (
-        <ul>
-          {selectedSymptoms.map((s, i) => {
-            try {
-              const parsed = JSON.parse(s);
-              return (
-                <li key={i} className={assessmentStyles.fieldset}>
-                  Bezeichnung: {parsed.name} <br></br>
-                  {parsed.bodyregion && <> Körperregion: {parsed.bodyregion}</>}<br></br>
-                  {parsed.painscale != null && <> Schmerzstärke: {parsed.painscale}</>}
-                  <button
-                    type="button"
-                    className={assessmentStyles.secondaryButton}
-                    onClick={() => {
-                      toggleSymptom(s);
-                    }}
-                  >
-                    Symptom entfernen
-                  </button>
-                </li>
-              );
-            } catch {
-              return <li key={i}>{s}</li>;
-            }
-          })}
-        </ul>
-      )
-      : "Keine Angabe";
-
-      
-      return (
-      <>
+  return (
+    <>
       <button
         type="button"
-        className={assessmentStyles.secondaryButton}
+        className={`${assessmentStyles.secondaryButton} ${assessmentStyles.dataToggleButton}`}
         onClick={() => setShowSavedData(!showSavedData)}
-        style={{ marginBottom: "16px" }}
       >
         {showSavedData
           ? "Daten ausblenden"
@@ -143,210 +183,123 @@ export function CheckInfo({
       </button>
 
       {showSavedData && (
-        <div
-          style={{
-            textAlign: "left",
-            width: "100%",
-            background: "#ffffff",
-            color: "#111111",
-            padding: "16px",
-            borderRadius: "12px",
-            border: "1px solid #e5e7eb",
-            marginBottom: "20px",
-          }}
-        >
-          <p>
-            Alter: <strong>{basisData.age || "Keine Angabe"}</strong>
-          </p>
+        <div className={assessmentStyles.dataPanel}>
+          <div className={assessmentStyles.dataHeader}>
+            <div>
+              <p className={assessmentStyles.dataTitle}>
+                Daten zur Überprüfung
+              </p>
+              <p className={assessmentStyles.dataMeta}>
+                Kontrollieren Sie Ihre Angaben vor dem Abschluss.
+              </p>
+            </div>
+          </div>
 
-          <p>
-            Geschlecht:{" "}
-            <strong>{basisData.gender || "Keine Angabe"}</strong>
-          </p>
+          <section className={assessmentStyles.dataSection}>
+            <p className={assessmentStyles.dataSectionTitle}>Basisdaten</p>
+            <div className={assessmentStyles.dataGrid}>
+              {renderDataRow("Alter", basisData.age)}
+              {renderDataRow("Geschlecht", basisData.gender)}
+              {basisData.gender !== "männlich" &&
+                renderDataRow("Schwangerschaft", basisData.pregnancy)}
+            </div>
+            <div className={assessmentStyles.dataActions}>
+              <button
+                type="button"
+                className={assessmentStyles.secondaryButton}
+                onClick={() => {
+                  setStep("basisStart");
+                  setCheckInfoActive(true);
+                }}
+              >
+                Basisdaten bearbeiten
+              </button>
+            </div>
+          </section>
 
-          {basisData.gender === "weiblich" || basisData.gender === "divers" && (
-          <>
-            <p>
-              Schwangerschaft:{" "}
-              <strong>
-                {basisData.pregnancy || "Keine Angabe"}
-              </strong>
-            </p>
+          <section className={assessmentStyles.dataSection}>
+            <p className={assessmentStyles.dataSectionTitle}>Beschwerden</p>
+            <div className={assessmentStyles.dataGrid}>
+              <div className={`${assessmentStyles.dataRow} ${assessmentStyles.dataRowWide}`}>
+                <span className={assessmentStyles.dataLabel}>
+                  Selbst beschriebene Beschwerden
+                </span>
+                {renderSymptomList(symptomText, "text")}
+              </div>
+              <div className={`${assessmentStyles.dataRow} ${assessmentStyles.dataRowWide}`}>
+                <span className={assessmentStyles.dataLabel}>
+                  Ausgewählte Symptome
+                </span>
+                {renderSymptomList(selectedSymptoms, "selected")}
+              </div>
+            </div>
+            <div className={assessmentStyles.dataActions}>
+              <button
+                type="button"
+                className={assessmentStyles.secondaryButton}
+                onClick={() => {
+                  setStep("bodyRegion");
+                  setCheckInfoActive(true);
+                }}
+              >
+                Weitere Symptome angeben
+              </button>
+            </div>
+          </section>
 
-          </>
-          )}
-
-          <button
-              type="button"
-              className={assessmentStyles.secondaryButton}
-              onClick={() => {
-                setStep("basisStart");
-                setCheckInfoActive(true);
-              }}
-            >
-              Basisdaten bearbeiten
-          </button>
-
-          {/*
-          <p>
-            Hauptregion:{" "}
-            <strong>{displayedMainRegion || "Keine Angabe"}</strong>
-          </p>
-
-          <p>
-            Unterregion:{" "}
-            <strong>{displayedSubRegion || "Keine Angabe"}</strong>
-          </p>
-          */}
-
-
-          <p>
-            Beschwerden selbst geschrieben: 
-          </p>
-          <strong>{symptomTextValue}</strong>
-
-          <p>
-            Symptome:
-          </p>
-          <strong>{selectedSymptomsValue}</strong>
-
-          <button
-              type="button"
-              className={assessmentStyles.secondaryButton}
-              onClick={() => {
-                setStep("bodyRegion");
-                setCheckInfoActive(true);
-              }}
-            >
-              weitere Symptome angeben
-          </button>
-
-
-          <hr style={{ margin: "16px 0", borderColor: "#e5e7eb" }} />
-
-          <p className={assessmentStyles.selectedText}>Zusatzangaben</p>
-
-
-          <p>
-            Größe:{" "}
-            <strong>
-              {additionalData.height || "Keine Angabe"}
-            </strong>
-          </p>
-
-          <p>
-            Gewicht:{" "}
-            <strong>
-              {additionalData.weight || "Keine Angabe"}
-            </strong>
-          </p>
-
-          <p>
-            Beschwerden bestehen seit (in Tagen):{" "}
-            <strong>
-              {additionalData.duration || "Keine Angabe"}
-            </strong>
-          </p>
-
-          {basisData.gender !== "männlich" && (
-          
-          <p>
-            Stillzeit:{" "}
-            <strong>
-              {additionalData.breastfeeding || "Keine Angabe"}
-            </strong>
-          </p>
-          )}
-
-          <p>
-            Medikamente:
-          </p>
-
-
-          {additionalData.medication && additionalData.medication.length > 0 ? (
-          <ul>
-            {additionalData.medication.map((m, i) => (
-              <li key={i}>
-                <strong>{m.name} {m.dose} {m.unit} - {m.frequency} pro {m.frequencyUnit} - seit {m.since} </strong>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <strong>Keine Angabe</strong>
-        )}
-
-          <p>
-            Vorerkrankungen: <strong>{conditionsValue}</strong>
-          </p>
-
-          <p>
-            Allergien:{" "}
-            <strong>
-              {additionalData.allergies || "Keine Angabe"}
-            </strong>
-          </p>
-
-          <p>
-            Alkoholische Getraenke pro Woche:{" "}
-            <strong>
-              {additionalData.alcoholPerWeek || "Keine Angabe"}
-            </strong>
-          </p>
-
-          <p>
-            Zigaretten pro Tag:{" "}
-            <strong>
-              {additionalData.cigarettesPerDay || "Keine Angabe"}
-            </strong>
-          </p>
-
-          <p>
-            Temperatur:{" "}
-            <strong>
-              {additionalData.temperature || "Keine Angabe"}
-            </strong>
-          </p>
-
-          <p>
-            Beschwerden werden stärker:{" "}
-            <strong>
-              {additionalData.worsening || "Keine Angabe"}
-            </strong>
-          </p>
-
-          <p>
-            Weitere Informationen:{" "}
-            <strong>
-              {additionalData.extraInfo || "Keine Angabe"}
-            </strong>
-          </p>
-
-          <button
-              type="button"
-              className={assessmentStyles.secondaryButton}
-              onClick={() => {
-                setStep("additionalInfo");
-                setCheckInfoActive(true);
-              }}
-            >
-              Zusatzangaben bearbeiten
-          </button>
+          <section className={assessmentStyles.dataSection}>
+            <p className={assessmentStyles.dataSectionTitle}>Zusatzangaben</p>
+            <div className={assessmentStyles.dataGrid}>
+              {renderDataRow("Größe", additionalData.height)}
+              {renderDataRow("Gewicht", additionalData.weight)}
+              {renderDataRow(
+                "Beschwerden bestehen seit",
+                additionalData.duration ? `${additionalData.duration} Tage` : "",
+              )}
+              {basisData.gender !== "männlich" &&
+                renderDataRow("Stillzeit", additionalData.breastfeeding)}
+              {renderDataRow("Vorerkrankungen", additionalData.conditions, true)}
+              {renderDataRow("Allergien", additionalData.allergies, true)}
+              {renderDataRow(
+                "Alkoholische Getränke pro Woche",
+                additionalData.alcoholPerWeek,
+              )}
+              {renderDataRow("Zigaretten pro Tag", additionalData.cigarettesPerDay)}
+              {renderDataRow("Temperatur", additionalData.temperature)}
+              {renderDataRow("Beschwerden werden stärker", additionalData.worsening)}
+              {renderDataRow("Weitere Informationen", additionalData.extraInfo, true)}
+              <div className={`${assessmentStyles.dataRow} ${assessmentStyles.dataRowWide}`}>
+                <span className={assessmentStyles.dataLabel}>Medikamente</span>
+                {renderMedicationList()}
+              </div>
+            </div>
+            <div className={assessmentStyles.dataActions}>
+              <button
+                type="button"
+                className={assessmentStyles.secondaryButton}
+                onClick={() => {
+                  setStep("additionalInfo");
+                  setCheckInfoActive(true);
+                }}
+              >
+                Zusatzangaben bearbeiten
+              </button>
+            </div>
+          </section>
         </div>
       )}
 
       {!isOffline && (
-        <button
-          type="submit"
-          className={assessmentStyles.primaryButton}
-        >
+        <button type="submit" className={assessmentStyles.primaryButton}>
           Einschätzung abschließen
         </button>
       )}
       {isOffline && (
         <p>
-          Im Offline-Modus können keine Daten bearbeitet werden. Sobald eine Internetverbindung besteht, ist das Vortsetzen möglich.
+          Im Offline-Modus können keine Daten bearbeitet werden. Sobald eine
+          Internetverbindung besteht, ist das Vortsetzen möglich.
         </p>
       )}
     </>
-    );
+  );
 }
