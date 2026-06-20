@@ -213,7 +213,7 @@ export function ResultStep({
 
             {prob && (
               <div style={{ marginTop: "4px" }}>
-                <strong>Wahrscheinlichkeit:</strong> {prob}
+                <strong>Wahrscheinlichkeit:</strong> {prob*100}%
               </div>
             )}
 
