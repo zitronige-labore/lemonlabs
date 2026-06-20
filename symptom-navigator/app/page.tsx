@@ -13,7 +13,7 @@ import homeStyles from "./Home.module.css";
 import assessmentStyles from "./assessment/Assessment.module.css";
 
 import { useSaveForm } from "./useSaveForm";
-import { sendDataToAi } from "./actions";
+import { sendDataToAi, sendFhirToServer } from "./actions";
 import { redFlagScan } from "./assessment/medicalLogic/redFlagScan";
 
 import SelectMoreSymptoms from "./assessment/components/SelectMoreSymptomsStep";
@@ -575,11 +575,17 @@ export default function Home() {
         triesLeft = 0;
       } catch (error) {
         if(triesLeft!>0) {
-          console.error("Error fetching AI response::", error);
+          console.error("Error fetching AI response:", error);
         }
         triesLeft--;
         console.error("Try fetching Ai answer: ", (3-triesLeft))
       }
+    }
+
+    try {
+      const fhirServerAnswer = await sendFhirToServer(caseId)
+    } catch (error) {
+      console.error("Error sending FHIR bundle to server")
     }
 
     setIsLoading(false);

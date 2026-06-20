@@ -1,7 +1,7 @@
 import type { MedicationEntry, Step } from "../../types/assessment";
 import assessmentStyles from "../Assessment.module.css";
 import { makeDBDataReadable } from "../utils/assessmentData";
-import { accessDataWithAccessCode, deleteDataOnAccessCode, accessAiDataWithAccessCode, getCaseIdFromAccessCode, sendFhirToServer, buildFhirBundle } from "../../actions";
+import { accessDataWithAccessCode, deleteDataOnAccessCode, accessAiDataWithAccessCode, getCaseIdFromAccessCode} from "../../actions";
 import { useState } from "react";
 import { downloadTxt, downloadPdf, type AssessmentExportData } from "../utils/exportUtils";
 
@@ -16,7 +16,6 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
     const [data, setData] = useState<any | null>(null);
     const [aiData, setAiData] = useState<any | null>(null);
     const [code, setCode] = useState<string>("");
-    const [fhirSent, setFhirSent] = useState<number>(0);
 
     //state to store validation errors for uuid-code
     const [codeError, setCodeError] = useState("");

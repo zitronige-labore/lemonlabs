@@ -1366,9 +1366,9 @@ if (height) {
  * @returns Promise<boolean>
  */
 
-export async function sendFhirToServer(accessCode: string): Promise<boolean> {
+export async function sendFhirToServer(caseId: string): Promise<boolean> {
 
-  const caseId = await getCaseIdFromAccessCode(accessCode);
+
   const fhirBundle = await buildFhirBundle(caseId);
 
   if (!fhirBundle) {
