@@ -74,7 +74,7 @@ export function BasisStartStep({
             value={basisData.age}
             onChange={(event) => {
               const value = event.target.value; //holt Benutzereingabe
-              
+
 
               setBasisData({ //Eingabe speichern
                 ...basisData,
@@ -117,10 +117,12 @@ export function BasisStartStep({
 
                 /*
                   Schwangerschaft wird nur gespeichert,
-                  wenn "weiblich" ausgewählt ist.
+                  wenn "weiblich" oder "divers" "keine Angabe" ausgewählt ist.
                 */
                 pregnancy:
-                  event.target.value === "weiblich"
+                  event.target.value === "weiblich" ||
+                  event.target.value === "divers" ||
+                  event.target.value === "keine Angabe"
                     ? basisData.pregnancy
                     : "",
               })
@@ -138,29 +140,33 @@ export function BasisStartStep({
           Zusätzliche Auswahl für Schwangerschaft oder Stillzeit.
 
           Dieser Bereich wird nur angezeigt,
-          wenn "weiblich" ausgewählt wurde.
+          wenn "weiblich" oder "divers" oder "keine Angabe" ausgewählt wurde.
         */}
-        {basisData.gender === "weiblich" && (
-          <label className={assessmentStyles.formLabel}>
-            Schwangerschaft
+        {(
+          basisData.gender === "weiblich" ||
+          basisData.gender === "divers" ||
+          basisData.gender === "keine Angabe" 
+        ) && (
+            <label className={assessmentStyles.formLabel}>
+              Schwangerschaft
 
-            <select
-              className={assessmentStyles.input}
-              value={basisData.pregnancy}
-              onChange={(event) =>
-                setBasisData({
-                  ...basisData,
-                  pregnancy: event.target.value,
-                })
-              }
-            >
-              <option value="">Bitte auswählen</option>
-              <option value="ja">Ja</option>
-              <option value="nein">Nein</option>
-              <option value="keine Angabe">Keine Angabe</option>
-            </select>
-          </label>
-        )}
+              <select
+                className={assessmentStyles.input}
+                value={basisData.pregnancy}
+                onChange={(event) =>
+                  setBasisData({
+                    ...basisData,
+                    pregnancy: event.target.value,
+                  })
+                }
+              >
+                <option value="">Bitte auswählen</option>
+                <option value="ja">Ja</option>
+                <option value="nein">Nein</option>
+                <option value="keine Angabe">Keine Angabe</option>
+              </select>
+            </label>
+          )}
       </fieldset>
 
       {!checkInfoActive && (
