@@ -50,13 +50,13 @@ const geistMono = Geist_Mono({
   und für PWA-Funktionen verwendet.
 */
 export const metadata: Metadata = {
-  title: "MediGuide",
+  title: "Symptometer",
   description: "Ersteinschätzung von Symptomen",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "MediGuide",
+    title: "Symptometer",
   },
   icons: {
     icon: "/images/lemonlabslogo_blue.png?v=2",

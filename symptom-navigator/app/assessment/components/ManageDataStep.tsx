@@ -1,297 +1,410 @@
-import type { MedicationEntry, Step } from "../../types/assessment";
-import assessmentStyles from "../Assessment.module.css";
-import { makeDBDataReadable } from "../utils/assessmentData";
-import { accessDataWithAccessCode, deleteDataOnAccessCode, accessAiDataWithAccessCode, getCaseIdFromAccessCode, sendFhirToServer, buildFhirBundle } from "../../actions";
 import { useState } from "react";
-import { downloadTxt, downloadPdf, type AssessmentExportData } from "../utils/exportUtils";
+
+import assessmentStyles from "../Assessment.module.css";
+
+import {
+  accessAiDataWithAccessCode,
+  accessDataWithAccessCode,
+  deleteDataOnAccessCode,
+} from "../../actions";
+import type { Step } from "../../types/assessment";
+import { makeDBDataReadable } from "../utils/assessmentData";
+import {
+  downloadPdf,
+  downloadTxt,
+  type AssessmentExportData,
+} from "../utils/exportUtils";
 
 type ManageDataStepProps = {
-    step: Step;
-    setStep: (step: Step) => void;
+  step: Step;
+  setStep: (step: Step) => void;
 };
 
+function displayValue(value: unknown) {
+  if (Array.isArray(value)) {
+    return value.length > 0 ? value.join(", ") : "Keine Angabe";
+  }
+
+  if (value === null || value === undefined || value === "") {
+    return "Keine Angabe";
+  }
+
+  return String(value);
+}
+
 export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
+  const [data, setData] = useState<any | null>(null);
+  const [aiData, setAiData] = useState<any | null>(null);
+  const [code, setCode] = useState("");
+  const [codeError, setCodeError] = useState("");
 
-    // state to store retrieved data and access code
-    const [data, setData] = useState<any | null>(null);
-    const [aiData, setAiData] = useState<any | null>(null);
-    const [code, setCode] = useState<string>("");
-    const [fhirSent, setFhirSent] = useState<number>(0);
+  const uuidPattern =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-    //state to store validation errors for uuid-code
-    const [codeError, setCodeError] = useState("");
+  const [geschlecht, schwangerschaft, stillzeit, worsening, medication] =
+    makeDBDataReadable(data);
 
-    //pattern for validation uuid code
-    const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  function buildExportData(): AssessmentExportData {
+    return {
+      alter: data?.caseData?.[0]?.age || "Keine Angabe",
+      geschlecht: geschlecht || "Keine Angabe",
+      schwangerschaft,
+      stillzeit,
+      worsening,
+      groesse: data?.additionalInfoData?.[0]?.height
+        ? `${data.additionalInfoData[0].height} cm`
+        : "Keine Angabe",
+      gewicht: data?.additionalInfoData?.[0]?.weight
+        ? `${data.additionalInfoData[0].weight} kg`
+        : "Keine Angabe",
+      temperatur: data?.additionalInfoData?.[0]?.temperature
+        ? `${data.additionalInfoData[0].temperature} °C`
+        : "Keine Angabe",
+      dauer: data?.additionalInfoData?.[0]?.duration
+        ? `${data.additionalInfoData[0].duration} Tage`
+        : "Keine Angabe",
+      medikation: medication.join(", ") || "Keine Angabe",
+      allergien: data?.allergyData?.allergies?.join(", ") || "Keine Angabe",
+      vorerkrankungen:
+        data?.conditionsData?.conditions?.join(", ") || "Keine Angabe",
+      alkoholkonsum:
+        data?.additionalInfoData?.[0]?.alcohol_per_week || "Keine Angabe",
+      zigaretten:
+        data?.additionalInfoData?.[0]?.cigarettes_per_day || "Keine Angabe",
+      symptome: data?.symptomData?.[0]?.name_de
+        ? data.symptomData.map((symptom: any) => symptom.name_de).join(", ")
+        : "",
+      textSymptome: data?.textSymptomData?.[0]?.raw_symptoms || "",
+      datum: data?.caseData?.[0]?.date
+        ? new Date(data.caseData[0].date).toLocaleString()
+        : "Keine Angabe",
+      dringlichkeit: aiData?.[0]?.urgency_level?.toString() || "Keine Angabe",
+      handlungsempfehlung: aiData?.[0]?.advice_text || "Keine Angabe",
+      vermutungen: [1, 2, 3, 4, 5]
+        .map((index) => ({
+          text: aiData?.[0]?.[`suspicion${index}`] || "",
+          wahrscheinlichkeit:
+            aiData?.[0]?.[`probability${index}`] != null
+              ? `${aiData[0][`probability${index}`]}%`
+              : "Keine Angabe",
+        }))
+        .filter((suspicion) => suspicion.text),
+    };
+  }
 
-    // convert coded values to be read by users where necessary
-    const [geschlecht, schwangerschaft, stillzeit, worsening, medication] = makeDBDataReadable(data);
+  const renderDataRow = (
+    label: string,
+    value: unknown,
+    wide = false,
+  ) => (
+    <div
+      className={`${assessmentStyles.dataRow} ${
+        wide ? assessmentStyles.dataRowWide : ""
+      }`}
+    >
+      <span className={assessmentStyles.dataLabel}>{label}</span>
+      <strong className={assessmentStyles.dataValue}>{displayValue(value)}</strong>
+    </div>
+  );
 
-    // building txt and pdf
-    function buildExportData(): AssessmentExportData {
-        return {
-            alter: data?.caseData?.[0]?.age || "Keine Angabe",
-            geschlecht: geschlecht || "Keine Angabe",
-            schwangerschaft,
-            stillzeit,
-            worsening,
-            groesse: data?.additionalInfoData?.[0]?.height ? `${data.additionalInfoData[0].height} cm` : "Keine Angabe",
-            gewicht: data?.additionalInfoData?.[0]?.weight ? `${data.additionalInfoData[0].weight} kg` : "Keine Angabe",
-            temperatur: data?.additionalInfoData?.[0]?.temperature ? `${data.additionalInfoData[0].temperature} °C` : "Keine Angabe",
-            dauer: data?.additionalInfoData?.[0]?.duration ? `${data.additionalInfoData[0].duration} Tage` : "Keine Angabe",
-            medikation: medication.join(", ") || "Keine Angabe",
-            allergien: data?.allergyData?.allergies?.join(", ") || "Keine Angabe",
-            vorerkrankungen: data?.conditionsData?.conditions?.join(", ") || "Keine Angabe",
-            alkoholkonsum: data?.additionalInfoData?.[0]?.alcoholPerWeek || "Keine Angabe",
-            zigaretten: data?.additionalInfoData?.[0]?.cigarettesPerDay || "Keine Angabe",
-            symptome: data?.symptomData?.[0]?.name_de ? data.symptomData.map((s: any) => s.name_de).join(", ") : "",
-            textSymptome: data?.textSymptomData?.[0]?.raw_symptoms || "",
-            datum: data?.caseData?.[0]?.date ? new Date(data.caseData[0].date).toLocaleString() : "Keine Angabe",
-            dringlichkeit: aiData?.[0]?.urgency_level?.toString() || "Keine Angabe",
-            handlungsempfehlung: aiData?.[0]?.advice_text || "Keine Angabe",
-            vermutungen: [1, 2, 3, 4, 5]
-                .map(i => ({
-                    text: aiData?.[0]?.[`suspicion${i}`] || "",
-                    wahrscheinlichkeit: aiData?.[0]?.[`probability${i}`] != null ? `${aiData[0][`probability${i}`]}%` : "Keine Angabe",
-                }))
-                .filter(v => v.text),
-        };
+  const renderSymptomList = (
+    symptoms: any[] | undefined,
+    textSymptom = false,
+  ) => {
+    if (!symptoms?.length) {
+      return <strong className={assessmentStyles.dataValue}>Keine Angabe</strong>;
     }
 
     return (
-        <div className={assessmentStyles.resultBox}>
-
-            <p className={assessmentStyles.selectedText}>Datenverwaltung</p>
-
-            <div className={assessmentStyles.fieldset}>
-                <p className={assessmentStyles.formLabel}>
-                    Code zum Abrufen oder Löschen der Daten eingeben:
-                </p>
-                <input
-                    type="text"
-                    placeholder="Code hier eingeben"
-                    className={assessmentStyles.input}
-                    onChange={(e) => {
-                        const value = e.target.value.trim();
-                        setCode(value);
-
-                        if (value === "") {
-                            setCodeError("");
-                        } else if (!uuidPattern.test(value)) {
-                            setCodeError("Bitte geben Sie einen gültigen Code ein.")
-                        } else {
-                            setCodeError("");
-                        }
-                    }}/>
-                {codeError && (
-                        <p className={assessmentStyles.errorText}>
-                            {codeError}
-                        </p>
-                    )
-                    }
-                <div className={assessmentStyles.buttonGroup}>
-                    <button
-                        type="button"
-                        className={assessmentStyles.continueButton}
-                        onClick={async () => {
-                            const result = await accessDataWithAccessCode(code);  // erst holen
-                            if (result === null) {
-                                setCodeError("Dieser Code hat keine Daten hinterlegt");
-                                setData(null);
-                                setAiData(null);
-                            } else {
-                                setCodeError("");
-                                setData(result);
-                                setAiData(await accessAiDataWithAccessCode(code));
-                            }
-                        }}
-                    >
-                        Abrufen
-                    </button>
-                    <button
-                        type="button"
-                        className={assessmentStyles.continueButton}
-                        onClick={async () => await deleteDataOnAccessCode(code)}
-                    >
-                        Löschen
-                    </button>
+      <ul className={assessmentStyles.dataList}>
+        {symptoms.map((symptom, index) => (
+          <li key={index} className={assessmentStyles.dataListItem}>
+            <p className={assessmentStyles.dataListItemHeader}>
+              {textSymptom
+                ? symptom.raw_symptoms || "Beschwerde"
+                : symptom.name_de || "Symptom"}
+            </p>
+            <div className={assessmentStyles.dataListItemGrid}>
+              {symptom.bodyregion && (
+                <div>
+                  <span className={assessmentStyles.dataLabel}>
+                    Körperregion
+                  </span>
+                  <strong className={assessmentStyles.dataValue}>
+                    {symptom.bodyregion}
+                  </strong>
                 </div>
+              )}
+              {symptom.painscale != null && (
+                <div>
+                  <span className={assessmentStyles.dataLabel}>
+                    Schmerzskala
+                  </span>
+                  <strong className={assessmentStyles.dataValue}>
+                    {symptom.painscale || "Nicht angegeben"}
+                  </strong>
+                </div>
+              )}
             </div>
-
-            {data && (
-                <>
-                    <p className={assessmentStyles.selectedText}>Abgerufene Daten</p>
-
-                    <div className={assessmentStyles.fieldset}>
-                        <p>Geschlecht: <strong>{geschlecht || "Keine Angabe"}</strong></p>
-                        <p>Alter: <strong>{data?.caseData?.[0]?.age || "Keine Angabe"}</strong></p>
-                        {geschlecht !== "männlich" && (
-                            <p>Schwanger: <strong>{schwangerschaft}</strong></p>
-                        )}
-                        {geschlecht !== "männlich" && (
-                            <p>Stillzeit: <strong>{stillzeit}</strong></p>
-                        )}
-                    </div>
-
-                    {data.symptomData?.[0]?.name_de != null && data.symptomData?.[0]?.name_de != '' && (
-                        <div className={assessmentStyles.fieldset}>
-                            <p className={assessmentStyles.selectedText}>Symptome</p>
-                            <ul>
-                                {data.symptomData.map((symptom: { name_de: string; bodyregion: string; painscale?: string }, i: number) => (
-                                    <div key={i} className={assessmentStyles.fieldset}>
-                                        Bezeichnung: <strong>{symptom.name_de}</strong><br />
-                                        Körperregion: <strong>{symptom.bodyregion}</strong><br />
-                                        {symptom.painscale !== null && (
-                                            <p>Schmerzskala: <strong>{symptom.painscale || "nicht angegeben"}</strong></p>
-                                        )}
-                                    </div>
-                                ))}
-                            </ul>
-                        </div>
-                    )}
-
-                    {data.textSymptomData?.[0]?.raw_symptoms != null && data.textSymptomData?.[0]?.raw_symptoms != '' && (
-                        <div className={assessmentStyles.fieldset}>
-                            <p className={assessmentStyles.selectedText}>Selbst beschriebene Beschwerden</p>
-                            <ul>
-                                {data.textSymptomData.map((symptom: { raw_symptoms: string; bodyregion: string; painscale?: string }, i: number) => (
-                                    <div key={i} className={assessmentStyles.fieldset}>
-                                        Bezeichnung: <strong>{symptom.raw_symptoms}</strong><br />
-                                        Körperregion: <strong>{symptom.bodyregion}</strong><br />
-                                        {symptom.painscale !== null && (
-                                            <p>Schmerzskala: <strong>{symptom.painscale || "nicht angegeben"}</strong></p>
-                                        )}
-                                    </div>
-                                ))}
-                            </ul>
-                        </div>
-                    )}
-
-                    {(data?.medicationData || data?.allergyData || data?.conditionsData) && (
-                        <div className={assessmentStyles.fieldset}>
-                            <p className={assessmentStyles.selectedText}>Zusatzangaben</p>
-
-                            <p>Medikamente:</p>
-                            {medication.length > 0 && (
-                                medication.map((m: string, i: number) => (
-                                    <div key={i} className={assessmentStyles.fieldset}>
-                                        {m}
-                                    </div>
-                                ))
-                            )}
-                            {data?.allergyData?.allergies[0] && (
-                                <p>Allergien: <strong>{data.allergyData.allergies?.join(", ")}</strong></p>
-                            )}
-                            {data?.conditionsData?.conditions[0] && (
-                                <p>Vorerkrankungen: <strong>{data.conditionsData.conditions?.join(", ")}</strong></p>
-                            )}
-                            {data?.additionalInfoData?.[0]?.height && (
-                                <p>Größe: <strong>{data.additionalInfoData[0].height} cm</strong></p>
-                            )}
-                            {data?.additionalInfoData?.[0]?.weight && (
-                                <p>Gewicht: <strong>{data.additionalInfoData[0].weight} kg</strong></p>
-                            )}
-                            {data?.additionalInfoData?.[0]?.temperature !== '' && data?.additionalInfoData?.[0]?.temperature !== null && (
-                                <p>Temperatur: <strong>{data.additionalInfoData[0].temperature} °C</strong></p>
-                            )}
-                            {data?.additionalInfoData?.[0]?.duration && (
-                                <p>Dauer der Symptome: <strong>{data.additionalInfoData[0].duration} Tage</strong></p>
-                            )}
-                            {worsening && (
-                                <p>Symptome werden schlimmer: <strong>{worsening}</strong></p>
-                            )}
-                            {data.additionalInfoData?.[0]?.cigarettes_per_day != null && (
-                            <p>
-                                Zigaretten pro Tag:{" "}
-                                <strong>{data.additionalInfoData[0].cigarettes_per_day}</strong>
-                            </p>
-                            )}
-                            {data.additionalInfoData?.[0]?.alcohol_per_week != null && (
-                            <p>
-                                Alkoholische Getränke pro Woche:{" "}
-                                <strong>{data.additionalInfoData[0].alcohol_per_week}</strong>
-                            </p>
-                            )}
-                            {data?.additionalInfoData?.[0]?.other_info && (
-                                <p>Sonstige Angaben: <strong>{data.additionalInfoData[0].other_info}</strong></p>
-                            )}
-
-                            {!(
-                            data?.additionalInfoData?.[0]?.other_info ||
-                            data?.additionalInfoData?.[0]?.height ||
-                            data?.additionalInfoData?.[0]?.weight ||
-                            data?.additionalInfoData?.[0]?.temperature ||
-                            data?.additionalInfoData?.[0]?.duration ||
-                            data?.additionalInfoData?.[0]?.alcohol_per_week ||
-                            data?.additionalInfoData?.[0]?.cigarettes_per_day ||
-                            (data?.allergyData?.allergies?.length > 0) ||
-                            (data?.conditionsData?.conditions?.length > 0) ||
-                            (data?.medicationData?.length > 0) ||
-                            worsening
-                            ) && (
-                            <p>Keine Zusatzangaben vorhanden</p>
-                            )}
-
-                        </div>
-                    )}
-
-                    {aiData && aiData[0] && (
-                        <>
-                            <div className={assessmentStyles.fieldset}>
-                                <p className={assessmentStyles.selectedText}>KI-Einschätzung</p>
-                                {aiData[0].urgency_level && (
-                                    <p>Dringlichkeitsstufe: <strong>{aiData[0].urgency_level}</strong></p>
-                                )}
-                                {aiData[0].advice_text && (
-                                    <p>Handlungsempfehlung: <strong>{aiData[0].advice_text}</strong></p>
-                                )}
-                            </div>
-
-
-                            <div className={assessmentStyles.fieldset}>
-                                <p className={assessmentStyles.selectedText}>Vermutungen</p>
-                                {[1, 2, 3, 4, 5].map((n) => {
-                                    const suspicion = aiData[0][`suspicion${n}`];
-                                    const probability = aiData[0][`probability${n}`];
-                                    if (!suspicion) return null;
-                                    return (
-                                        <div key={n} className={assessmentStyles.fieldset}>
-                                            Vermutung {n}: <strong>{suspicion}</strong><br />
-                                            {probability != null && (
-                                                <p>Wahrscheinlichkeit: <strong>{probability}%</strong></p>
-                                            )}
-                                        </div>
-                                    );
-                                })}
-                            </div>
-
-                            {data?.caseData?.[0]?.date && (
-                                <div className={assessmentStyles.fieldset}>
-                                    <p>Daten erfasst am: <strong>{new Date(data.caseData[0].date).toLocaleString()}</strong></p>
-                                </div>
-                            )}
-
-                        </>
-                    )}
-                    <div className={assessmentStyles.buttonGroup}>
-                        <button
-                            type="button"
-                            className={assessmentStyles.secondaryButton}
-                            onClick={() => downloadPdf(buildExportData())}
-                        >
-                            pdf herunterladen
-                        </button>
-
-                        <button
-                            type="button"
-                            className={assessmentStyles.secondaryButton}
-                            onClick={() => downloadTxt(buildExportData())}
-                        >
-                            txt herunterladen
-                        </button>
-                    </div>
-                </>
-            )}
-        </div>
+          </li>
+        ))}
+      </ul>
     );
+  };
+
+  const renderMedicationList = () => {
+    if (!medication.length) {
+      return <strong className={assessmentStyles.dataValue}>Keine Angabe</strong>;
+    }
+
+    return (
+      <ul className={assessmentStyles.dataList}>
+        {medication.map((entry: string, index: number) => (
+          <li key={index} className={assessmentStyles.dataListItem}>
+            <strong className={assessmentStyles.dataValue}>{entry}</strong>
+          </li>
+        ))}
+      </ul>
+    );
+  };
+
+  const handleFetchData = async () => {
+    const result = await accessDataWithAccessCode(code);
+
+    if (result === null) {
+      setCodeError("Dieser Code hat keine Daten hinterlegt");
+      setData(null);
+      setAiData(null);
+      return;
+    }
+
+    setCodeError("");
+    setData(result);
+    setAiData(await accessAiDataWithAccessCode(code));
+  };
+
+  return (
+    <div className={assessmentStyles.resultBox}>
+      <p className={assessmentStyles.selectedText}>Datenverwaltung</p>
+
+      <div className={assessmentStyles.dataPanel}>
+        <div className={assessmentStyles.dataHeader}>
+          <div>
+            <p className={assessmentStyles.dataTitle}>Zugriffscode</p>
+            <p className={assessmentStyles.dataMeta}>
+              Gespeicherte Daten abrufen oder löschen.
+            </p>
+          </div>
+        </div>
+        <label className={assessmentStyles.formLabel}>
+          Code eingeben
+          <input
+            type="text"
+            placeholder="Code hier eingeben"
+            className={assessmentStyles.input}
+            onChange={(event) => {
+              const value = event.target.value.trim();
+              setCode(value);
+
+              if (value === "") {
+                setCodeError("");
+              } else if (!uuidPattern.test(value)) {
+                setCodeError("Bitte geben Sie einen gültigen Code ein.");
+              } else {
+                setCodeError("");
+              }
+            }}
+          />
+        </label>
+        {codeError && <p className={assessmentStyles.errorText}>{codeError}</p>}
+        <div className={assessmentStyles.dataActions}>
+          <button
+            type="button"
+            className={assessmentStyles.continueButton}
+            onClick={handleFetchData}
+          >
+            Abrufen
+          </button>
+          <button
+            type="button"
+            className={assessmentStyles.secondaryButton}
+            onClick={async () => await deleteDataOnAccessCode(code)}
+          >
+            Löschen
+          </button>
+        </div>
+      </div>
+
+      {data && (
+        <div className={assessmentStyles.dataPanel}>
+          <div className={assessmentStyles.dataHeader}>
+            <div>
+              <p className={assessmentStyles.dataTitle}>Abgerufene Daten</p>
+              <p className={assessmentStyles.dataMeta}>
+                Gespeicherte Angaben zu diesem Zugriffscode.
+              </p>
+            </div>
+          </div>
+
+          <section className={assessmentStyles.dataSection}>
+            <p className={assessmentStyles.dataSectionTitle}>Basisdaten</p>
+            <div className={assessmentStyles.dataGrid}>
+              {renderDataRow("Geschlecht", geschlecht)}
+              {renderDataRow("Alter", data?.caseData?.[0]?.age)}
+              {geschlecht !== "männlich" &&
+                renderDataRow("Schwanger", schwangerschaft)}
+              {geschlecht !== "männlich" &&
+                renderDataRow("Stillzeit", stillzeit)}
+              {renderDataRow(
+                "Daten erfasst am",
+                data?.caseData?.[0]?.date
+                  ? new Date(data.caseData[0].date).toLocaleString()
+                  : "",
+                true,
+              )}
+            </div>
+          </section>
+
+          <section className={assessmentStyles.dataSection}>
+            <p className={assessmentStyles.dataSectionTitle}>Beschwerden</p>
+            <div className={assessmentStyles.dataGrid}>
+              <div className={`${assessmentStyles.dataRow} ${assessmentStyles.dataRowWide}`}>
+                <span className={assessmentStyles.dataLabel}>Symptome</span>
+                {renderSymptomList(data.symptomData)}
+              </div>
+              <div className={`${assessmentStyles.dataRow} ${assessmentStyles.dataRowWide}`}>
+                <span className={assessmentStyles.dataLabel}>
+                  Selbst beschriebene Beschwerden
+                </span>
+                {renderSymptomList(data.textSymptomData, true)}
+              </div>
+            </div>
+          </section>
+
+          <section className={assessmentStyles.dataSection}>
+            <p className={assessmentStyles.dataSectionTitle}>Zusatzangaben</p>
+            <div className={assessmentStyles.dataGrid}>
+              {renderDataRow(
+                "Allergien",
+                data?.allergyData?.allergies,
+                true,
+              )}
+              {renderDataRow(
+                "Vorerkrankungen",
+                data?.conditionsData?.conditions,
+                true,
+              )}
+              {renderDataRow(
+                "Größe",
+                data?.additionalInfoData?.[0]?.height
+                  ? `${data.additionalInfoData[0].height} cm`
+                  : "",
+              )}
+              {renderDataRow(
+                "Gewicht",
+                data?.additionalInfoData?.[0]?.weight
+                  ? `${data.additionalInfoData[0].weight} kg`
+                  : "",
+              )}
+              {renderDataRow(
+                "Temperatur",
+                data?.additionalInfoData?.[0]?.temperature
+                  ? `${data.additionalInfoData[0].temperature} °C`
+                  : "",
+              )}
+              {renderDataRow(
+                "Dauer der Symptome",
+                data?.additionalInfoData?.[0]?.duration
+                  ? `${data.additionalInfoData[0].duration} Tage`
+                  : "",
+              )}
+              {renderDataRow("Symptome werden schlimmer", worsening)}
+              {renderDataRow(
+                "Zigaretten pro Tag",
+                data?.additionalInfoData?.[0]?.cigarettes_per_day,
+              )}
+              {renderDataRow(
+                "Alkoholische Getränke pro Woche",
+                data?.additionalInfoData?.[0]?.alcohol_per_week,
+              )}
+              {renderDataRow(
+                "Sonstige Angaben",
+                data?.additionalInfoData?.[0]?.other_info,
+                true,
+              )}
+              <div className={`${assessmentStyles.dataRow} ${assessmentStyles.dataRowWide}`}>
+                <span className={assessmentStyles.dataLabel}>Medikamente</span>
+                {renderMedicationList()}
+              </div>
+            </div>
+          </section>
+
+          {aiData?.[0] && (
+            <section className={assessmentStyles.dataSection}>
+              <p className={assessmentStyles.dataSectionTitle}>KI-Einschätzung</p>
+              <div className={assessmentStyles.dataGrid}>
+                {renderDataRow("Dringlichkeitsstufe", aiData[0].urgency_level)}
+                {renderDataRow("Handlungsempfehlung", aiData[0].advice_text, true)}
+                <div className={`${assessmentStyles.dataRow} ${assessmentStyles.dataRowWide}`}>
+                  <span className={assessmentStyles.dataLabel}>Vermutungen</span>
+                  <ul className={assessmentStyles.dataList}>
+                    {[1, 2, 3, 4, 5].map((index) => {
+                      const suspicion = aiData[0][`suspicion${index}`];
+                      const probability = aiData[0][`probability${index}`];
+                      if (!suspicion) return null;
+                      return (
+                        <li key={index} className={assessmentStyles.dataListItem}>
+                          <p className={assessmentStyles.dataListItemHeader}>
+                            Vermutung {index}
+                          </p>
+                          <div className={assessmentStyles.dataListItemGrid}>
+                            <div>
+                              <span className={assessmentStyles.dataLabel}>
+                                Beschreibung
+                              </span>
+                              <strong className={assessmentStyles.dataValue}>
+                                {suspicion}
+                              </strong>
+                            </div>
+                            {probability != null && (
+                              <div>
+                                <span className={assessmentStyles.dataLabel}>
+                                  Wahrscheinlichkeit
+                                </span>
+                                <strong className={assessmentStyles.dataValue}>
+                                  {probability}%
+                                </strong>
+                              </div>
+                            )}
+                          </div>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              </div>
+            </section>
+          )}
+
+          <div className={assessmentStyles.dataActions}>
+            <button
+              type="button"
+              className={assessmentStyles.secondaryButton}
+              onClick={() => downloadPdf(buildExportData())}
+            >
+              PDF herunterladen
+            </button>
+
+            <button
+              type="button"
+              className={assessmentStyles.secondaryButton}
+              onClick={() => downloadTxt(buildExportData())}
+            >
+              TXT herunterladen
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }

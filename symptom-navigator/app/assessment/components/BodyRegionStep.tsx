@@ -155,7 +155,7 @@ export function BodyRegionStep({
         </p>
 
         <svg
-          viewBox="900 500 1700 3950"
+          viewBox="150 500 3230 3950"
           className={assessmentStyles.bodyMap}
           role="img"
           aria-label="Interaktive Körperkarte zur Auswahl der Körperregion"
