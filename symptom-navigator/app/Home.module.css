@@ -549,17 +549,20 @@
   }
 
   .sosButton {
-    width: 64px;
-    height: 64px;
-    right: 14px;
-    bottom: calc(86px + env(safe-area-inset-bottom));
+    width: 52px;
+    height: 52px;
+    right: max(10px, env(safe-area-inset-right));
+    bottom: calc(34px + env(safe-area-inset-bottom));
+    font-size: 0.95rem;
+    box-shadow: 0 8px 18px rgba(255, 65, 65, 0.28);
   }
 
   .tutorialButton {
-    width: 50px;
-    height: 50px;
-    left: 14px;
-    bottom: calc(94px + env(safe-area-inset-bottom));
+    width: 44px;
+    height: 44px;
+    left: max(10px, env(safe-area-inset-left));
+    bottom: calc(38px + env(safe-area-inset-bottom));
+    box-shadow: 0 8px 18px rgba(28, 134, 255, 0.22);
   }
 
   .footer {
