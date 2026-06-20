@@ -67,10 +67,10 @@ export function getSubRegions(
       return ["Oberschenkel", "Knie", "Unterschenkel", "Fuß"];
 
     case "Psyche":
-      return ["Psyche"];
+      return [];
 
     case "Allgemein (ganzer Körper)":
-      return ["Keine bestimmte Region / mehrere Stellen"];
+      return [];
 
     /*
       Falls keine passende Region gefunden wird,
