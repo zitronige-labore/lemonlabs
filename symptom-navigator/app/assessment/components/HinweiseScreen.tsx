@@ -38,7 +38,7 @@ export function HinweiseScreen({
         <div className={homeStyles.kopfbox}>
           {/* Kopfbereich mit Titel und Logo */}
           <div className={homeStyles.header}>
-            <h1 className={homeStyles.title}>MediGuide</h1>
+            <h1 className={homeStyles.title}>Symptometer</h1>
 
             <h2 className={homeStyles.subtitle}>
               <span>by lemonlabs</span>

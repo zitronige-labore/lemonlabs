@@ -1,6 +1,6 @@
 {
-  "name": "MediGuide",
-  "short_name": "MediGuide",
+  "name": "Symptometer",
+  "short_name": "Symptometer",
   "description": "Ersteinschätzung von Symptomen",
   "start_url": "/",
   "display": "standalone",
