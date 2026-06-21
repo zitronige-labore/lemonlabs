@@ -79,7 +79,8 @@ export type AdditionalData = {
 */
 export type MainRegion =
   | "Kopf & Gesicht"
-  | "Hals & Nacken"
+  | "Hals"
+  | "Nacken"
   | "Brust"
   | "Bauch"
   | "Rücken"

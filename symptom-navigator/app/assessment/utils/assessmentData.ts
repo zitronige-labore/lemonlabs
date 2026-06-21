@@ -45,8 +45,11 @@ export function getSubRegions(
     case "Kopf & Gesicht":
       return ["Kopf", "Augen", "Ohren", "Nase", "Mund / Zähne"];
 
-    case "Hals & Nacken":
-      return ["Hals", "Nacken"];
+    case "Hals":
+      return ["Hals"];
+
+    case "Nacken":
+      return ["Nacken"];
 
     case "Brust":
       return ["Brust links", "Brust rechts"];
