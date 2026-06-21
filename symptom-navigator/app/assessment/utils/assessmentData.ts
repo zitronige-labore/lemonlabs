@@ -52,7 +52,7 @@ export function getSubRegions(
       return ["Brust links", "Brust rechts"];
 
     case "Bauch":
-      return ["Oberbauch", "Unterbauch"];
+      return ["OberbauchRechts", "UnterbauchRechts", "OberbauchLinks", "UnterbauchLinks"];
 
     case "Rücken":
       return ["Rücken oben", "Rücken unten"];
@@ -60,11 +60,21 @@ export function getSubRegions(
     case "Becken & Unterleib":
       return ["Becken", "Genitalbereich"];
 
-    case "Arme & Hände":
-      return ["Schulter", "Oberarm", "Unterarm", "Hand"];
+    case "Arme & Hände links":
+      return ["SchulterLinks", "OberarmLinks", "UnterarmLinks",
+        "HandLinks"];
 
-    case "Beine & Füße":
-      return ["Oberschenkel", "Knie", "Unterschenkel", "Fuß"];
+    case "Arme & Hände rechts":
+      return ["SchulterRechts", "OberarmRechts", "UnterarmRechts",
+        "HandRechts"];
+
+    case "Beine & Füße links":
+      return ["OberschenkelLinks", "KnieLinks", "UnterschenkelLinks", 
+        "FußLinks"];
+
+    case "Beine & Füße rechts":
+      return ["OberschenkelRechts", "KnieRechts", "UnterschenkelRechts", 
+        "FußRechts"];
 
     case "Psyche":
       return [];
