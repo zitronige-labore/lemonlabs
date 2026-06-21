@@ -49,7 +49,7 @@ export function OtherStep({ onBack, onManageData }: OtherStepProps) {
               <button
                 type="button"
                 className={homeStyles.secondaryButton}
-                onClick={() => setSelectedConcern("daten")}
+                onClick={onManageData}
               >
                 Gespeicherte Daten verwalten
               </button>
@@ -100,21 +100,6 @@ export function OtherStep({ onBack, onManageData }: OtherStepProps) {
             </section>
           )}
 
-          {selectedConcern === "daten" && (
-            <section className={homeStyles.actionStack}>
-              <h2 className={homeStyles.sectionTitle}>
-                Gespeicherte Daten verwalten
-              </h2>
-
-              <button
-                type="button"
-                className={homeStyles.secondaryButton}
-                onClick={onManageData}
-              >
-                Gespeicherte Daten ansehen und löschen
-              </button>
-            </section>
-          )}
         </div>
 
         <div className={homeStyles.buttonBox}>
