@@ -95,6 +95,59 @@ export function getSubRegions(
 }
 
 
+export function getMainRegionForSubRegion(sub: SubRegion): MainRegion[] {
+  switch (sub) {
+    case "Kopf":
+    case "Augen":
+    case "Ohren":
+    case "Nase":
+    case "Mund / Zähne":
+      return ["Kopf & Gesicht"];
+    case "Hals":
+      return ["Hals"];
+    case "Nacken":
+      return ["Nacken"];
+    case "Brust links":
+      return ["Brust"];
+    case "Brust rechts":
+      return ["Brust"];
+    case "OberbauchLinks":
+    case "UnterbauchLinks":
+    case "OberbauchRechts":
+    case "UnterbauchRechts":
+      return ["Bauch"];
+    case "Rücken oben":
+    case "Rücken unten":
+      return ["Rücken"];
+    case "Becken":
+    case "Genitalbereich":
+      return ["Becken & Unterleib"];
+    case "SchulterLinks":
+    case "OberarmLinks":
+    case "UnterarmLinks":
+    case "HandLinks":
+      return ["Arme & Hände links"];
+    case "SchulterRechts":
+    case "OberarmRechts":
+    case "UnterarmRechts":
+    case "HandRechts":
+      return ["Arme & Hände rechts"];
+    case "OberschenkelLinks":
+    case "KnieLinks":
+    case "UnterschenkelLinks":
+    case "FußLinks":
+      return ["Beine & Füße links"];
+    case "OberschenkelRechts":
+    case "KnieRechts":
+    case "UnterschenkelRechts":
+    case "FußRechts":
+      return ["Beine & Füße rechts"];
+    default:
+      return [];
+  }
+}
+
+
 /**
  * Converts coded DB values into human-readable strings for display.
  * @param data - object in the format of getUserDataFromDB() (non-null)
