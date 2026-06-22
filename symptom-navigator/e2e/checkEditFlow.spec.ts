@@ -35,8 +35,17 @@ test("Eingegebene Daten auf CheckInfo-Seite überprüfen und bearbeiten", async 
   await page.getByRole("button", { name: "nein" }).click();
 
   // 4. Zusatzangaben ausfüllen
-  await page.getByLabel("Nehmen Sie aktuell Medikamente ein?").fill("Aspirin");
-  await page.getByLabel("Sind Allergien bekannt?").fill("Katzen");
+  // check medication and fill in
+  await page.getByLabel("Einnahme von Medikamenten").check();
+  await page.getByPlaceholder("z. B. Ibuprofen").fill("Aspirin");
+  await page.getByPlaceholder("z. B. 400").fill("100");
+  await page.getByLabel("* Einheit").selectOption("mg");
+  await page.getByPlaceholder("z. B. 1").fill("1");
+  await page.getByLabel("* Zeitraum").selectOption("Tag");
+
+  // check allergies and fill in
+  await page.getByLabel("Es liegen Allergien vor").check();
+  await page.getByPlaceholder("Allergien z.B. Pollen, Penicillin...").fill("Katzen");
   await page.getByRole("button", { name: "weiter" }).click();
 
   // 5. Auf der Check-Info-Seite "Daten zur Überprüfung anzeigen" klicken
@@ -53,7 +62,7 @@ test("Eingegebene Daten auf CheckInfo-Seite überprüfen und bearbeiten", async 
   // 8. Zusatzangaben bearbeiten
   await page.getByRole("button", { name: "Daten zur Überprüfung anzeigen" }).click();
   await page.getByRole("button", { name: "Zusatzangaben bearbeiten" }).click();
-  await page.getByLabel("Sind Allergien bekannt?").fill("Hunde");
+  await page.getByPlaceholder("Allergien z.B. Pollen, Penicillin...").fill("Hunde");
   await page.getByRole("button", { name: "zurück zur Überprüfung" }).click();
 
   // 9. Prüfen, ob die aktualisierten Daten angezeigt werden

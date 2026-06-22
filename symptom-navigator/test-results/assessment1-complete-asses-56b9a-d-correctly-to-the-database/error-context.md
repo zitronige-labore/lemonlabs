@@ -12,39 +12,80 @@
 # Error details
 
 ```
-Error: expect(locator).toBeVisible() failed
+Test timeout of 90000ms exceeded.
+```
 
-Locator: getByText(/Dringlichkeitsstufe/)
-Expected: visible
-Timeout: 60000ms
-Error: element(s) not found
-
+```
+Error: locator.fill: Test timeout of 90000ms exceeded.
 Call log:
-  - Expect "toBeVisible" with timeout 60000ms
-  - waiting for getByText(/Dringlichkeitsstufe/)
+  - waiting for getByLabel('Nehmen Sie aktuell Medikamente ein?')
 
 ```
 
+# Page snapshot
+
 ```yaml
-- main:
-  - heading "Ersteinschätzung" [level=1]
-  - paragraph: Die KI Auswertung ist fehlgeschlagen
-  - button "KI-Begründung anzeigen"
-  - paragraph: "Ihr persönlicher Zugangscode:"
-  - paragraph: 3357e883-cdb6-440c-89a1-24c175306fca
-  - button "Kopieren"
-  - paragraph: Mit diesem Code können Sie Ihre Daten später wieder abrufen.
-  - paragraph: Ihre Angaben wurden erfasst.
-  - button "Gespeicherte Daten anzeigen"
-  - separator
-  - button "Zur Startseite"
-  - button "Kontakt"
-  - button "Datenschutz"
-  - button "Support"
-  - button "Impressum"
-  - button "Tutorial öffnen":
-    - img
-- alert
+- generic [active] [ref=e1]:
+  - main [ref=e2]:
+    - generic [ref=e3]:
+      - heading "Ersteinschätzung" [level=1] [ref=e4]
+      - paragraph [ref=e8]: "Optional: Diese Angaben können helfen, die Beschwerden besser einzuordnen. Sie können diesen Schritt auch überspringen."
+      - group "Zusatzangaben" [ref=e9]:
+        - generic [ref=e10]: Zusatzangaben
+        - generic [ref=e11] [cursor=pointer]:
+          - checkbox "Einnahme von Medikamenten" [ref=e12]
+          - text: Einnahme von Medikamenten
+        - generic [ref=e13] [cursor=pointer]:
+          - checkbox "Es liegen Vorerkrankungen vor" [ref=e14]
+          - text: Es liegen Vorerkrankungen vor
+        - generic [ref=e15] [cursor=pointer]:
+          - checkbox "Zigaretten" [ref=e16]
+          - text: Zigaretten
+        - generic [ref=e17] [cursor=pointer]:
+          - checkbox "Alkohol" [ref=e18]
+          - text: Alkohol
+        - generic [ref=e19] [cursor=pointer]:
+          - checkbox "Es liegen Allergien vor" [ref=e20]
+          - text: Es liegen Allergien vor
+        - generic [ref=e21]:
+          - text: Gewicht in kg
+          - spinbutton "Gewicht in kg" [ref=e22]
+        - generic [ref=e23]:
+          - text: Größe in cm
+          - spinbutton "Größe in cm" [ref=e24]
+        - generic [ref=e25]:
+          - text: Stillzeit
+          - combobox "Stillzeit" [ref=e26]:
+            - option "Bitte auswählen" [selected]
+            - option "Ja"
+            - option "Nein"
+            - option "Keine Angabe"
+        - generic [ref=e27]:
+          - text: Haben Sie Temperatur gemessen?
+          - spinbutton "Haben Sie Temperatur gemessen?" [ref=e28]
+        - generic [ref=e29]:
+          - text: Seit wie vielen Tagen bestehen die Beschwerden?
+          - spinbutton "Seit wie vielen Tagen bestehen die Beschwerden?" [ref=e30]
+        - generic [ref=e31]:
+          - text: Werden die Beschwerden stärker?
+          - combobox "Werden die Beschwerden stärker?" [ref=e32]:
+            - option "Bitte auswählen" [selected]
+            - option "Ja"
+            - option "Nein"
+            - option "Unklar"
+        - generic [ref=e33]:
+          - text: Gibt es weitere wichtige Informationen?
+          - textbox "Gibt es weitere wichtige Informationen?" [ref=e34]:
+            - /placeholder: z. B. Kontakt zu erkrankten Personen, kürzliche Reise, Unfall...
+      - button "weiter" [ref=e36] [cursor=pointer]
+    - generic [ref=e37]:
+      - button "Kontakt" [ref=e38] [cursor=pointer]
+      - button "Datenschutz" [ref=e39] [cursor=pointer]
+      - button "Support" [ref=e40] [cursor=pointer]
+      - button "Impressum" [ref=e41] [cursor=pointer]
+    - button "Tutorial öffnen" [ref=e42] [cursor=pointer]:
+      - img [ref=e43]
+  - alert [ref=e45]
 ```
 
 # Test source
@@ -64,115 +105,112 @@ Call log:
   12  |   await resetDb();
   13  | });
   14  | 
-  15  | test('complete assessment flow is saved correctly to the database', async ({ page }) => {
+  15  | test("complete assessment flow is saved correctly to the database", async ({ page }) => {
   16  | 
-  17  |   // browser log
-  18  |   page.on("console", (msg) => console.log("BROWSER LOG:", msg.text()));
-  19  | 
-  20  |   // navigate to start page
-  21  |   await page.goto("/");
-  22  |   await page.getByRole("button", { name: "Ersteinschätzung von Symptomen" }).click();
-  23  | 
-  24  |   // confirm disclaimer checkbox and continue
-  25  |   await page.getByLabel("Ich habe die Hinweise gelesen und verstanden.").check();
-  26  |   await page.getByRole("button", { name: "Weiter zur Ersteinschätzung" }).click();
-  27  | 
-  28  |   // select "none of the above" for red flags and continue
-  29  |   await page.getByLabel("Keines davon trifft zu").check();
-  30  |   await page.getByRole("button", { name: "Weiter" }).click();
+  17  |   // navigate to start page
+  18  |   await page.goto("/");
+  19  |   await page.getByRole("button", { name: "Ersteinschätzung von Symptomen" }).click();
+  20  | 
+  21  |   // confirm disclaimer checkbox and continue
+  22  |   await page.getByLabel("Ich habe die Hinweise gelesen und verstanden.").check();
+  23  |   await page.getByRole("button", { name: "Weiter zur Ersteinschätzung" }).click();
+  24  | 
+  25  |   // select "none of the above" for red flags and continue
+  26  |   await page.getByLabel("Keines davon trifft zu").check();
+  27  |   await page.getByRole("button", { name: "Weiter" }).click();
+  28  | 
+  29  |   // fill in age
+  30  |   await page.getByPlaceholder("Zum Beispiel: 25").fill("30");
   31  | 
-  32  |   // fill in age
-  33  |   await page.getByPlaceholder("Zum Beispiel: 25").fill("30");
+  32  |   // select gender — no name attribute on select, use nth
+  33  |   await page.locator('select').nth(0).selectOption("Weiblich");
   34  | 
-  35  |   // select gender — no name attribute on select, use nth
-  36  |   await page.locator('select').nth(0).selectOption("Weiblich");
+  35  |   // pregnancy field appears conditionally after selecting "Weiblich"
+  36  |   await page.locator('select').nth(1).selectOption("Nein");
   37  | 
-  38  |   // pregnancy field appears conditionally after selecting "Weiblich"
-  39  |   await page.locator('select').nth(1).selectOption("Nein");
-  40  | 
-  41  |   await page.getByRole("button", { name: "Weiter zur Körperregion" }).click();
+  38  |   await page.getByRole("button", { name: "Weiter zur Körperregion" }).click();
+  39  | 
+  40  |   // click "Kopf & Gesicht" region on the SVG body map via aria-label
+  41  |   await page.getByRole("button", { name: "Kopf & Gesicht" }).click();
   42  | 
-  43  |   // click "Kopf & Gesicht" region on the SVG body map via aria-label
-  44  |   await page.getByRole("button", { name: "Kopf & Gesicht" }).click();
+  43  |   // select "Kopf" as sub-region from the buttons that appear below
+  44  |   await page.getByRole("button", { name: "Kopf", exact: true }).click();
   45  | 
-  46  |   // select "Kopf" as sub-region from the buttons that appear below
-  47  |   await page.getByRole("button", { name: "Kopf", exact: true }).click();
+  46  |   // continue to symptom categories
+  47  |   await page.getByRole("button", { name: "Weiter" }).last().click();
   48  | 
-  49  |   // continue to symptom categories
-  50  |   await page.getByRole("button", { name: "Weiter" }).last().click();
+  49  |   // select symptom category
+  50  |   await page.getByRole("button", { name: /Spannung & Druck im Kopf/ }).click();
   51  | 
-  52  |   // select symptom category
-  53  |   await page.getByRole("button", { name: /Spannung & Druck im Kopf/ }).click();
+  52  |   // select symptom via checkbox label — symptoms are checkboxes not buttons
+  53  |   await page.getByLabel("Dumpfer, drückender Schmerz (beidseitig)").check();
   54  | 
-  55  |   // select symptom via checkbox label — symptoms are checkboxes not buttons
-  56  |   await page.getByLabel("Dumpfer, drückender Schmerz (beidseitig)").check();
+  55  |   // fill in symptom duration and pain intensity
+  56  |   await page.locator('input[type="range"]').fill("7");
   57  | 
-  58  |   // fill in symptom duration and pain intensity
-  59  |   await page.locator('input[type="range"]').fill("7");
+  58  |   // select symptom from list
+  59  |   await page.getByLabel("Schwerer Druck auf dem gesamten Schädel").check();
   60  | 
-  61  |     // select symptom from list
-  62  |   await page.getByLabel("Schwerer Druck auf dem gesamten Schädel").check();
+  61  |   // continue
+  62  |   await page.getByRole("button", { name: "Weiter" }).click();
   63  | 
-  64  |   // continue
-  65  |   await page.getByRole("button", { name: "Weiter" }).click();
+  64  |   // do not add more symptoms
+  65  |   await page.getByRole("button", { name: "nein" }).click();
   66  | 
-  67  |   // do not add more symptoms
-  68  |   await page.getByRole("button", { name: "nein" }).click();
-  69  | 
+  67  | 
+  68  |   // fill in optional medication field
+> 69  |   await page.getByLabel("Nehmen Sie aktuell Medikamente ein?").fill("Ibuprofen");
+      |                                                                ^ Error: locator.fill: Test timeout of 90000ms exceeded.
   70  | 
-  71  |   // fill in optional medication field
-  72  |   await page.getByLabel("Nehmen Sie aktuell Medikamente ein?").fill("Ibuprofen");
+  71  |   // fill in allergies field
+  72  |   await page.getByLabel("Sind Allergien bekannt?").fill("Pollen");
   73  | 
-  74  |   // fill in allergies field
-  75  |   await page.getByLabel("Sind Allergien bekannt?").fill("Pollen");
+  74  |   // select condition via checkbox
+  75  |   await page.getByLabel("Bluthochdruck").check();
   76  | 
-  77  |   // select condition via checkbox
-  78  |   await page.getByLabel("Bluthochdruck").check();
+  77  |   // continue to check info screen
+  78  |   await page.getByRole("button", { name: "weiter" }).click();
   79  | 
-  80  |   // continue to check info screen
-  81  |   await page.getByRole("button", { name: "weiter" }).click();
+  80  |   // submit assessment — button is type="submit"
+  81  |   await page.getByRole("button", { name: "Einschätzung abschließen" }).click();
   82  | 
-  83  |   // submit assessment — button is type="submit"
-  84  |   await page.getByRole("button", { name: "Einschätzung abschließen" }).click();
-  85  | 
-  86  |   // wait for AI result (generous timeout due to model response time)
-  87  |   await expect(
-  88  |     page.getByText(/Dringlichkeitsstufe/)
-> 89  |   ).toBeVisible({ timeout: 60_000 });
-      |     ^ Error: expect(locator).toBeVisible() failed
-  90  | 
-  91  |   // assert case was written to the database
-  92  |   const dbCase = await getCaseFromDb();
-  93  |   expect(dbCase).not.toBeNull();
-  94  |   expect(dbCase.age).toBe(30);
-  95  |   expect(dbCase.sex).toBe("w");
-  96  |   expect(dbCase.pregnancy).toBe(false);
-  97  | 
-  98  |   // assert additional info was saved
-  99  |   const additionalInfo = await getAdditionalInfoFromDb(dbCase.case_id);
-  100 |   expect(additionalInfo).not.toBeNull();
-  101 | 
-  102 |   // assert at least one symptom was saved
-  103 |   const symptoms = await getSymptomsFromDb(dbCase.case_id);
-  104 |   expect(symptoms.length).toBeGreaterThan(0);
-  105 | 
-  106 |   // assert allergies were saved
-  107 | const allergies = await getDetailsNoCertainCountFromDb(dbCase.case_id, "allergy");
-  108 | expect(allergies).toContain("Pollen");
-  109 | 
-  110 | // assert medication was saved
-  111 | const medication = await getDetailsNoCertainCountFromDb(dbCase.case_id, "medication");
-  112 | expect(medication).toContain("Ibuprofen");
-  113 | 
-  114 | // assert conditions were saved
-  115 | const conditions = await getDetailsNoCertainCountFromDb(dbCase.case_id, "condition");
-  116 | expect(conditions).toContain("Bluthochdruck");
-  117 | 
-  118 |   // assert AI recommendation was saved with a valid urgency level
-  119 |   const recommendation = await getRecommendationFromDb(dbCase.case_id);
-  120 |   expect(recommendation).not.toBeNull();
-  121 |   expect(recommendation.urgency_level).toBeGreaterThanOrEqual(1);
-  122 |   expect(recommendation.urgency_level).toBeLessThanOrEqual(5);
-  123 |   expect(recommendation.advice_text).toBeTruthy();
-  124 | });
+  83  |   // wait for AI result (generous timeout due to model response time)
+  84  |   await expect(
+  85  |     page.getByText(/Dringlichkeitsstufe/)
+  86  |   ).toBeVisible({ timeout: 60_000 });
+  87  | 
+  88  |   // assert case was written to the database
+  89  |   const dbCase = await getCaseFromDb();
+  90  |   expect(dbCase).not.toBeNull();
+  91  |   expect(dbCase.age).toBe(30);
+  92  |   expect(dbCase.sex).toBe("w");
+  93  |   expect(dbCase.pregnancy).toBe(false);
+  94  | 
+  95  |   // assert additional info was saved
+  96  |   const additionalInfo = await getAdditionalInfoFromDb(dbCase.case_id);
+  97  |   expect(additionalInfo).not.toBeNull();
+  98  | 
+  99  |   // assert at least one symptom was saved
+  100 |   const symptoms = await getSymptomsFromDb(dbCase.case_id);
+  101 |   expect(symptoms.length).toBeGreaterThan(0);
+  102 | 
+  103 |   // assert allergies were saved
+  104 |   const allergies = await getDetailsNoCertainCountFromDb(dbCase.case_id, "allergy");
+  105 |   expect(allergies).toContain("Pollen");
+  106 | 
+  107 |   // assert medication was saved
+  108 |   const medication = await getDetailsNoCertainCountFromDb(dbCase.case_id, "medication");
+  109 |   expect(medication).toContain("Ibuprofen");
+  110 | 
+  111 |   // assert conditions were saved
+  112 |   const conditions = await getDetailsNoCertainCountFromDb(dbCase.case_id, "condition");
+  113 |   expect(conditions).toContain("Bluthochdruck");
+  114 | 
+  115 |   // assert AI recommendation was saved with a valid urgency level
+  116 |   const recommendation = await getRecommendationFromDb(dbCase.case_id);
+  117 |   expect(recommendation).not.toBeNull();
+  118 |   expect(recommendation.urgency_level).toBeGreaterThanOrEqual(1);
+  119 |   expect(recommendation.urgency_level).toBeLessThanOrEqual(5);
+  120 |   expect(recommendation.advice_text).toBeTruthy();
+  121 | });
 ```

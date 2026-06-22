@@ -5,7 +5,8 @@ import {
   getAdditionalInfoFromDb,
   getSymptomsFromDb,
   getRecommendationFromDb,
-  getDetailsNoCertainCountFromDb
+  getDetailsNoCertainCountFromDb,
+  getMedicationFromDb
 } from './helpers/dbAssert';
 
 test.beforeEach(async () => {
@@ -61,7 +62,9 @@ test("männlicher Patient mit Nackenbeschwerden wird korrekt gespeichert", async
   await page.getByRole("button", { name: "nein" }).click();
 
   // fill in allergies only
-  await page.getByLabel("Sind Allergien bekannt?").fill("Hausstaub");
+  // check allergies and fill in
+  await page.getByLabel("Es liegen Allergien vor").check();
+  await page.getByPlaceholder("Allergien z.B. Pollen, Penicillin...").fill("Hausstaub");
 
   // leave medication and conditions empty
 
@@ -96,7 +99,7 @@ test("männlicher Patient mit Nackenbeschwerden wird korrekt gespeichert", async
   expect(allergies).toContain("Hausstaub");
 
   // assert medication list is empty (no medication entered)
-  const medication = await getDetailsNoCertainCountFromDb(dbCase.case_id, "medication");
+  const medication = await getMedicationFromDb(dbCase.case_id);
   expect(medication.length).toBe(0);
 
   // assert conditions list is empty
