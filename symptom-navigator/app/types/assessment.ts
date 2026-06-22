@@ -106,8 +106,11 @@ export type SubRegion =
   | "Mund / Zähne"
   | "Hals"
   | "Nacken"
+  | "Brust"
   | "Brust links"
   | "Brust rechts"
+  | "Oberbauch"
+  | "Unterbauch"
   | "OberbauchRechts"
   | "UnterbauchRechts"
   | "OberbauchLinks"
@@ -116,6 +119,10 @@ export type SubRegion =
   | "Rücken unten"
   | "Becken"
   | "Genitalbereich"
+  | "Schulter"
+  | "Oberarm"
+  | "Unterarm"
+  | "Hand"
   | "SchulterRechts"
   | "OberarmRechts"
   | "UnterarmRechts"
@@ -124,6 +131,10 @@ export type SubRegion =
   | "OberarmLinks"
   | "UnterarmLinks"
   | "HandLinks"
+  | "Oberschenkel"
+  | "Unterschenkel"
+  | "Knie"
+  | "Fuß"
   | "OberschenkelRechts"
   | "KnieRechts"
   | "UnterschenkelRechts"
@@ -136,6 +147,7 @@ export type SubRegion =
   | "Keine bestimmte Region / mehrere Stellen";
 
 
+  
 /*
   Enthält alle möglichen Warnzeichen,
   die auf einen medizinischen Notfall

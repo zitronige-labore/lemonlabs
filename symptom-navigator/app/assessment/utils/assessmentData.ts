@@ -148,6 +148,48 @@ export function getMainRegionForSubRegion(sub: SubRegion): MainRegion[] {
 }
 
 
+export function getWholeFromSides(sub: SubRegion): SubRegion {
+  switch (sub) {
+    case "Brust rechts":
+    case "Brust links":
+      return "Brust";
+    case "OberbauchRechts":
+    case "OberbauchLinks":
+        return "Oberbauch";
+    case "UnterbauchLinks":
+    case "UnterbauchRechts":
+      return "Unterbauch";
+    case "SchulterLinks":
+    case "SchulterRechts":
+      return "Schulter";
+    case "OberarmLinks":
+    case "OberarmRechts":
+      return "Oberarm";
+    case "UnterarmLinks":
+    case "UnterarmRechts":
+      return "Unterarm";
+    case "HandLinks":
+    case "HandRechts":
+      return "Hand";
+    case "OberschenkelLinks":
+    case "OberschenkelRechts":
+      return "Oberschenkel";
+    case "KnieLinks":
+    case "KnieRechts":
+      return "Knie";
+    case "UnterschenkelLinks":
+    case "UnterschenkelRechts":
+      return "Unterschenkel";
+    case "FußLinks":
+    case "FußRechts":
+      return "Fuß";
+    default:
+      return sub;
+    
+  }
+}
+
+
 /**
  * Converts coded DB values into human-readable strings for display.
  * @param data - object in the format of getUserDataFromDB() (non-null)

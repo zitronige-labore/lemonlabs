@@ -24,7 +24,7 @@ import type { Step, MainRegion, SubRegion } from "../../types/assessment";
   Import der Hilfsfunktion,
   die passende Unterregionen zu einer Hauptregion liefert.
 */
-import { getSubRegions, getMainRegionForSubRegion } from "../utils/assessmentData";
+import { getSubRegions, getMainRegionForSubRegion, getWholeFromSides } from "../utils/assessmentData";
 
 type BodyRegionStepProps = {
   selectedMainRegion: MainRegion | null;
@@ -411,8 +411,8 @@ export function BodyRegionStep({
 
           <SubRegionPath
             region="SchulterRechts"
-            d="M1418.142,1693.287L1422.936,1652.782C1422.936,1652.782 1529.765,1478.608 1473.484,1278.992C1472.383,1275.09 1411.995,1301.363 1358.891,1327.443C1305.786,1353.524 1258.486,1509.756 1258.486,1509.756L1418.142,1693.287Z"
-          />
+            transform="matrix(-1,0,0,1,4212.663062,4.570186)"
+            d="M2156.085,1693.287L2160.879,1652.782C2160.879,1652.782 2267.708,1478.608 2211.427,1278.992C2210.326,1275.09 2149.938,1301.363 2096.834,1327.443C2043.729,1353.524 1996.429,1509.756 1996.429,1509.756L2156.085,1693.287Z"/>
 
           <SubRegionPath
             region="OberarmRechts"
@@ -520,7 +520,7 @@ export function BodyRegionStep({
         className={assessmentStyles.primaryButton}
         onClick={() => {
           if (selectedSubRegion) {
-            setStep(selectedSubRegion);
+            setStep(getWholeFromSides(selectedSubRegion));
           }
         }}
         disabled={!selectedMainRegion || !selectedSubRegion}
