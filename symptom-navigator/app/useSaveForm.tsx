@@ -1,9 +1,10 @@
 "use client"
 
+import { AdditionalData, BasisData } from "./types/assessment";
 import { saveFormData} from "./actions"; // form data is being importet here so it will be called in page when function is called
 import { useCallback } from "react";
 
-export function useSaveForm(basisData: any, additionalData:any, redFlags: any, selectedMainRegion: any, selectedSubRegion: any, selectedSymptoms: string[], symptomText: string[], ) {
+export function useSaveForm(basisData: BasisData, additionalData: AdditionalData, redFlags: any, selectedMainRegion: any, selectedSubRegion: any, selectedSymptoms: string[], symptomText: string[], ) {
 
     // actual function to be used in components
     const handleSaveForm = useCallback(
@@ -18,16 +19,18 @@ export function useSaveForm(basisData: any, additionalData:any, redFlags: any, s
         formData.set("symptomText", symptomText.join("|||"));
         formData.set("selectedMainRegion", selectedMainRegion);
         formData.set("selectedSubRegion", selectedSubRegion);
-        formData.set("medication", additionalData.medication);
+        formData.set("medication", JSON.stringify(additionalData.medication ?? []));
         formData.set("weight", additionalData.weight);
         formData.set("height", additionalData.height);
         formData.set("breastfeeding", additionalData.breastfeeding);
-        formData.set("conditions", additionalData.conditions);
-        formData.set("allergies", additionalData.allergies);
+        formData.set("conditions", additionalData.conditions.join(","));
+        formData.set("allergies", additionalData.allergies.join(","));
         formData.set("temperature", additionalData.temperature);
         formData.set("duration", additionalData.duration);
         formData.set("worsening", additionalData.worsening);
         formData.set("extraInfo", additionalData.extraInfo);
+        formData.set("alcoholPerWeek", additionalData.alcoholPerWeek);
+        formData.set("cigarettesPerDay", additionalData.cigarettesPerDay);
         formData.set("redFlags", redFlags); 
         const caseId = await saveFormData(formData); // call the server action to save the form data in the db and set the cookie
         return caseId;    

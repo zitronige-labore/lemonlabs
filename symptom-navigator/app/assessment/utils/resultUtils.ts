@@ -39,6 +39,11 @@ export function buildExportData(
   selectedSymptoms: string[],
   aiAnswer: any
 ): AssessmentExportData {
+  const medicationValue = additionalData.medication?.map(
+    (medication) =>
+      `Medikation: ${medication.name} ${medication.dose} ${medication.unit}, Einnahmen pro ${medication.frequencyUnit}: ${medication.frequency}, Seit wann: ${medication.since}`,
+  );
+
   return {
     alter: basisData.age || "Keine Angabe",
     geschlecht: basisData.gender || "Keine Angabe",
@@ -49,9 +54,11 @@ export function buildExportData(
     gewicht: additionalData.weight ? `${additionalData.weight} kg` : "Keine Angabe",
     temperatur: additionalData.temperature || "Keine Angabe",
     dauer: additionalData.duration || "Keine Angabe",
-    medikation: additionalData.medication || "Keine Angabe",
-    allergien: additionalData.allergies || "Keine Angabe",
-    vorerkrankungen: additionalData.conditions || "Keine Angabe",
+    medikation: medicationValue?.join(",") || "Keine Angabe",
+    allergien: additionalData.allergies?.join(",") || "Keine Angabe",
+    vorerkrankungen: additionalData.conditions?.join(",") || "Keine Angabe",
+    alkoholkonsum: additionalData.alcoholPerWeek || "Keine Angabe",
+    zigaretten: additionalData.cigarettesPerDay || "Keine Angabe",
     symptome: selectedSymptoms.length > 0
       ? selectedSymptoms.map(parseSymptomName).join(", ")
       : "",

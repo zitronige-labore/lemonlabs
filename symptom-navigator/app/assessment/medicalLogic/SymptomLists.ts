@@ -19,6 +19,50 @@ export function getSymptomList() {
     */
     const symptomList: SymptomSelectionList = 
     [
+    {step: "psycheEnergie",
+    symptoms:
+        [
+        { symptomName: "Anhaltende Erschöpfung", schmerzen: false, symptomValue: "Anhaltende Erschöpfung: Gefühl von extremer Müdigkeit, die auch durch Schlaf nicht gebessert wird.",  snomedCode: "84229001" },
+        { symptomName: "Antriebslosigkeit", schmerzen: false, symptomValue: "Antriebslosigkeit: Massive Überwindung nötig, um einfachste Dinge (Essen, Aufstehen) zu tun.", snomedCode: "26413003" },
+        { symptomName: "Innere Erstarrung", schmerzen: false, symptomValue: "Innere Erstarrung: Gefühl, emotional leer oder wie versteinert zu sein; keine Gefühlsregungen mehr.", snomedCode: "6140007"},
+        ]
+    },
+     {step: "psycheStimmung",
+    symptoms:
+        [
+        { symptomName: "Niedergeschlagenheit", schmerzen: false, symptomValue: "Niedergeschlagenheit: Tiefes Gefühl von Traurigkeit oder Sinnlosigkeit über einen langen Zeitraum.",  snomedCode: "87521009" },
+        { symptomName: "Interessenverlust", schmerzen: false, symptomValue: "Interessenverlust: Dinge, die früher wichtig waren, fühlen sich jetzt völlig gleichgültig an.", snomedCode: "28669007" },
+        { symptomName: "Starke Selbstzweifel", schmerzen: false, symptomValue: "Starke Selbstzweifel: Ständige Gedanken über eigene Fehler oder Minderwertigkeit.", snomedCode: "286649004"},
+        { symptomName: "Stimmungsschwankungen", schmerzen: false, symptomValue: "Stimmungsschwankungen: Häufige oder starke Wechsel der Stimmung innerhalb kurzer Zeit, ohne erkennbaren Auslöser, den Alltag beeinträchtigen.", snomedCode: "281129008"},
+
+    ]
+    },
+     {step: "psycheAngst",
+    symptoms:
+        [
+        { symptomName: "Plötzliches Herzrasen", schmerzen: false, symptomValue: "Plötzliches Herzrasen: Anfallartige Episoden mit Todesangst, Schweißausbrüchen und Atemnot.",  snomedCode: "3424008" },
+        { symptomName: "Innere Unruhe", schmerzen: false, symptomValue: "Innere Unruhe: Ein Gefühl von ständiger Getriebenheit oder unter Strom stehen.", snomedCode: "424196004" },
+        { symptomName: "Gedankenkreisen", schmerzen: false, symptomValue: "Gedankenkreisen: Unfähigkeit, das Grübeln über Probleme oder Sorgen zu stoppen.", snomedCode: "86110000"},
+        ]
+    },
+    {step: "psycheWahrnehmung",
+    symptoms:
+        [
+        { symptomName: "Konzentrationsmangel", schmerzen: false, symptomValue: "Konzentrationsmangel: Konzentrationsstörungen mit Schwierigkeiten, Gesprächen oder Tätigkeiten über längere Zeit zu folgen.",  snomedCode: "26329005" },
+        { symptomName: "Veränderte Wahrnehmung", schmerzen: false, symptomValue: "Veränderte Wahrnehmung: Gefühl, dass die Umwelt oder man selbst \"fremd\" oder \"unwirklich\" erscheint.", snomedCode: "1157237004" },
+        ]
+    },
+     {step: "psycheKrise",
+    symptoms:
+        [
+        { symptomName: "Selbstverletzungsgedanken", schmerzen: false, symptomValue: "Selbstverletzungsgedanken: Der wiederkehrende Drang, sich selbst körperlichen Schmerz oder Schaden zuzufügen.",  snomedCode: "102911000" },
+        { symptomName: "Suizidgedanken", schmerzen: false, symptomValue: "Suizidgedanken: Konkrete Pläne oder der Wunsch, das eigene Leben zu beenden.", snomedCode: "6471006" },
+        { symptomName: "Halluzinationen", schmerzen: false, symptomValue: "Halluzinationen: Hören von Stimmen oder Sehen von Dingen, die andere nicht wahrnehmen.", snomedCode: "7011001"},
+        { symptomName: "Akute Verwirrtheit", schmerzen: false, symptomValue: "Akute Verwirrtheit: Plötzliches Nicht-Wissen, wer man ist, welches Datum wir haben oder wo man sich befindet.", snomedCode: "130987000"},
+        { symptomName: "Fremdgefährdung", schmerzen: false, symptomValue: "Fremdgefährdung: Der Impuls oder das Vorhaben, anderen Menschen körperlich zu schaden.", snomedCode: "129707006"},
+    
+    ]
+    },
     {step: "aussenOhr",
     symptoms:
         [
@@ -447,14 +491,6 @@ export function getSymptomList() {
             { symptomName: "Plötzliche, große blaue Flecken ohne Stoßen", schmerzen: false, symptomValue: "Plötzliches Auftreten von großen, blauen Flecken am Körper, ohne dass man sich gestoßen oder verletzt hat", snomedCode: "247511005" }
         ]
         },
-        {step: "Psyche",
-        symptoms:
-        [
-            { symptomName: "Panikattacke", schmerzen: false, symptomValue: "Panikattacke: Plötzliche, intensive Angstgefühle, die zu körperlichen Symptomen wie Herzrasen, Schweißausbrüchen und Atemnot führen.", snomedCode: "19342001" },
-            { symptomName: "Halluzinationen", schmerzen: false, symptomValue: "Halluzinationen: Wahrnehmung von Dingen, die nicht existieren, oft begleitet von Verwirrtheit und Angst.", snomedCode: "23101004" },
-            { symptomName: "Stimmungsschwankungen", schmerzen: false, symptomValue: "Stimmungsschwankungen: Schwankende Stimmungen, die den Alltag beeinträchtigen", snomedCode: "18963009" }
-        ]
-        }
     ]
 
     return symptomList;

@@ -28,7 +28,7 @@ describe("Utility Logic Tests", () => {
         additionalInfoData: [{ worsening: true }],
       };
       const result = makeDBDataReadable(mockData);
-      expect(result).toEqual(["männlich", "ja", "nein", "ja"]);
+      expect(result).toEqual(["männlich", "ja", "nein", "ja", ["nicht angegeben"]]);
     });
   });
 

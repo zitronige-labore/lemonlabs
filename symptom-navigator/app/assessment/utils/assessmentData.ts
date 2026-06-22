@@ -67,10 +67,10 @@ export function getSubRegions(
       return ["Oberschenkel", "Knie", "Unterschenkel", "Fuß"];
 
     case "Psyche":
-      return ["Psyche"];
+      return [];
 
     case "Allgemein (ganzer Körper)":
-      return ["Keine bestimmte Region / mehrere Stellen"];
+      return [];
 
     /*
       Falls keine passende Region gefunden wird,
@@ -111,9 +111,23 @@ export function makeDBDataReadable(data: any)
     if (data?.caseData?.[0]?.lactation === true) stillzeit = "ja";
     else if (data?.caseData?.[0]?.lactation === false) stillzeit = "nein";
 
-    let worsening: string | undefined;
+    let worsening = "nicht angegeben";
     if (data?.additionalInfoData?.[0]?.worsening === true) worsening = "ja";
     else if (data?.additionalInfoData?.[0]?.worsening === false) worsening = "nein";
 
-    return [geschlecht, schwangerschaft, stillzeit, worsening]
+    let medication = ["nicht angegeben"];
+    const medList = data?.medicationData?.map((m: {
+        medication: string;
+        dose: number;
+        unit: string;
+        taken_since: Date;
+        frequency: number;
+        frequency_unit: string;
+    }) => `Name: ${m.medication}, Dosis: ${m.dose}${m.unit}, ${m.frequency} mal pro ${m.frequency_unit}`);
+
+    if (medList && medList.length > 0) {
+        medication = medList;
+    }
+
+    return [geschlecht, schwangerschaft, stillzeit, worsening, medication]
 }
