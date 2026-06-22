@@ -5,7 +5,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   padding: var(--space-3) var(--space-2);
 }
 
@@ -15,6 +15,8 @@
   background: var(--surface);
   padding: clamp(32px, 6vw, 48px);
   text-align: center;
+  margin-top: auto;
+  margin-bottom: auto;
 }
 
 .progressContainer {
@@ -382,7 +384,9 @@ textarea.input {
 
 .bodyMap {
   width: 100%;
-  height: 560px;
+  height: auto;
+  aspect-ratio: 3230 / 3950;
+  max-height: 560px;
   display: block;
 }
 
@@ -451,10 +455,209 @@ textarea.input {
   line-height: 1.65;
 }
 
+.dataPanel {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  color: var(--text-primary);
+  padding: clamp(18px, 4vw, 24px);
+  margin-bottom: var(--space-3);
+  text-align: left;
+  box-shadow: 0 10px 26px rgba(15, 35, 64, 0.06);
+}
+
+.dataPanel p {
+  margin: 0;
+}
+
+.dataHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding-bottom: var(--space-2);
+  margin-bottom: var(--space-2);
+  border-bottom: 1px solid var(--border);
+}
+
+.dataTitle {
+  color: var(--text-primary);
+  font-size: 1.08rem;
+  font-weight: 800;
+  line-height: 1.35;
+  margin: 0;
+}
+
+.dataMeta {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-weight: 650;
+  line-height: 1.45;
+  margin: 4px 0 0;
+}
+
+.dataSection {
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.dataSection:first-of-type {
+  padding-top: 0;
+}
+
+.dataSection:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.dataSectionTitle {
+  color: var(--primary);
+  font-size: 0.95rem;
+  font-weight: 800;
+  line-height: 1.35;
+  margin: 0 0 12px;
+  text-transform: uppercase;
+}
+
+.dataGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.dataRow {
+  min-width: 0;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-small);
+  padding: 12px 14px;
+}
+
+.dataRowWide {
+  grid-column: 1 / -1;
+}
+
+.dataLabel {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.84rem;
+  font-weight: 720;
+  line-height: 1.35;
+  margin-bottom: 4px;
+}
+
+.dataValue {
+  display: block;
+  color: var(--text-primary);
+  font-size: 0.98rem;
+  font-weight: 750;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.dataList {
+  display: grid;
+  gap: 12px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.dataListItem {
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-small);
+  padding: 14px;
+}
+
+.dataListItemHeader {
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1.45;
+  margin: 0 0 10px;
+  overflow-wrap: anywhere;
+}
+
+.dataListItemGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 14px;
+}
+
+.dataListItem .secondaryButton {
+  margin-top: 12px;
+}
+
+.dataActions {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: var(--space-2);
+}
+
+.dataActions .primaryButton,
+.dataActions .secondaryButton,
+.dataActions .continueButton {
+  width: auto;
+  min-width: min(100%, 190px);
+}
+
+.dataToggleButton {
+  margin-bottom: 16px;
+}
+
+.dataDivider {
+  width: 100%;
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: var(--space-3) 0;
+}
+
+.statusPanel {
+  width: 100%;
+  background: var(--primary-soft);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-card);
+  color: var(--text-primary);
+  padding: clamp(16px, 4vw, 20px);
+  margin-bottom: var(--space-3);
+  text-align: left;
+}
+
+.statusPanel p {
+  margin: 0;
+}
+
+.codePanel {
+  width: 100%;
+  display: grid;
+  gap: 12px;
+  background: var(--primary-soft);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-card);
+  padding: clamp(16px, 4vw, 20px);
+  margin-bottom: var(--space-3);
+  text-align: left;
+}
+
+.codeValue {
+  color: var(--primary);
+  font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+  font-size: 0.96rem;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  overflow-wrap: anywhere;
+}
+
 .footer {
   width: 100%;
+  flex: 0 0 auto;
   padding: var(--space-3) 0 0;
-  margin-top: var(--space-3);
+  margin-top: 0;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -597,7 +800,7 @@ textarea.input {
 
 @media (max-width: 600px) {
   .main {
-    padding: var(--space-2) 12px;
+    padding: var(--space-2) 12px max(var(--space-2), env(safe-area-inset-bottom));
   }
 
   .card {
@@ -619,16 +822,44 @@ textarea.input {
   }
 
   .bodyMap {
-    height: 520px;
+    max-height: none;
   }
 
   .resultBox {
     padding: var(--space-2);
   }
 
+  .dataPanel {
+    padding: 16px;
+  }
+
+  .dataHeader {
+    flex-direction: column;
+  }
+
+  .dataGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .dataListItemGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .dataActions {
+    flex-direction: column;
+  }
+
+  .dataActions .primaryButton,
+  .dataActions .secondaryButton,
+  .dataActions .continueButton {
+    width: 100%;
+  }
+
   .footer {
     gap: 10px;
     flex-wrap: wrap;
-    padding-bottom: var(--space-2);
+    padding-top: var(--space-2);
+    padding-bottom: 0;
+    line-height: 1.5;
   }
 }

@@ -25,7 +25,7 @@ export function StartScreen({
       <div className={homeStyles.hauptbox}>
         <div className={homeStyles.kopfbox}>
           <div className={homeStyles.header}>
-            <h1 className={homeStyles.title}>MediGuide</h1>
+            <h1 className={homeStyles.title}>Symptometer</h1>
 
             <h2 className={homeStyles.subtitle}>
               <span>by lemonlabs</span>

@@ -135,17 +135,17 @@ export default function Home() {
 
     // server ping to check more reliably than using navigator.isOnline
     async function checkConnection() {
-    try {
-      await fetch('/api/ping', { method: 'HEAD' });
-      setIsOffline(false);
-    } catch {
-      setIsOffline(true);
+      try {
+        await fetch('/api/ping', { method: 'HEAD' });
+        setIsOffline(false);
+      } catch {
+        setIsOffline(true);
+      }
     }
-  }
 
-  checkConnection();
+    checkConnection();
 
-  const interval = setInterval(checkConnection, 5000);
+    const interval = setInterval(checkConnection, 5000);
 
 
     function handleOnline() {
@@ -159,7 +159,7 @@ export default function Home() {
     window.addEventListener("online", handleOnline);
     window.addEventListener("offline", handleOffline);
 
-    return function() {
+    return function () {
       window.removeEventListener("online", handleOnline);
       window.removeEventListener("offline", handleOffline);
     };
@@ -182,16 +182,16 @@ export default function Home() {
   const [additionalData, setAdditionalData] = useState<AdditionalData>({
     medication: [],
     hasMedication: false,
-  
+
     conditions: [],
     hasConditions: false,
-  
+
     allergies: [],
     hasAllergies: false,
-  
+
     cigarettesPerDay: "",
     smokescigarettes: false,
-  
+
     alcoholPerWeek: "",
     drinksAlcohol: false,
 
@@ -232,27 +232,27 @@ export default function Home() {
 
   // defines all steps which are part of the form
   const formularSteps: Step[] = [
-  "redflags",
-  "basisStart",
-  "bodyRegion",
-  "symptomChoice",
-  "textInput",
-  "selectMoreSymptoms",
-  "additionalInfo",
-];
+    "redflags",
+    "basisStart",
+    "bodyRegion",
+    "symptomChoice",
+    "textInput",
+    "selectMoreSymptoms",
+    "additionalInfo",
+  ];
 
   // sets browser history at start (for navigation)
-  useEffect(function() {
+  useEffect(function () {
     history.replaceState({ step: step }, "", "#" + step);
     return;
-    }, []);
+  }, []);
 
 
   // catch the back and forth button from browser
-  useEffect(function() {
+  useEffect(function () {
     function handlePopState(event: PopStateEvent) {
       if (event.state && event.state.step) {
-        
+
         const zielStep = event.state.step as Step;
 
         if (zielStep === "hinweise" && stepRef.current === "redflags") {
@@ -272,16 +272,16 @@ export default function Home() {
         setStep(zielStep);
       }
     }
-      
+
     window.addEventListener("popstate", handlePopState);
 
-    return function() {
+    return function () {
       window.removeEventListener("popstate", handlePopState);
     };
   }, []);
 
   // warning of data loss when reload
-  useEffect(function() {
+  useEffect(function () {
     function handleBeforeUnload(event: BeforeUnloadEvent) {
       if (formularSteps.includes(step)) {
         event.preventDefault();
@@ -290,7 +290,7 @@ export default function Home() {
 
     window.addEventListener("beforeunload", handleBeforeUnload);
 
-    return function() {
+    return function () {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, [step]);
@@ -420,6 +420,13 @@ export default function Home() {
   */
   function selectMainRegion(region: MainRegion) {
     setSelectedMainRegion(region);
+    if (region === "Psyche") {
+      setSelectedSubRegion("Psyche");
+      return;
+    } else if (region === "Allgemein (ganzer Körper)"){
+      setSelectedSubRegion("Keine bestimmte Region / mehrere Stellen");
+      return;
+    }
     setSelectedSubRegion(null);
   }
 
@@ -488,41 +495,41 @@ export default function Home() {
     setHighestAssessmentProgress(0);
     setCheckInfoActive(false);
     setAdditionalData({
-    medication: [],
-    hasMedication: false,
-  
-    conditions: [],
-    hasConditions: false,
-  
-    allergies: [],
-    hasAllergies: false,
-  
-    cigarettesPerDay: "",
-    smokescigarettes: false,
-  
-    alcoholPerWeek: "",
-    drinksAlcohol: false,
+      medication: [],
+      hasMedication: false,
 
-    temperature: "",
-    worsening: "",
-    duration: "",
+      conditions: [],
+      hasConditions: false,
 
-    weight: "",
-    height: "",
+      allergies: [],
+      hasAllergies: false,
 
-    breastfeeding: "",
+      cigarettesPerDay: "",
+      smokescigarettes: false,
 
-    extraInfo: "",
-  });
-  setBasisData({
-    age: "",
-    gender: "",
-    pregnancy: "",
-  });
-  setAiAnswer(null),
-  setCaseId("");
-  setRedFlagScanPositive(false);
-  setRedFlagScanResult([]);
+      alcoholPerWeek: "",
+      drinksAlcohol: false,
+
+      temperature: "",
+      worsening: "",
+      duration: "",
+
+      weight: "",
+      height: "",
+
+      breastfeeding: "",
+
+      extraInfo: "",
+    });
+    setBasisData({
+      age: "",
+      gender: "",
+      pregnancy: "",
+    });
+    setAiAnswer(null),
+      setCaseId("");
+    setRedFlagScanPositive(false);
+    setRedFlagScanResult([]);
   }
 
 
@@ -551,7 +558,7 @@ export default function Home() {
 
     try {
       const redFlagScanResultLokal = await redFlagScan(basisData, additionalData, selectedSubRegion!, selectedSymptoms, symptomText)
-      if(redFlagScanResultLokal[0]) {
+      if (redFlagScanResultLokal[0]) {
         setRedFlagScanPositive(true)
         setRedFlagScanResult(redFlagScanResultLokal[1])
       }
@@ -559,7 +566,7 @@ export default function Home() {
     catch (error) {
       console.error("Error doing redflag scan", error);
     }
-    
+
     try {
       id = await handleSaveForm();
       setCaseId(id)
@@ -568,17 +575,17 @@ export default function Home() {
     }
 
     // since ai answer goes wring sometimes, up to 3 tries are allowed
-    while(triesLeft>0) {
+    while (triesLeft > 0) {
       try {
         const aiAnswer = await sendDataToAi(basisData, additionalData, symptomText, selectedSymptoms, id);
         setAiAnswer(aiAnswer);
         triesLeft = 0;
       } catch (error) {
-        if(triesLeft!>0) {
-          console.error("Error fetching AI response:", error);
+        if (triesLeft! > 0) {
+          console.error("Error fetching AI response::", error);
         }
         triesLeft--;
-        console.error("Try fetching Ai answer: ", (3-triesLeft))
+        console.error("Try fetching Ai answer: ", (3 - triesLeft))
       }
     }
 
@@ -652,7 +659,7 @@ export default function Home() {
           onSubmit={handleSubmit}
           progress={Math.max(highestAssessmentProgress, getStepProgress(step))}
         >
-          
+
           {/* Schritt 1: Warnzeichen prüfen */}
           {step === "redflags" && (
             <RedFlagsStep

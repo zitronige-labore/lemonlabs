@@ -5,14 +5,15 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   padding: var(--space-3) var(--space-2);
 }
 
 .hauptbox {
   width: 100%;
   max-width: var(--content-width);
-  flex: 0 1 auto;
+  flex: 1 1 auto;
+  min-height: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -484,8 +485,9 @@
 
 .footer {
   width: 100%;
+  flex: 0 0 auto;
   padding: var(--space-3) 0 0;
-  margin-top: var(--space-3);
+  margin-top: auto;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -510,7 +512,12 @@
 
 @media (max-width: 600px) {
   .main {
-    padding: var(--space-2) 12px;
+    padding: var(--space-2) 12px max(var(--space-2), env(safe-area-inset-bottom));
+  }
+
+  .hauptbox {
+    align-items: center;
+    padding-bottom: var(--space-2);
   }
 
   .kopfbox {
@@ -542,22 +549,27 @@
   }
 
   .sosButton {
-    width: 64px;
-    height: 64px;
-    right: 14px;
-    bottom: 18px;
+    width: 52px;
+    height: 52px;
+    right: max(10px, env(safe-area-inset-right));
+    bottom: calc(34px + env(safe-area-inset-bottom));
+    font-size: 0.95rem;
+    box-shadow: 0 8px 18px rgba(255, 65, 65, 0.28);
   }
 
   .tutorialButton {
-    width: 50px;
-    height: 50px;
-    left: 14px;
-    bottom: 26px;
+    width: 44px;
+    height: 44px;
+    left: max(10px, env(safe-area-inset-left));
+    bottom: calc(38px + env(safe-area-inset-bottom));
+    box-shadow: 0 8px 18px rgba(28, 134, 255, 0.22);
   }
 
   .footer {
     gap: 10px;
     flex-wrap: wrap;
-    padding-bottom: 84px;
+    padding-top: var(--space-2);
+    padding-bottom: 0;
+    line-height: 1.5;
   }
 }
