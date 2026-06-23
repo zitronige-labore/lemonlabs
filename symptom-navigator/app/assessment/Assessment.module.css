@@ -391,9 +391,10 @@ textarea.input {
 }
 
 .bodyPart {
-  fill: rgba(27, 51, 78, 0.26);
+  fill: #d8e6f4;
   stroke: var(--text-muted);
-  stroke-width: 1.5;
+  stroke-width: 10;
+  stroke-color: #495062;
   cursor: pointer;
   transition:
     fill 0.18s ease,
