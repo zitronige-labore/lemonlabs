@@ -45,14 +45,17 @@ export function getSubRegions(
     case "Kopf & Gesicht":
       return ["Kopf", "Augen", "Ohren", "Nase", "Mund / Zähne"];
 
-    case "Hals & Nacken":
-      return ["Hals", "Nacken"];
+    case "Hals":
+      return ["Hals"];
+
+    case "Nacken":
+      return ["Nacken"];
 
     case "Brust":
       return ["Brust links", "Brust rechts"];
 
     case "Bauch":
-      return ["Oberbauch", "Unterbauch"];
+      return ["OberbauchRechts", "UnterbauchRechts", "OberbauchLinks", "UnterbauchLinks"];
 
     case "Rücken":
       return ["Rücken oben", "Rücken unten"];
@@ -60,11 +63,21 @@ export function getSubRegions(
     case "Becken & Unterleib":
       return ["Becken", "Genitalbereich"];
 
-    case "Arme & Hände":
-      return ["Schulter", "Oberarm", "Unterarm", "Hand"];
+    case "Arme & Hände links":
+      return ["SchulterLinks", "OberarmLinks", "UnterarmLinks",
+        "HandLinks"];
 
-    case "Beine & Füße":
-      return ["Oberschenkel", "Knie", "Unterschenkel", "Fuß"];
+    case "Arme & Hände rechts":
+      return ["SchulterRechts", "OberarmRechts", "UnterarmRechts",
+        "HandRechts"];
+
+    case "Beine & Füße links":
+      return ["OberschenkelLinks", "KnieLinks", "UnterschenkelLinks", 
+        "FußLinks"];
+
+    case "Beine & Füße rechts":
+      return ["OberschenkelRechts", "KnieRechts", "UnterschenkelRechts", 
+        "FußRechts"];
 
     case "Psyche":
       return [];
@@ -78,6 +91,101 @@ export function getSubRegions(
     */
     default:
       return [];
+  }
+}
+
+
+export function getMainRegionForSubRegion(sub: SubRegion): MainRegion[] {
+  switch (sub) {
+    case "Kopf":
+    case "Augen":
+    case "Ohren":
+    case "Nase":
+    case "Mund / Zähne":
+      return ["Kopf & Gesicht"];
+    case "Hals":
+      return ["Hals"];
+    case "Nacken":
+      return ["Nacken"];
+    case "Brust links":
+      return ["Brust"];
+    case "Brust rechts":
+      return ["Brust"];
+    case "OberbauchLinks":
+    case "UnterbauchLinks":
+    case "OberbauchRechts":
+    case "UnterbauchRechts":
+      return ["Bauch"];
+    case "Rücken oben":
+    case "Rücken unten":
+      return ["Rücken"];
+    case "Becken":
+    case "Genitalbereich":
+      return ["Becken & Unterleib"];
+    case "SchulterLinks":
+    case "OberarmLinks":
+    case "UnterarmLinks":
+    case "HandLinks":
+      return ["Arme & Hände links"];
+    case "SchulterRechts":
+    case "OberarmRechts":
+    case "UnterarmRechts":
+    case "HandRechts":
+      return ["Arme & Hände rechts"];
+    case "OberschenkelLinks":
+    case "KnieLinks":
+    case "UnterschenkelLinks":
+    case "FußLinks":
+      return ["Beine & Füße links"];
+    case "OberschenkelRechts":
+    case "KnieRechts":
+    case "UnterschenkelRechts":
+    case "FußRechts":
+      return ["Beine & Füße rechts"];
+    default:
+      return [];
+  }
+}
+
+
+export function getWholeFromSides(sub: SubRegion): SubRegion {
+  switch (sub) {
+    case "Brust rechts":
+    case "Brust links":
+      return "Brust";
+    case "OberbauchRechts":
+    case "OberbauchLinks":
+        return "Oberbauch";
+    case "UnterbauchLinks":
+    case "UnterbauchRechts":
+      return "Unterbauch";
+    case "SchulterLinks":
+    case "SchulterRechts":
+      return "Schulter";
+    case "OberarmLinks":
+    case "OberarmRechts":
+      return "Oberarm";
+    case "UnterarmLinks":
+    case "UnterarmRechts":
+      return "Unterarm";
+    case "HandLinks":
+    case "HandRechts":
+      return "Hand";
+    case "OberschenkelLinks":
+    case "OberschenkelRechts":
+      return "Oberschenkel";
+    case "KnieLinks":
+    case "KnieRechts":
+      return "Knie";
+    case "UnterschenkelLinks":
+    case "UnterschenkelRechts":
+      return "Unterschenkel";
+    case "FußLinks":
+    case "FußRechts":
+      return "Fuß";
+    default:
+      return sub;
+    
   }
 }
 

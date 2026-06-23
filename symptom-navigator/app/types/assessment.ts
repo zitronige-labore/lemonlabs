@@ -79,13 +79,16 @@ export type AdditionalData = {
 */
 export type MainRegion =
   | "Kopf & Gesicht"
-  | "Hals & Nacken"
+  | "Hals"
+  | "Nacken"
   | "Brust"
   | "Bauch"
   | "Rücken"
   | "Becken & Unterleib"
-  | "Arme & Hände"
-  | "Beine & Füße"
+  | "Arme & Hände links"
+  | "Arme & Hände rechts"
+  | "Beine & Füße links"
+  | "Beine & Füße rechts"
   | "Psyche"
   | "Allgemein (ganzer Körper)";
 
@@ -103,10 +106,15 @@ export type SubRegion =
   | "Mund / Zähne"
   | "Hals"
   | "Nacken"
+  | "Brust"
   | "Brust links"
   | "Brust rechts"
   | "Oberbauch"
   | "Unterbauch"
+  | "OberbauchRechts"
+  | "UnterbauchRechts"
+  | "OberbauchLinks"
+  | "UnterbauchLinks"
   | "Rücken oben"
   | "Rücken unten"
   | "Becken"
@@ -115,14 +123,31 @@ export type SubRegion =
   | "Oberarm"
   | "Unterarm"
   | "Hand"
+  | "SchulterRechts"
+  | "OberarmRechts"
+  | "UnterarmRechts"
+  | "HandRechts"
+  | "SchulterLinks"
+  | "OberarmLinks"
+  | "UnterarmLinks"
+  | "HandLinks"
   | "Oberschenkel"
-  | "Knie"
   | "Unterschenkel"
+  | "Knie"
   | "Fuß"
+  | "OberschenkelRechts"
+  | "KnieRechts"
+  | "UnterschenkelRechts"
+  | "OberschenkelLinks"
+  | "KnieLinks"
+  | "UnterschenkelLinks"
+  | "FußRechts"
+  | "FußLinks"
   | "Psyche"
   | "Keine bestimmte Region / mehrere Stellen";
 
 
+  
 /*
   Enthält alle möglichen Warnzeichen,
   die auf einen medizinischen Notfall
