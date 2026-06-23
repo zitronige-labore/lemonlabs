@@ -18,7 +18,7 @@ describe("Utility Logic Tests", () => {
   describe("assessmentData utils", () => {
     it("getSubRegions returns correct subregions for each main region", () => {
       expect(getSubRegions("Kopf & Gesicht" as MainRegion)).toContain("Kopf");
-      expect(getSubRegions("Bauch" as MainRegion)).toEqual(["Oberbauch", "Unterbauch"]);
+      expect(getSubRegions("Bauch" as MainRegion)).toEqual(["OberbauchRechts", "UnterbauchRechts", "OberbauchLinks", "UnterbauchLinks"]);
       expect(getSubRegions(null)).toEqual([]);
     });
 
