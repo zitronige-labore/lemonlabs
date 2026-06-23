@@ -128,6 +128,14 @@ export async function redFlagScan(
         return[true, ["Plötzliche, extreme Unterleibsschmerzen + mindestens eines dieser Symptome: Plötzliche Hodenschwellung/ Hodenschmerz, Erbrechen"]]
     }
 
+    // Eigen oder Fremdgefährdung
+    if (
+        hasAny(combined, "Selbstverletzungsgedanken") ||
+        hasAny(combined, "Fremdgefährdung")
+    ) {
+        return[true, ["Fremd oder Eigengefährdung"]]
+    }
+
 
     return [false, ["keine Redflags gefunden"]];
 
