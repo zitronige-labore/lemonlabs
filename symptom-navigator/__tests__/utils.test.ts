@@ -103,6 +103,9 @@ describe("Utility Logic Tests", () => {
       textSymptome: "Bauchschmerz",
       datum: "01.01.2024",
       dringlichkeit: "3",
+      worsening: "Nein",
+      alkoholkonsum: "0",
+      zigaretten: "0",
       handlungsempfehlung: "Arztbesuch",
       vermutungen: [{ text: "Test", wahrscheinlichkeit: "50%" }],
     };
