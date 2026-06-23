@@ -9,13 +9,9 @@ export function DatenschutzStep({ onBack }: DatenschutzStepProps) {
     <div className={assessmentStyles.card}>
       <h1>Datenschutzerklärung</h1>
 
-      <h2>1. Verantwortlicher</h2>
-      <p>
-        [Name des Unternehmens / der Praxis]<br />
-        [Telefonnummer]
-      </p>
+      
 
-      <h2>2. Welche Daten wir erheben</h2>
+      <h2>1. Welche Daten wir erheben</h2>
       <p>
         Es werden keine persönlichen Identifikationsdaten erhoben. Es ist
         kein Name, keine Adresse und keine E-Mail-Adresse erforderlich.
@@ -25,7 +21,7 @@ export function DatenschutzStep({ onBack }: DatenschutzStepProps) {
         Rückschlüsse auf Ihre Identität erlaubt.
       </p>
 
-      <h2>3. Verarbeitung im Rahmen der Ersteinschätzung</h2>
+      <h2>2. Verarbeitung im Rahmen der Ersteinschätzung</h2>
       <p>
         Ihre Angaben werden verarbeitet, um eine unverbindliche
         Ersteinschätzung Ihrer Beschwerden zu erstellen. Es handelt sich
@@ -34,7 +30,7 @@ export function DatenschutzStep({ onBack }: DatenschutzStepProps) {
         ausdrücklichen Einwilligung (Art. 9 Abs. 2 lit. a DSGVO).
       </p>
 
-      <h2>4. Hinweis zur Ersteinschätzung</h2>
+      <h2>3. Hinweis zur Ersteinschätzung</h2>
       <p>
         Diese Anwendung dient ausschließlich einer unverbindlichen
         Ersteinschätzung möglicher gesundheitlicher Beschwerden auf Basis
@@ -45,7 +41,7 @@ export function DatenschutzStep({ onBack }: DatenschutzStepProps) {
         Rettungsdienst (112).
       </p>
 
-      <h2>5. Nutzung ohne Konto</h2>
+      <h2>4. Nutzung ohne Konto</h2>
       <p>
         Die Nutzung dieser Anwendung ist ohne Registrierung und ohne
         Anmeldung möglich. Es wird kein Nutzerkonto angelegt. Ihre Angaben
@@ -53,19 +49,19 @@ export function DatenschutzStep({ onBack }: DatenschutzStepProps) {
         zugeordnet, nicht über Ihre Person.
       </p>
 
-      <h2>6. Speicherdauer</h2>
+      <h2>5. Speicherdauer</h2>
       <p>
         Ihre Angaben werden automatisch nach 7 Tagen gelöscht.
       </p>
 
-      <h2>7. Weitergabe an Dritte</h2>
+      <h2>6. Weitergabe an Dritte</h2>
       <p>
         Zur Erstellung der Ersteinschätzung werden Angaben an einen
         KI-Dienstleister übermittelt. Eine Weitergabe an sonstige Dritte
         erfolgt nicht, soweit keine gesetzliche Verpflichtung besteht.
       </p>
 
-      <h2>8. Ihre Rechte</h2>
+      <h2>7. Ihre Rechte</h2>
       <p>
         Sie haben das Recht auf Auskunft, Berichtigung, Löschung,
         Einschränkung der Verarbeitung, Datenübertragbarkeit sowie
@@ -73,7 +69,7 @@ export function DatenschutzStep({ onBack }: DatenschutzStepProps) {
         hierzu an die oben genannte verantwortliche Stelle.
       </p>
 
-      <h2>9. Beschwerderecht</h2>
+      <h2>8. Beschwerderecht</h2>
       <p>
         Sie haben das Recht, sich bei einer Datenschutzaufsichtsbehörde
         über die Verarbeitung Ihrer personenbezogenen Daten zu beschweren.
