@@ -354,7 +354,7 @@ export function ResultStep({
                   Wahrscheinlichkeit
                 </span>
                 <strong className={assessmentStyles.dataValue}>
-                  {probability}
+                  {probability*100}%
                 </strong>
               </div>
             )}
