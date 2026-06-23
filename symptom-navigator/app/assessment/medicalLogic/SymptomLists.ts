@@ -3,7 +3,7 @@
 
 import { Step, SymptomSelectionList } from "@/app/types/assessment";
 
-export function getSymptomList() {
+export function getSymptomList(gender?: string) {
 
     
     // list for symptom pages
@@ -492,6 +492,16 @@ export function getSymptomList() {
         ]
         },
     ]
+
+    if (gender === "weiblich") {
+        const genitalWarn = symptomList.find(s => s.step === "genitalWarnsignale");
+        if (genitalWarn) {
+            genitalWarn.symptoms = genitalWarn.symptoms.filter(
+                s => s.symptomName !== "Plötzlicher, extremer Hodenschmerz (Notfall!)" &&
+                     s.symptomName !== "Schmerzhafte Dauererektion > 4 Std. (Priapismus)"
+            );
+        }
+    }
 
     return symptomList;
 }
