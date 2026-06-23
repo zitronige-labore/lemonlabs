@@ -20,7 +20,6 @@ project-root/
 │   │   └── medicalLogic/
 │   │       # Symptom- und Red-Flag-Logik
 │   │
-│   │
 │   ├── dbs/
 │   │   # Datenbank-Verbindungsspezifikationen
 │   │   # z. B. lemonlabs_db
