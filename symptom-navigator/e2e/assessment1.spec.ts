@@ -5,7 +5,8 @@ import {
   getAdditionalInfoFromDb,
   getSymptomsFromDb,
   getRecommendationFromDb,
-  getDetailsNoCertainCountFromDb
+  getDetailsNoCertainCountFromDb,
+  getMedicationFromDb
 } from './helpers/dbAssert';
 
 test.beforeEach(async () => {
@@ -65,14 +66,21 @@ test("complete assessment flow is saved correctly to the database", async ({ pag
   await page.getByRole("button", { name: "nein" }).click();
 
 
-  // fill in optional medication field
-  await page.getByLabel("Nehmen Sie aktuell Medikamente ein?").fill("Ibuprofen");
+  // check medication and fill in
+  await page.getByLabel("Einnahme von Medikamenten").check();
+  await page.getByPlaceholder("z. B. Ibuprofen").fill("Ibuprofen");
+  await page.getByPlaceholder("z. B. 400").fill("400");
+  await page.getByLabel("* Einheit").selectOption("mg");
+  await page.getByPlaceholder("z. B. 1").fill("2");
+  await page.getByLabel("* Zeitraum").selectOption("Tag");
 
-  // fill in allergies field
-  await page.getByLabel("Sind Allergien bekannt?").fill("Pollen");
+  // check allergies and fill in
+  await page.getByLabel("Es liegen Allergien vor").check();
+  await page.getByPlaceholder("Allergien z.B. Pollen, Penicillin...").fill("Pollen");
 
-  // select condition via checkbox
-  await page.getByLabel("Bluthochdruck").check();
+  // check conditions and fill in
+  await page.getByLabel("Es liegen Vorerkrankungen vor").check();
+  await page.getByPlaceholder("Vorerkrankung (z. B. Diabetes, Bluthochdruck)").fill("Bluthochdruck");
 
   // continue to check info screen
   await page.getByRole("button", { name: "weiter" }).click();
@@ -105,7 +113,7 @@ test("complete assessment flow is saved correctly to the database", async ({ pag
   expect(allergies).toContain("Pollen");
 
   // assert medication was saved
-  const medication = await getDetailsNoCertainCountFromDb(dbCase.case_id, "medication");
+  const medication = await getMedicationFromDb(dbCase.case_id);
   expect(medication).toContain("Ibuprofen");
 
   // assert conditions were saved

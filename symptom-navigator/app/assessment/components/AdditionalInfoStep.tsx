@@ -6,6 +6,14 @@ import { useState } from "react";
 
 
 
+import {
+  validateWeight,
+  validateHeight,
+  validateTemperature,
+  validateDuration,
+  validateListFormat
+} from "../utils/validationUtils";
+
 type AdditionalInfoStepProps = {
   additionalData: AdditionalData;
   setAdditionalData: (data: AdditionalData) => void;
@@ -31,9 +39,8 @@ export function AdditionalInfoStep({
   const [doseError, setDoseError] = useState<Record<number, string>>({});
   const [frequencyError, setFrequencyError] =useState<Record<number, string>>({});
 
-
   const noErrors =
-    Object.values(frequencyError).every(error => error === "") &&
+    Object.values(doseError).every(error => error === "") &&
     Object.values(frequencyError).every(error => error === "") &&
     cigarettesError === "" &&
     alcoholError === "" &&
@@ -149,7 +156,6 @@ export function AdditionalInfoStep({
       allergies: additionalData.allergies.filter((_, i) => i !== index)
     });
   }
-
 
   return (
     <>
@@ -525,10 +531,11 @@ export function AdditionalInfoStep({
             value={additionalData.weight}
             onChange={(e) => {
               const value = e.target.value;
-              setAdditionalData({ ...additionalData, weight: value });
-              const n = Number(value);
-              setWeightError(value !== "" && (n <= 0 || n > 600 || !Number.isInteger(n))
-                ? "Bitte geben Sie ein gültiges Gewicht ein." : "");
+              setAdditionalData({
+                ...additionalData,
+                weight: value,
+              });
+              setWeightError(validateWeight(value));
             }}
             placeholder="z. B. 72"
           />
@@ -544,10 +551,11 @@ export function AdditionalInfoStep({
             value={additionalData.height}
             onChange={(e) => {
               const value = e.target.value;
-              setAdditionalData({ ...additionalData, height: value });
-              const n = Number(value);
-              setHeightError(value !== "" && (n < 40 || n > 300 || !Number.isInteger(n))
-                ? "Bitte geben Sie eine gültige Körpergröße ein." : "");
+              setAdditionalData({
+                ...additionalData,
+                height: value,
+              });
+              setHeightError(validateHeight(value));
             }}
             placeholder="z. B. 175"
           />
@@ -581,10 +589,11 @@ export function AdditionalInfoStep({
             value={additionalData.temperature}
             onChange={(e) => {
               const value = e.target.value;
-              setAdditionalData({ ...additionalData, temperature: value });
-              const n = Number(value);
-              setTemperatureError(value !== "" && (n < 30 || n > 45)
-                ? "Bitte geben Sie eine gültige Körpertemperatur ein." : "");
+              setAdditionalData({
+                ...additionalData,
+                temperature: value,
+              });
+              setTemperatureError(validateTemperature(value));
             }}
             placeholder="z. B. 38.5"
           />
@@ -600,10 +609,11 @@ export function AdditionalInfoStep({
             value={additionalData.duration}
             onChange={(e) => {
               const value = e.target.value;
-              setAdditionalData({ ...additionalData, duration: value });
-              const n = Number(value);
-              setDurationError(value !== "" && (n < 0 || n > 365 || !Number.isInteger(n))
-                ? "Bitte geben Sie eine gültige Anzahl an Tagen ein." : "");
+              setAdditionalData({
+                ...additionalData,
+                duration: value,
+              });
+              setDurationError(validateDuration(value));
             }}
             placeholder="z. B. 2"
           />

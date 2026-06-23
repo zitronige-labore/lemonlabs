@@ -3,16 +3,17 @@ import { useEffect, useState } from "react";
 import assessmentStyles from "../Assessment.module.css";
 
 import { getAccessCode } from "../../actions";
-import {
-  downloadPdf,
-  downloadTxt,
-  type AssessmentExportData,
-} from "../utils/exportUtils";
+import { downloadTxt, downloadPdf } from "../utils/exportUtils";
 
 import type {
   AdditionalData,
   BasisData,
 } from "../../types/assessment";
+import {
+  buildExportData,
+  parseSymptomName,
+  parseSymptomText
+} from "../utils/resultUtils";
 
 type ResultStepProps = {
   basisData: BasisData;
@@ -64,72 +65,7 @@ export function ResultStep({
       ? additionalData.conditions
       : "Keine Angabe";
 
-  function buildExportData(): AssessmentExportData {
-    return {
-      alter: basisData.age || "Keine Angabe",
-      geschlecht: basisData.gender || "Keine Angabe",
-      schwangerschaft: basisData.pregnancy || "Keine Angabe",
-      stillzeit: additionalData.breastfeeding || "Keine Angabe",
-      worsening: additionalData.worsening || undefined,
-      groesse: additionalData.height ? `${additionalData.height} cm` : "Keine Angabe",
-      gewicht: additionalData.weight ? `${additionalData.weight} kg` : "Keine Angabe",
-      temperatur: additionalData.temperature || "Keine Angabe",
-      dauer: additionalData.duration || "Keine Angabe",
-      medikation: medicationValue?.join(",") || "Keine Angabe",
-      allergien: additionalData.allergies.join(",") || "Keine Angabe",
-      vorerkrankungen: additionalData.conditions.join(",") || "Keine Angabe",
-      alkoholkonsum: additionalData.alcoholPerWeek || "Keine Angabe",
-      zigaretten: additionalData.cigarettesPerDay || "Keine Angabe",
-      symptome:
-        selectedSymptoms.length > 0
-          ? selectedSymptoms
-              .map((symptom) => {
-                try {
-                  return JSON.parse(symptom).name;
-                } catch {
-                  return symptom;
-                }
-              })
-              .join(", ")
-          : "",
-      textSymptome:
-        symptomText.length > 0
-          ? symptomText
-              .map((symptom) => {
-                try {
-                  return JSON.parse(symptom).text_symptom;
-                } catch {
-                  return symptom;
-                }
-              })
-              .join(", ")
-          : "",
-      datum: new Date().toLocaleString(),
-      dringlichkeit: aiAnswer?.assessment?.urgency?.toString() || "Keine Angabe",
-      handlungsempfehlung: aiAnswer?.assessment?.nextSteps || "Keine Angabe",
-      vermutungen: suspicions
-        ? ([1, 2, 3, 4, 5]
-            .map((index) => {
-              const suspicion = suspicions[`suspicion${index}`];
-              if (!suspicion) return null;
-              const reasonKey = Object.keys(suspicion).find((key) =>
-                key.toLowerCase().includes("reason"),
-              );
-              const probKey = Object.keys(suspicion).find((key) =>
-                key.toLowerCase().includes("probability"),
-              );
-              return {
-                text: reasonKey ? suspicion[reasonKey] : "Keine Angabe",
-                wahrscheinlichkeit:
-                  probKey && suspicion[probKey]
-                    ? `${suspicion[probKey]}`
-                    : "Keine Angabe",
-              };
-            })
-            .filter(Boolean) as AssessmentExportData["vermutungen"])
-        : [],
-    };
-  }
+
 
   useEffect(() => {
     if (caseId) {
@@ -525,14 +461,14 @@ export function ResultStep({
             <button
               type="button"
               className={assessmentStyles.secondaryButton}
-              onClick={() => downloadPdf(buildExportData())}
+              onClick={() => downloadPdf(buildExportData(basisData, additionalData, symptomText, selectedSymptoms, aiAnswer))}
             >
               PDF herunterladen
             </button>
             <button
               type="button"
               className={assessmentStyles.secondaryButton}
-              onClick={() => downloadTxt(buildExportData())}
+              onClick={() => downloadTxt(buildExportData(basisData, additionalData, symptomText, selectedSymptoms, aiAnswer))}
             >
               TXT herunterladen
             </button>

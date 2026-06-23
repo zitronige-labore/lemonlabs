@@ -5,7 +5,8 @@ import {
   getAdditionalInfoFromDb,
   getSymptomsFromDb,
   getRecommendationFromDb,
-  getDetailsNoCertainCountFromDb
+  getDetailsNoCertainCountFromDb,
+  getMedicationFromDb
 } from './helpers/dbAssert';
 
 test.beforeEach(async () => {
@@ -58,8 +59,13 @@ test("älterer männlicher Patient mit Innenohr-Symptomen wird korrekt gespeiche
   // do not add more symptoms
   await page.getByRole("button", { name: "nein" }).click();
 
-  // fill in medication only
-  await page.getByLabel("Nehmen Sie aktuell Medikamente ein?").fill("ASS 100");
+  // check medication and fill in
+  await page.getByLabel("Einnahme von Medikamenten").check();
+  await page.getByPlaceholder("z. B. Ibuprofen").fill("ASS 100");
+  await page.getByPlaceholder("z. B. 400").fill("100");
+  await page.getByLabel("* Einheit").selectOption("mg");
+  await page.getByPlaceholder("z. B. 1").fill("1");
+  await page.getByLabel("* Zeitraum").selectOption("Tag");
 
   // leave allergies and conditions empty
 
@@ -90,7 +96,7 @@ test("älterer männlicher Patient mit Innenohr-Symptomen wird korrekt gespeiche
   expect(symptoms.length).toBeGreaterThan(0);
 
   // assert medication was saved
-  const medication = await getDetailsNoCertainCountFromDb(dbCase.case_id, "medication");
+  const medication = await getMedicationFromDb(dbCase.case_id);
   expect(medication).toContain("ASS 100");
 
   // assert allergy list is empty

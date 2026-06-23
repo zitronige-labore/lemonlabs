@@ -41,3 +41,15 @@ export async function getDetailsNoCertainCountFromDb(caseId: string, category: s
   );
   return result.rows.map((row: any) => row.detail);
 }
+
+export async function getMedicationFromDb(caseId: string) {
+  const result = await pool.query(`
+    SELECT medication
+    FROM medication
+    WHERE case_id = $1
+    ;
+    `,
+    [caseId]
+  );
+  return result.rows.map((row: any) => row.medication);
+}
