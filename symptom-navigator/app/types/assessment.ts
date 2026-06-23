@@ -22,6 +22,7 @@ export type symptomChoiceStep =
 
 export type Step =
   | "start"
+  | "datenschutz"
   | "hinweise"
   | "redflags"
   | "basisStart"
