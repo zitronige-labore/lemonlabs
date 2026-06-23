@@ -55,7 +55,7 @@ export function getSubRegions(
       return ["Brust links", "Brust rechts"];
 
     case "Bauch":
-      return ["OberbauchRechts", "UnterbauchRechts", "OberbauchLinks", "UnterbauchLinks"];
+      return ["Oberbauch rechts", "Unterbauch rechts", "Oberbauch links", "Unterbauch links"];
 
     case "Rücken":
       return ["Rücken oben", "Rücken unten"];
@@ -64,20 +64,20 @@ export function getSubRegions(
       return ["Becken", "Genitalbereich"];
 
     case "Arme & Hände links":
-      return ["SchulterLinks", "OberarmLinks", "UnterarmLinks",
-        "HandLinks"];
+      return ["Schulter links", "Oberarm links", "Unterarm links",
+        "Hand links"];
 
     case "Arme & Hände rechts":
-      return ["SchulterRechts", "OberarmRechts", "UnterarmRechts",
-        "HandRechts"];
+      return ["Schulter rechts", "Oberarm rechts", "Unterarm rechts",
+        "Hand rechts"];
 
     case "Beine & Füße links":
-      return ["OberschenkelLinks", "KnieLinks", "UnterschenkelLinks", 
-        "FußLinks"];
+      return ["Oberschenkel links", "Knie links", "Unterschenkel links", 
+        "Fuß links"];
 
     case "Beine & Füße rechts":
-      return ["OberschenkelRechts", "KnieRechts", "UnterschenkelRechts", 
-        "FußRechts"];
+      return ["Oberschenkel rechts", "Knie rechts", "Unterschenkel rechts", 
+        "Fuß rechts"];
 
     case "Psyche":
       return [];
@@ -111,10 +111,10 @@ export function getMainRegionForSubRegion(sub: SubRegion): MainRegion[] {
       return ["Brust"];
     case "Brust rechts":
       return ["Brust"];
-    case "OberbauchLinks":
-    case "UnterbauchLinks":
-    case "OberbauchRechts":
-    case "UnterbauchRechts":
+    case "Oberbauch links":
+    case "Unterbauch links":
+    case "Oberbauch rechts":
+    case "Unterbauch rechts":
       return ["Bauch"];
     case "Rücken oben":
     case "Rücken unten":
@@ -122,25 +122,25 @@ export function getMainRegionForSubRegion(sub: SubRegion): MainRegion[] {
     case "Becken":
     case "Genitalbereich":
       return ["Becken & Unterleib"];
-    case "SchulterLinks":
-    case "OberarmLinks":
-    case "UnterarmLinks":
-    case "HandLinks":
+    case "Schulter links":
+    case "Oberarm links":
+    case "Unterarm links":
+    case "Hand links":
       return ["Arme & Hände links"];
-    case "SchulterRechts":
-    case "OberarmRechts":
-    case "UnterarmRechts":
-    case "HandRechts":
+    case "Schulter rechts":
+    case "Oberarm rechts":
+    case "Unterarm rechts":
+    case "Hand rechts":
       return ["Arme & Hände rechts"];
-    case "OberschenkelLinks":
-    case "KnieLinks":
-    case "UnterschenkelLinks":
-    case "FußLinks":
+    case "Oberschenkel links":
+    case "Knie links":
+    case "Unterschenkel links":
+    case "Fuß links":
       return ["Beine & Füße links"];
-    case "OberschenkelRechts":
-    case "KnieRechts":
-    case "UnterschenkelRechts":
-    case "FußRechts":
+    case "Oberschenkel rechts":
+    case "Knie rechts":
+    case "Unterschenkel rechts":
+    case "Fuß rechts":
       return ["Beine & Füße rechts"];
     default:
       return [];
@@ -153,35 +153,35 @@ export function getWholeFromSides(sub: SubRegion): SubRegion {
     case "Brust rechts":
     case "Brust links":
       return "Brust";
-    case "OberbauchRechts":
-    case "OberbauchLinks":
+    case "Oberbauch rechts":
+    case "Oberbauch links":
         return "Oberbauch";
-    case "UnterbauchLinks":
-    case "UnterbauchRechts":
+    case "Unterbauch links":
+    case "Unterbauch rechts":
       return "Unterbauch";
-    case "SchulterLinks":
-    case "SchulterRechts":
+    case "Schulter links":
+    case "Schulter rechts":
       return "Schulter";
-    case "OberarmLinks":
-    case "OberarmRechts":
+    case "Oberarm links":
+    case "Oberarm rechts":
       return "Oberarm";
-    case "UnterarmLinks":
-    case "UnterarmRechts":
+    case "Unterarm links":
+    case "Unterarm rechts":
       return "Unterarm";
-    case "HandLinks":
-    case "HandRechts":
+    case "Hand links":
+    case "Hand rechts":
       return "Hand";
-    case "OberschenkelLinks":
-    case "OberschenkelRechts":
+    case "Oberschenkel links":
+    case "Oberschenkel rechts":
       return "Oberschenkel";
-    case "KnieLinks":
-    case "KnieRechts":
+    case "Knie links":
+    case "Knie rechts":
       return "Knie";
-    case "UnterschenkelLinks":
-    case "UnterschenkelRechts":
+    case "Unterschenkel links":
+    case "Unterschenkel rechts":
       return "Unterschenkel";
-    case "FußLinks":
-    case "FußRechts":
+    case "Fuß links":
+    case "Fuß rechts":
       return "Fuß";
     default:
       return sub;
