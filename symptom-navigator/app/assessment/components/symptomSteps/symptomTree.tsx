@@ -56,7 +56,7 @@ export default function SymptomTree({
 
 
   // list for symptom pages
-  const symptomList: SymptomSelectionList = getSymptomList();
+  const symptomList: SymptomSelectionList = getSymptomList(gender);
 
   return (
 
