@@ -6,7 +6,7 @@
   Die sichtbaren Bereiche wurden in einzelne Komponenten ausgelagert.
   Die Zustände und die zentrale Ablaufsteuerung bleiben hier in page.tsx.
 */
-
+import { DatenschutzStep } from "./assessment/components/ DatenschutzStep";
 import { useState, useEffect, useRef } from "react";
 
 import homeStyles from "./Home.module.css";
@@ -609,7 +609,7 @@ export default function Home() {
   return (
     <main
       className={
-        step === "start" || step === "hinweise" || step === "other"
+        step === "start" || step === "hinweise" || step === "other" || step === "datenschutz"
           ? homeStyles.main
           : assessmentStyles.main
       }
@@ -658,8 +658,12 @@ export default function Home() {
           onManageData={() => goToStep("manageData")}
         />
       )}
+      {/* Datenschutzerklärung */}
+{step === "datenschutz" && (
+  <DatenschutzStep onBack={() => goToStep("start")} />
+)}
       {/* Alle Schritte der eigentlichen Ersteinschätzung */}
-      {step !== "start" && step !== "hinweise" && step !== "manageData" && step !== "other" && (
+      {step !== "start" && step !== "hinweise" && step !== "manageData" && step !== "other" && step !== "datenschutz" &&(
         <AssessmentLayout
           onSubmit={handleSubmit}
           progress={Math.max(highestAssessmentProgress, getStepProgress(step))}

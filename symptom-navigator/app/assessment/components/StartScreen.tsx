@@ -105,7 +105,7 @@ export function StartScreen({
           Kontakt
         </button>
 
-        <button type="button" className={homeStyles.footerLink}>
+        <button type="button" className={homeStyles.footerLink}onClick={() => setStep("datenschutz")}>
           Datenschutz
         </button>
 
