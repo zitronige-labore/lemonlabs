@@ -20,6 +20,11 @@ project-root/
 │   │   └── medicalLogic/
 │   │       # Symptom- und Red-Flag-Logik
 │   │
+│   ├── otherFeatures/
+│   │   ├── components/
+│   │   │   # Komponenten weiterer Funktionen
+│   │   └── utils/
+│   │       # Client-seitige Hilfsfunktionen
 │   │
 │   ├── dbs/
 │   │   # Datenbank-Verbindungsspezifikationen
@@ -35,6 +40,9 @@ project-root/
 │   # Statische Assets
 │   # - Bilder
 │   # - manifest.json
+│
+├── __tests__/
+│   # Unit- und Integrationstests
 │
 ├── e2e/
 │   # End-to-End-Tests
