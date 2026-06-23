@@ -94,17 +94,6 @@ export function BodyRegionStep({
         aria-label={region}
         className={`${assessmentStyles.bodyPart} ${selectedSubRegion === region ? assessmentStyles.selectedBodyPart : ""
         }`}
-        onMouseEnter={(e) => {
-          if (!isSelected)
-            (e.currentTarget as SVGPathElement).style.fill =
-              "rgba(0, 95, 143, 0.18)";
-        }}
-        onMouseLeave={(e) => {
-          if (!isSelected)
-            (e.currentTarget as SVGPathElement).style.fill =
-              "rgba(0, 95, 143, 0.0)";
-        }}
-        onClick={() => selectSubRegion(region)}
       />
     );
   };
