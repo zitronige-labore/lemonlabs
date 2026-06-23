@@ -20,11 +20,6 @@ project-root/
 │   │   └── medicalLogic/
 │   │       # Symptom- und Red-Flag-Logik
 │   │
-│   ├── otherFeatures/
-│   │   ├── components/
-│   │   │   # Komponenten weiterer Funktionen
-│   │   └── utils/
-│   │       # Client-seitige Hilfsfunktionen
 │   │
 │   ├── dbs/
 │   │   # Datenbank-Verbindungsspezifikationen
