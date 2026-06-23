@@ -5,18 +5,20 @@ project-root/
 ├── app/
 │   ├── page.tsx
 │   │   # State-Logik zur Anzeige der richtigen Komponenten
-│   │   # einzige Page der Web-App (Single Page Application)
+│   │   # Einzige Page der Web-App (Single Page Application)
 │   │
 │   ├── actions.tsx
-│   │   # Server Actions (entsprechen etwa dem traditionellen Backend)
-│   │   # API routes DB + AI
-│   │   # Promtaufbereitung
+│   │   # Server Actions (entsprechen dem traditionellen Backend)
+│   │   # API-Routen für Datenbank- und KI-Zugriffe
+│   │   # Prompt-Aufbereitung
 │   │
 │   ├── assessment/
 │   │   ├── components/
 │   │   │   # Komponenten der Hauptfunktion „Assessment“
-│   │   └── utils/
-│   │       # Client-seitige Hilfsfunktionen
+│   │   ├── utils/
+│   │   │   # Client-seitige Hilfsfunktionen
+│   │   └── medicalLogic/
+│   │       # Symptom- und Red-Flag-Logik
 │   │
 │   ├── otherFeatures/
 │   │   ├── components/
@@ -25,20 +27,27 @@ project-root/
 │   │       # Client-seitige Hilfsfunktionen
 │   │
 │   ├── dbs/
-│   │   # Verbindungsspezifikationen zu:
-│   │   # - lemonlabs_db
-│   │   # - AI-Kontext-Datenbank
+│   │   # Datenbank-Verbindungsspezifikationen
+│   │   # z. B. lemonlabs_db
 │   │
-│   └── types/
-│       # Zentrale Definition aller verwendeten TypeScript-Typen
+│   ├── types/
+│   │   # Zentrale Definition aller verwendeten TypeScript-Typen
+│   │
+│   └── ping/
+│       # Endpoint zum Prüfen der Serververbindung
 │
 ├── public/
-│   # Statische Assets:
+│   # Statische Assets
 │   # - Bilder
 │   # - manifest.json
+│
+├── e2e/
+│   # End-to-End-Tests
 │
 ├── README.md
 │   # Projektdokumentation
 │
-├── configfiles
-    # z.b. tsconfig.json
+└── configfiles/
+    # Konfigurationsdateien
+    # z. B. tsconfig.json
+```
