@@ -5,7 +5,8 @@ import {
   getAdditionalInfoFromDb,
   getSymptomsFromDb,
   getRecommendationFromDb,
-  getDetailsNoCertainCountFromDb
+  getDetailsNoCertainCountFromDb,
+  getMedicationFromDb
 } from './helpers/dbAssert';
 
 test.beforeEach(async () => {
@@ -34,11 +35,11 @@ test("männlicher Patient mit Hals-Symptomen ohne Zusatzangaben wird korrekt ges
 
   await page.getByRole("button", { name: "Weiter zur Körperregion" }).click();
 
-  // click "Hals & Nacken" region on the SVG body map
-  await page.getByRole("button", { name: "Hals & Nacken" }).click();
+  // click "Hals" region on the SVG body map
+  await page.getByRole("button", { name: "Hals", exact: true }).first().click();
 
   // select "Hals" as sub-region
-  await page.getByRole("button", { name: "Hals", exact: true }).click();
+  await page.getByRole("button", { name: "Hals", exact: true }).last().click();
 
   // continue to symptom categories
   await page.getByRole("button", { name: "Weiter" }).last().click();
@@ -87,7 +88,7 @@ test("männlicher Patient mit Hals-Symptomen ohne Zusatzangaben wird korrekt ges
   expect(symptoms.length).toBeGreaterThan(0);
 
   // assert all optional lists are empty
-  const medication = await getDetailsNoCertainCountFromDb(dbCase.case_id, "medication");
+  const medication = await getMedicationFromDb(dbCase.case_id);
   expect(medication.length).toBe(0);
 
   const allergies = await getDetailsNoCertainCountFromDb(dbCase.case_id, "allergy");

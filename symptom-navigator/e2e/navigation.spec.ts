@@ -158,8 +158,8 @@ test.describe("Navigation & UI-Verhalten", () => {
     await page.getByRole("button", { name: "Kopf & Gesicht" }).click();
 
     // Unterregionen erscheinen
-    await expect(page.getByRole("button", { name: "Kopf", exact: true })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Nase", exact: true })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Kopf", exact: true }).last()).toBeVisible();
+    await expect(page.getByRole("button", { name: "Nase", exact: true }).last()).toBeVisible();
   });
 
   test("Körperregion: Weiter-Button ohne Unterregion ist deaktiviert", async ({ page }) => {

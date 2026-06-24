@@ -23,7 +23,8 @@ test("Symptome auf CheckInfo-Seite entfernen vor dem Absenden", async ({ page })
 
   // 2. Ohren -> Innenohr
   await page.getByRole("button", { name: "Kopf & Gesicht" }).click();
-  await page.getByRole("button", { name: "Ohren", exact: true }).click();
+  // select "Ohren" as sub-region from quick-select
+  await page.getByRole("button", { name: "Ohren", exact: true }).last().click();
   await page.getByRole("button", { name: "Weiter" }).last().click();
 
   await page.getByRole("button", { name: /innenohr/i }).click();

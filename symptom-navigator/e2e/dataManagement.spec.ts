@@ -21,8 +21,11 @@ test("Datenabruf und -löschung über Zugriffscode", async ({ page }) => {
   await page.locator('select').nth(0).selectOption("Männlich");
   await page.getByRole("button", { name: "Weiter zur Körperregion" }).click();
 
-  await page.getByRole("button", { name: "Hals & Nacken" }).click();
-  await page.getByRole("button", { name: "Hals", exact: true }).click();
+  // click "Hals" region on the SVG body map
+  await page.getByRole("button", { name: "Hals", exact: true }).first().click();
+
+  // select "Hals" as sub-region from quick-select
+  await page.getByRole("button", { name: "Hals", exact: true }).last().click();
   await page.getByRole("button", { name: "Weiter" }).last().click();
 
   await page.getByRole("button", { name: /Kehlkopf & Luftröhre/ }).click();
@@ -50,16 +53,17 @@ test("Datenabruf und -löschung über Zugriffscode", async ({ page }) => {
   // 5. Über "Andere Anliegen" in die Datenverwaltung gehen
   await page.getByRole("button", { name: "Andere Anliegen" }).click();
   await page.getByRole("button", { name: "Gespeicherte Daten verwalten" }).click();
-  await page.getByRole("button", { name: "Gespeicherte Daten ansehen und löschen" }).click();
 
   // 6. Code eingeben und abrufen
   await page.getByPlaceholder("Code hier eingeben").fill(accessCode);
   await page.getByRole("button", { name: "Abrufen" }).click();
 
   // 7. Prüfe, ob die gespeicherten Daten angezeigt werden
-  await expect(page.getByText("Geschlecht: männlich")).toBeVisible();
-  await expect(page.getByText("Alter: 33")).toBeVisible();
-  await expect(page.getByText("Bezeichnung: Heiserkeit: Rauigkeit, behauchte Stimme, Wegbrechen der Stimme")).toBeVisible();
+  await expect(page.getByText("Geschlecht")).toBeVisible();
+  await expect(page.getByText("männlich")).toBeVisible();
+  await expect(page.getByText("Alter")).toBeVisible();
+  await expect(page.getByText("33", { exact: true })).toBeVisible();
+  await expect(page.getByText("Heiserkeit: Rauigkeit, behauchte Stimme, Wegbrechen der Stimme")).toBeVisible();
 
   // 8. Daten löschen
   await page.getByRole("button", { name: "Löschen" }).click();
@@ -70,6 +74,6 @@ test("Datenabruf und -löschung über Zugriffscode", async ({ page }) => {
   await page.getByRole("button", { name: "Abrufen" }).click();
 
   // Nach dem Löschen und erneuten Abrufen sollten die Daten weg sein
-  await expect(page.getByText("Geschlecht: männlich")).not.toBeVisible();
-  await expect(page.getByText("Alter: 33")).not.toBeVisible();
+  await expect(page.getByText("männlich")).not.toBeVisible();
+  await expect(page.getByText("33", { exact: true })).not.toBeVisible();
 });

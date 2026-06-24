@@ -24,9 +24,15 @@ test.describe("KI-Dringlichkeitsstufen Validierung", () => {
     await page.locator('select').nth(0).selectOption("Männlich");
     await page.getByRole("button", { name: "Weiter zur Körperregion" }).click();
 
-    // Hals & Nacken -> Nacken
-    await page.getByRole("button", { name: "Hals & Nacken" }).click();
-    await page.getByRole("button", { name: "Nacken", exact: true }).click();
+    // rotate to back view
+    await page.getByRole("button", { name: "Zur Rückseite" }).click();
+
+    // click "Nacken" region on the SVG body map
+    await page.getByRole("button", { name: "Nacken", exact: true }).first().click();
+
+    // select "Nacken" as sub-region from quick-select
+    await page.getByRole("button", { name: "Nacken", exact: true }).last().click();
+
     await page.getByRole("button", { name: "Weiter" }).last().click();
 
     // Verspannung & Bewegungsschmerz
@@ -84,7 +90,7 @@ test.describe("KI-Dringlichkeitsstufen Validierung", () => {
 
     // Brust -> Brust links
     await page.getByRole("button", { name: "Brust" }).click();
-    await page.getByRole("button", { name: "Brust links", exact: true }).click();
+    await page.getByRole("button", { name: "Brust links", exact: true }).last().click();
     await page.getByRole("button", { name: "Weiter" }).last().click();
 
     // Engegefühl (Red Flag)
@@ -142,7 +148,7 @@ test.describe("KI-Dringlichkeitsstufen Validierung", () => {
 
     // Kopf & Gesicht -> Ohren
     await page.getByRole("button", { name: "Kopf & Gesicht" }).click();
-    await page.getByRole("button", { name: "Ohren", exact: true }).click();
+    await page.getByRole("button", { name: "Ohren", exact: true }).last().click();
     await page.getByRole("button", { name: "Weiter" }).last().click();
 
     // Aussenohr -> Starkes Jucken im Gehörgang
@@ -197,7 +203,7 @@ test.describe("KI-Dringlichkeitsstufen Validierung", () => {
 
     // Kopf & Gesicht -> Kopf
     await page.getByRole("button", { name: "Kopf & Gesicht" }).click();
-    await page.getByRole("button", { name: "Kopf", exact: true }).click();
+    await page.getByRole("button", { name: "Kopf", exact: true }).last().click();
     await page.getByRole("button", { name: "Weiter" }).last().click();
 
     // Dringende Warnsignale (Kopf) -> Explosionsartiger Vernichtungsschmerz
@@ -252,9 +258,12 @@ test.describe("KI-Dringlichkeitsstufen Validierung", () => {
     await page.locator('select').nth(1).selectOption("Nein");
     await page.getByRole("button", { name: "Weiter zur Körperregion" }).click();
 
-    // Hals & Nacken -> Hals
-    await page.getByRole("button", { name: "Hals & Nacken" }).click();
-    await page.getByRole("button", { name: "Hals", exact: true }).click();
+    // click "Hals" region on the SVG body map
+    await page.getByRole("button", { name: "Hals", exact: true }).first().click();
+
+    // select "Hals" as sub-region from quick-select
+    await page.getByRole("button", { name: "Hals", exact: true }).last().click();
+
     await page.getByRole("button", { name: "Weiter" }).last().click();
 
     // Rachenwand & Schlucken -> Räusperzwang
@@ -309,7 +318,7 @@ test.describe("KI-Dringlichkeitsstufen Validierung", () => {
 
     // Bauch -> Oberbauch
     await page.getByRole("button", { name: "Bauch" }).click();
-    await page.getByRole("button", { name: "Oberbauch", exact: true }).click();
+    await page.getByRole("button", { name: "Oberbauch links", exact: true }).last().click();
     await page.getByRole("button", { name: "Weiter" }).last().click();
 
     // Magen (Oberbauch) -> Kaffeesatz-Erbrechen

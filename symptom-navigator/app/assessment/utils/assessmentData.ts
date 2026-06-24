@@ -72,11 +72,11 @@ export function getSubRegions(
         "Hand rechts"];
 
     case "Beine & Füße links":
-      return ["Oberschenkel links", "Knie links", "Unterschenkel links", 
+      return ["Oberschenkel links", "Knie links", "Unterschenkel links",
         "Fuß links"];
 
     case "Beine & Füße rechts":
-      return ["Oberschenkel rechts", "Knie rechts", "Unterschenkel rechts", 
+      return ["Oberschenkel rechts", "Knie rechts", "Unterschenkel rechts",
         "Fuß rechts"];
 
     case "Psyche":
@@ -150,12 +150,9 @@ export function getMainRegionForSubRegion(sub: SubRegion): MainRegion[] {
 
 export function getWholeFromSides(sub: SubRegion): SubRegion {
   switch (sub) {
-    case "Brust rechts":
-    case "Brust links":
-      return "Brust";
     case "Oberbauch rechts":
     case "Oberbauch links":
-        return "Oberbauch";
+      return "Oberbauch";
     case "Unterbauch links":
     case "Unterbauch rechts":
       return "Unterbauch";
@@ -185,7 +182,7 @@ export function getWholeFromSides(sub: SubRegion): SubRegion {
       return "Fuß";
     default:
       return sub;
-    
+
   }
 }
 
@@ -200,42 +197,41 @@ export function getWholeFromSides(sub: SubRegion): SubRegion {
  *   worsening: 'ja' | 'nein' | undefined
  * ]
  */
-export function makeDBDataReadable(data: any)
-{
-   // convert coded values to be read by users where necessary
+export function makeDBDataReadable(data: any) {
+  // convert coded values to be read by users where necessary
 
-    let geschlecht = data?.caseData?.[0]?.sex;
-    if (geschlecht === "m") {
-        geschlecht = "männlich";
-    } else if (geschlecht === "w") {
-        geschlecht = "weiblich";
-    }
+  let geschlecht = data?.caseData?.[0]?.sex;
+  if (geschlecht === "m") {
+    geschlecht = "männlich";
+  } else if (geschlecht === "w") {
+    geschlecht = "weiblich";
+  }
 
-    let schwangerschaft = "nicht angegeben";
-    if (data?.caseData?.[0]?.pregnancy === true) schwangerschaft = "ja";
-    else if (data?.caseData?.[0]?.pregnancy === false) schwangerschaft = "nein";
+  let schwangerschaft = "nicht angegeben";
+  if (data?.caseData?.[0]?.pregnancy === true) schwangerschaft = "ja";
+  else if (data?.caseData?.[0]?.pregnancy === false) schwangerschaft = "nein";
 
-    let stillzeit = "nicht angegeben";
-    if (data?.caseData?.[0]?.lactation === true) stillzeit = "ja";
-    else if (data?.caseData?.[0]?.lactation === false) stillzeit = "nein";
+  let stillzeit = "nicht angegeben";
+  if (data?.caseData?.[0]?.lactation === true) stillzeit = "ja";
+  else if (data?.caseData?.[0]?.lactation === false) stillzeit = "nein";
 
-    let worsening = "nicht angegeben";
-    if (data?.additionalInfoData?.[0]?.worsening === true) worsening = "ja";
-    else if (data?.additionalInfoData?.[0]?.worsening === false) worsening = "nein";
+  let worsening = "nicht angegeben";
+  if (data?.additionalInfoData?.[0]?.worsening === true) worsening = "ja";
+  else if (data?.additionalInfoData?.[0]?.worsening === false) worsening = "nein";
 
-    let medication = ["nicht angegeben"];
-    const medList = data?.medicationData?.map((m: {
-        medication: string;
-        dose: number;
-        unit: string;
-        taken_since: Date;
-        frequency: number;
-        frequency_unit: string;
-    }) => `Name: ${m.medication}, Dosis: ${m.dose}${m.unit}, ${m.frequency} mal pro ${m.frequency_unit}`);
+  let medication = ["nicht angegeben"];
+  const medList = data?.medicationData?.map((m: {
+    medication: string;
+    dose: number;
+    unit: string;
+    taken_since: Date;
+    frequency: number;
+    frequency_unit: string;
+  }) => `Name: ${m.medication}, Dosis: ${m.dose}${m.unit}, ${m.frequency} mal pro ${m.frequency_unit}`);
 
-    if (medList && medList.length > 0) {
-        medication = medList;
-    }
+  if (medList && medList.length > 0) {
+    medication = medList;
+  }
 
-    return [geschlecht, schwangerschaft, stillzeit, worsening, medication]
+  return [geschlecht, schwangerschaft, stillzeit, worsening, medication]
 }
