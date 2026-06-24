@@ -2,18 +2,49 @@ import type { Step } from "../../types/assessment";
 import homeStyles from "../../Home.module.css";
 import { CheckCircle, X } from "@phosphor-icons/react";
 
+/*
+  Eigenschaften des globalen Tutorial-Modals.
+
+  isOpen:
+  Steuert, ob das Modal angezeigt wird.
+
+  onClose:
+  Schließt das Modal über den Schließen-Button oder den Bestätigungsbutton.
+
+  currentStep:
+  Aktueller Anwendungsschritt, damit passende Hilfetexte angezeigt werden.
+*/
 type TutorialModalProps = {
   isOpen: boolean;
   onClose: () => void;
   currentStep: Step;
 };
 
+/*
+  Einheitliche Struktur für alle Tutorial-Inhalte.
+
+  title:
+  Überschrift des aktuellen Hilfedialogs.
+
+  description:
+  Kurze Einordnung, worum es in diesem Schritt geht.
+
+  steps:
+  Konkrete Hinweise, die als Liste im Modal angezeigt werden.
+*/
 type TutorialContent = {
   title: string;
   description: string;
   steps: string[];
 };
 
+/*
+  Schritte, in denen zunächst eine Symptomgruppe innerhalb einer
+  Körperregion ausgewählt wird.
+
+  Für diese Schritte reicht ein gemeinsamer Tutorial-Text,
+  weil die Bedienlogik überall gleich ist.
+*/
 const symptomCategorySteps = new Set<Step>([
   "Ohren",
   "Kopf",
@@ -31,6 +62,12 @@ const symptomCategorySteps = new Set<Step>([
   "Fuß",
 ]);
 
+/*
+  Schritte, in denen konkrete Symptome oder Aussagen markiert werden.
+
+  Auch diese Seiten teilen sich dieselbe Interaktionslogik:
+  passende Aussagen auswählen, optional Schmerzstärke angeben und fortfahren.
+*/
 const symptomSelectionSteps = new Set<Step>([
   "aussenOhr",
   "innenOhr",
@@ -75,6 +112,12 @@ const symptomSelectionSteps = new Set<Step>([
   "Psyche",
 ]);
 
+/*
+  Schrittgenaue Tutorial-Inhalte.
+
+  Für zentrale Stationen des Ablaufs gibt es eigene Texte,
+  damit das Tutorial den jeweiligen Kontext direkt erklärt.
+*/
 const tutorialContentByStep: Partial<Record<Exclude<Step, null>, TutorialContent>> = {
   start: {
     title: "Start",
@@ -237,6 +280,10 @@ const tutorialContentByStep: Partial<Record<Exclude<Step, null>, TutorialContent
   },
 };
 
+/*
+  Allgemeiner Tutorial-Text für Symptomkategorie-Seiten,
+  die nicht jeden Schritt einzeln im Mapping brauchen.
+*/
 const categoryTutorialContent: TutorialContent = {
   title: "Symptomgruppe auswählen",
   description:
@@ -248,6 +295,9 @@ const categoryTutorialContent: TutorialContent = {
   ],
 };
 
+/*
+  Allgemeiner Tutorial-Text für konkrete Symptomauswahl-Seiten.
+*/
 const symptomTutorialContent: TutorialContent = {
   title: "Symptome markieren",
   description:
@@ -259,6 +309,12 @@ const symptomTutorialContent: TutorialContent = {
   ],
 };
 
+/*
+  Rückfalltext für neue oder noch nicht speziell gepflegte Schritte.
+
+  So bleibt das Tutorial nutzbar, auch wenn der Ablauf erweitert wird,
+  bevor ein eigener Hilfetext ergänzt wurde.
+*/
 const fallbackTutorialContent: TutorialContent = {
   title: "Tutorial",
   description:
@@ -270,6 +326,15 @@ const fallbackTutorialContent: TutorialContent = {
   ],
 };
 
+/*
+  Ermittelt den passenden Tutorial-Inhalt für den aktuellen Schritt.
+
+  Reihenfolge:
+  1. Exakter Inhalt für bekannte Hauptschritte
+  2. Gemeinsamer Inhalt für Symptomkategorien
+  3. Gemeinsamer Inhalt für konkrete Symptomauswahl
+  4. Fallback für alle übrigen Schritte
+*/
 function getTutorialContent(currentStep: Step): TutorialContent {
   if (currentStep && tutorialContentByStep[currentStep]) {
     return tutorialContentByStep[currentStep];
@@ -286,18 +351,33 @@ function getTutorialContent(currentStep: Step): TutorialContent {
   return fallbackTutorialContent;
 }
 
+/*
+  Globales Tutorial-Modal.
+
+  Es wird von page.tsx unabhängig vom aktuellen Screen eingebunden
+  und passt seinen Inhalt über currentStep dynamisch an.
+*/
 export function TutorialModal({
   isOpen,
   onClose,
   currentStep,
 }: TutorialModalProps) {
+  /*
+    Wenn das Modal geschlossen ist, wird nichts gerendert.
+    Dadurch bleibt es auch für Screenreader und Tastaturfokus unsichtbar.
+  */
   if (!isOpen) return null;
 
+  /*
+    Passende Texte für den aktuellen Anwendungsschritt laden.
+  */
   const tutorialContent = getTutorialContent(currentStep);
 
   return (
+    /* Overlay über der aktuellen Seite */
     <div className={homeStyles.tutorialOverlay}>
       <div className={homeStyles.tutorialModalBox}>
+        {/* Schließen-Button oben rechts */}
         <button
           type="button"
           className={homeStyles.closeTutorialButton}
@@ -309,6 +389,7 @@ export function TutorialModal({
 
         <h2 className={homeStyles.tutorialTitle}>{tutorialContent.title}</h2>
 
+        {/* Beschreibung und konkrete Handlungshinweise */}
         <div className={homeStyles.tutorialContent}>
           <p>{tutorialContent.description}</p>
 
@@ -322,6 +403,7 @@ export function TutorialModal({
           </ul>
         </div>
 
+        {/* Bestätigungsbutton am Ende des Tutorials */}
         <button
           type="button"
           className={homeStyles.primaryButton}
