@@ -1,3 +1,10 @@
+/*
+  Grundlayout des Assessment-Bereichs.
+
+  Diese Styles greifen für alle Schritte nach der Start- und Hinweisseite.
+  Der Inhalt wird vertikal zentriert, bleibt aber auf die zentrale
+  Projektbreite begrenzt.
+*/
 .main {
   min-height: 100vh;
   min-height: 100dvh;
@@ -9,6 +16,9 @@
   padding: var(--space-3) var(--space-2);
 }
 
+/*
+  Gemeinsame Formularfläche für die einzelnen Assessment-Schritte.
+*/
 .card {
   width: 100%;
   max-width: var(--content-width);
@@ -19,6 +29,11 @@
   margin-bottom: auto;
 }
 
+/*
+  Fortschrittsanzeige im AssessmentLayout.
+
+  Die Breite von .progressFill wird in React pro Schritt gesetzt.
+*/
 .progressContainer {
   width: 100%;
   margin-bottom: var(--space-3);
@@ -40,6 +55,10 @@
   transition: width 0.3s ease;
 }
 
+/*
+  Allgemeine Textbausteine für Überschriften, Beschreibungstexte
+  und kontextbezogene Hinweise innerhalb der Schritte.
+*/
 .title {
   color: var(--text-primary);
   font-size: clamp(1.7rem, 6vw, 2.2rem);
@@ -78,6 +97,10 @@
   justify-content: center;
 }
 
+/*
+  Animierter Pfeil, der bei der Körperregion-Auswahl auf den nächsten
+  erwarteten Interaktionspunkt hinweist.
+*/
 .hintArrow {
   width: 30px;
   height: 30px;
@@ -103,6 +126,12 @@
   text-align: center;
 }
 
+/*
+  Formulargruppen und Eingabeelemente.
+
+  Diese Klassen werden von Basisdaten, Zusatzangaben, Freitext
+  und Symptomauswahl gemeinsam genutzt.
+*/
 .fieldset {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -236,6 +265,11 @@ textarea.input {
   line-height: 1.5;
 }
 
+/*
+  Einheitliche Button-Basis für primäre, sekundäre und regionale Aktionen.
+
+  Die Varianten überschreiben anschließend Farbe, Rahmen und Schatten.
+*/
 .primaryButton,
 .secondaryButton,
 .emergencyButton,
@@ -322,6 +356,12 @@ textarea.input {
   transform: translateY(0);
 }
 
+/*
+  Vertikale Aktionsgruppen.
+
+  buttonGroup wird für Schritt-Navigation genutzt,
+  quickSelect für kompakte Auswahlreihen wie Regionen oder Kategorien.
+*/
 .buttonGroup,
 .quickSelect {
   width: 100%;
@@ -339,6 +379,12 @@ textarea.input {
   margin: var(--space-3) 0 12px;
 }
 
+/*
+  Warn- und Notfallbereiche.
+
+  Diese Elemente heben medizinisch dringliche Informationen sichtbar
+  vom normalen Formularfluss ab.
+*/
 .emergencyButton {
   background: var(--danger);
   border-color: var(--danger);
@@ -372,6 +418,12 @@ textarea.input {
   margin: 0 0 var(--space-1);
 }
 
+/*
+  Interaktive Körperkarte.
+
+  Haupt- und Unterregionen haben eigene Grundflächen, teilen sich aber
+  Hover- und Auswahlzustände.
+*/
 .bodyWrapper {
   width: 100%;
   max-width: 480px;
@@ -433,12 +485,21 @@ textarea.input {
   color: var(--text-primary);
 }
 
+/*
+  Slider für Schmerzskalen und andere stufenlose Eingaben.
+*/
 .slider {
   width: 100%;
   accent-color: var(--primary);
   cursor: pointer;
 }
 
+/*
+  Ergebnis- und Zusammenfassungsbereiche.
+
+  resultBox rahmt die Auswertung, dataPanel und die data*-Klassen
+  strukturieren gespeicherte Angaben, KI-Antworten und Details.
+*/
 .resultBox {
   width: 100%;
   margin-top: var(--space-3);
@@ -666,6 +727,9 @@ textarea.input {
   overflow-wrap: anywhere;
 }
 
+/*
+  Fußzeile innerhalb des Assessment-Bereichs.
+*/
 .footer {
   width: 100%;
   flex: 0 0 auto;
@@ -693,6 +757,12 @@ textarea.input {
   text-decoration: underline;
 }
 
+/*
+  Aufklappbare Zusatzangaben.
+
+  Diese Klassen werden vor allem in AdditionalInfoStep verwendet,
+  wenn optionale Bereiche nach einer Checkbox-Eingabe sichtbar werden.
+*/
 .checkboxLabel {
   display: flex;
   align-items: center;
@@ -767,6 +837,12 @@ textarea.input {
   background: color-mix(in srgb, var(--error, #c0392b) 10%, transparent);
 }
 
+/*
+  Spezielle Eingabekarte für Medikamente.
+
+  Die Felder sind zweispaltig angeordnet; Name und Zeitraum können bei Bedarf
+  die volle Breite einnehmen.
+*/
 .medicationEntry {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -800,6 +876,9 @@ textarea.input {
   right: 8px;
 }
 
+/*
+  Bewegung des Hinweis-Pfeils bei der Körperregion-Auswahl.
+*/
 @keyframes hintArrowBounce {
   0%,
   100% {
@@ -811,6 +890,12 @@ textarea.input {
   }
 }
 
+/*
+  Mobile Anpassungen.
+
+  Auf kleinen Bildschirmen werden Abstände reduziert, Buttons verbreitert
+  und Datenraster einspaltig dargestellt.
+*/
 @media (max-width: 600px) {
   .main {
     padding: var(--space-2) 12px max(var(--space-2), env(safe-area-inset-bottom));
