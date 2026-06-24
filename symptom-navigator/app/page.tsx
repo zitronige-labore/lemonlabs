@@ -6,14 +6,15 @@
   Die sichtbaren Bereiche wurden in einzelne Komponenten ausgelagert.
   Die Zustände und die zentrale Ablaufsteuerung bleiben hier in page.tsx.
 */
-
+import { DatenschutzStep } from "./assessment/components/ DatenschutzStep";
 import { useState, useEffect, useRef } from "react";
 
 import homeStyles from "./Home.module.css";
 import assessmentStyles from "./assessment/Assessment.module.css";
 
 import { useSaveForm } from "./useSaveForm";
-import { sendDataToAi } from "./actions";
+import { sendDataToAi, sendFhirToServer } from "./actions";
+import { redFlagScan } from "./assessment/medicalLogic/redFlagScan";
 
 import SelectMoreSymptoms from "./assessment/components/SelectMoreSymptomsStep";
 import { AdditionalInfoStep } from "./assessment/components/AdditionalInfoStep";
@@ -30,6 +31,7 @@ import { LoadingPopup } from "./assessment/components/LoadingPopup";
 import { ManageDataStep } from "./assessment/components/ManageDataStep";
 import { CheckInfo } from "./assessment/components/CheckInfo";
 import { OtherStep } from "./assessment/components/OtherStep";
+import { RedFlagPositivePopUp } from "./assessment/components/RedFlagScanPositivePopUp";
 
 import { Question } from "@phosphor-icons/react";
 
@@ -45,6 +47,16 @@ import type {
 } from "./types/assessment";
 
 import { emptyRedFlags } from "./assessment/utils/assessmentData";
+import { SosModal } from "./assessment/components/SosModal";
+import {
+  formularSteps,
+  getStepProgress,
+  getUpdatedSymptoms,
+  getUpdatedSymptomText,
+  calculateHasEmergency,
+  calculateNewHighestProgress,
+  isRegionSelectionComplete,
+} from "./assessment/utils/pageLogic";
 
 export default function Home() {
   /*
@@ -118,23 +130,31 @@ export default function Home() {
   // state to check if offline
   const [isOffline, setIsOffline] = useState<boolean>(false);
 
+  // state in case form should be started in offline mode
+  const [startFormOffline, setStartFormOffline] = useState<boolean>(false)
+
+  // state to check if redFlag scan was positive
+  const [redFlagScanPositive, setRedFlagScanPositive] = useState<boolean>(false);
+
+  // state to save redflags detected by red flag scan 
+  const [redFlagScanResult, setRedFlagScanResult] = useState<string[]>([]);
 
   // event listener to check if user goes offline or comes back online
   useEffect(() => {
 
     // server ping to check more reliably than using navigator.isOnline
     async function checkConnection() {
-    try {
-      await fetch('/api/ping', { method: 'HEAD' });
-      setIsOffline(false);
-    } catch {
-      setIsOffline(true);
+      try {
+        await fetch('/api/ping', { method: 'HEAD' });
+        setIsOffline(false);
+      } catch {
+        setIsOffline(true);
+      }
     }
-  }
 
-  checkConnection();
+    checkConnection();
 
-  const interval = setInterval(checkConnection, 5000);
+    const interval = setInterval(checkConnection, 5000);
 
 
     function handleOnline() {
@@ -148,7 +168,7 @@ export default function Home() {
     window.addEventListener("online", handleOnline);
     window.addEventListener("offline", handleOffline);
 
-    return function() {
+    return function () {
       window.removeEventListener("online", handleOnline);
       window.removeEventListener("offline", handleOffline);
     };
@@ -162,8 +182,6 @@ export default function Home() {
     age: "",
     gender: "",
     pregnancy: "",
-    duration: "",
-    intensity: "0",
   });
 
   /*
@@ -171,14 +189,24 @@ export default function Home() {
     Diese Angaben sind nicht verpflichtend.
   */
   const [additionalData, setAdditionalData] = useState<AdditionalData>({
-    medication: "",
-    conditions: "",
-    duration: "",
+    medication: [],
+    hasMedication: false,
 
-    allergies: "",
+    conditions: [],
+    hasConditions: false,
+
+    allergies: [],
+    hasAllergies: false,
+
+    cigarettesPerDay: "",
+    smokescigarettes: false,
+
+    alcoholPerWeek: "",
+    drinksAlcohol: false,
 
     temperature: "",
     worsening: "",
+    duration: "",
 
     weight: "",
     height: "",
@@ -213,21 +241,27 @@ export default function Home() {
 
   // defines all steps which are part of the form
   const formularSteps: Step[] = [
-  "redflags",
-  "basisStart",
-  "bodyRegion",
-  "symptomChoice",
-  "textInput",
-  "selectMoreSymptoms",
-  "additionalInfo",
-];
+    "redflags",
+    "basisStart",
+    "bodyRegion",
+    "symptomChoice",
+    "textInput",
+    "selectMoreSymptoms",
+    "additionalInfo",
+  ];
+
+  // sets browser history at start (for navigation)
+  useEffect(function () {
+    history.replaceState({ step: step }, "", "#" + step);
+    return;
+  }, []);
 
 
   // catch the back and forth button from browser
-  useEffect(function() {
+  useEffect(function () {
     function handlePopState(event: PopStateEvent) {
       if (event.state && event.state.step) {
-        
+
         const zielStep = event.state.step as Step;
 
         if (zielStep === "hinweise" && stepRef.current === "redflags") {
@@ -240,17 +274,15 @@ export default function Home() {
 
         stepRef.current = zielStep;
         setHighestAssessmentProgress((previousProgress) =>
-          zielStep === "start" || zielStep === "hinweise"
-            ? 0
-            : Math.max(previousProgress, getStepProgress(zielStep))
+          calculateNewHighestProgress(previousProgress, zielStep)
         );
         setStep(zielStep);
       }
     }
-      
+
     window.addEventListener("popstate", handlePopState);
 
-    return function() {
+    return function () {
       window.removeEventListener("popstate", handlePopState);
     };
   }, []);
@@ -284,6 +316,11 @@ export default function Home() {
         if (s.aiAnswer)            setAiAnswer(s.aiAnswer);
       } catch {
         sessionStorage.removeItem("assessmentState");
+  // warning of data loss when reload
+  useEffect(function () {
+    function handleBeforeUnload(event: BeforeUnloadEvent) {
+      if (formularSteps.includes(step)) {
+        event.preventDefault();
       }
     }, []);
 
@@ -306,6 +343,8 @@ export default function Home() {
       checkInfoActive,
       caseId,
       aiAnswer,
+    return function () {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
     };
 
     sessionStorage.setItem("assessmentState", JSON.stringify(state));
@@ -330,13 +369,12 @@ export default function Home() {
     stepRef.current = nextStep;
     history.pushState({ step: nextStep }, "", "#" + nextStep);
     setHighestAssessmentProgress((previousProgress) =>
-      nextStep === "start" || nextStep === "hinweise"
-        ? 0
-        : Math.max(previousProgress, getStepProgress(nextStep))
+      calculateNewHighestProgress(previousProgress, nextStep)
     );
     setStep(nextStep);
   }
 
+  // function to track progress
   function getStepProgress(step: Step): number {
     switch (step) {
       case "redflags":
@@ -449,6 +487,19 @@ export default function Home() {
   */
   function selectMainRegion(region: MainRegion) {
     setSelectedMainRegion(region);
+    if (region === "Psyche") {
+      setSelectedSubRegion("Psyche");
+      return;
+    } else if (region === "Allgemein (ganzer Körper)"){
+      setSelectedSubRegion("Keine bestimmte Region / mehrere Stellen");
+      return;
+    } else if (region === "Hals") {
+      setSelectedSubRegion("Hals");
+      return;
+    } else if (region === "Nacken") {
+      setSelectedSubRegion("Nacken");
+      return;
+    }
     setSelectedSubRegion(null);
   }
 
@@ -515,6 +566,43 @@ export default function Home() {
     setCopyPainScale({});
     setNoRedFlags(false);
     setHighestAssessmentProgress(0);
+    setCheckInfoActive(false);
+    setAdditionalData({
+      medication: [],
+      hasMedication: false,
+
+      conditions: [],
+      hasConditions: false,
+
+      allergies: [],
+      hasAllergies: false,
+
+      cigarettesPerDay: "",
+      smokescigarettes: false,
+
+      alcoholPerWeek: "",
+      drinksAlcohol: false,
+
+      temperature: "",
+      worsening: "",
+      duration: "",
+
+      weight: "",
+      height: "",
+
+      breastfeeding: "",
+
+      extraInfo: "",
+    });
+    setBasisData({
+      age: "",
+      gender: "",
+      pregnancy: "",
+    });
+    setAiAnswer(null),
+      setCaseId("");
+    setRedFlagScanPositive(false);
+    setRedFlagScanResult([]);
   }
 
 
@@ -537,14 +625,47 @@ export default function Home() {
 
     setIsLoading(true);
 
-    try {
-      const id = await handleSaveForm();
-      setCaseId(id)
+    let id;
+    let triesLeft = 3;
 
-      const aiAnswer = await sendDataToAi(id);
-      setAiAnswer(aiAnswer);
+
+    try {
+      const redFlagScanResultLokal = await redFlagScan(basisData, additionalData, selectedSubRegion!, selectedSymptoms, symptomText)
+      if (redFlagScanResultLokal[0]) {
+        setRedFlagScanPositive(true)
+        setRedFlagScanResult(redFlagScanResultLokal[1])
+      }
+    }
+    catch (error) {
+      console.error("Error doing redflag scan", error);
+    }
+
+    try {
+      id = await handleSaveForm();
+      setCaseId(id)
     } catch (error) {
-      console.error("Error saving form or fetching AI response:", error);
+      console.error("Error saving data into db:", error);
+    }
+
+    // since ai answer goes wring sometimes, up to 3 tries are allowed
+    while (triesLeft > 0) {
+      try {
+        const aiAnswer = await sendDataToAi(basisData, additionalData, symptomText, selectedSymptoms, id);
+        setAiAnswer(aiAnswer);
+        triesLeft = 0;
+      } catch (error) {
+        if (triesLeft! > 0) {
+          console.error("Error fetching AI response::", error);
+        }
+        triesLeft--;
+        console.error("Try fetching Ai answer: ", (3 - triesLeft))
+      }
+    }
+
+    try {
+      const fhirServerAnswer = await sendFhirToServer(caseId)
+    } catch (error) {
+      console.error("Error sending FHIR bundle to server")
     }
 
     setIsLoading(false);
@@ -556,7 +677,7 @@ export default function Home() {
   return (
     <main
       className={
-        step === "start" || step === "hinweise" || step === "other"
+        step === "start" || step === "hinweise" || step === "other" || step === "datenschutz"
           ? homeStyles.main
           : assessmentStyles.main
       }
@@ -568,6 +689,7 @@ export default function Home() {
           resetProcess={resetProcess}
           setStep={goToStep}
           isOffline={isOffline}
+          setStartFormOffline={setStartFormOffline}
         />
       )}
 
@@ -604,13 +726,17 @@ export default function Home() {
           onManageData={() => goToStep("manageData")}
         />
       )}
+      {/* Datenschutzerklärung */}
+{step === "datenschutz" && (
+  <DatenschutzStep onBack={() => goToStep("start")} />
+)}
       {/* Alle Schritte der eigentlichen Ersteinschätzung */}
-      {step !== "start" && step !== "hinweise" && step !== "manageData" && step !== "other" && (
+      {step !== "start" && step !== "hinweise" && step !== "manageData" && step !== "other" && step !== "datenschutz" &&(
         <AssessmentLayout
           onSubmit={handleSubmit}
           progress={Math.max(highestAssessmentProgress, getStepProgress(step))}
         >
-          
+
           {/* Schritt 1: Warnzeichen prüfen */}
           {step === "redflags" && (
             <RedFlagsStep
@@ -620,7 +746,9 @@ export default function Home() {
               updateRedFlag={updateRedFlag}
               selectNoRedFlags={selectNoRedFlags}
               onContinue={() => goToStep("basisStart")}
+              setStep={goToStep}
               isOffline={isOffline}
+              startFormOffline={startFormOffline}
             />
           )}
 
@@ -727,6 +855,17 @@ export default function Home() {
           )}
         </AssessmentLayout>
       )}
+
+
+      {/* SOS ausloesen */}
+      {redFlagScanPositive && (
+        <RedFlagPositivePopUp
+          redFlagScanResult={redFlagScanResult}
+          isOpen={redFlagScanPositive}
+          onClose={() => setRedFlagScanPositive(false)}
+        />
+      )}
+
 
       {/* Globaler Tutorial Button */}
       <button

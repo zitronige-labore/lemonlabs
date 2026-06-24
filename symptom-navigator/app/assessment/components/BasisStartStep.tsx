@@ -68,22 +68,19 @@ export function BasisStartStep({
 
           <input
             className={assessmentStyles.input}
-            type="number"
-            min="0"
-            max="120"
+            type="text"
+            inputMode="numeric"
             value={basisData.age}
             onChange={(event) => {
               const value = event.target.value; //holt Benutzereingabe
-              const age = Number(value);
 
-              console.log(value);
-              console.log(age);
-              console.log(isNaN(age));
+
               setBasisData({ //Eingabe speichern
                 ...basisData,
                 age: value,
               });
-              //const age = Number(value); //cast in zahl 
+
+              const age = Number(value); //cast in zahl 
               if (
                 value === "" ||
                 Number.isNaN(age) ||
@@ -95,7 +92,7 @@ export function BasisStartStep({
                 setAgeError("");
               }
             }
-            } placeholder="Zum Beispiel: 25"
+            } placeholder="Zum Beispiel: 25 (Neugeborene: 0)"
           />
           {ageError && (
             <p className={assessmentStyles.errorText}>
@@ -119,10 +116,12 @@ export function BasisStartStep({
 
                 /*
                   Schwangerschaft wird nur gespeichert,
-                  wenn "weiblich" ausgewählt ist.
+                  wenn "weiblich" oder "divers" "keine Angabe" ausgewählt ist.
                 */
                 pregnancy:
-                  event.target.value === "weiblich"
+                  event.target.value === "weiblich" ||
+                  event.target.value === "divers" ||
+                  event.target.value === "keine Angabe"
                     ? basisData.pregnancy
                     : "",
               })
@@ -140,29 +139,33 @@ export function BasisStartStep({
           Zusätzliche Auswahl für Schwangerschaft oder Stillzeit.
 
           Dieser Bereich wird nur angezeigt,
-          wenn "weiblich" ausgewählt wurde.
+          wenn "weiblich" oder "divers" oder "keine Angabe" ausgewählt wurde.
         */}
-        {basisData.gender === "weiblich" && (
-          <label className={assessmentStyles.formLabel}>
-            Schwangerschaft
+        {(
+          basisData.gender === "weiblich" ||
+          basisData.gender === "divers" ||
+          basisData.gender === "keine Angabe" 
+        ) && (
+            <label className={assessmentStyles.formLabel}>
+              Schwangerschaft
 
-            <select
-              className={assessmentStyles.input}
-              value={basisData.pregnancy}
-              onChange={(event) =>
-                setBasisData({
-                  ...basisData,
-                  pregnancy: event.target.value,
-                })
-              }
-            >
-              <option value="">Bitte auswählen</option>
-              <option value="ja">Ja</option>
-              <option value="nein">Nein</option>
-              <option value="keine Angabe">Keine Angabe</option>
-            </select>
-          </label>
-        )}
+              <select
+                className={assessmentStyles.input}
+                value={basisData.pregnancy}
+                onChange={(event) =>
+                  setBasisData({
+                    ...basisData,
+                    pregnancy: event.target.value,
+                  })
+                }
+              >
+                <option value="">Bitte auswählen</option>
+                <option value="ja">Ja</option>
+                <option value="nein">Nein</option>
+                <option value="keine Angabe">Keine Angabe</option>
+              </select>
+            </label>
+          )}
       </fieldset>
 
       {!checkInfoActive && (
@@ -182,7 +185,7 @@ export function BasisStartStep({
               !basisData.gender ||
               (basisData.gender === "weiblich" &&
                 !basisData.pregnancy) ||
-              ageError != ""
+              ageError !== ""
             }
           >
             Weiter zur Körperregion

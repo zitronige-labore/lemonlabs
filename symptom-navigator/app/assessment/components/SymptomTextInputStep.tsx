@@ -3,7 +3,10 @@
 */
 import assessmentStyles from "../Assessment.module.css";
 
-// state fuer currentText
+/*
+  useState wird für die lokale Freitexteingabe,
+  die optionale Schmerzskala und die Schmerz-Auswahl benötigt.
+*/
 import { useState } from "react";
 
 /*
@@ -17,7 +20,22 @@ import type {
 } from "../../types/assessment";
 
 /*
-  Eigenschaften der SymptomInputStep-Komponente.
+  Eigenschaften der SymptomTextInputStep-Komponente.
+
+  selectedSubRegion:
+  Die zuletzt ausgewählte Unterregion der Körperkarte.
+  Sie wird zusammen mit dem Freitext gespeichert.
+
+  symptomText:
+  Bereits gespeicherte Freitextsymptome.
+  Der Wert wird hier nicht direkt gerendert, bleibt aber Teil
+  der Schnittstelle zum zentralen Assessment-State.
+
+  addSymptomText:
+  Übergibt den neu formulierten Freitext an page.tsx.
+
+  onContinue:
+  Wechselt nach dem Speichern zum nächsten Schritt.
 */
 type SymptomTextInputStepProps = {
   selectedSubRegion: SubRegion | null;
@@ -40,8 +58,23 @@ export function SymptomTextInputStep({
   onContinue
 }: SymptomTextInputStepProps) {
 
+  /*
+    Speichert den aktuell eingegebenen Freitext,
+    bevor er in die zentrale Symptomliste übernommen wird.
+  */
   const [currentText, setCurrentText] = useState("");
+
+  /*
+    Speichert die optionale Schmerzstärke.
+
+    Der Wert kommt vom Range-Input als String,
+    kann aber fachlich als Zahl verstanden werden.
+  */
   const [painscale, setPainscale] = useState<string | number>();
+
+  /*
+    Steuert, ob die zusätzliche Schmerzskala eingeblendet wird.
+  */
   const [isPainSymptom, setIsPainSymptom] = useState(false);
 
   return (
@@ -76,6 +109,7 @@ export function SymptomTextInputStep({
           </span>
         </label>
 
+        {/* Optionale Einordnung, ob die freie Beschwerde Schmerzen enthält */}
         <label className={assessmentStyles.label}>
           <input
             type="checkbox"
@@ -88,6 +122,10 @@ export function SymptomTextInputStep({
         </label>
 
         {isPainSymptom && (
+          /*
+            Schmerzskala nur anzeigen, wenn der Freitext
+            als Schmerzsymptom markiert wurde.
+          */
            <fieldset className={assessmentStyles.fieldset}>
             <legend className={assessmentStyles.legend}>
               Schmerzstärke
@@ -113,11 +151,16 @@ export function SymptomTextInputStep({
             </fieldset>
         )}
 
-        {/* Button zum Wechseln zum nächsten Schritt */}
+        {/* Speichert den Freitext mit Region und optionaler Schmerzstärke */}
         <button
           type="button"
           className={assessmentStyles.primaryButton}
           onClick={() => {
+            /*
+              Der Freitext wird als JSON-ähnlicher String gespeichert,
+              weil CheckInfo, ResultStep und Datenverwaltung diese Struktur
+              später wieder auslesen.
+            */
             addSymptomText(
               `{"text_symptom":"${currentText}","bodyregion":"${selectedSubRegion}","painscale":${isPainSymptom ? painscale ?? null : null}}`
             );

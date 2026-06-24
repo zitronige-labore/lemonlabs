@@ -49,7 +49,18 @@ export function AssessmentLayout({
         Alle einzelnen Schritte werden
         innerhalb von {children} angezeigt.
       */}
-      <form className={assessmentStyles.card} onSubmit={onSubmit}>
+      <form 
+      className={assessmentStyles.card} 
+      onSubmit={onSubmit}
+      onKeyDown={(event) => {
+          if (
+            event.key === "Enter" &&
+            (event.target as HTMLElement).tagName !== "TEXTAREA"
+          ) {
+            event.preventDefault();
+          }
+        }}
+      >
         <h1 className={assessmentStyles.title}>Ersteinschätzung</h1>
 
         <div className={assessmentStyles.progressContainer}>

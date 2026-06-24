@@ -5,7 +5,8 @@ import {
   getAdditionalInfoFromDb,
   getSymptomsFromDb,
   getRecommendationFromDb,
-  getDetailsNoCertainCountFromDb
+  getDetailsNoCertainCountFromDb,
+  getMedicationFromDb
 } from './helpers/dbAssert';
 
 test.beforeEach(async () => {
@@ -40,8 +41,8 @@ test("complete assessment flow is saved correctly to the database", async ({ pag
   // click "Kopf & Gesicht" region on the SVG body map via aria-label
   await page.getByRole("button", { name: "Kopf & Gesicht" }).click();
 
-  // select "Kopf" as sub-region from the buttons that appear below
-  await page.getByRole("button", { name: "Kopf", exact: true }).click();
+  // select "Kopf" as sub-region from quick-select
+  await page.getByRole("button", { name: "Kopf", exact: true }).last().click();
 
   // continue to symptom categories
   await page.getByRole("button", { name: "Weiter" }).last().click();
@@ -55,7 +56,7 @@ test("complete assessment flow is saved correctly to the database", async ({ pag
   // fill in symptom duration and pain intensity
   await page.locator('input[type="range"]').fill("7");
 
-    // select symptom from list
+  // select symptom from list
   await page.getByLabel("Schwerer Druck auf dem gesamten Schädel").check();
 
   // continue
@@ -66,13 +67,21 @@ test("complete assessment flow is saved correctly to the database", async ({ pag
 
 
   // fill in optional medication field
-  await page.getByLabel("Nehmen Sie aktuell Medikamente ein?").fill("Ibuprofen");
+  await page.getByLabel("Einnahme von Medikamenten").check();
+  await page.getByPlaceholder("z. B. Ibuprofen").fill("Ibuprofen");
+  await page.getByPlaceholder("z. B. 400").fill("400");
+  await page.getByLabel("Einheit*").selectOption("mg");
+  await page.getByPlaceholder("z. B. 3", { exact: true }).fill("1");
+  await page.getByLabel("pro*").selectOption("Tag");
+  await page.getByLabel("seit wann*").fill("2026-06-20");
 
   // fill in allergies field
-  await page.getByLabel("Sind Allergien bekannt?").fill("Pollen");
+  await page.getByLabel("Es liegen Allergien vor").check();
+  await page.getByPlaceholder("Allergien z.B. Pollen, Penicillin...").fill("Pollen");
 
-  // select condition via checkbox
-  await page.getByLabel("Bluthochdruck").check();
+  // select condition via checkbox/input
+  await page.getByLabel("Es liegen Vorerkrankungen vor").check();
+  await page.getByPlaceholder("Vorerkrankung (z. B. Diabetes, Bluthochdruck)").fill("Bluthochdruck");
 
   // continue to check info screen
   await page.getByRole("button", { name: "weiter" }).click();
@@ -101,16 +110,16 @@ test("complete assessment flow is saved correctly to the database", async ({ pag
   expect(symptoms.length).toBeGreaterThan(0);
 
   // assert allergies were saved
-const allergies = await getDetailsNoCertainCountFromDb(dbCase.case_id, "allergy");
-expect(allergies).toContain("Pollen");
+  const allergies = await getDetailsNoCertainCountFromDb(dbCase.case_id, "allergy");
+  expect(allergies).toContain("Pollen");
 
-// assert medication was saved
-const medication = await getDetailsNoCertainCountFromDb(dbCase.case_id, "medication");
-expect(medication).toContain("Ibuprofen");
+  // assert medication was saved
+  const medication = await getMedicationFromDb(dbCase.case_id);
+  expect(medication).toContain("Ibuprofen");
 
-// assert conditions were saved
-const conditions = await getDetailsNoCertainCountFromDb(dbCase.case_id, "condition");
-expect(conditions).toContain("Bluthochdruck");
+  // assert conditions were saved
+  const conditions = await getDetailsNoCertainCountFromDb(dbCase.case_id, "condition");
+  expect(conditions).toContain("Bluthochdruck");
 
   // assert AI recommendation was saved with a valid urgency level
   const recommendation = await getRecommendationFromDb(dbCase.case_id);

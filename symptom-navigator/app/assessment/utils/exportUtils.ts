@@ -14,6 +14,8 @@ export type AssessmentExportData = {
   medikation: string;
   allergien: string;
   vorerkrankungen: string;
+  alkoholkonsum: string;
+  zigaretten: string;
   symptome: string;
   textSymptome: string;
   datum: string;
@@ -22,7 +24,7 @@ export type AssessmentExportData = {
   vermutungen: { text: string; wahrscheinlichkeit: string }[];
 };
 
-export function downloadTxt(d: AssessmentExportData) {
+export function formatAssessmentTxt(d: AssessmentExportData): string {
   const rows: string[] = [];
 
   rows.push("Daten\n");
@@ -40,8 +42,10 @@ export function downloadTxt(d: AssessmentExportData) {
     rows.push(`Stillzeit: ${d.stillzeit}`);
   }
   rows.push(`Medikation: ${d.medikation}`);
-  rows.push(`Allergien: ${d.allergien}`);
-  rows.push(`Vorerkrankungen: ${d.vorerkrankungen}`);
+  rows.push(`Allergien: ${d.allergien || "Keine Angabe"}`);
+  rows.push(`Vorerkrankungen: ${d.vorerkrankungen.length > 0 ? d.vorerkrankungen : "Keine Angabe"}`);
+  rows.push(`Alkoholkonsum (Getränke/Woche): ${d.alkoholkonsum || "Keine Angabe"}`);
+  rows.push(`Zigaretten pro Tag: ${d.zigaretten || "Keine Angabe"}`);
 
   rows.push("\nSymptome");
   if (d.symptome) rows.push(`Symptome: ${d.symptome}`);
@@ -59,7 +63,11 @@ export function downloadTxt(d: AssessmentExportData) {
 
   rows.push(`\nDaten erfasst am: ${d.datum}`);
 
-  const text = rows.join("\n");
+  return rows.join("\n");
+}
+
+export function downloadTxt(d: AssessmentExportData) {
+  const text = formatAssessmentTxt(d);
   const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
@@ -69,7 +77,7 @@ export function downloadTxt(d: AssessmentExportData) {
   URL.revokeObjectURL(url);
 }
 
-export function downloadPdf(d: AssessmentExportData) {
+export function formatAssessmentPdfTable(d: AssessmentExportData): string[][] {
   const tableBody: string[][] = [];
 
   tableBody.push(["Alter", d.alter]);
@@ -77,8 +85,10 @@ export function downloadPdf(d: AssessmentExportData) {
   tableBody.push(["Größe", d.groesse]);
   tableBody.push(["Gewicht", d.gewicht]);
   tableBody.push(["Medikation", d.medikation]);
-  tableBody.push(["Allergien", d.allergien]);
-  tableBody.push(["Vorerkrankungen", d.vorerkrankungen]);
+  tableBody.push(["Allergien", d.allergien || "Keine Angabe"]);
+  tableBody.push(["Vorerkrankungen", d.vorerkrankungen.length > 0 ? d.vorerkrankungen : "Keine Angabe"]);
+  tableBody.push(["Alkoholkonsum (Getränke/Woche)", d.alkoholkonsum || "Keine Angabe"]);
+  tableBody.push(["Zigaretten pro Tag", d.zigaretten || "Keine Angabe"]);
   tableBody.push(["Temperatur", d.temperatur]);
   tableBody.push(["Dauer der Symptome", d.dauer]);
   tableBody.push(["Symptome werden schlimmer", d.worsening || "Keine Angabe"]);
@@ -95,6 +105,12 @@ export function downloadPdf(d: AssessmentExportData) {
     tableBody.push(["Wahrscheinlichkeit", v.wahrscheinlichkeit]);
   });
   tableBody.push(["Daten erfasst am", d.datum]);
+
+  return tableBody;
+}
+
+export function downloadPdf(d: AssessmentExportData) {
+  const tableBody = formatAssessmentPdfTable(d);
 
   const doc = new jsPDF();
   doc.setFontSize(16);

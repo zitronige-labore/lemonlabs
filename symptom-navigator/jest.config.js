@@ -25,8 +25,7 @@ const config = {
   ],
 
   moduleNameMapper: {
-    // Next.js Server Actions: "use server" wird ignoriert
-    "^server-only$": "<rootDir>/__mocks__/server-only.js",
+    // Falls nötig, können hier andere Mappings hin, aber keine CSS-Mocks mehr
   },
 
 

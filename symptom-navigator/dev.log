@@ -1,0 +1,65 @@
+
+> symptom-navigator@0.1.0 dev
+> next dev
+
+▲ Next.js 16.2.4 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.179.219:3000
+- Environments: .env
+✓ Ready in 247ms
+⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of /Users/tasnemalkhateeb/Desktop/lemonlabs/package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * /Users/tasnemalkhateeb/Desktop/lemonlabs/symptom-navigator/package-lock.json
+
+◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
+[Cleanup] deleteOldCases beim Start ausgeführt.
+instrumentation.ts register() called
+
+ GET / 200 in 316ms (next.js: 79ms, application-code: 237ms)
+ HEAD /api/ping 404 in 55ms (next.js: 17ms, application-code: 38ms)
+ HEAD /api/ping 404 in 31ms (next.js: 5ms, application-code: 27ms)
+ HEAD /api/ping 404 in 20ms (next.js: 2ms, application-code: 18ms)
+ HEAD /api/ping 404 in 22ms (next.js: 3ms, application-code: 19ms)
+ HEAD /api/ping 404 in 25ms (next.js: 3ms, application-code: 22ms)
+ HEAD /api/ping 404 in 26ms (next.js: 4ms, application-code: 22ms)
+ HEAD /api/ping 404 in 31ms (next.js: 5ms, application-code: 26ms)
+ HEAD /api/ping 404 in 28ms (next.js: 4ms, application-code: 24ms)
+ HEAD /api/ping 404 in 26ms (next.js: 4ms, application-code: 22ms)
+ HEAD /api/ping 404 in 22ms (next.js: 3ms, application-code: 19ms)
+ HEAD /api/ping 404 in 23ms (next.js: 3ms, application-code: 20ms)
+ HEAD /api/ping 404 in 23ms (next.js: 3ms, application-code: 20ms)
+ HEAD /api/ping 404 in 28ms (next.js: 4ms, application-code: 24ms)
+ HEAD /api/ping 404 in 27ms (next.js: 4ms, application-code: 23ms)
+ HEAD /api/ping 404 in 22ms (next.js: 3ms, application-code: 19ms)
+ HEAD /api/ping 404 in 27ms (next.js: 4ms, application-code: 24ms)
+ HEAD /api/ping 404 in 20ms (next.js: 1870µs, application-code: 18ms)
+ HEAD /api/ping 404 in 30ms (next.js: 5ms, application-code: 25ms)
+ HEAD /api/ping 404 in 29ms (next.js: 4ms, application-code: 25ms)
+ HEAD /api/ping 404 in 27ms (next.js: 4ms, application-code: 24ms)
+ HEAD /api/ping 404 in 28ms (next.js: 4ms, application-code: 25ms)
+ HEAD /api/ping 404 in 28ms (next.js: 4ms, application-code: 24ms)
+ HEAD /api/ping 404 in 28ms (next.js: 4ms, application-code: 24ms)
+ HEAD /api/ping 404 in 24ms (next.js: 4ms, application-code: 19ms)
+ HEAD /api/ping 404 in 26ms (next.js: 3ms, application-code: 23ms)
+ HEAD /api/ping 404 in 22ms (next.js: 3ms, application-code: 19ms)
+ HEAD /api/ping 404 in 20ms (next.js: 1875µs, application-code: 18ms)
+ HEAD /api/ping 404 in 23ms (next.js: 4ms, application-code: 20ms)
+ HEAD /api/ping 404 in 23ms (next.js: 3ms, application-code: 20ms)
+ HEAD /api/ping 404 in 26ms (next.js: 4ms, application-code: 23ms)
+ HEAD /api/ping 404 in 26ms (next.js: 4ms, application-code: 22ms)
+ HEAD /api/ping 404 in 28ms (next.js: 4ms, application-code: 25ms)
+ HEAD /api/ping 404 in 23ms (next.js: 3ms, application-code: 20ms)
+ HEAD /api/ping 404 in 27ms (next.js: 4ms, application-code: 23ms)
+ HEAD /api/ping 404 in 25ms (next.js: 4ms, application-code: 21ms)
+ HEAD /api/ping 404 in 30ms (next.js: 4ms, application-code: 26ms)
+ HEAD /api/ping 404 in 29ms (next.js: 4ms, application-code: 25ms)
+ HEAD /api/ping 404 in 30ms (next.js: 4ms, application-code: 26ms)
+ HEAD /api/ping 404 in 31ms (next.js: 5ms, application-code: 26ms)
+ HEAD /api/ping 404 in 25ms (next.js: 3ms, application-code: 22ms)
+ HEAD /api/ping 404 in 20ms (next.js: 3ms, application-code: 18ms)
+ HEAD /api/ping 404 in 25ms (next.js: 3ms, application-code: 22ms)
+ HEAD /api/ping 404 in 23ms (next.js: 2ms, application-code: 21ms)
+ HEAD /api/ping 404 in 21ms (next.js: 1553µs, application-code: 19ms)

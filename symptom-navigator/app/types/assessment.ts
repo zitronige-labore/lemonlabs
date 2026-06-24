@@ -3,6 +3,10 @@
   der Ersteinschätzung innerhalb der Anwendung.
 */
 
+// importy of steps from category list
+import { categoryTargetSteps } from "../assessment/utils/makeStepFromSymptomCategory";
+import { RedFlags } from "../assessment/medicalLogic/redFlagCheckboxes";
+
 export type subregionCategory =
   | SubRegion
   | null;
@@ -11,73 +15,14 @@ export type categoryAfterCategoryIfNeeded =
   | "bsp";
 
 export type symptomChoiceStep =
-  | "innenOhr"
-  | "aussenOhr"
-  | "nase"
-  | "augen"
-  | "Kopf"
-  | "kopfSpannung"
-  | "kopfMigraene"
-  | "kopfCluster"
-  | "kopfBegleitung"
-  | "kopfWarnsignale"
-  | "MagenDarm"
-  | "mdSpeiseroehre"
-  | "mdMagen"
-  | "mdDarm"
-  | "mdGalle"
-  | "mdEnddarm"
-  | "ArmeHaende"
-  | "armSchulter"
-  | "armEllbogen"
-  | "armHandFinger"
-  | "armGefaesse"
-  | "Hals"
-  | "halsMandeln"
-  | "halsRachen"
-  | "halsKehlkopf"
-  | "halsDruesen"
-  | "RueckenOben"
-  | "RueckenUnten"
-  | "Becken"
-  | "Genitalbereich"
-  | "Oberschenkel"
-  | "Knie"
-  | "Unterschenkel"
-  | "Fuß"
-  | "AllgemeinesBefinden"
-  | "genitalHarnwege"
-  | "genitalSymptomeWeiblich"
-  | "genitalSymptomeMaennlich"
-  | "genitalSymptomeDivers"
-  | "genitalWarnsignale"
-  | "beineGelenke"     
-  | "beineMuskeln"      
-  | "beineNervenGefaese" 
-  | "beineWarnsignale"
-  | "nackenBewegung"     
-  | "nackenWarnsignale"    
-  | "mundZaehneSchmerz"    
-  | "mundZaehneSchleimhaut"
-  | "Mund"
-  | "Zaehne"
-  | "MundZaehne"
-  | "unterbauchDuendarm"
-  | "unterbauchDickdarm"
-  | "unterbauchOvarien"
-  | "brustHerz"
-  | "brustLunge"
-  | "brustRippen"
-  | "brustraumWarnsignale"
-  | "rueckenHalswirbel"
-  | "rueckenBrustwirbel"
-  | "rueckenLendenwirbel"
-  | "rueckenMuskulatur"; 
+  categoryTargetSteps
+  ; 
 
 
 
 export type Step =
   | "start"
+  | "datenschutz"
   | "hinweise"
   | "redflags"
   | "basisStart"
@@ -100,11 +45,20 @@ export type Step =
   Zusatzangaben der Nutzerin oder des Nutzers.
 */
 export type AdditionalData = {
-  medication?: string;
+  medication?: MedicationEntry[];
+  hasMedication: boolean;
 
-  conditions: string;
+  conditions: string[];
+  hasConditions: boolean;
 
-  allergies: string;
+  allergies: string[];
+  hasAllergies: boolean;
+
+  cigarettesPerDay: string;
+  smokescigarettes: boolean;
+
+  alcoholPerWeek: string;
+  drinksAlcohol: boolean;
 
   temperature: string;
   duration: string;
@@ -126,13 +80,16 @@ export type AdditionalData = {
 */
 export type MainRegion =
   | "Kopf & Gesicht"
-  | "Hals & Nacken"
+  | "Hals"
+  | "Nacken"
   | "Brust"
   | "Bauch"
   | "Rücken"
   | "Becken & Unterleib"
-  | "Arme & Hände"
-  | "Beine & Füße"
+  | "Arme & Hände links"
+  | "Arme & Hände rechts"
+  | "Beine & Füße links"
+  | "Beine & Füße rechts"
   | "Psyche"
   | "Allgemein (ganzer Körper)";
 
@@ -150,10 +107,15 @@ export type SubRegion =
   | "Mund / Zähne"
   | "Hals"
   | "Nacken"
+  | "Brust"
   | "Brust links"
   | "Brust rechts"
   | "Oberbauch"
   | "Unterbauch"
+  | "Oberbauch rechts"
+  | "Unterbauch rechts"
+  | "Oberbauch links"
+  | "Unterbauch links"
   | "Rücken oben"
   | "Rücken unten"
   | "Becken"
@@ -162,27 +124,37 @@ export type SubRegion =
   | "Oberarm"
   | "Unterarm"
   | "Hand"
+  | "Schulter rechts"
+  | "Oberarm rechts"
+  | "Unterarm rechts"
+  | "Hand rechts"
+  | "Schulter links"
+  | "Oberarm links"
+  | "Unterarm links"
+  | "Hand links"
   | "Oberschenkel"
-  | "Knie"
   | "Unterschenkel"
+  | "Knie"
   | "Fuß"
+  | "Oberschenkel rechts"
+  | "Knie rechts"
+  | "Unterschenkel rechts"
+  | "Oberschenkel links"
+  | "Knie links"
+  | "Unterschenkel links"
+  | "Fuß rechts"
+  | "Fuß links"
   | "Psyche"
   | "Keine bestimmte Region / mehrere Stellen";
 
 
+  
 /*
   Enthält alle möglichen Warnzeichen,
   die auf einen medizinischen Notfall
   hinweisen können.
 */
-export type RedFlags = {
-  chestPain: boolean;
-  breathingProblems: boolean;
-  unconsciousness: boolean;
-  severeBleeding: boolean;
-  strokeSymptoms: boolean;
-  highFeverConfusion: boolean;
-};
+export type { RedFlags } from "../assessment/medicalLogic/redFlagCheckboxes";
 
 /*
   Speichert allgemeine Angaben der Nutzerin
@@ -193,6 +165,34 @@ export type BasisData = {
   age: string;
   gender: string;
   pregnancy: string;
-  duration: string;
-  intensity: string;
+};
+
+
+export type SymptomSelectionList = {
+    step: Step;
+    symptoms: {
+    symptomName: string;
+    schmerzen: boolean;
+    symptomValue: string;
+    snomedCode: string;
+    }[];
+    }[];
+
+
+export type SymptomCategoryList = {
+step: Step;
+categories: {
+  category: string;
+  step: Step;
+  }[];
+}[];
+
+
+export type MedicationEntry = {
+  name: string;
+  dose: string;
+  unit: string; 
+  frequency: string;
+  frequencyUnit: string;
+  since: string;
 };

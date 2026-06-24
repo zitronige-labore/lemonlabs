@@ -36,6 +36,7 @@ export default function SymptomSelection({
   toggleSymptom
   }: SymptomSelectionProps) {
   
+  // saving painscales locally to make the component work properly
   const [painscales, setPainscales] = useState<Record<string, string>>(copyPainScale);
   const saveSelectedSymptomPainScales = () => {
     setSelectedSymptoms((prev) =>
@@ -47,6 +48,7 @@ export default function SymptomSelection({
         return s;
       })
     );
+    // writing a copy of the painscales to page.tsx for persistance
     setCopyPainScale(painscales);
   };
   
@@ -55,7 +57,7 @@ export default function SymptomSelection({
     <>
     <fieldset className={assessmentStyles.fieldset}>
       <legend className={assessmentStyles.legend}>
-        Wählen Sie Ihre Symptome
+        Wählen Sie die Symptome
       </legend>
 
       {/* one box for every symptom */}
