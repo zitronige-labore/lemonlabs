@@ -291,42 +291,36 @@ export default function Home() {
 
   // loading session storage data 
   useEffect(() => {
-      const saved = sessionStorage.getItem("assessmentState");
-      if (!saved) {
-        // if no state is saved → normal initialiying to start
-        history.replaceState({ step: "start" }, "", "#start");
-        return;
-      };
+    const saved = sessionStorage.getItem("assessmentState");
+    if (!saved) {
+      // if no state is saved → normal initialiying to start
+      history.replaceState({ step: "start" }, "", "#start");
+      return;
+    };
 
-      try {
-        const s = JSON.parse(saved);
-        if (s.step)                setStep(s.step);
-        stepRef.current = s.step;
-        if (s.basisData)           setBasisData(s.basisData);
-        if (s.additionalData)      setAdditionalData(s.additionalData);
-        if (s.redFlags)            setRedFlags(s.redFlags);
-        if (s.selectedMainRegion)  setSelectedMainRegion(s.selectedMainRegion);
-        if (s.selectedSubRegion)   setSelectedSubRegion(s.selectedSubRegion);
-        if (s.selectedSymptoms)    setSelectedSymptoms(s.selectedSymptoms);
-        if (s.symptomText)         setSymptomText(s.symptomText);
-        if (s.copyPainScale)       setCopyPainScale(s.copyPainScale);
-        if (s.noRedFlags != null)  setNoRedFlags(s.noRedFlags);
-        if (s.checkInfoActive != null) setCheckInfoActive(s.checkInfoActive);
-        if (s.caseId)              setCaseId(s.caseId);
-        if (s.aiAnswer)            setAiAnswer(s.aiAnswer);
-      } catch {
-        sessionStorage.removeItem("assessmentState");
-  // warning of data loss when reload
-  useEffect(function () {
-    function handleBeforeUnload(event: BeforeUnloadEvent) {
-      if (formularSteps.includes(step)) {
-        event.preventDefault();
-      }
+    try {
+      const s = JSON.parse(saved);
+      if (s.step)                setStep(s.step);
+      stepRef.current = s.step;
+      if (s.basisData)           setBasisData(s.basisData);
+      if (s.additionalData)      setAdditionalData(s.additionalData);
+      if (s.redFlags)            setRedFlags(s.redFlags);
+      if (s.selectedMainRegion)  setSelectedMainRegion(s.selectedMainRegion);
+      if (s.selectedSubRegion)   setSelectedSubRegion(s.selectedSubRegion);
+      if (s.selectedSymptoms)    setSelectedSymptoms(s.selectedSymptoms);
+      if (s.symptomText)         setSymptomText(s.symptomText);
+      if (s.copyPainScale)       setCopyPainScale(s.copyPainScale);
+      if (s.noRedFlags != null)  setNoRedFlags(s.noRedFlags);
+      if (s.checkInfoActive != null) setCheckInfoActive(s.checkInfoActive);
+      if (s.caseId)              setCaseId(s.caseId);
+      if (s.aiAnswer)            setAiAnswer(s.aiAnswer);
+    } catch {
+      sessionStorage.removeItem("assessmentState");
+    }
     }, []);
 
   // writing state changes into session storage
   useEffect(() => {
-    
     if (step === "start") return;
 
     const state = {
@@ -343,8 +337,6 @@ export default function Home() {
       checkInfoActive,
       caseId,
       aiAnswer,
-    return function () {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
     };
 
     sessionStorage.setItem("assessmentState", JSON.stringify(state));
