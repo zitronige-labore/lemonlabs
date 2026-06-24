@@ -150,9 +150,6 @@ export function getMainRegionForSubRegion(sub: SubRegion): MainRegion[] {
 
 export function getWholeFromSides(sub: SubRegion): SubRegion {
   switch (sub) {
-    case "Brust rechts":
-    case "Brust links":
-      return "Brust";
     case "Oberbauch rechts":
     case "Oberbauch links":
         return "Oberbauch";

@@ -61,7 +61,11 @@ export function BodyRegionStep({
       transform={transform}
       role="button"
       aria-label={region}
-      className={`${assessmentStyles.bodyPart} ${selectedMainRegion === region && !selectedSubRegion ? assessmentStyles.selectedBodyPart : ""
+      className={`${assessmentStyles.bodyPartMain} ${
+        selectedMainRegion === region &&
+        (!selectedSubRegion || ["Hals", "Nacken", "Psyche", "Allgemein (ganzer Körper)"].includes(region))
+          ? assessmentStyles.selectedBodyPart 
+          : ""
       }`}
       onMouseEnter={() => setHoveredPart(region)}
       onMouseLeave={() => setHoveredPart(null)}
@@ -92,7 +96,11 @@ export function BodyRegionStep({
         transform={transform}
         role="button"
         aria-label={region}
-        className={`${assessmentStyles.bodyPart} ${selectedSubRegion === region ? assessmentStyles.selectedBodyPart : ""
+        className={`${assessmentStyles.bodyPartSub} ${
+          selectedSubRegion === region || 
+          (belongsToActive && !selectedSubRegion)
+            ? assessmentStyles.selectedBodyPart 
+            : ""
         }`}
       />
     );
@@ -124,7 +132,11 @@ export function BodyRegionStep({
         rx="117"
         role="button"
         aria-label={region}
-        className={`${assessmentStyles.bodyPart} ${selectedMainRegion === region && !selectedSubRegion ? assessmentStyles.selectedBodyPart : ""
+        className={`${assessmentStyles.bodyPartMain} ${
+          selectedMainRegion === region &&
+          (!selectedSubRegion || ["Hals", "Nacken", "Psyche", "Allgemein (ganzer Körper)"].includes(region))
+            ? assessmentStyles.selectedBodyPart 
+            : ""
         }`}
         onMouseEnter={() => setHoveredPart(region)}
         onMouseLeave={() => setHoveredPart(null)}
@@ -341,11 +353,6 @@ export function BodyRegionStep({
                />
 
               <SubRegionPath
-                region="Nacken"
-                d="M1762.937,1090.421C1801.579,1090.421 1877.385,1071.283 1877.385,1071.283C1877.385,1071.283 1863.361,1199.805 1895.315,1199.805C1895.315,1199.805 1873.004,1277.828 1843.242,1284.52C1787.911,1296.961 1758.217,1293.881 1681.796,1282.927C1646.175,1277.821 1626.651,1199.805 1626.651,1199.805C1658.605,1199.805 1643.939,1076.062 1643.939,1076.062C1643.939,1076.062 1724.295,1090.421 1762.937,1090.421Z"
-              />
-
-              <SubRegionPath
                 region="Rücken oben"
                 d="M1486.88,1855.631C1486.621,1850.493 1486.402,1847.906 1486.402,1847.906C1472.346,1529.32 1400.253,1305.815 1402.193,1304.961C1562.85,1234.156 1630.553,1199.805 1630.553,1199.805C1630.553,1199.805 1640.645,1267.531 1666.426,1275.611C1787.285,1313.49 1841.637,1284.401 1863.688,1268.828C1885.152,1253.669 1895.321,1199.805 1895.321,1199.805C1895.321,1199.805 1963.024,1234.156 2123.682,1304.961C2125.601,1305.806 2060.602,1545.866 2039.814,1851.207C2039.814,1851.207 2039.804,1852.692 2039.82,1855.631L1486.88,1855.631Z"
               />
@@ -362,6 +369,16 @@ export function BodyRegionStep({
             region="Ohren"
             transform="matrix(1,0,0,1,-703.601623,-10)"
             d="M2669.084,877.683C2713.891,904.075 2664.266,962.659 2664.266,962.659L2649.965,986.024L2669.084,877.683ZM2245.907,877.683L2265.026,986.024L2250.724,962.659C2250.724,962.659 2201.099,904.075 2245.907,877.683Z"
+          />
+
+          <SubRegionPath
+            region="Becken"
+            d="M1456.602,2216.56L2067.572,2216.56C2067.572,2216.56 2066.729,2215.542 2092.618,2288.909C2101.56,2314.248 2109.613,2465.229 2109.613,2465.229C2109.613,2465.229 2031.842,2485.104 1762.937,2480.315C1762.736,2480.311 1415.207,2465.992 1415.207,2465.992C1415.207,2465.992 1423.704,2315.164 1432.201,2289.672C1488.19,2121.706 1456.602,2216.56 1456.602,2216.56Z"
+          />
+
+          <SubRegionPath
+            region="Genitalbereich"
+            d="M1456.602,2216.56L2067.572,2216.56C2067.572,2216.56 2066.729,2215.542 2092.618,2288.909C2101.56,2314.248 2109.613,2465.229 2109.613,2465.229C2109.613,2465.229 2031.842,2485.104 1762.937,2480.315C1762.736,2480.311 1415.207,2465.992 1415.207,2465.992C1415.207,2465.992 1423.704,2315.164 1432.201,2289.672C1488.19,2121.706 1456.602,2216.56 1456.602,2216.56Z"
           />
 
           {!isBackView ? (

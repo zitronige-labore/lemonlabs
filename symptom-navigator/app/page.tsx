@@ -431,6 +431,12 @@ export default function Home() {
     } else if (region === "Allgemein (ganzer Körper)"){
       setSelectedSubRegion("Keine bestimmte Region / mehrere Stellen");
       return;
+    } else if (region === "Hals") {
+      setSelectedSubRegion("Hals");
+      return;
+    } else if (region === "Nacken") {
+      setSelectedSubRegion("Nacken");
+      return;
     }
     setSelectedSubRegion(null);
   }
