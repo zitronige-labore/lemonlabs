@@ -19,8 +19,10 @@ export function validateHeight(value: string): string {
 }
 
 export function validateTemperature(value: string): string {
-  const temperature = Number(value);
   if (value === "") return "";
+
+  const temperature = Number(value.replace(",", "."));
+  
   if (temperature < 30 || temperature > 45 || Number.isNaN(temperature)) {
     return "Bitte geben Sie ein gültige Körpertemperatur ein.";
   }
