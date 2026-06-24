@@ -68,9 +68,8 @@ export function BasisStartStep({
 
           <input
             className={assessmentStyles.input}
-            type="number"
-            min="0"
-            max="120"
+            type="text"
+            inputMode="numeric"
             value={basisData.age}
             onChange={(event) => {
               const value = event.target.value; //holt Benutzereingabe
