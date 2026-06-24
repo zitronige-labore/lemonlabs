@@ -1,10 +1,8 @@
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
-DROP TABLE IF EXISTS recommendations CASCADE;
 DROP TABLE IF EXISTS case_symptoms CASCADE;
 DROP TABLE IF EXISTS symptom_catalog CASCADE;
 DROP TABLE IF EXISTS cases CASCADE;
-DROP TABLE IF EXISTS redflag_scan CASCADE;
 DROP TABLE IF EXISTS details_no_certain_count CASCADE;
 DROP TABLE IF EXISTS raw_text_symptoms CASCADE;
 DROP TABLE IF EXISTS additional_information CASCADE;
@@ -51,21 +49,6 @@ CREATE TABLE medication (
 	frequency_unit VARCHAR(15)
 );
 
-CREATE TABLE symptom_catalog (
-	symptom_id SERIAL PRIMARY KEY,
-	name_de VARCHAR(255) NOT NULL UNIQUE,
-	snomed_code VARCHAR(50) UNIQUE,
-	is_red_flag BOOLEAN DEFAULT FALSE
-);
-
-INSERT INTO symptom_catalog (name_de, snomed_code, is_red_flag)
-VALUES ('Besitz einer Katze', '1234', false);
-
-CREATE TABLE redflag_scan (
-  	redflag_id SERIAL PRIMARY KEY,
-	redflag_name VARCHAR(100)
-);
-
 
 CREATE TABLE raw_text_symptoms (
 	raw_id SERIAL PRIMARY KEY,
@@ -96,5 +79,4 @@ CREATE TABLE recommendations (
 	probability4 INTEGER,
 	probability5 INTEGER,
 	context_data JSONB,
-	fhir_json JSONB
 );
