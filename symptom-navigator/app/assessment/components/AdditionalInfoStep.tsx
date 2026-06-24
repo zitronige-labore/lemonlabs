@@ -589,7 +589,6 @@ export function AdditionalInfoStep({
             value={additionalData.temperature}
             onChange={(e) => {
               const value = e.target.value;
-              console.log("Wert:", value);
               setAdditionalData({
                 ...additionalData,
                 temperature: value,
