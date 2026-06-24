@@ -61,7 +61,11 @@ export function BodyRegionStep({
       transform={transform}
       role="button"
       aria-label={region}
-      className={`${assessmentStyles.bodyPartMain} ${selectedMainRegion === region && !selectedSubRegion ? assessmentStyles.selectedBodyPart : ""
+      className={`${assessmentStyles.bodyPartMain} ${
+        selectedMainRegion === region &&
+        (!selectedSubRegion || ["Hals", "Nacken", "Psyche", "Allgemein (ganzer Körper)"].includes(region))
+          ? assessmentStyles.selectedBodyPart 
+          : ""
       }`}
       onMouseEnter={() => setHoveredPart(region)}
       onMouseLeave={() => setHoveredPart(null)}
@@ -128,7 +132,11 @@ export function BodyRegionStep({
         rx="117"
         role="button"
         aria-label={region}
-        className={`${assessmentStyles.bodyPartMain} ${selectedMainRegion === region && !selectedSubRegion ? assessmentStyles.selectedBodyPart : ""
+        className={`${assessmentStyles.bodyPartMain} ${
+          selectedMainRegion === region &&
+          (!selectedSubRegion || ["Hals", "Nacken", "Psyche", "Allgemein (ganzer Körper)"].includes(region))
+            ? assessmentStyles.selectedBodyPart 
+            : ""
         }`}
         onMouseEnter={() => setHoveredPart(region)}
         onMouseLeave={() => setHoveredPart(null)}
@@ -343,11 +351,6 @@ export function BodyRegionStep({
                 transform="matrix(1,0,0,1,-8.556458,18.834312)"
                 d="M1759.834,594.368L1762.937,594.368C1762.937,594.368 1960.346,559.901 1972.853,858.848C1972.944,861.03 2018.708,874.157 1967.783,944.415C1963.058,950.934 1959.134,958.98 1953.734,967.19C1951.868,970.027 1908.917,1111.868 1759.907,1111.868C1599.744,1111.868 1570.903,970.027 1569.037,967.19C1563.637,958.98 1559.712,950.934 1554.987,944.415C1504.063,874.157 1549.826,861.03 1549.918,858.848C1562.425,559.901 1759.834,594.368 1759.834,594.368Z"
                />
-
-              <SubRegionPath
-                region="Nacken"
-                d="M1762.937,1090.421C1801.579,1090.421 1877.385,1071.283 1877.385,1071.283C1877.385,1071.283 1863.361,1199.805 1895.315,1199.805C1895.315,1199.805 1873.004,1277.828 1843.242,1284.52C1787.911,1296.961 1758.217,1293.881 1681.796,1282.927C1646.175,1277.821 1626.651,1199.805 1626.651,1199.805C1658.605,1199.805 1643.939,1076.062 1643.939,1076.062C1643.939,1076.062 1724.295,1090.421 1762.937,1090.421Z"
-              />
 
               <SubRegionPath
                 region="Rücken oben"
