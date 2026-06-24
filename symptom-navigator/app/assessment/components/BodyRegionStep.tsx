@@ -61,7 +61,7 @@ export function BodyRegionStep({
       transform={transform}
       role="button"
       aria-label={region}
-      className={`${assessmentStyles.bodyPart} ${selectedMainRegion === region && !selectedSubRegion ? assessmentStyles.selectedBodyPart : ""
+      className={`${assessmentStyles.bodyPartMain} ${selectedMainRegion === region && !selectedSubRegion ? assessmentStyles.selectedBodyPart : ""
       }`}
       onMouseEnter={() => setHoveredPart(region)}
       onMouseLeave={() => setHoveredPart(null)}
@@ -92,7 +92,11 @@ export function BodyRegionStep({
         transform={transform}
         role="button"
         aria-label={region}
-        className={`${assessmentStyles.bodyPart} ${selectedSubRegion === region ? assessmentStyles.selectedBodyPart : ""
+        className={`${assessmentStyles.bodyPartSub} ${
+          selectedSubRegion === region || 
+          (belongsToActive && !selectedSubRegion)
+            ? assessmentStyles.selectedBodyPart 
+            : ""
         }`}
       />
     );
@@ -124,7 +128,7 @@ export function BodyRegionStep({
         rx="117"
         role="button"
         aria-label={region}
-        className={`${assessmentStyles.bodyPart} ${selectedMainRegion === region && !selectedSubRegion ? assessmentStyles.selectedBodyPart : ""
+        className={`${assessmentStyles.bodyPartMain} ${selectedMainRegion === region && !selectedSubRegion ? assessmentStyles.selectedBodyPart : ""
         }`}
         onMouseEnter={() => setHoveredPart(region)}
         onMouseLeave={() => setHoveredPart(null)}
@@ -362,6 +366,16 @@ export function BodyRegionStep({
             region="Ohren"
             transform="matrix(1,0,0,1,-703.601623,-10)"
             d="M2669.084,877.683C2713.891,904.075 2664.266,962.659 2664.266,962.659L2649.965,986.024L2669.084,877.683ZM2245.907,877.683L2265.026,986.024L2250.724,962.659C2250.724,962.659 2201.099,904.075 2245.907,877.683Z"
+          />
+
+          <SubRegionPath
+            region="Becken"
+            d="M1456.602,2216.56L2067.572,2216.56C2067.572,2216.56 2066.729,2215.542 2092.618,2288.909C2101.56,2314.248 2109.613,2465.229 2109.613,2465.229C2109.613,2465.229 2031.842,2485.104 1762.937,2480.315C1762.736,2480.311 1415.207,2465.992 1415.207,2465.992C1415.207,2465.992 1423.704,2315.164 1432.201,2289.672C1488.19,2121.706 1456.602,2216.56 1456.602,2216.56Z"
+          />
+
+          <SubRegionPath
+            region="Genitalbereich"
+            d="M1456.602,2216.56L2067.572,2216.56C2067.572,2216.56 2066.729,2215.542 2092.618,2288.909C2101.56,2314.248 2109.613,2465.229 2109.613,2465.229C2109.613,2465.229 2031.842,2485.104 1762.937,2480.315C1762.736,2480.311 1415.207,2465.992 1415.207,2465.992C1415.207,2465.992 1423.704,2315.164 1432.201,2289.672C1488.19,2121.706 1456.602,2216.56 1456.602,2216.56Z"
           />
 
           {!isBackView ? (

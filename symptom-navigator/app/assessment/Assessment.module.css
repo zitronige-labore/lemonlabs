@@ -390,11 +390,23 @@ textarea.input {
   display: block;
 }
 
-.bodyPart {
+.bodyPartMain {
   fill: #d8e6f4;
   stroke: var(--text-muted);
   stroke-width: 10;
   stroke-color: #495062;
+  cursor: pointer;
+  transition:
+    fill 0.18s ease,
+    stroke 0.18s ease,
+    filter 0.18s ease;
+}
+
+.bodyPartSub {
+  fill: #d8e6f400;
+  stroke: var(--text-muted);
+  stroke-width: 10;
+  stroke-color: #49506200;
   cursor: pointer;
   transition:
     fill 0.18s ease,
