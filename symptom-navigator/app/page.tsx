@@ -298,25 +298,32 @@ export default function Home() {
       return;
     };
 
-    try {
-      const s = JSON.parse(saved);
-      if (s.step)                setStep(s.step);
-      stepRef.current = s.step;
-      if (s.basisData)           setBasisData(s.basisData);
-      if (s.additionalData)      setAdditionalData(s.additionalData);
-      if (s.redFlags)            setRedFlags(s.redFlags);
-      if (s.selectedMainRegion)  setSelectedMainRegion(s.selectedMainRegion);
-      if (s.selectedSubRegion)   setSelectedSubRegion(s.selectedSubRegion);
-      if (s.selectedSymptoms)    setSelectedSymptoms(s.selectedSymptoms);
-      if (s.symptomText)         setSymptomText(s.symptomText);
-      if (s.copyPainScale)       setCopyPainScale(s.copyPainScale);
-      if (s.noRedFlags != null)  setNoRedFlags(s.noRedFlags);
-      if (s.checkInfoActive != null) setCheckInfoActive(s.checkInfoActive);
-      if (s.caseId)              setCaseId(s.caseId);
-      if (s.aiAnswer)            setAiAnswer(s.aiAnswer);
-    } catch {
-      sessionStorage.removeItem("assessmentState");
-    }
+      try {
+        const s = JSON.parse(saved);
+        const loadedStep: Step = s.step ?? "start";
+
+        if (s.step)                setStep(s.step);
+        stepRef.current = loadedStep;
+        if (s.basisData)           setBasisData(s.basisData);
+        if (s.additionalData)      setAdditionalData(s.additionalData);
+        if (s.redFlags)            setRedFlags(s.redFlags);
+        if (s.selectedMainRegion)  setSelectedMainRegion(s.selectedMainRegion);
+        if (s.selectedSubRegion)   setSelectedSubRegion(s.selectedSubRegion);
+        if (s.selectedSymptoms)    setSelectedSymptoms(s.selectedSymptoms);
+        if (s.symptomText)         setSymptomText(s.symptomText);
+        if (s.copyPainScale)       setCopyPainScale(s.copyPainScale);
+        if (s.noRedFlags != null)  setNoRedFlags(s.noRedFlags);
+        if (s.checkInfoActive != null) setCheckInfoActive(s.checkInfoActive);
+        if (s.caseId)              setCaseId(s.caseId);
+        if (s.aiAnswer)            setAiAnswer(s.aiAnswer);
+
+        // ✅ History mit dem tatsächlich geladenen Step setzen
+        history.replaceState({ step: loadedStep }, "", "#" + loadedStep);
+        setHighestAssessmentProgress(getStepProgress(loadedStep));
+      } catch {
+        sessionStorage.removeItem("assessmentState");
+        history.replaceState({ step: "start" }, "", "#start");
+      }
     }, []);
 
   // writing state changes into session storage
