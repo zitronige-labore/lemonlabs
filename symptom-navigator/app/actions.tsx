@@ -1068,7 +1068,7 @@ export async function buildFhirBundle(caseId: string): Promise<any> {
 
   // Übernommen von Franziska
   const { sex, age, pregnancy, date } = userData.caseData[0] ?? {};
-  const { weight, height, temperature, duration, worsening, breastfeeding, extraInfo } = userData.additionalInfoData[0] ?? {};
+  const { weight, height, temperature, duration, worsening, breastfeeding, extraInfo, alcohol, smoking } = userData.additionalInfoData[0] ?? {};
   const { allergies } = userData.allergyData ?? {};
   const { medication } = userData.medicationData ?? {};
   const { conditions } = userData.conditionsData ?? {};
@@ -1177,6 +1177,42 @@ export async function buildFhirBundle(caseId: string): Promise<any> {
     });
   }
 
+if (smoking !== undefined) {
+  fhirEntries.push ({
+    resource: {
+      resourceType: "Observation",
+      status: "final",
+      subject: {reference: patientRef},
+      effectiveDateTime: date,
+      category: [{ coding: [{ system: "http://terminology.hl7.org/CodeSystem/observation-category", code: "social-history", display:" Social History" }]}],
+      code: { coding: [{ system: "http://loinc.org", coce: "72166-2", display: "Tobacco smoking status" }]},
+      valueCodeableConcept: {
+        text: typeof smoking === "boolean"
+        ? (smoking ? "Patient konsumiert Tabak/Zigaretten": "Patient konsumiert keinen Tabak")
+        : `Tabakkonsum: ${smoking}` // Falls Freitext statt Boolean
+      }
+    }
+  });
+}
+
+if (alcohol !== undefined) {
+  fhirEntries.push({
+    resource: {
+      resourceType: "Observation",
+      status: "final",
+      subject: {refernce: patientRef }, 
+      effectiveDateTime: date,
+      category: [{ coding: [{ system: "http://terminology.hl7.org/CodeSystem/observation-category", code: "social-history", display: "Social History" }] }],
+      code: {coding: [{ system:  "http://loinc.org", code: "74013-4", display: "Alcoholic beverage intake" }]},
+      valueCodeableConcept: {
+          text: typeof alcohol === "boolean"
+            ? (alcohol ? "Patient konsumiert regelmäßig Alkohol" : "Patient konsumiert keinen Alkohol")
+            : `Alkoholkonsum: ${alcohol}` // Falls Freitext statt Boolean
+    }
+  }
+  });
+}
+
   // Gegebene Symptome
   for (const symptom of symptoms) {
     const snomedCodeFromTree = await mapNameToSnomed(symptom.name_de);
@@ -1223,6 +1259,7 @@ export async function buildFhirBundle(caseId: string): Promise<any> {
       resource: {
         resourceType: "Observation",
         status: "final",
+        effectiveDateTime: date,
         subject: { reference: patientRef },
         category: [{ coding: [{ system: "http://terminology.hl7.org/CodeSystem/observation-category", code: "vital-signs", display: "Vital Signs" }] }],
         code: { coding: [{ system: "http://loinc.org", code: "8310-5", display: "Body temperature" }] },
