@@ -3,7 +3,7 @@ export const PATTERN_LIST = /^[^,]+(,[^,]+)*$/;
 export function validateWeight(value: string): string {
   const weight = Number(value);
   if (value === "") return "";
-  if (weight <= 0 || weight > 600 || !Number.isInteger(weight)) {
+  if (weight <= 0 || weight > 600 || !Number.isInteger(weight) || Number.isNaN(weight)) {
     return "Bitte geben Sie ein gültiges Gewicht ein.";
   }
   return "";
@@ -21,7 +21,7 @@ export function validateHeight(value: string): string {
 export function validateTemperature(value: string): string {
   const temperature = Number(value);
   if (value === "") return "";
-  if (temperature < 30 || temperature > 45) {
+  if (temperature < 30 || temperature > 45 || Number.isNaN(temperature)) {
     return "Bitte geben Sie ein gültige Körpertemperatur ein.";
   }
   return "";

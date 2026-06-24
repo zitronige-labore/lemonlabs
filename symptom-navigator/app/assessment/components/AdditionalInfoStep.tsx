@@ -213,9 +213,8 @@ export function AdditionalInfoStep({
                   Dosis*
                   <input
                     className={assessmentStyles.input}
-                    type="number"
-                    min={0}
-                    step={1}
+                    type="text"
+                    inputMode="numeric"
                     required
                     placeholder="z. B. 400"
                     value={entry.dose}
@@ -257,9 +256,8 @@ export function AdditionalInfoStep({
                   <input
                     className={assessmentStyles.input}
                     required
-                    type="number"
-                    min={0}
-                    step={1}
+                    type="text"
+                    inputMode="numeric"
                     placeholder="z. B. 3"
                     value={entry.frequency}
                     onChange={(e) => {
@@ -388,9 +386,8 @@ export function AdditionalInfoStep({
               *
               <input
                 className={assessmentStyles.input}
-                type="number"
-                min={0}
-                step={1}
+                type="text"
+                inputMode="numeric"
                 placeholder="z. B. 10"
                 value={additionalData.cigarettesPerDay}
                 onChange={(e) => {
@@ -420,6 +417,7 @@ export function AdditionalInfoStep({
         <label className={assessmentStyles.checkboxLabel}>
           <input
             type="checkbox"
+
             checked={additionalData.drinksAlcohol ?? false}
             onChange={(e) =>
               setAdditionalData({ ...additionalData, drinksAlcohol: e.target.checked, alcoholPerWeek: "" })
@@ -436,9 +434,8 @@ export function AdditionalInfoStep({
               *
               <input
                 className={assessmentStyles.input}
-                type="number"
-                min={0}
-                step={1}
+                type="text"
+                inputMode="numeric"
                 placeholder="z. B. 3"
                 value={additionalData.alcoholPerWeek}
                 onChange={(e) => {
@@ -527,7 +524,8 @@ export function AdditionalInfoStep({
           Gewicht in kg
           <input
             className={assessmentStyles.input}
-            type="number"
+            type="text"
+            inputMode="numeric"
             value={additionalData.weight}
             onChange={(e) => {
               const value = e.target.value;
@@ -547,7 +545,8 @@ export function AdditionalInfoStep({
           Größe in cm
           <input
             className={assessmentStyles.input}
-            type="number"
+            type="text"
+            inputMode="numeric"
             value={additionalData.height}
             onChange={(e) => {
               const value = e.target.value;
@@ -584,11 +583,13 @@ export function AdditionalInfoStep({
           Haben Sie Temperatur gemessen?
           <input
             className={assessmentStyles.input}
-            type="number"
+            type="text"
+            inputMode="decimal"
             step="0.1"
             value={additionalData.temperature}
             onChange={(e) => {
               const value = e.target.value;
+              console.log("Wert:", value);
               setAdditionalData({
                 ...additionalData,
                 temperature: value,
@@ -605,7 +606,8 @@ export function AdditionalInfoStep({
           Seit wie vielen Tagen bestehen die Beschwerden?
           <input
             className={assessmentStyles.input}
-            type="number"
+            type="text"
+            inputMode="numeric"
             value={additionalData.duration}
             onChange={(e) => {
               const value = e.target.value;

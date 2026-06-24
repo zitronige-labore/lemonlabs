@@ -131,9 +131,10 @@ export async function redFlagScan(
     // Eigen oder Fremdgefährdung
     if (
         hasAny(combined, "Selbstverletzungsgedanken") ||
-        hasAny(combined, "Fremdgefährdung")
+        hasAny(combined, "Fremdgefährdung") ||
+        hasAny(combined, "Suizidgedanken")
     ) {
-        return[true, ["Fremd oder Eigengefährdung"]]
+        return[true, ["Fremd oder Eigengefährdung oder Suizidgedanken"]]
     }
 
 
