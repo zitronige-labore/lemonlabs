@@ -38,8 +38,8 @@ test("älterer männlicher Patient mit Innenohr-Symptomen wird korrekt gespeiche
   // click "Kopf & Gesicht" region on the SVG body map
   await page.getByRole("button", { name: "Kopf & Gesicht" }).click();
 
-  // select "Ohren" as sub-region
-  await page.getByRole("button", { name: "Ohren", exact: true }).click();
+  // select "Ohren" as sub-region from quick-select
+  await page.getByRole("button", { name: "Ohren", exact: true }).last().click();
 
   // continue to symptom categories
   await page.getByRole("button", { name: "Weiter" }).last().click();
@@ -59,13 +59,14 @@ test("älterer männlicher Patient mit Innenohr-Symptomen wird korrekt gespeiche
   // do not add more symptoms
   await page.getByRole("button", { name: "nein" }).click();
 
-  // check medication and fill in
+  // fill in medication only
   await page.getByLabel("Einnahme von Medikamenten").check();
   await page.getByPlaceholder("z. B. Ibuprofen").fill("ASS 100");
   await page.getByPlaceholder("z. B. 400").fill("100");
-  await page.getByLabel("* Einheit").selectOption("mg");
-  await page.getByPlaceholder("z. B. 1").fill("1");
-  await page.getByLabel("* Zeitraum").selectOption("Tag");
+  await page.getByLabel("Einheit*").selectOption("mg");
+  await page.getByPlaceholder("z. B. 3", { exact: true }).fill("1");
+  await page.getByLabel("pro*").selectOption("Tag");
+  await page.getByLabel("seit wann*").fill("2026-06-20");
 
   // leave allergies and conditions empty
 

@@ -24,7 +24,7 @@ test("Eingegebene Daten auf CheckInfo-Seite überprüfen und bearbeiten", async 
 
   // 2. Wähle Brust -> Brust links -> Engegefühl
   await page.getByRole("button", { name: "Brust" }).click();
-  await page.getByRole("button", { name: "Brust links", exact: true }).click();
+  await page.getByRole("button", { name: "Brust links", exact: true }).last().click();
   await page.getByRole("button", { name: "Weiter" }).last().click();
 
   await page.getByLabel("Engegefühl, massiver Druck oder Brennen (Red Flag)").check();
@@ -35,15 +35,14 @@ test("Eingegebene Daten auf CheckInfo-Seite überprüfen und bearbeiten", async 
   await page.getByRole("button", { name: "nein" }).click();
 
   // 4. Zusatzangaben ausfüllen
-  // check medication and fill in
   await page.getByLabel("Einnahme von Medikamenten").check();
   await page.getByPlaceholder("z. B. Ibuprofen").fill("Aspirin");
-  await page.getByPlaceholder("z. B. 400").fill("100");
-  await page.getByLabel("* Einheit").selectOption("mg");
-  await page.getByPlaceholder("z. B. 1").fill("1");
-  await page.getByLabel("* Zeitraum").selectOption("Tag");
+  await page.getByPlaceholder("z. B. 400").fill("500");
+  await page.getByLabel("Einheit*").selectOption("mg");
+  await page.getByPlaceholder("z. B. 3", { exact: true }).fill("1");
+  await page.getByLabel("pro*").selectOption("Tag");
+  await page.getByLabel("seit wann*").fill("2026-06-20");
 
-  // check allergies and fill in
   await page.getByLabel("Es liegen Allergien vor").check();
   await page.getByPlaceholder("Allergien z.B. Pollen, Penicillin...").fill("Katzen");
   await page.getByRole("button", { name: "weiter" }).click();
@@ -67,9 +66,12 @@ test("Eingegebene Daten auf CheckInfo-Seite überprüfen und bearbeiten", async 
 
   // 9. Prüfen, ob die aktualisierten Daten angezeigt werden
   await page.getByRole("button", { name: "Daten zur Überprüfung anzeigen" }).click();
-  await expect(page.getByText("Alter: 31")).toBeVisible();
-  await expect(page.getByText("Geschlecht: divers")).toBeVisible();
-  await expect(page.getByText("Allergien: Hunde")).toBeVisible();
+  await expect(page.getByText("Alter")).toBeVisible();
+  await expect(page.getByText("31", { exact: true })).toBeVisible();
+  await expect(page.getByText("Geschlecht")).toBeVisible();
+  await expect(page.getByText("divers")).toBeVisible();
+  await expect(page.getByText("Allergien")).toBeVisible();
+  await expect(page.getByText("Hunde")).toBeVisible();
 
   // 10. Einschätzung abschließen
   await page.getByRole("button", { name: "Einschätzung abschließen" }).click();
@@ -85,14 +87,14 @@ test("Eingegebene Daten auf CheckInfo-Seite überprüfen und bearbeiten", async 
 
   const additionalInfo = await getAdditionalInfoFromDb(dbCase.case_id);
   expect(additionalInfo).not.toBeNull();
-  
+
   // Assert allergies changed from "Katzen" to "Hunde"
   const allergies = await page.evaluate(async (cid) => {
     // We can run a direct DB assertion or just read from getDetailsNoCertainCountFromDb in our helper.
     // However, since we are in playwright test file, let's import the helper:
     return cid;
   }, dbCase.case_id);
-  
+
   // Let's use the DB check in the test context:
   const allergiesDb = await getDetailsNoCertainCountFromDb(dbCase.case_id, "allergy");
   expect(allergiesDb).toContain("Hunde");

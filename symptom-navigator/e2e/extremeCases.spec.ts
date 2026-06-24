@@ -24,7 +24,7 @@ test("Extremfall: Mehr als 10 Symptome aus unterschiedlichen Körperregionen aus
 
   // --- REGION 1: Ohren (3 Symptome) ---
   await page.getByRole("button", { name: "Kopf & Gesicht" }).click();
-  await page.getByRole("button", { name: "Ohren", exact: true }).click();
+  await page.getByRole("button", { name: "Ohren", exact: true }).last().click();
   await page.getByRole("button", { name: "Weiter" }).last().click();
 
   await page.getByRole("button", { name: /innenohr/i }).click();
@@ -38,7 +38,7 @@ test("Extremfall: Mehr als 10 Symptome aus unterschiedlichen Körperregionen aus
 
   // --- REGION 2: Kopf (2 Symptome) ---
   await page.getByRole("button", { name: "Kopf & Gesicht" }).click();
-  await page.getByRole("button", { name: "Kopf", exact: true }).click();
+  await page.getByRole("button", { name: "Kopf", exact: true }).last().click();
   await page.getByRole("button", { name: "Weiter" }).last().click();
 
   await page.getByRole("button", { name: /Spannung & Druck im Kopf/ }).click();
@@ -50,8 +50,9 @@ test("Extremfall: Mehr als 10 Symptome aus unterschiedlichen Körperregionen aus
   await page.getByRole("button", { name: "ja" }).click();
 
   // --- REGION 3: Nacken (3 Symptome) ---
-  await page.getByRole("button", { name: "Hals & Nacken" }).click();
-  await page.getByRole("button", { name: "Nacken", exact: true }).click();
+  await page.getByRole("button", { name: "Zur Rückseite" }).click();
+  await page.getByRole("button", { name: "Nacken", exact: true }).first().click();
+  await page.getByRole("button", { name: "Nacken", exact: true }).last().click();
   await page.getByRole("button", { name: "Weiter" }).last().click();
 
   await page.getByRole("button", { name: /Verspannung & Bewegungsschmerz/ }).click();
@@ -64,8 +65,8 @@ test("Extremfall: Mehr als 10 Symptome aus unterschiedlichen Körperregionen aus
   await page.getByRole("button", { name: "ja" }).click();
 
   // --- REGION 4: Hals (2 Symptome) ---
-  await page.getByRole("button", { name: "Hals & Nacken" }).click();
-  await page.getByRole("button", { name: "Hals", exact: true }).click();
+  await page.getByRole("button", { name: "Hals", exact: true }).first().click();
+  await page.getByRole("button", { name: "Hals", exact: true }).last().click();
   await page.getByRole("button", { name: "Weiter" }).last().click();
 
   await page.getByRole("button", { name: /Kehlkopf & Luftröhre/ }).click();
@@ -78,7 +79,7 @@ test("Extremfall: Mehr als 10 Symptome aus unterschiedlichen Körperregionen aus
 
   // --- REGION 5: Magen (Freitext) ---
   await page.getByRole("button", { name: "Bauch" }).click();
-  await page.getByRole("button", { name: "Oberbauch", exact: true }).click();
+  await page.getByRole("button", { name: "Oberbauch links", exact: true }).last().click();
   await page.getByRole("button", { name: "Weiter" }).last().click();
 
   await page.getByRole("button", { name: /Sonstiges/ }).click();

@@ -38,8 +38,8 @@ test("diverse Person mit Magenbeschwerden und Freitexteingabe wird korrekt gespe
   // click "Bauch" region on the SVG body map
   await page.getByRole("button", { name: "Bauch" }).click();
 
-  // select "Oberbauch" as sub-region
-  await page.getByRole("button", { name: "Oberbauch", exact: true }).click();
+  // select "Oberbauch links" as sub-region from quick-select
+  await page.getByRole("button", { name: "Oberbauch links", exact: true }).last().click();
 
   // continue to symptom categories
   await page.getByRole("button", { name: "Weiter" }).last().click();
@@ -61,7 +61,7 @@ test("diverse Person mit Magenbeschwerden und Freitexteingabe wird korrekt gespe
 
   // select another region: Bauch and Oberbauch again
   await page.getByRole("button", { name: "Bauch" }).click();
-  await page.getByRole("button", { name: "Oberbauch", exact: true }).click();
+  await page.getByRole("button", { name: "Oberbauch links", exact: true }).last().click();
   await page.getByRole("button", { name: "Weiter" }).last().click();
 
   // use "Sonstiges" to get to free text input
@@ -78,8 +78,9 @@ await page.getByRole("textbox", { name: /Beschreiben Sie Ihre Beschwerden/ })
   // do not add more symptoms
   await page.getByRole("button", { name: "nein" }).click();
 
-  // fill in condition: Diabetes
-  await page.getByRole("checkbox", { name: "Diabetes Typ 1" }).check();
+  // fill in condition: Diabetes Typ 1
+  await page.getByLabel("Es liegen Vorerkrankungen vor").check();
+  await page.getByPlaceholder("Vorerkrankung (z. B. Diabetes, Bluthochdruck)").fill("Diabetes Typ 1");
 
   // continue to check info screen
   await page.getByRole("button", { name: "weiter" }).click();

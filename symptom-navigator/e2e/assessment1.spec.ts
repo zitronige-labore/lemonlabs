@@ -41,8 +41,8 @@ test("complete assessment flow is saved correctly to the database", async ({ pag
   // click "Kopf & Gesicht" region on the SVG body map via aria-label
   await page.getByRole("button", { name: "Kopf & Gesicht" }).click();
 
-  // select "Kopf" as sub-region from the buttons that appear below
-  await page.getByRole("button", { name: "Kopf", exact: true }).click();
+  // select "Kopf" as sub-region from quick-select
+  await page.getByRole("button", { name: "Kopf", exact: true }).last().click();
 
   // continue to symptom categories
   await page.getByRole("button", { name: "Weiter" }).last().click();
@@ -66,19 +66,20 @@ test("complete assessment flow is saved correctly to the database", async ({ pag
   await page.getByRole("button", { name: "nein" }).click();
 
 
-  // check medication and fill in
+  // fill in optional medication field
   await page.getByLabel("Einnahme von Medikamenten").check();
   await page.getByPlaceholder("z. B. Ibuprofen").fill("Ibuprofen");
   await page.getByPlaceholder("z. B. 400").fill("400");
-  await page.getByLabel("* Einheit").selectOption("mg");
-  await page.getByPlaceholder("z. B. 1").fill("2");
-  await page.getByLabel("* Zeitraum").selectOption("Tag");
+  await page.getByLabel("Einheit*").selectOption("mg");
+  await page.getByPlaceholder("z. B. 3", { exact: true }).fill("1");
+  await page.getByLabel("pro*").selectOption("Tag");
+  await page.getByLabel("seit wann*").fill("2026-06-20");
 
-  // check allergies and fill in
+  // fill in allergies field
   await page.getByLabel("Es liegen Allergien vor").check();
   await page.getByPlaceholder("Allergien z.B. Pollen, Penicillin...").fill("Pollen");
 
-  // check conditions and fill in
+  // select condition via checkbox/input
   await page.getByLabel("Es liegen Vorerkrankungen vor").check();
   await page.getByPlaceholder("Vorerkrankung (z. B. Diabetes, Bluthochdruck)").fill("Bluthochdruck");
 

@@ -35,11 +35,14 @@ test("männlicher Patient mit Nackenbeschwerden wird korrekt gespeichert", async
 
   await page.getByRole("button", { name: "Weiter zur Körperregion" }).click();
 
-  // click "Hals & Nacken" region on the SVG body map
-  await page.getByRole("button", { name: "Hals & Nacken" }).click();
+  // rotate to back view
+  await page.getByRole("button", { name: "Zur Rückseite" }).click();
 
-  // select "Nacken" as sub-region
-  await page.getByRole("button", { name: "Nacken", exact: true }).click();
+  // click "Nacken" region on the SVG body map
+  await page.getByRole("button", { name: "Nacken", exact: true }).first().click();
+
+  // select "Nacken" as sub-region from quick-select
+  await page.getByRole("button", { name: "Nacken", exact: true }).last().click();
 
   // continue to symptom categories
   await page.getByRole("button", { name: "Weiter" }).last().click();
@@ -62,7 +65,6 @@ test("männlicher Patient mit Nackenbeschwerden wird korrekt gespeichert", async
   await page.getByRole("button", { name: "nein" }).click();
 
   // fill in allergies only
-  // check allergies and fill in
   await page.getByLabel("Es liegen Allergien vor").check();
   await page.getByPlaceholder("Allergien z.B. Pollen, Penicillin...").fill("Hausstaub");
 

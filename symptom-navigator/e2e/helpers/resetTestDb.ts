@@ -9,7 +9,7 @@ export async function resetDb() {
   await pool.query(`
     TRUNCATE cases, case_symptoms, raw_text_symptoms,
     details_no_certain_count, additional_information,
-    recommendations RESTART IDENTITY CASCADE;
+    recommendations, medication RESTART IDENTITY CASCADE;
   `);
 }
 

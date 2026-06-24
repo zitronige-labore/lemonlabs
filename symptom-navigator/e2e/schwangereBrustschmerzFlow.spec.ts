@@ -40,8 +40,8 @@ test("schwangere Patientin mit Brustschmerz, Fieber und Verschlimmerung wird kor
   // click "Brust" region on the SVG body map
   await page.getByRole("button", { name: "Brust" }).click();
 
-  // select "Brust links" as sub-region
-  await page.getByRole("button", { name: "Brust links", exact: true }).click();
+  // select "Brust links" as sub-region from quick-select
+  await page.getByRole("button", { name: "Brust links", exact: true }).last().click();
 
   // continue to symptom categories
   await page.getByRole("button", { name: "Weiter" }).last().click();
