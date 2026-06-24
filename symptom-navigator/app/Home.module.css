@@ -1,3 +1,9 @@
+/*
+  Grundlayout für Start-, Hinweis- und weitere Home-nahe Seiten.
+
+  Die Seite nimmt die gesamte Viewport-Höhe ein und hält den Inhalt
+  mittig auf der gemeinsamen Projektbreite.
+*/
 .main {
   min-height: 100vh;
   min-height: 100dvh;
@@ -9,6 +15,12 @@
   padding: var(--space-3) var(--space-2);
 }
 
+/*
+  Zentrale Inhaltsbox der Home-Ansichten.
+
+  hauptbox richtet die Fläche im Viewport aus,
+  kopfbox bildet den sichtbaren Inhaltsbereich.
+*/
 .hauptbox {
   width: 100%;
   max-width: var(--content-width);
@@ -25,6 +37,9 @@
   padding: clamp(32px, 6vw, 48px);
 }
 
+/*
+  Branding und kurze Einführungstexte der Start- und Hinweisseiten.
+*/
 .header {
   color: var(--text-primary);
   margin-bottom: var(--space-4);
@@ -61,6 +76,9 @@
   text-align: center;
 }
 
+/*
+  Warn- und Bestätigungstexte vor dem Start der Ersteinschätzung.
+*/
 .warningText {
   color: var(--text-secondary);
   font-size: 1rem;
@@ -104,6 +122,12 @@
   flex: 0 0 auto;
 }
 
+/*
+  Vertikale Aktionsbereiche.
+
+  buttonBox wird auf der Startseite und in Hinweisdialogen genutzt,
+  actionStack für gestapelte Aktionskarten.
+*/
 .buttonBox,
 .actionStack {
   width: 100%;
@@ -123,6 +147,10 @@
   margin-right: 7.5%;
 }
 
+/*
+  Karten und Panels für größere Startseiten-Aktionen
+  oder erklärende Zwischenbereiche.
+*/
 .actionCard {
   width: 100%;
   background: var(--surface);
@@ -166,6 +194,12 @@
   margin: 0;
 }
 
+/*
+  Einheitliche Button-Basis für Home-nahe Seiten.
+
+  Die Varianten definieren anschließend ihre jeweilige Gewichtung:
+  primär, sekundär, Fortfahren oder Notfall.
+*/
 .emergencyButton,
 .primaryButton,
 .secondaryButton,
@@ -281,6 +315,11 @@
   box-shadow: 0 14px 30px rgba(255, 65, 65, 0.32);
 }
 
+/*
+  Fester SOS-Schnellzugriff.
+
+  Der Button bleibt unabhängig vom aktuellen Startseiteninhalt erreichbar.
+*/
 .sosButton {
   position: fixed;
   right: max(16px, env(safe-area-inset-right));
@@ -317,6 +356,9 @@
   transform: translateY(0);
 }
 
+/*
+  Gemeinsame Overlay- und Modalflächen für SOS, Tutorial und Ladezustand.
+*/
 .sosModalOverlay,
 .tutorialOverlay {
   position: fixed;
@@ -356,6 +398,9 @@
   max-width: var(--reading-width);
 }
 
+/*
+  Globaler Tutorial-Zugriff und Tutorial-Inhalte.
+*/
 .tutorialButton {
   position: fixed;
   left: max(16px, env(safe-area-inset-left));
@@ -460,6 +505,9 @@
   flex-shrink: 0;
 }
 
+/*
+  Ladeanzeige für Prozesse, die eine kurze Wartezeit benötigen.
+*/
 .loadingPopup {
   display: flex;
   flex-direction: column;
@@ -489,6 +537,9 @@
   }
 }
 
+/*
+  Fußzeile der Home-Ansichten.
+*/
 .footer {
   width: 100%;
   flex: 0 0 auto;
@@ -516,6 +567,12 @@
   text-decoration: underline;
 }
 
+/*
+  Mobile Anpassungen.
+
+  Auf kleinen Bildschirmen werden Abstände reduziert,
+  Buttons verbreitert und schwebende Schnellzugriffe kleiner dargestellt.
+*/
 @media (max-width: 600px) {
   .main {
     padding: var(--space-2) 12px max(var(--space-2), env(safe-area-inset-bottom));
