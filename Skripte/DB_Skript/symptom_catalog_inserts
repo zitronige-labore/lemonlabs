@@ -1,2 +1,0 @@
-INSERT INTO symptom_catalog (name_de, snomed_code, is_red_flag)
-VALUES ('Besitz einer Katze', '1234', false);
