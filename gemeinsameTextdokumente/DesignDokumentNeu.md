@@ -77,7 +77,7 @@ Durch ihre technologische Vertrautheit nutzt sie selbstverständlich Apps und On
 
 Besonders bei plötzlich auftretenden Beschwerden besteht die Gefahr, dass Unsicherheiten durch Internetrecherchen verstärkt werden oder medizinische Situationen falsch eingeschätzt werden.
 
-![Persona Aylin Demir](images/persona-aylin-demir.png)
+![Persona Aylin Demir](Personas/PersonaAylin.png)
 
 Die Persona verdeutlicht damit den Bedarf nach einer schnellen, verständlichen und niedrigschwelligen Orientierungshilfe im Gesundheitsbereich.
 
@@ -95,7 +95,7 @@ Die Persona zeigt insbesondere den Bedarf nach einer leicht verständlichen und 
 
 Außerdem verdeutlicht sie, wie wichtig schnelle Orientierung und klare Kommunikation für Nutzer ohne medizinische Fachkenntnisse sind.
 
-![Persona Eltern](images/persona-eltern.png)
+![Persona Eltern](Personas/PersonaElternN.png)
 
 ---
 
