@@ -109,7 +109,8 @@ Die Architektur besteht aus einer Datenhaltungsschicht, einer Präsentations und
 
 Zusätzlich ist eine mögliche externe Schnittstelle über FHIR vorgesehen.
 
-![Komponentendiagramm der Systemarchitektur](images/komponentendiagramm.png)
+![Komponentendiagramm der Systemarchitektur](gemeinsameDiagramme/komponentenDiagramm.jpeg)
+siehe gemeinsameDiagramme Komponentendiagramm
 
 Die zentrale Anwendung basiert auf Next.js und verbindet Frontend, Backend, Datenbanken sowie die KI Komponente miteinander.
 
@@ -155,7 +156,8 @@ Die FHIR Schnittstelle soll eine mögliche Anbindung an externe medizinische Sys
 
 ## 3.3 Verzeichnisstruktur
 
-![Verzeichnisstruktur](images/verzeichnisstruktur.png)
+![Verzeichnisstruktur](gemeinsameDiagramme/folderstruktur.png)
+siehe gemeinsame Diagramme Folderstruktur
 
 ## 3.4 Verwendete Technologien
 
@@ -197,11 +199,12 @@ Es zeigt den grundlegenden Ablauf der Anwendung von der Eingabe der Beschwerden 
 
 Nutzer werden dabei schrittweise durch die Symptomerfassung geführt und können zusätzliche Angaben ergänzen oder Eingaben bearbeiten.
 
-![Benutzerfluss](images/benutzerfluss.png)
+![Benutzerfluss](gemeinsameDiagramme/aktivitätsdiagramm.png)
+siehe gemeinsameDiagramme Aktivitätsdiagramm
 
 ## 4.2 Interaktives Körpermodell
 
-![Interaktives Körpermodell](images/koerpermodell.png)
+![Interaktives Körpermodell]
 
 Das interaktive Körpermodell dient der visuellen Symptomerfassung und soll Nutzern die Zuordnung gesundheitlicher Beschwerden erleichtern.
 
