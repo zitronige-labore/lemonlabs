@@ -91,9 +91,8 @@ export function ResultStep({
     wide = false,
   ) => (
     <div
-      className={`${assessmentStyles.dataRow} ${
-        wide ? assessmentStyles.dataRowWide : ""
-      }`}
+      className={`${assessmentStyles.dataRow} ${wide ? assessmentStyles.dataRowWide : ""
+        }`}
     >
       <span className={assessmentStyles.dataLabel}>{label}</span>
       <strong className={assessmentStyles.dataValue}>{displayValue(value)}</strong>
@@ -290,7 +289,7 @@ export function ResultStep({
                   Wahrscheinlichkeit
                 </span>
                 <strong className={assessmentStyles.dataValue}>
-                  {probability*100}%
+                  {probability * 100}%
                 </strong>
               </div>
             )}
@@ -306,6 +305,13 @@ export function ResultStep({
     });
   };
 
+  let urgencyColor = "";
+  if (urgency === 1) urgencyColor = "#6600FF";
+  if (urgency === 2) urgencyColor = "#66CC00";
+  if (urgency === 3) urgencyColor = "#FFFF00";
+  if (urgency === 4) urgencyColor = "#FF6600";
+  if (urgency === 5) urgencyColor = "#FF0000";
+
   return (
     <div className={assessmentStyles.resultBox}>
       {aiAnswer?.assessment?.urgency ? (
@@ -313,7 +319,9 @@ export function ResultStep({
           <div className={assessmentStyles.dataHeader}>
             <div>
               <p className={assessmentStyles.dataTitle}>KI-Einschätzung</p>
-              <p className={assessmentStyles.dataMeta}>
+              <p className={assessmentStyles.dataMeta}
+              style={{color: urgencyColor, fontWeight: 700}}
+              >
                 Dringlichkeitsstufe {aiAnswer.assessment.urgency}:{" "}
                 {aiAnswer.assessment.urgencyText}
               </p>
