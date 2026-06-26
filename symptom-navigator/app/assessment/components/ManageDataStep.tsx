@@ -37,6 +37,7 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
   const [aiData, setAiData] = useState<any | null>(null);
   const [code, setCode] = useState("");
   const [codeError, setCodeError] = useState("");
+  const [lastDeleted, setLastDeleted] = useState<string>("")
 
   const uuidPattern =
     /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -228,10 +229,31 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
           <button
             type="button"
             className={assessmentStyles.secondaryButton}
-            onClick={async () => await deleteDataOnAccessCode(code)}
+            onClick={async () => {
+              let deletion:boolean;
+              try {
+                deletion = await deleteDataOnAccessCode(code)
+              }
+              catch {
+                deletion = false
+              }
+
+              if(deletion) {
+                setLastDeleted(code)
+              }
+              else{
+                setLastDeleted("Löschung fehlgeschlagen")
+              }
+            }}
           >
             Löschen
           </button>
+          {lastDeleted === code && (
+            <p>Daten wurden gelöscht</p>
+          )}
+          {lastDeleted === "Löschung fehlgeschlagen" && (
+            <p>Löschung fehlgeschlagen</p>
+          )}
         </div>
       </div>
 
