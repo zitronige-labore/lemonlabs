@@ -26,7 +26,7 @@ POSTGRES_DATABASE="lemonlabs_db"
 
 \# MedGemma API  
 MEDGEMMA_API_URL=http://141.19.140.104:4000/v1/chat/completions  
-MEDGEMMA_API_KEY=api key hier
+MEDGEMMA_API_KEY=api key hier  
 MEDGEMMA_API_MODEL=medgemma:27b  
 
 \# Fhir Server connection  
