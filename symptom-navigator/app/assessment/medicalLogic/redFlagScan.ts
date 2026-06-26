@@ -1,3 +1,6 @@
+// this file contains the red flag scan function
+// this functions runs before each assessment
+// it can be adjusted if needed
 import { AdditionalData, BasisData, SubRegion } from "@/app/types/assessment";
 
 
@@ -128,6 +131,7 @@ export async function redFlagScan(
         return[true, ["Plötzliche, extreme Unterleibsschmerzen + mindestens eines dieser Symptome: Plötzliche Hodenschwellung/ Hodenschmerz, Erbrechen"]]
     }
 
+    
     // Eigen oder Fremdgefährdung
     if (
         hasAny(combined, "Selbstverletzungsgedanken") ||
