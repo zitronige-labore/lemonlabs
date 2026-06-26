@@ -24,6 +24,9 @@ export async function saveFormData(formData: FormData) {
 
 
     // writing data into db and returning id for later use
+    // try catch blocks are added around suitabel inserts (with no dependencies)
+    // to ensure as much data as possible is saved if there is an error
+    
     const dbReturn = await connectionPool.query(
         `
         Insert into cases (age, sex, pregnancy, date)
@@ -40,37 +43,57 @@ export async function saveFormData(formData: FormData) {
     // writing additional info into db
 
     // insert for singular values
-    await connectionPool.query(
-        `
-        Insert into additional_information 
-        (case_id, weight, height, temperature, duration, 
-        worsening, breastfeeding, extrainfo, cigarettes_per_day, alcohol_per_week)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);
-        `,
-        [caseId, weight || null, height || null, temperatureFloat|| null, duration|| null, 
-        worseningBool, breastfeedingBool, extraInfo|| null, cigarettesPerDay || null, alcoholPerWeek || null]
-    );
+    try{
+      await connectionPool.query(
+          `
+          Insert into additional_information 
+          (case_id, weight, height, temperature, duration, 
+          worsening, breastfeeding, extrainfo, cigarettes_per_day, alcohol_per_week)
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);
+          `,
+          [caseId, weight || null, height || null, temperatureFloat|| null, duration|| null, 
+          worseningBool, breastfeedingBool, extraInfo|| null, cigarettesPerDay || null, alcoholPerWeek || null]
+      );
+    }
+    catch {
+      console.log("Error saving additional info")
+    }
 
 
     // insert for multiple values
 
     // allergies
-    await insertListIntoSymptomsNoCertainCount(allergyList, "allergy", caseId);
+    try {
+      await insertListIntoSymptomsNoCertainCount(allergyList, "allergy", caseId);
+    }
+    catch {
+      console.log("Error saving allergies")
+    }
     
     // conditions
-    await insertListIntoSymptomsNoCertainCount(conditionList, "condition", caseId);
+    try {
+      await insertListIntoSymptomsNoCertainCount(conditionList, "condition", caseId);
+    }
+    catch {
+      console.log("Error saving conditions")
+    }
 
     // medication
-    for(let i = 0; i < medicationList.length; i++) {
-      await connectionPool.query(
-          `
-          Insert into medication 
-          (case_id, medication, dose, unit, frequency, frequency_unit, taken_since)
-          VALUES ($1, $2, $3, $4, $5, $6, $7);
-          `,
-          [caseId, medicationList[i].name || null, medicationList[i].dose || null , medicationList[i].unit || null, 
-          medicationList[i].frequency || null, medicationList[i].frequencyUnit || null, medicationList[i].since || null]
-      );
+    try {
+      for(let i = 0; i < medicationList.length; i++) {
+        await connectionPool.query(
+            `
+            Insert into medication 
+            (case_id, medication, dose, unit, frequency, frequency_unit, taken_since)
+            VALUES ($1, $2, $3, $4, $5, $6, $7);
+            `,
+            [caseId, medicationList[i].name || null, medicationList[i].dose || null , medicationList[i].unit || null, 
+            medicationList[i].frequency || null, medicationList[i].frequencyUnit || null, medicationList[i].since || null]
+        );
+      }
+    }
+    catch {
+      console.log("Error saving medication entries")
     }
 
     // writing raw text symptoms in db
