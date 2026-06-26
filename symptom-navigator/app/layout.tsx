@@ -59,8 +59,11 @@ export const metadata: Metadata = {
     title: "Symptometer",
   },
   icons: {
-    icon: "/images/lemonlabslogo_blue.png?v=2",
-    apple: "/images/lemonlabslogo_blue.png?v=4",
+    icon: [
+      { url: "/images/symptometer192x192px.png", sizes: "192x192", type: "image/png" },
+      { url: "/images/symptometer512x512px.png", sizes: "512x512", type: "image/png" }
+    ],
+    apple: "/images/symptometer192x192px.png",
   },
 };
 
