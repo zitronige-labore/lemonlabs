@@ -264,6 +264,11 @@ export default function Home() {
 
         const zielStep = event.state.step as Step;
 
+        if (stepRef.current === "result") {
+          history.pushState({ step: stepRef.current }, "", "#" + stepRef.current);
+          return;
+        }
+
         if (zielStep === "hinweise" && stepRef.current === "redflags") {
           const bestaetigt = window.confirm("Wenn du zurückgehst, gehen deine eingegebenen Daten verloren. Trotzdem zurück?");
           if (!bestaetigt) {
