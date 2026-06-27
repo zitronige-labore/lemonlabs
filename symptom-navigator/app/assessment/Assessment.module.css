@@ -515,6 +515,76 @@ textarea.input {
   line-height: 1.65;
 }
 
+.statusPanel1 {
+  width: 100%;
+  background: var(--primary-soft);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-card);
+  color: var(--text-primary);
+  padding: clamp(16px, 4vw, 20px);
+  margin-bottom: var(--space-3);
+  text-align: left;
+  border-color: #0a3b74;
+  background-color: #c9e1fc;
+  color: #0a3b74;
+}
+
+.statusPanel2 {
+  width: 100%;
+  background: var(--primary-soft);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-card);
+  color: var(--text-primary);
+  padding: clamp(16px, 4vw, 20px);
+  margin-bottom: var(--space-3);
+  text-align: left;
+  border-color: #204d2c;
+  color: #204d2c;
+  background-color: #e1ffea;
+}
+
+.statusPanel3 {
+  width: 100%;
+  background: var(--primary-soft);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-card);
+  color: var(--text-primary);
+  padding: clamp(16px, 4vw, 20px);
+  margin-bottom: var(--space-3);
+  text-align: left;
+  border-color: #363605;
+  color: #363605;
+  background-color: #fdfdcd;
+}
+
+.statusPanel4 {
+  width: 100%;
+  background: var(--primary-soft);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-card);
+  color: var(--text-primary);
+  padding: clamp(16px, 4vw, 20px);
+  margin-bottom: var(--space-3);
+  text-align: left;
+  border-color: #82550e;
+  color: #82550e;
+  background-color: #ffe5ba;
+}
+
+.statusPanel5 {
+  width: 100%;
+  background: var(--primary-soft);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-card);
+  color: var(--text-primary);
+  padding: clamp(16px, 4vw, 20px);
+  margin-bottom: var(--space-3);
+  text-align: left;
+  border-color: #820e0e;
+  color: #820e0e;
+  background-color: #ffe6e4;
+}
+
 .resultBox p {
   margin: 0;
   line-height: 1.65;
@@ -569,6 +639,14 @@ textarea.input {
   font-weight: 650;
   line-height: 1.45;
   margin: 4px 0 0;
+}
+
+.dataMetaUrgency {
+  font-size: 1.5rem;
+  font-weight: 650;
+  line-height: 1.45;
+  margin: 4px 0 0;
+
 }
 
 .dataSection {

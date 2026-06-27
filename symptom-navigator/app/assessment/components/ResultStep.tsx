@@ -313,14 +313,24 @@ export function ResultStep({
   if (urgency === 5) urgencyColor = "#FF0000";
 
   return (
-    <div className={assessmentStyles.resultBox}>
+    <div 
+    className={
+      assessmentStyles.resultBox
+      }>
       {aiAnswer?.assessment?.urgency ? (
-        <div className={assessmentStyles.statusPanel}>
+        <div className={
+          urgency === 1 ? assessmentStyles.statusPanel: 
+          urgency === 2 ? assessmentStyles.statusPanel2: 
+          urgency === 3 ? assessmentStyles.statusPanel3: 
+          urgency === 4 ? assessmentStyles.statusPanel4: 
+          urgency === 5 ? assessmentStyles.statusPanel5: 
+          assessmentStyles.statusPanel
+
+        }>
           <div className={assessmentStyles.dataHeader}>
             <div>
               <p className={assessmentStyles.dataTitle}>KI-Einschätzung</p>
-              <p className={assessmentStyles.dataMeta}
-              style={{color: urgencyColor, fontWeight: 700}}
+              <p className={assessmentStyles.dataMetaUrgency}
               >
                 Dringlichkeitsstufe {aiAnswer.assessment.urgency}:{" "}
                 {aiAnswer.assessment.urgencyText}
