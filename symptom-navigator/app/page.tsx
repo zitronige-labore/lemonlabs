@@ -142,12 +142,8 @@ export default function Home() {
   // event listener to check if user goes offline or comes back online
   useEffect(() => {
 
-    // server ping to check more reliably than using navigator.onLine
+    // server ping to check more reliably than using navigator.isOnline
     async function checkConnection() {
-      if (typeof window !== "undefined" && navigator && !navigator.onLine) {
-        setIsOffline(true);
-        return;
-      }
       try {
         await fetch('/api/ping', { method: 'HEAD' });
         setIsOffline(false);
@@ -162,7 +158,7 @@ export default function Home() {
 
 
     function handleOnline() {
-      checkConnection();
+      checkConnection;
     }
 
     function handleOffline() {
