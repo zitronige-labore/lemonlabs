@@ -1,16 +1,28 @@
+/*
+  Eigenständige Datenschutzerklärung der Anwendung.
+
+  Sie informiert über Art, Zweck und Dauer der Datenverarbeitung sowie über
+  Weitergabe und Betroffenenrechte. Die Seite liegt bewusst außerhalb des
+  eigentlichen Assessment-Formulars und verändert keine Gesundheitsdaten.
+*/
+
+/* Wiederverwendete Karten-, Typografie- und Button-Styles des Assessments. */
 import assessmentStyles from "../Assessment.module.css";
 
+/* Rücksprung zur Startseite als einzige Interaktion dieser Informationsseite. */
 type DatenschutzStepProps = {
   onBack: () => void;
 };
 
+/* Reine Darstellungskomponente ohne lokalen Zustand oder Formulareingaben. */
 export function DatenschutzStep({ onBack }: DatenschutzStepProps) {
   return (
     <div className={assessmentStyles.card}>
+      {/* Eindeutige Überschrift für den separat aufgerufenen Startseitenbereich. */}
       <h1>Datenschutzerklärung</h1>
 
       
-
+      {/* Umfang der erhobenen Angaben und Rechtsgrundlage ihrer Verarbeitung. */}
       <h2>1. Welche Daten wir erheben</h2>
       <p>
         Es werden keine persönlichen Identifikationsdaten erhoben. Es ist
@@ -30,6 +42,7 @@ export function DatenschutzStep({ onBack }: DatenschutzStepProps) {
         ausdrücklichen Einwilligung (Art. 9 Abs. 2 lit. a DSGVO).
       </p>
 
+      {/* Medizinische Grenzen der Anwendung und Vorrang professioneller Hilfe. */}
       <h2>3. Hinweis zur Ersteinschätzung</h2>
       <p>
         Diese Anwendung dient ausschließlich einer unverbindlichen
@@ -41,6 +54,7 @@ export function DatenschutzStep({ onBack }: DatenschutzStepProps) {
         Rettungsdienst (112).
       </p>
 
+      {/* Technische Zuordnung, Speicherdauer und mögliche externe Verarbeitung. */}
       <h2>4. Nutzung ohne Konto</h2>
       <p>
         Die Nutzung dieser Anwendung ist ohne Registrierung und ohne
@@ -61,6 +75,7 @@ export function DatenschutzStep({ onBack }: DatenschutzStepProps) {
         erfolgt nicht, soweit keine gesetzliche Verpflichtung besteht.
       </p>
 
+      {/* Rechte der betroffenen Personen und Möglichkeit einer Beschwerde. */}
       <h2>7. Ihre Rechte</h2>
       <p>
         Sie haben das Recht auf Auskunft, Berichtigung, Löschung,
@@ -75,6 +90,7 @@ export function DatenschutzStep({ onBack }: DatenschutzStepProps) {
         über die Verarbeitung Ihrer personenbezogenen Daten zu beschweren.
       </p>
 
+      {/* Beendet die Informationsansicht und öffnet wieder die Startseite. */}
       <div className={assessmentStyles.buttonGroup}>
         <button
           type="button"
