@@ -6,6 +6,8 @@ type TutorialModalProps = {
   isOpen: boolean;
   onClose: () => void;
   currentStep: Step;
+  isOffline?: boolean;
+  startFormOffline?: boolean;
 };
 
 type TutorialContent = {
@@ -270,7 +272,73 @@ const fallbackTutorialContent: TutorialContent = {
   ],
 };
 
-function getTutorialContent(currentStep: Step): TutorialContent {
+function getTutorialContent(
+  currentStep: Step,
+  isOffline?: boolean,
+  startFormOffline?: boolean
+): TutorialContent {
+  if (isOffline) {
+    if (currentStep === "start") {
+      return {
+        title: "Start (Offline)",
+        description:
+          "Du befindest dich im Offline-Modus. Du kannst Notfall-Warnzeichen prüfen oder eine Ersteinschätzung offline vorbereiten.",
+        steps: [
+          "Wähle 'Warnzeichen erkennen', um direkt zu überprüfen ob ein Notfall vorliegt",
+          "Wähle 'Ersteinschätzung von Symptomen offline starten', um deine Symptome offline einzugeben.",
+          "Der SOS-Button ist jederzeit für akute Notfälle erreichbar.",
+          "Hinweis: Zum Absenden der Einschätzung wird später eine Internetverbindung benötigt.",
+        ],
+      };
+    }
+    if (currentStep === "redflags") {
+      if (startFormOffline) {
+        return {
+          title: "Warnzeichen (Offline)",
+          description:
+            "Dieser Schritt prüft offline, ob Anzeichen für einen medizinischen Notfall vorliegen.",
+          steps: [
+            "Markiere alle Warnzeichen, die aktuell zutreffen.",
+            "Wenn nichts davon zutrifft, wähle 'Keines davon trifft zu', um mit der Offline-Einschätzung fortzufahren.",
+            "Bei einem Warnzeichen empfiehlt die App den Notruf.",
+          ],
+        };
+      } else {
+        return {
+          title: "Warnzeichen-Scan (Offline)",
+          description:
+            "Dieser Schritt prüft offline, ob Anzeichen für einen medizinischen Notfall vorliegen.",
+          steps: [
+            "Markiere alle Warnzeichen, die aktuell zutreffen.",
+            "Wenn nichts davon zutrifft, wähle 'Keines davon trifft zu'.",
+            "Da du offline bist und keine Ersteinschätzung gestartet hast, kehrst du danach zur Startseite zurück.",
+          ],
+        };
+      }
+    }
+    if (currentStep === "checkInfo") {
+      return {
+        title: "Angaben prüfen (Offline)",
+        description: "Prüfe deine Angaben im Offline-Modus.",
+        steps: [
+          "Kontrolliere, ob alle Beschwerden und Zusatzangaben stimmen.",
+          "Nutze Bearbeiten, falls du etwas korrigieren möchtest.",
+          "Im Offline-Modus können die Angaben erst abgesendet werden, wenn wieder eine Internetverbindung besteht.",
+        ],
+      };
+    }
+    if (currentStep === "other") {
+      return {
+        title: "Andere Anliegen (Offline)",
+        description: "Die Online-Dienste sind zurzeit nicht verfügbar.",
+        steps: [
+          "Terminbuchungen und Online-Rezepte erfordern eine aktive Internetverbindung.",
+          "Sobald du wieder online bist, stehen diese Funktionen wieder zur Verfügung.",
+        ],
+      };
+    }
+  }
+
   if (currentStep && tutorialContentByStep[currentStep]) {
     return tutorialContentByStep[currentStep];
   }
@@ -290,10 +358,12 @@ export function TutorialModal({
   isOpen,
   onClose,
   currentStep,
+  isOffline,
+  startFormOffline,
 }: TutorialModalProps) {
   if (!isOpen) return null;
 
-  const tutorialContent = getTutorialContent(currentStep);
+  const tutorialContent = getTutorialContent(currentStep, isOffline, startFormOffline);
 
   return (
     <div className={homeStyles.tutorialOverlay}>
