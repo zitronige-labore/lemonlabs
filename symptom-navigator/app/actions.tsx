@@ -1035,7 +1035,7 @@ export async function fhirExample(caseId: string): Promise<any> {
   const { sex, age, pregnancy, date } = userData.caseData[0] ?? {};
   const { weight, height, temperature, duration, worsening, breastfeeding, extraInfo, alcohol, smoking } = userData.additionalInfoData[0] ?? {};
   const { allergies } = userData.allergyData ?? {};
-  const { medication } = userData.medicationData ?? {};
+  const { medications } = userData.medicationData ?? [];
   const { conditions } = userData.conditionsData ?? {};
 
   // Liste der gegebenen Symptome
@@ -1317,20 +1317,48 @@ if (height) {
     }
   }
 
-  if (medication && Array.isArray(medication)) {
-    for (const med of medication) {
-      if (med) {
+ if (medications && Array.isArray(medications)) {
+    for (const med of medications) {
+      if (med && med.name) {
         fhirEntries.push({
           resource: {
             resourceType: "MedicationStatement",
             status: "recorded",
             subject: { reference: patientRef },
-            medication: { concept: { text: med } }
+            effectiveDateTime: date,
+            medication: {
+              concept: {
+                text: med.name
+              }
+            },
+            ...(med.dosage || med.unit ? {
+              dosage: [{
+                doseAndRate: [{
+                  doseQuantity: {
+                    value: med.dosage ? parseFloat(med.dosage) : undefined,
+                    unit: med.unit || undefined
+                  }
+                }],
+                ...(med.frequency || med.frequency_unit ? {
+                  timing: {
+                    repeat: {
+                      frequency: med.frequency ? parseInt(med.frequency) : undefined,
+                      period: 1,
+                      periodUnit: med.frequency_unit === "täglich" ? "d" : (med.frequency_unit === "wöchentlich" ? "wk" : undefined)
+                    }
+                  }
+                } : {})
+              }]
+            } : {}),
+            ...(med.start_date ? {
+              note: [{ text: `Eingenommen seit: ${med.start_date}` }]
+            } : {})
           }
         });
       }
     }
   }
+  
 
   if (conditions && Array.isArray(conditions)) {
     for (const condition of conditions) {
@@ -1367,9 +1395,12 @@ if (height) {
  * @param accessCode der access code des zu sendenden cases
  */
 
-export async function sendToHapiFhir(accessCode: string): Promise<boolean> {
-
-  const caseId = await getCaseIdFromAccessCode(accessCode);
+export async function sendToHapiFhir(caseId: string): Promise<boolean> {
+  if (!caseId) {
+    console.error("Senden abgebrochen: Keine caseId übergeben. ");
+    return false;
+  }
+  
   const fhirBundle = await fhirExample(caseId);
 
   if (!fhirBundle) {
@@ -1404,4 +1435,3 @@ export async function sendToHapiFhir(accessCode: string): Promise<boolean> {
     return false;
   }
 }
-
