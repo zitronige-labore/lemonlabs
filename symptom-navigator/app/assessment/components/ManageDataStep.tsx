@@ -1,25 +1,41 @@
+/*
+  Verwaltung bereits gespeicherter Assessment-Daten.
+
+  Über einen persönlichen Zugriffscode können Falldaten und die zugehörige
+  KI-Auswertung abgerufen, dargestellt, exportiert oder vollständig gelöscht werden.
+*/
 import { useState } from "react";
 
+/* Gemeinsame Styles für Datenbereiche, Formulare und Ergebnislisten. */
 import assessmentStyles from "../Assessment.module.css";
 
+/* Serveraktionen für Abruf und Löschung der zum Zugriffscode gehörenden Daten. */
 import {
   accessAiDataWithAccessCode,
   accessDataWithAccessCode,
   deleteDataOnAccessCode,
 } from "../../actions";
+/* Typ der zentralen Seitennavigation. */
 import type { Step } from "../../types/assessment";
+/* Übersetzt codierte Datenbankwerte in lesbare deutsche Angaben. */
 import { makeDBDataReadable } from "../utils/assessmentData";
+/* Gemeinsame Exportfunktionen und ihr erwartetes Datenformat. */
 import {
   downloadPdf,
   downloadTxt,
   type AssessmentExportData,
 } from "../utils/exportUtils";
 
+/*
+  Navigationswerte werden von der Hauptseite übergeben, sind in der aktuellen
+  Darstellung aber noch nicht direkt erforderlich.
+*/
 type ManageDataStepProps = {
   step: Step;
   setStep: (step: Step) => void;
 };
 
+/* Vereinheitlicht leere Werte und Listen für die Anzeige in den Datenzeilen. */
 function displayValue(value: unknown) {
   if (Array.isArray(value)) {
     return value.length > 0 ? value.join(", ") : "Keine Angabe";
@@ -33,18 +49,27 @@ function displayValue(value: unknown) {
 }
 
 export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
+  /* Getrennte Zustände für medizinische Falldaten und die optionale KI-Auswertung. */
   const [data, setData] = useState<any | null>(null);
   const [aiData, setAiData] = useState<any | null>(null);
+
+  /* Eingabe-, Validierungs- und Rückmeldungszustände des Zugriffscode-Formulars. */
   const [code, setCode] = useState("");
   const [codeError, setCodeError] = useState("");
   const [lastDeleted, setLastDeleted] = useState<string>("")
 
+  /* Zugriffscodes werden als UUID gespeichert und vor der Serveranfrage formal geprüft. */
   const uuidPattern =
     /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
+  /* Für Nutzer schwer lesbare Datenbankwerte werden zentral aufbereitet. */
   const [geschlecht, schwangerschaft, stillzeit, worsening, medication] =
     makeDBDataReadable(data);
 
+  /*
+    Führt die verteilten Datenbankergebnisse in das gemeinsame Exportformat zusammen.
+    Fehlende Teilbereiche erhalten dieselben Fallbacks wie in der sichtbaren Ansicht.
+  */
   function buildExportData(): AssessmentExportData {
     return {
       alter: data?.caseData?.[0]?.age || "Keine Angabe",
@@ -93,6 +118,7 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
     };
   }
 
+  /* Rendert wiederkehrende Beschriftung-Wert-Paare einheitlich im Datenraster. */
   const renderDataRow = (
     label: string,
     value: unknown,
@@ -108,6 +134,10 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
     </div>
   );
 
+  /*
+    Stellt strukturierte oder frei formulierte Symptome mit Region und Schmerzskala dar.
+    textSymptom wählt dabei das passende Beschriftungsfeld des Datenbankobjekts.
+  */
   const renderSymptomList = (
     symptoms: any[] | undefined,
     textSymptom = false,
@@ -153,6 +183,7 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
     );
   };
 
+  /* Gibt die zuvor lesbar aufbereiteten Medikationsangaben als Liste aus. */
   const renderMedicationList = () => {
     if (!medication.length) {
       return <strong className={assessmentStyles.dataValue}>Keine Angabe</strong>;
@@ -169,6 +200,10 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
     );
   };
 
+  /*
+    Lädt zuerst die Falldaten. Nur bei einem Treffer wird anschließend auch
+    die getrennt gespeicherte KI-Auswertung für denselben Code angefordert.
+  */
   const handleFetchData = async () => {
     const result = await accessDataWithAccessCode(code);
 
@@ -188,6 +223,7 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
     <div className={assessmentStyles.resultBox}>
       <p className={assessmentStyles.selectedText}>Datenverwaltung</p>
 
+      {/* Zugriffscode eingeben, prüfen und für Abruf oder Löschung verwenden. */}
       <div className={assessmentStyles.dataPanel}>
         <div className={assessmentStyles.dataHeader}>
           <div>
@@ -204,6 +240,7 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
             placeholder="Code hier eingeben"
             className={assessmentStyles.input}
             onChange={(event) => {
+              /* Leerzeichen entfernen und nur die formale UUID-Struktur validieren. */
               const value = event.target.value.trim();
               setCode(value);
 
@@ -226,6 +263,7 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
           >
             Abrufen
           </button>
+          {/* Die Löschaktion behandelt auch fehlgeschlagene Serveranfragen kontrolliert. */}
           <button
             type="button"
             className={assessmentStyles.secondaryButton}
@@ -257,6 +295,7 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
         </div>
       </div>
 
+      {/* Ergebnisbereiche erscheinen erst nach einem erfolgreichen Datenabruf. */}
       {data && (
         <div className={assessmentStyles.dataPanel}>
           <div className={assessmentStyles.dataHeader}>
@@ -268,6 +307,7 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
             </div>
           </div>
 
+          {/* Allgemeine Falldaten einschließlich des Erfassungszeitpunkts. */}
           <section className={assessmentStyles.dataSection}>
             <p className={assessmentStyles.dataSectionTitle}>Basisdaten</p>
             <div className={assessmentStyles.dataGrid}>
@@ -287,6 +327,7 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
             </div>
           </section>
 
+          {/* Strukturierte Auswahl und selbst beschriebene Beschwerden getrennt anzeigen. */}
           <section className={assessmentStyles.dataSection}>
             <p className={assessmentStyles.dataSectionTitle}>Beschwerden</p>
             <div className={assessmentStyles.dataGrid}>
@@ -303,6 +344,7 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
             </div>
           </section>
 
+          {/* Ergänzende Gesundheits- und Lebensstilinformationen. */}
           <section className={assessmentStyles.dataSection}>
             <p className={assessmentStyles.dataSectionTitle}>Zusatzangaben</p>
             <div className={assessmentStyles.dataGrid}>
@@ -361,6 +403,7 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
             </div>
           </section>
 
+          {/* Die KI-Einschätzung ist optional und wird nur bei vorhandenen Daten gezeigt. */}
           {aiData?.[0] && (
             <section className={assessmentStyles.dataSection}>
               <p className={assessmentStyles.dataSectionTitle}>KI-Einschätzung</p>
@@ -370,6 +413,7 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
                 <div className={`${assessmentStyles.dataRow} ${assessmentStyles.dataRowWide}`}>
                   <span className={assessmentStyles.dataLabel}>Vermutungen</span>
                   <ul className={assessmentStyles.dataList}>
+                    {/* Die Datenbank reserviert bis zu fünf nummerierte Vermutungen. */}
                     {[1, 2, 3, 4, 5].map((index) => {
                       const suspicion = aiData[0][`suspicion${index}`];
                       const probability = aiData[0][`probability${index}`];
@@ -408,6 +452,7 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
             </section>
           )}
 
+          {/* PDF und TXT basieren auf derselben normalisierten Exportstruktur. */}
           <div className={assessmentStyles.dataActions}>
             <button
               type="button"
