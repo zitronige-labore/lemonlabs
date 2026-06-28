@@ -74,6 +74,5 @@ CREATE TABLE recommendations (
     probability2  REAL,
     probability3  REAL,
     probability4  REAL,
-    probability5  REAL,
-    context_data  JSONB
+    probability5  REAL
 );
