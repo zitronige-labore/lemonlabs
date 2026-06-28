@@ -1,13 +1,18 @@
 /*
-  Import der CSS-Module für den Assessment-Bereich.
+  Erfasst die grundlegenden Personendaten zu Beginn des Assessments.
+
+  Alter und Geschlecht werden immer abgefragt. Eine Schwangerschaft kann
+  zusätzlich angegeben werden, wenn sie anhand der Geschlechtsauswahl relevant
+  oder nicht sicher auszuschließen ist.
 */
+
+/* Gemeinsame Styles für Formularfelder, Validierung und Navigation. */
 import assessmentStyles from "../Assessment.module.css";
 
-/*
-  Import des Typs für allgemeine Nutzerdaten
-  und Beschwerdeinformationen.
-*/
+/* Datenmodell der Basisangaben und Typ der zentralen Schrittnavigation. */
 import type { BasisData, Step } from "../../types/assessment";
+
+/* Lokaler Zustand für die unmittelbare Validierungsrückmeldung. */
 import { useState } from "react";
 
 
@@ -18,10 +23,13 @@ import { useState } from "react";
   Enthält die aktuell eingegebenen Basisdaten
 
   setBasisData:
-  Funktion zum Aktualisieren der Basisdaten
+  Aktualisiert die kontrollierten Eingaben im zentralen Zustand.
 
   onContinue:
-  Funktion zum Wechseln zum nächsten Schritt
+  Führt im regulären Ablauf zur Auswahl der Körperregion.
+
+  checkInfoActive / setStep:
+  Ermöglichen nach einer Korrektur den direkten Rücksprung zur Prüfansicht.
 */
 type BasisStartStepProps = {
   basisData: BasisData;
@@ -31,15 +39,7 @@ type BasisStartStepProps = {
   setStep: (step: Step) => void;
 };
 
-/*
-  Dieser Schritt sammelt allgemeine Angaben
-  zur Nutzerin oder zum Nutzer.
-
-  Dazu gehören:
-  - Alter
-  - Geschlecht
-  - Schwangerschaft oder Stillzeit
-*/
+/* Formularschritt für Alter, Geschlecht und gegebenenfalls Schwangerschaft. */
 export function BasisStartStep({
   basisData,
   setBasisData,
@@ -47,22 +47,23 @@ export function BasisStartStep({
   checkInfoActive,
   setStep
 }: BasisStartStepProps) {
+  /* Bleibt leer, solange das Alter eine ganze Zahl zwischen 0 und 120 ist. */
   const [ageError, setAgeError] = useState("");
 
   return (
     <>
-      {/* Beschreibung des aktuellen Schritts */}
+      {/* Kurze Einordnung vor den kontrollierten Basisdatenfeldern. */}
       <p className={assessmentStyles.text}>
         Bitte machen Sie zuerst einige allgemeine Angaben.
       </p>
 
-      {/* Formularbereich für allgemeine Angaben */}
+      {/* Zusammengehörige allgemeine Angaben als eigener Formularbereich. */}
       <fieldset className={assessmentStyles.fieldset}>
         <legend className={assessmentStyles.legend}>
           Allgemeine Angaben
         </legend>
 
-        {/* Eingabe des Alters */}
+        {/* Textfeld für den Rohwert; inputMode öffnet auf Mobilgeräten die Zahlentastatur. */}
         <label className={assessmentStyles.formLabel}>
           Alter
 
@@ -72,15 +73,16 @@ export function BasisStartStep({
             inputMode="numeric"
             value={basisData.age}
             onChange={(event) => {
-              const value = event.target.value; //holt Benutzereingabe
+              /* Eingabe unverändert zentral speichern und numerisch validieren. */
+              const value = event.target.value;
 
 
-              setBasisData({ //Eingabe speichern
+              setBasisData({
                 ...basisData,
                 age: value,
               });
 
-              const age = Number(value); //cast in zahl 
+              const age = Number(value);
               if (
                 value === "" ||
                 Number.isNaN(age) ||
@@ -102,7 +104,7 @@ export function BasisStartStep({
 
         </label>
 
-        {/* Auswahl des Geschlechts */}
+        {/* Die Geschlechtsauswahl steuert zugleich die Schwangerschaftsabfrage. */}
         <label className={assessmentStyles.formLabel}>
           Geschlecht
 
@@ -115,8 +117,8 @@ export function BasisStartStep({
                 gender: event.target.value,
 
                 /*
-                  Schwangerschaft wird nur gespeichert,
-                  wenn "weiblich" oder "divers" "keine Angabe" ausgewählt ist.
+                  Eine vorhandene Schwangerschaftsangabe bleibt nur erhalten,
+                  solange die gewählte Option die Zusatzfrage weiterhin anzeigt.
                 */
                 pregnancy:
                   event.target.value === "weiblich" ||
@@ -136,10 +138,10 @@ export function BasisStartStep({
         </label>
 
         {/*
-          Zusätzliche Auswahl für Schwangerschaft oder Stillzeit.
+          Zusätzliche Auswahl zur Schwangerschaft.
 
-          Dieser Bereich wird nur angezeigt,
-          wenn "weiblich" oder "divers" oder "keine Angabe" ausgewählt wurde.
+          Sie wird bei "weiblich", "divers" oder der Auswahl "Keine Angabe"
+          angezeigt; im aktuellen Pflichtschema ist sie nur bei "weiblich" zwingend.
         */}
         {(
           basisData.gender === "weiblich" ||
@@ -168,17 +170,17 @@ export function BasisStartStep({
           )}
       </fieldset>
 
+      {/* Im normalen Ablauf führt der Schritt anschließend zur Körperkarte. */}
       {!checkInfoActive && (
         <>
-          {/* Button zum Wechsel zur Körperregion-Auswahl */}
           <button
             type="button"
             className={assessmentStyles.primaryButton}
             onClick={onContinue}
 
             /*
-              Der Button bleibt deaktiviert,
-              solange Pflichtangaben fehlen.
+              Nur vollständige Pflichtangaben und ein gültiges Alter erlauben
+              die Navigation in den nächsten regulären Assessment-Schritt.
             */
             disabled={
               !basisData.age ||
@@ -193,6 +195,7 @@ export function BasisStartStep({
         </>
       )}
 
+      {/* Im Korrekturmodus wird der restliche lineare Ablauf übersprungen. */}
       {checkInfoActive && (
         <button
           type="button"

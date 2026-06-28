@@ -1,18 +1,29 @@
+/*
+  Verbindliche Hinweis-Seite vor Beginn der medizinischen Ersteinschätzung.
+
+  Sie grenzt die Anwendung von Diagnose und Beratung ab, weist auf akute
+  Notfälle hin und verlangt eine bewusste Bestätigung vor der Red-Flag-Prüfung.
+*/
 import { useState } from "react";
 
-/*
-  Import der CSS-Module der Start- und Hinweisseiten.
-
-  Diese Styles werden für das Layout,
-  die Buttons und die Warnhinweise verwendet.
-*/
+/* Gemeinsame Styles für Startseite, Hinweise, Navigation und Notfallzugriff. */
 import homeStyles from "../../Home.module.css";
 
-/*
-  Import der SosModal-Komponente
-*/
+/* Wiederverwendbarer Dialog mit direktem Telefon-Link zur 112. */
 import { SosModal } from "./SosModal";
 
+/*
+  Eigenschaften der Hinweis-Seite.
+
+  hinweiseBestaetigt / setHinweiseBestaetigt:
+  Lesen und aktualisieren die Bestätigung im zentralen Zustand der Hauptseite.
+
+  onBack:
+  Führt ohne Start des Assessments zur Startseite zurück.
+
+  onContinue:
+  Öffnet nach der Bestätigung als Nächstes die medizinische Warnzeichen-Prüfung.
+*/
 type HinweiseScreenProps = {
   hinweiseBestaetigt: boolean;
 
@@ -29,14 +40,15 @@ export function HinweiseScreen({
   onBack,
   onContinue,
 }: HinweiseScreenProps) {
+  /* Das SOS-Modal ist ein rein lokaler UI-Zustand dieser Seite. */
   const [showSos, setShowSos] = useState(false);
 
   return (
     <>
-      {/* Hauptcontainer der Hinweis-Seite */}
+      {/* Eigenständige Hinweisansicht im Layout der Startseite. */}
       <div className={homeStyles.hauptbox}>
         <div className={homeStyles.kopfbox}>
-          {/* Kopfbereich mit Titel und Logo */}
+          {/* Produktkopf zur eindeutigen Zuordnung vor Beginn des Ablaufs. */}
           <div className={homeStyles.header}>
             <h1 className={homeStyles.title}>Symptometer</h1>
 
@@ -45,24 +57,23 @@ export function HinweiseScreen({
             </h2>
           </div>
 
-          {/* Allgemeiner Hinweis zur Anwendung */}
+          {/* Zweck und medizinische Grenzen der Anwendung klar voneinander trennen. */}
           <p className={homeStyles.warningText}>
             Diese Anwendung unterstützt Sie nur bei einer ersten Einschätzung
             Ihrer Beschwerden.
           </p>
 
-          {/* Hinweis zur fehlenden medizinischen Diagnose */}
           <p className={homeStyles.warningText}>
             Sie ersetzt keine ärztliche Diagnose und keine medizinische Beratung.
           </p>
 
-          {/* Hinweis auf medizinische Notfälle */}
+          {/* Akute Warnzeichen haben immer Vorrang vor der digitalen Ersteinschätzung. */}
           <div className={homeStyles.notrufBox}>
             Bei akuten Beschwerden wie Atemnot, Bewusstlosigkeit oder starken
             Brustschmerzen wählen Sie sofort den Notruf 112.
           </div>
 
-          {/* Checkbox zur Bestätigung der Hinweise */}
+          {/* Die kontrollierte Checkbox schreibt die Bestätigung in den Hauptzustand. */}
           <label className={homeStyles.checkboxLabel}>
             <input
               type="checkbox"
@@ -75,7 +86,7 @@ export function HinweiseScreen({
             Ich habe die Hinweise gelesen und verstanden.
           </label>
 
-          {/* Navigationsbutton */}
+          {/* Fortfahren ist erst nach ausdrücklicher Bestätigung möglich. */}
           <div className={homeStyles.buttonBox}>
             <button
               type="button"
@@ -96,7 +107,7 @@ export function HinweiseScreen({
         </div>
       </div>
 
-      {/* Schnellzugriff auf den Notruf */}
+      {/* Der Notruf bleibt unabhängig von der Bestätigung direkt erreichbar. */}
       <button
         type="button"
         onClick={() => setShowSos(true)}
@@ -106,10 +117,10 @@ export function HinweiseScreen({
         SOS
       </button>
 
-      {/* Das Notruf-Modal */}
+      {/* Das Modal wird erst bei Bedarf inhaltlich sichtbar. */}
       <SosModal isOpen={showSos} onClose={() => setShowSos(false)} />
 
-      {/* Fußzeile der Seite */}
+      {/* Derzeit rein visuelle Fußzeilen-Einträge ohne hinterlegte Navigation. */}
       <footer className={homeStyles.footer}>
         <button type="button" className={homeStyles.footerLink}>
           Kontakt

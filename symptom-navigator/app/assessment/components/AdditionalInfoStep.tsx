@@ -1,11 +1,25 @@
 "use client";
 
+/*
+  Optionaler Detailfragebogen vor der abschließenden Prüfansicht.
+
+  Erfasst Medikation, Vorerkrankungen, Allergien, Konsumangaben und weitere
+  Gesundheitswerte. Aktivierte Themenblöcke verlangen dabei zusätzliche
+  Detailangaben, obwohl der Schritt insgesamt optional ist.
+*/
+
+/* Gemeinsame Styles für Formularfelder, dynamische Listen und Fehlermeldungen. */
 import assessmentStyles from "../Assessment.module.css";
+
+/* Datenmodell der Zusatzangaben, einzelner Medikamente und der Navigation. */
 import type { AdditionalData, MedicationEntry, Step } from "../../types/assessment";
+
+/* Lokaler Zustand für feldbezogene Validierungsfehler. */
 import { useState } from "react";
 
 
 
+/* Gemeinsame Validierungshelfer für die unterschiedlichen Zusatzfelder. */
 import {
   validateWeight,
   validateHeight,
@@ -14,6 +28,17 @@ import {
   validateListFormat
 } from "../utils/validationUtils";
 
+/*
+  additionalData / setAdditionalData:
+  Lesen und aktualisieren alle Zusatzangaben im zentralen Assessment-Zustand.
+
+  setStep / checkInfoActive:
+  Navigieren zur Prüfansicht und unterscheiden normalen Ablauf von Korrekturmodus.
+
+  onSkip:
+  Ist für ein separates Überspringen vorgesehen, wird in der aktuellen Ansicht
+  jedoch nicht als eigene Aktion angeboten.
+*/
 type AdditionalInfoStepProps = {
   additionalData: AdditionalData;
   setAdditionalData: (data: AdditionalData) => void;
@@ -30,15 +55,22 @@ export function AdditionalInfoStep({
   checkInfoActive
 }: AdditionalInfoStepProps) {
 
+  /* Einfache Zahlenfelder besitzen jeweils eine direkte Fehlermeldung. */
   const [weightError, setWeightError] = useState("");
   const [heightError, setHeightError] = useState("");
   const [temperatureError, setTemperatureError] = useState("");
   const [durationError, setDurationError] = useState("");
   const [cigarettesError, setCigarettesError] = useState("");
   const [alcoholError, setAlcoholError] = useState("");
+
+  /* Dynamische Medikamentenzeilen benötigen Fehlerzustände pro Listenindex. */
   const [doseError, setDoseError] = useState<Record<number, string>>({});
   const [frequencyError, setFrequencyError] =useState<Record<number, string>>({});
 
+  /*
+    Bündelt Feldfehler und bedingte Pflichtangaben zu einer Freigabeentscheidung.
+    Nicht aktivierte Themenblöcke beeinflussen die Navigation nicht.
+  */
   const noErrors =
     Object.values(doseError).every(error => error === "") &&
     Object.values(frequencyError).every(error => error === "") &&
@@ -48,7 +80,7 @@ export function AdditionalInfoStep({
     heightError === "" &&
     temperatureError === "" &&
     durationError === "" &&
-    // check if added data has been filled
+    /* Aktiv hinzugefügte Datensätze dürfen keine programmatisch geprüften Lücken haben. */
     (!additionalData.hasMedication || (additionalData.medication ?? []).every(entry =>
     entry.name.trim() !== "" &&
     entry.dose.trim() !== "" &&
@@ -66,6 +98,7 @@ export function AdditionalInfoStep({
     additionalData.allergies.every(a => a.trim() !== ""));
 
 
+  /* Liefert für den gesperrten Weiter-Button den ersten konkreten Korrekturhinweis. */
   function getValidationHint(): string | null {
     if (additionalData.hasMedication) {
       const incomplete = (additionalData.medication ?? []).some(entry =>
@@ -98,6 +131,7 @@ export function AdditionalInfoStep({
     return null;
   }
 
+  /* Aktualisiert genau ein Feld eines Medikaments, ohne andere Einträge zu verändern. */
   function updateMedication(index: number, field: keyof MedicationEntry, value: string) {
     const updated = additionalData.medication?.map((entry, i) =>
       i === index ? { ...entry, [field]: value } : entry
@@ -105,6 +139,7 @@ export function AdditionalInfoStep({
     setAdditionalData({ ...additionalData, medication: updated });
   }
 
+  /* Fügt eine vollständig leere Medikamentenzeile für einen weiteren Eintrag an. */
   function addMedication() {
     setAdditionalData({...additionalData, medication: [
       ...(additionalData.medication ?? []),
@@ -112,6 +147,7 @@ export function AdditionalInfoStep({
     ]});
   }
 
+  /* Entfernt nur das Medikament am angegebenen Listenindex. */
   function removeMedication(index: number) {
     setAdditionalData({
       ...additionalData,
@@ -119,6 +155,7 @@ export function AdditionalInfoStep({
     });
   }
 
+  /* Hilfsfunktionen für die dynamische Liste der Vorerkrankungen. */
   function updateCondition(index: number, value: string) {
     const updated = additionalData.conditions.map((c, i) => i === index ? value : c);
     setAdditionalData({ ...additionalData, conditions: updated });
@@ -138,6 +175,7 @@ export function AdditionalInfoStep({
     });
   }
 
+  /* Hilfsfunktionen für die dynamische Liste der Allergien. */
   function updateAllergy(index: number, value: string) {
     const updated = additionalData.allergies.map((c, i) => i === index ? value : c);
     setAdditionalData({ ...additionalData, allergies: updated });
@@ -159,6 +197,7 @@ export function AdditionalInfoStep({
 
   return (
     <>
+      {/* Der gesamte Schritt darf ohne Zusatzangaben durchlaufen werden. */}
       <p className={assessmentStyles.optionalHint}>
         Optional: Diese Angaben können helfen, die Beschwerden besser
         einzuordnen. Sie können diesen Schritt auch überspringen.
@@ -167,7 +206,10 @@ export function AdditionalInfoStep({
       <fieldset className={assessmentStyles.fieldset}>
         <legend className={assessmentStyles.legend}>Zusatzangaben</legend>
 
-        {/* medication*/}
+        {/*
+          Medikation als wiederholbarer Detailblock. Beim ersten Aktivieren wird
+          automatisch eine Eingabezeile erzeugt; vorhandene Einträge bleiben erhalten.
+        */}
         <label className={assessmentStyles.checkboxLabel}>
           <input
             type="checkbox"
@@ -313,7 +355,7 @@ export function AdditionalInfoStep({
           </div>
         )}
 
-        {/* conditions*/}
+        {/* Vorerkrankungen als dynamische Liste mit mindestens einem Eintrag bei Aktivierung. */}
         <label className={assessmentStyles.checkboxLabel}>
           <input
             type="checkbox"
@@ -366,7 +408,7 @@ export function AdditionalInfoStep({
           </div>
         )}
 
-        {/* cigarettes */}
+        {/* Rauchstatus mit bedingt erforderlicher und begrenzter Tagesmenge. */}
         <label className={assessmentStyles.checkboxLabel}>
           <input
             type="checkbox"
@@ -413,7 +455,7 @@ export function AdditionalInfoStep({
           </div>
         )}
 
-        {/* alcohol*/}
+        {/* Alkoholkonsum mit bedingt erforderlicher und begrenzter Wochenmenge. */}
         <label className={assessmentStyles.checkboxLabel}>
           <input
             type="checkbox"
@@ -466,7 +508,7 @@ export function AdditionalInfoStep({
           </div>
         )}
 
-        {/* allergies */}
+        {/* Allergien als dynamische Liste mit mindestens einem Eintrag bei Aktivierung. */}
         <label className={assessmentStyles.checkboxLabel}>
           <input
             type="checkbox"
@@ -519,7 +561,8 @@ export function AdditionalInfoStep({
           </div>
         )}
 
-        {/* weight */}
+        {/* Freiwillige Einzelwerte werden nur validiert, wenn tatsächlich etwas eingegeben wurde. */}
+        {/* Gewicht */}
         <label className={assessmentStyles.formLabel}>
           Gewicht in kg
           <input
@@ -540,7 +583,7 @@ export function AdditionalInfoStep({
           {weightError && <p className={assessmentStyles.errorText}>{weightError}</p>}
         </label>
 
-        {/* height */}
+        {/* Körpergröße */}
         <label className={assessmentStyles.formLabel}>
           Größe in cm
           <input
@@ -561,7 +604,7 @@ export function AdditionalInfoStep({
           {heightError && <p className={assessmentStyles.errorText}>{heightError}</p>}
         </label>
 
-        {/* breastfeeding*/}
+        {/* Stillzeit als optionale kategoriale Zusatzangabe. */}
         <label className={assessmentStyles.formLabel}>
           Stillzeit
           <select
@@ -578,7 +621,7 @@ export function AdditionalInfoStep({
           </select>
         </label>
 
-        {/* temperature */}
+        {/* Dezimalwert der gemessenen Körpertemperatur. */}
         <label className={assessmentStyles.formLabel}>
           Haben Sie Temperatur gemessen?
           <input
@@ -600,7 +643,7 @@ export function AdditionalInfoStep({
           {temperatureError && <p className={assessmentStyles.errorText}>{temperatureError}</p>}
         </label>
 
-        {/* duration */}
+        {/* Ganzzahlige Beschwerdedauer in Tagen. */}
         <label className={assessmentStyles.formLabel}>
           Seit wie vielen Tagen bestehen die Beschwerden?
           <input
@@ -621,7 +664,7 @@ export function AdditionalInfoStep({
           {durationError && <p className={assessmentStyles.errorText}>{durationError}</p>}
         </label>
 
-        {/* worsening */}
+        {/* Subjektive Entwicklung der Beschwerden. */}
         <label className={assessmentStyles.formLabel}>
           Werden die Beschwerden stärker?
           <select
@@ -638,7 +681,7 @@ export function AdditionalInfoStep({
           </select>
         </label>
 
-        {/* extraInfo */}
+        {/* Freitext für Kontext, der durch die strukturierten Felder nicht abgedeckt ist. */}
         <label className={assessmentStyles.formLabel}>
           Gibt es weitere wichtige Informationen?
           <textarea
@@ -653,6 +696,10 @@ export function AdditionalInfoStep({
         </label>
       </fieldset>
 
+      {/*
+        Im normalen Ablauf wird nur mit validen aktivierten Blöcken fortgefahren.
+        Nach einer Korrektur führt die Aktion unabhängig davon direkt zur Prüfansicht zurück.
+      */}
       <div className={assessmentStyles.quickSelect}>
         {
         !checkInfoActive
