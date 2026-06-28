@@ -1,31 +1,42 @@
 "use client";
 
 /*
-  Import der CSS-Module für den Assessment-Bereich.
+  Interaktive Körperkarte zur räumlichen Eingrenzung der Beschwerden.
+
+  Zuerst wird eine Hauptregion auf der Vorder- oder Rückansicht gewählt.
+  Anschließend wird die Auswahl über passende Unterregionen präzisiert und
+  als Einstiegspunkt an den jeweiligen Symptombaum übergeben.
 */
+
+/* Styles für Körperkarte, Auswahlzustände und ergänzende Regionsbuttons. */
 import assessmentStyles from "../Assessment.module.css";
 
-/*
-  React-State für Vorder- und Rückansicht der Körperkarte.
-*/
+/* Lokaler Zustand für Kartenansicht und Hover-Rückmeldung. */
 import { useState } from "react";
 
-/*
-  Icon für den Wechsel zwischen Vorder- und Rückseite.
-*/
+/* Icon für den Wechsel zwischen Vorder- und Rückseite. */
 import { ArrowsLeftRight } from "@phosphor-icons/react";
 
-/*
-  Import der Typdefinitionen für Haupt- und Unterregionen.
-*/
+/* Typen der zentralen Navigation sowie der medizinischen Regionsauswahl. */
 import type { Step, MainRegion, SubRegion } from "../../types/assessment";
 
 /*
-  Import der Hilfsfunktion,
-  die passende Unterregionen zu einer Hauptregion liefert.
+  Ordnet Haupt- und Unterregionen einander zu und normalisiert seitenspezifische
+  Unterregionen für den nachfolgenden Symptombaum.
 */
 import { getSubRegions, getMainRegionForSubRegion, getWholeFromSides } from "../utils/assessmentData";
 
+/*
+  selectedMainRegion / selectedSubRegion:
+  Enthalten die aktuelle zweistufige Auswahl aus dem Hauptzustand.
+
+  selectMainRegion / selectSubRegion:
+  Aktualisieren die Auswahl zentral und setzen abhängige Werte passend zurück.
+
+  setStep:
+  Öffnet den zur gewählten Unterregion gehörenden Symptombaum. onContinue ist
+  weiterhin Teil der Schnittstelle, wird in der aktuellen Navigation aber nicht genutzt.
+*/
 type BodyRegionStepProps = {
   selectedMainRegion: MainRegion | null;
   selectedSubRegion: SubRegion | null;
@@ -44,9 +55,16 @@ export function BodyRegionStep({
   selectSubRegion,
   setStep,
 }: BodyRegionStepProps) {
+  /* Vorder- und Rückansicht teilen sich dieselbe Auswahl im Hauptzustand. */
   const [isBackView, setIsBackView] = useState(false);
+
+  /* Zeigt beim Überfahren einer Hauptregion deren verständlichen Namen an. */
   const [hoveredPart, setHoveredPart] = useState<MainRegion | null>(null);
 
+  /*
+    Wiederverwendbarer interaktiver SVG-Pfad für Hauptregionen.
+    Regionen mit automatisch bestimmter Unterregion bleiben direkt hervorgehoben.
+  */
   const BodyPath = ({
     d,
     region,
@@ -61,7 +79,11 @@ export function BodyRegionStep({
       transform={transform}
       role="button"
       aria-label={region}
-      className={`${assessmentStyles.bodyPart} ${selectedMainRegion === region && !selectedSubRegion ? assessmentStyles.selectedBodyPart : ""
+      className={`${assessmentStyles.bodyPartMain} ${
+        selectedMainRegion === region &&
+        (!selectedSubRegion || ["Hals", "Nacken", "Psyche", "Allgemein (ganzer Körper)"].includes(region))
+          ? assessmentStyles.selectedBodyPart 
+          : ""
       }`}
       onMouseEnter={() => setHoveredPart(region)}
       onMouseLeave={() => setHoveredPart(null)}
@@ -69,6 +91,10 @@ export function BodyRegionStep({
     />
   );
 
+  /*
+    Visuelle Kontur einer Unterregion. Sie wird nur eingeblendet, wenn sie zur
+    aktiven Hauptregion gehört; die konkrete Auswahl erfolgt über die Buttons darunter.
+  */
   const SubRegionPath = ({
     d,
     region,
@@ -92,12 +118,20 @@ export function BodyRegionStep({
         transform={transform}
         role="button"
         aria-label={region}
-        className={`${assessmentStyles.bodyPart} ${selectedSubRegion === region ? assessmentStyles.selectedBodyPart : ""
+        className={`${assessmentStyles.bodyPartSub} ${
+          selectedSubRegion === region || 
+          (belongsToActive && !selectedSubRegion)
+            ? assessmentStyles.selectedBodyPart 
+            : ""
         }`}
       />
     );
   };
 
+  /*
+    Klickbare SVG-Alternative für Bereiche ohne eindeutige anatomische Form,
+    beispielsweise psychische oder den ganzen Körper betreffende Beschwerden.
+  */
   const InfoBox = ({
     x,
     y,
@@ -124,7 +158,11 @@ export function BodyRegionStep({
         rx="117"
         role="button"
         aria-label={region}
-        className={`${assessmentStyles.bodyPart} ${selectedMainRegion === region && !selectedSubRegion ? assessmentStyles.selectedBodyPart : ""
+        className={`${assessmentStyles.bodyPartMain} ${
+          selectedMainRegion === region &&
+          (!selectedSubRegion || ["Hals", "Nacken", "Psyche", "Allgemein (ganzer Körper)"].includes(region))
+            ? assessmentStyles.selectedBodyPart 
+            : ""
         }`}
         onMouseEnter={() => setHoveredPart(region)}
         onMouseLeave={() => setHoveredPart(null)}
@@ -162,11 +200,13 @@ export function BodyRegionStep({
 
   return (
     <>
+      {/* Die Auswahl folgt immer der Reihenfolge Hauptregion vor Unterregion. */}
       <p className={assessmentStyles.text}>
         Klicken Sie auf eine Hauptregion und wählen Sie danach die passende
         Unterregion aus.
       </p>
 
+      {/* Nach der ersten Auswahl lenkt der Hinweis zur erforderlichen Präzisierung. */}
       {selectedMainRegion && !selectedSubRegion && (
         <div className={assessmentStyles.selectionHint}>
           <span className={assessmentStyles.hintArrow}>↓</span>
@@ -174,6 +214,7 @@ export function BodyRegionStep({
         </div>
       )}
 
+      {/* Kartenansicht mit Umschalter, Hover-Bezeichnung und skalierbarer SVG-Grafik. */}
       <div className={assessmentStyles.bodyWrapper}>
         <button
           type="button"
@@ -188,12 +229,14 @@ export function BodyRegionStep({
           {hoveredPart ? hoveredPart : "Körperteil antippen"}
         </p>
 
+        {/* Die SVG bleibt über die viewBox unabhängig von der Bildschirmgröße skalierbar. */}
         <svg
           viewBox="150 500 3230 3950"
           className={assessmentStyles.bodyMap}
           role="img"
           aria-label="Interaktive Körperkarte zur Auswahl der Körperregion"
         >
+          {/* Vorder- und Rückseite verwenden eigene Pfade für Rumpf, Kopf und Nacken. */}
           {!isBackView ? (
             <>
               {/* Kopf & Gesicht (Vorderseite) */}
@@ -245,31 +288,36 @@ export function BodyRegionStep({
           )}
 
           
-          {/* Becken & Unterleib (Rückseite) */}
+          {/* Becken und Gliedmaßen werden in beiden Ansichten gemeinsam gezeichnet. */}
+          {/* Becken & Unterleib (beide Ansichten) */}
           <BodyPath
             region="Becken & Unterleib"
             d="M1456.602,2216.56L2067.572,2216.56C2067.572,2216.56 2066.729,2215.542 2092.618,2288.909C2101.56,2314.248 2109.613,2465.229 2109.613,2465.229C2109.613,2465.229 2031.842,2485.104 1762.937,2480.315C1762.736,2480.311 1415.207,2465.992 1415.207,2465.992C1415.207,2465.992 1423.704,2315.164 1432.201,2289.672C1488.19,2121.706 1456.602,2216.56 1456.602,2216.56Z"
           />
 
-          {/* Arm links (Rückseite) */}
+          {/*
+            Links und rechts werden beim Drehen aus Sicht der dargestellten Person
+            gespiegelt, obwohl die geometrischen Pfade an derselben Position bleiben.
+          */}
+          {/* Arm auf der rechten Bildseite: vorne links, hinten rechts */}
           <BodyPath
             region={!isBackView ? "Arme & Hände links" : "Arme & Hände rechts"}
             d="M2123.708,1304.669C2123.708,1304.669 2259.91,1391.767 2249.289,1742.283C2238.667,2092.8 2328.75,2114.906 2344.884,2360.467C2347.008,2392.8 2421.36,2403.825 2438.355,2459.918C2455.35,2516.012 2502.151,2654.159 2419.236,2528.758C2415.922,2523.746 2488.955,2814.774 2306.646,2664.716C2302.978,2661.697 2248.89,2713.574 2223.398,2493.772C2197.906,2273.969 2149.355,2129.514 2123.708,2053.038C2098.062,1976.561 2053.451,1572.806 2053.451,1572.806L2123.708,1304.669Z"
           />
 
-          {/* Arm rechts (Rückseite) */}
+          {/* Arm auf der linken Bildseite: vorne rechts, hinten links */}
           <BodyPath
             region={!isBackView ? "Arme & Hände rechts" : "Arme & Hände links"}
             d="M1402.484,1304.669L1472.742,1572.806C1472.742,1572.806 1428.131,1976.561 1402.484,2053.038C1376.838,2129.514 1328.287,2273.969 1302.795,2493.772C1277.302,2713.574 1223.214,2661.697 1219.547,2664.716C1037.238,2814.774 1110.271,2523.746 1106.957,2528.758C1024.042,2654.159 1070.843,2516.012 1087.838,2459.918C1104.832,2403.825 1179.184,2392.8 1181.309,2360.467C1197.443,2114.906 1287.526,2092.8 1276.904,1742.283C1266.282,1391.767 1402.484,1304.669 1402.484,1304.669Z"
           />
 
-          {/* Bein links (Rückseite) */}
+          {/* Bein auf der rechten Bildseite: vorne links, hinten rechts */}
           <BodyPath
             region={!isBackView ? "Beine & Füße links" : "Beine & Füße rechts"}
             d="M1763.017,2480.268C1768.998,2478.385 2109.613,2459.918 2109.613,2459.918C2109.613,2459.918 2124.636,2878.188 2028.357,3254.423C2000.161,3364.604 2107.384,3478.059 1936.275,4055.163C1920.545,4108.217 2028.357,4223.379 2028.357,4223.379C2028.357,4223.379 2084.627,4376.591 1811.674,4308.353C1786.182,4301.979 1819.785,4050.021 1807.425,4008.82C1801.052,3987.577 1784.431,3426.212 1814.259,3392.76C1818.043,3388.516 1792.047,2857.869 1763.017,2481.348L1763.017,2480.268Z"
           />
 
-          {/* Bein rechts (Rückseite) */}
+          {/* Bein auf der linken Bildseite: vorne rechts, hinten links */}
           <BodyPath
             region={!isBackView ? "Beine & Füße rechts" : "Beine & Füße links"}
             d="M1763.017,2481.348C1733.987,2857.869 1707.99,3388.516 1711.775,3392.76C1741.602,3426.212 1724.981,3987.577 1718.608,4008.82C1706.248,4050.021 1739.852,4301.979 1714.36,4308.353C1441.407,4376.591 1497.676,4223.379 1497.676,4223.379C1497.676,4223.379 1605.489,4108.217 1589.758,4055.163C1418.649,3478.059 1525.872,3364.604 1497.676,3254.423C1401.397,2878.188 1416.42,2459.918 1416.42,2459.918C1416.42,2459.918 1757.036,2478.385 1763.017,2480.268L1763.017,2481.348Z"
@@ -341,11 +389,6 @@ export function BodyRegionStep({
                />
 
               <SubRegionPath
-                region="Nacken"
-                d="M1762.937,1090.421C1801.579,1090.421 1877.385,1071.283 1877.385,1071.283C1877.385,1071.283 1863.361,1199.805 1895.315,1199.805C1895.315,1199.805 1873.004,1277.828 1843.242,1284.52C1787.911,1296.961 1758.217,1293.881 1681.796,1282.927C1646.175,1277.821 1626.651,1199.805 1626.651,1199.805C1658.605,1199.805 1643.939,1076.062 1643.939,1076.062C1643.939,1076.062 1724.295,1090.421 1762.937,1090.421Z"
-              />
-
-              <SubRegionPath
                 region="Rücken oben"
                 d="M1486.88,1855.631C1486.621,1850.493 1486.402,1847.906 1486.402,1847.906C1472.346,1529.32 1400.253,1305.815 1402.193,1304.961C1562.85,1234.156 1630.553,1199.805 1630.553,1199.805C1630.553,1199.805 1640.645,1267.531 1666.426,1275.611C1787.285,1313.49 1841.637,1284.401 1863.688,1268.828C1885.152,1253.669 1895.321,1199.805 1895.321,1199.805C1895.321,1199.805 1963.024,1234.156 2123.682,1304.961C2125.601,1305.806 2060.602,1545.866 2039.814,1851.207C2039.814,1851.207 2039.804,1852.692 2039.82,1855.631L1486.88,1855.631Z"
               />
@@ -362,6 +405,16 @@ export function BodyRegionStep({
             region="Ohren"
             transform="matrix(1,0,0,1,-703.601623,-10)"
             d="M2669.084,877.683C2713.891,904.075 2664.266,962.659 2664.266,962.659L2649.965,986.024L2669.084,877.683ZM2245.907,877.683L2265.026,986.024L2250.724,962.659C2250.724,962.659 2201.099,904.075 2245.907,877.683Z"
+          />
+
+          <SubRegionPath
+            region="Becken"
+            d="M1456.602,2216.56L2067.572,2216.56C2067.572,2216.56 2066.729,2215.542 2092.618,2288.909C2101.56,2314.248 2109.613,2465.229 2109.613,2465.229C2109.613,2465.229 2031.842,2485.104 1762.937,2480.315C1762.736,2480.311 1415.207,2465.992 1415.207,2465.992C1415.207,2465.992 1423.704,2315.164 1432.201,2289.672C1488.19,2121.706 1456.602,2216.56 1456.602,2216.56Z"
+          />
+
+          <SubRegionPath
+            region="Genitalbereich"
+            d="M1456.602,2216.56L2067.572,2216.56C2067.572,2216.56 2066.729,2215.542 2092.618,2288.909C2101.56,2314.248 2109.613,2465.229 2109.613,2465.229C2109.613,2465.229 2031.842,2485.104 1762.937,2480.315C1762.736,2480.311 1415.207,2465.992 1415.207,2465.992C1415.207,2465.992 1423.704,2315.164 1432.201,2289.672C1488.19,2121.706 1456.602,2216.56 1456.602,2216.56Z"
           />
 
           {!isBackView ? (
@@ -552,6 +605,7 @@ export function BodyRegionStep({
           )}
 
 
+          {/* Nicht lokalisierte Anliegen ergänzen die anatomische Karte als Textflächen. */}
           <InfoBox
             x={530}
             y={600}
@@ -573,6 +627,7 @@ export function BodyRegionStep({
         </svg>
       </div>
 
+      {/* Nur Unterregionen der aktiven Hauptregion werden als Auswahl angeboten. */}
       {selectedMainRegion && (
         <>
           <p className={assessmentStyles.selectedText}>
@@ -597,6 +652,10 @@ export function BodyRegionStep({
         </>
       )}
 
+      {/*
+        Seitenspezifische Angaben werden auf den gemeinsamen Kategorie-Schritt
+        normalisiert; ohne vollständige Regionsauswahl bleibt die Navigation gesperrt.
+      */}
       <button
         type="button"
         className={assessmentStyles.primaryButton}

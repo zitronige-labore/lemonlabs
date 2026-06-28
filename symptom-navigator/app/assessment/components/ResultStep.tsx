@@ -1,10 +1,21 @@
+/*
+  Abschlussansicht des Assessments.
+
+  Sie stellt die KI-Einschätzung und die erfassten Falldaten dar,
+  bietet passende nächste Schritte an und ermöglicht den Export sowie
+  den späteren Zugriff über den persönlichen Zugangscode.
+*/
 import { useEffect, useState } from "react";
 
+/* Gemeinsame Styles für Ergebnisbereiche, Datentabellen und Aktionen. */
 import assessmentStyles from "../Assessment.module.css";
 
+/* Serverzugriff für den zum gespeicherten Fall gehörenden Zugangscode. */
 import { getAccessCode } from "../../actions";
+/* Erstellt die herunterladbaren TXT- und PDF-Dateien im Browser. */
 import { downloadTxt, downloadPdf } from "../utils/exportUtils";
 
+/* Datenmodelle der vorherigen Assessment-Schritte. */
 import type {
   AdditionalData,
   BasisData,
@@ -15,6 +26,11 @@ import {
   parseSymptomText
 } from "../utils/resultUtils";
 
+/*
+  Sämtliche Ergebnisse werden von der zentralen Ablaufsteuerung übergeben.
+  Die Komponente verändert diese Daten nicht, sondern bereitet sie nur für
+  Anzeige, Download und weitere Aktionen auf.
+*/
 type ResultStepProps = {
   basisData: BasisData;
   additionalData: AdditionalData;
@@ -25,6 +41,7 @@ type ResultStepProps = {
   onGoHome: () => void;
 };
 
+/* Vereinheitlicht leere Einzelwerte und Listen für die Ergebnisdarstellung. */
 function displayValue(value: unknown) {
   if (Array.isArray(value)) {
     return value.length > 0 ? value.join(", ") : "Keine Angabe";
@@ -46,12 +63,14 @@ export function ResultStep({
   caseId,
   onGoHome,
 }: ResultStepProps) {
+  /* Sichtbarkeit der optional aufklappbaren Ergebnisbereiche und des Notfallhinweises. */
   const [showSavedData, setShowSavedData] = useState(false);
   const [showAiReasoning, setShowAiReasoning] = useState(false);
   const [showEmergencyPopup, setShowEmergencyPopup] = useState(false);
   const [accessCode, setAccessCode] = useState<string | null>(null);
   const [accessCodeCopied, setAccessCodeCopied] = useState(false);
 
+  /* Optionale Verkettung hält die Ansicht auch bei unvollständigen KI-Antworten stabil. */
   const suspicions = aiAnswer?.assessment?.suspicions;
   const urgency = Number(aiAnswer?.assessment?.urgency);
 
@@ -65,14 +84,14 @@ export function ResultStep({
       ? additionalData.conditions
       : "Keine Angabe";
 
-
-
+  /* Lädt den Zugangscode nach, sobald ein gespeicherter Fall verfügbar ist. */
   useEffect(() => {
     if (caseId) {
       getAccessCode(caseId).then(setAccessCode);
     }
   }, [caseId]);
 
+  /* Gibt kurzzeitig visuelles Feedback, wenn der Zugangscode kopiert wurde. */
   const handleCopyAccessCode = async () => {
     if (!accessCode) return;
 
@@ -85,21 +104,25 @@ export function ResultStep({
     }
   };
 
+  /* Rendert wiederkehrende Beschriftung-Wert-Paare einheitlich im Datenraster. */
   const renderDataRow = (
     label: string,
     value: unknown,
     wide = false,
   ) => (
     <div
-      className={`${assessmentStyles.dataRow} ${
-        wide ? assessmentStyles.dataRowWide : ""
-      }`}
+      className={`${assessmentStyles.dataRow} ${wide ? assessmentStyles.dataRowWide : ""
+        }`}
     >
       <span className={assessmentStyles.dataLabel}>{label}</span>
       <strong className={assessmentStyles.dataValue}>{displayValue(value)}</strong>
     </div>
   );
 
+  /*
+    Symptome werden im Ablauf als JSON-Strings gespeichert. Bei älteren oder
+    fehlerhaften Einträgen bleibt durch den Fallback trotzdem der Rohtext sichtbar.
+  */
   const renderSymptomList = (entries: string[], kind: "text" | "selected") => {
     if (!entries.length) {
       return <strong className={assessmentStyles.dataValue}>Keine Angabe</strong>;
@@ -154,6 +177,7 @@ export function ResultStep({
     );
   };
 
+  /* Bereitet die strukturierten Medikationsangaben als lesbare Liste auf. */
   const renderMedicationList = () => {
     if (!additionalData.medication?.length) {
       return <strong className={assessmentStyles.dataValue}>Keine Angabe</strong>;
@@ -200,6 +224,10 @@ export function ResultStep({
   const emergencyRoomsSearchUrl =
     "https://www.google.com/maps/search/Notaufnahme+in+der+Umgebung";
 
+  /*
+    Übersetzt die Dringlichkeitsstufe in eine konkrete Folgeaktion:
+    Arztsuche, Suche nach einer Notaufnahme oder unmittelbarer Notfallhinweis.
+  */
   const renderUrgencyAction = () => {
     if (!urgency) return null;
 
@@ -244,6 +272,10 @@ export function ResultStep({
     return null;
   };
 
+  /*
+    Liest die dynamisch benannten Felder der KI-Vermutungen aus.
+    Solange keine Auswertung vorliegt, erklärt ein Platzhalter den fehlenden Inhalt.
+  */
   const renderSuspicions = () => {
     if (!suspicions) {
       return (
@@ -290,7 +322,7 @@ export function ResultStep({
                   Wahrscheinlichkeit
                 </span>
                 <strong className={assessmentStyles.dataValue}>
-                  {probability*100}%
+                  {probability * 100}%
                 </strong>
               </div>
             )}
@@ -306,14 +338,38 @@ export function ResultStep({
     });
   };
 
+  /*
+    Vorbereitete Farbwerte der fünf Dringlichkeitsstufen. Die sichtbaren
+    Statusflächen werden aktuell über die stufenabhängigen CSS-Klassen gewählt.
+  */
+  let urgencyColor = "";
+  if (urgency === 1) urgencyColor = "#6600FF";
+  if (urgency === 2) urgencyColor = "#66CC00";
+  if (urgency === 3) urgencyColor = "#FFFF00";
+  if (urgency === 4) urgencyColor = "#FF6600";
+  if (urgency === 5) urgencyColor = "#FF0000";
+
   return (
-    <div className={assessmentStyles.resultBox}>
+    <div 
+    className={
+      assessmentStyles.resultBox
+      }>
+      {/* Zentrale KI-Einschätzung mit stufenabhängiger Hervorhebung und Aktion. */}
       {aiAnswer?.assessment?.urgency ? (
-        <div className={assessmentStyles.statusPanel}>
+        <div className={
+          urgency === 1 ? assessmentStyles.statusPanel: 
+          urgency === 2 ? assessmentStyles.statusPanel2: 
+          urgency === 3 ? assessmentStyles.statusPanel3: 
+          urgency === 4 ? assessmentStyles.statusPanel4: 
+          urgency === 5 ? assessmentStyles.statusPanel5: 
+          assessmentStyles.statusPanel
+
+        }>
           <div className={assessmentStyles.dataHeader}>
             <div>
               <p className={assessmentStyles.dataTitle}>KI-Einschätzung</p>
-              <p className={assessmentStyles.dataMeta}>
+              <p className={assessmentStyles.dataMetaUrgency}
+              >
                 Dringlichkeitsstufe {aiAnswer.assessment.urgency}:{" "}
                 {aiAnswer.assessment.urgencyText}
               </p>
@@ -329,6 +385,7 @@ export function ResultStep({
         <p>Die KI Auswertung ist fehlgeschlagen</p>
       )}
 
+      {/* Die medizinische Begründung bleibt zunächst eingeklappt. */}
       <button
         type="button"
         className={`${assessmentStyles.secondaryButton} ${assessmentStyles.dataToggleButton}`}
@@ -353,6 +410,7 @@ export function ResultStep({
         </div>
       )}
 
+      {/* Ohne erfolgreich geladenen Code wird der Zugangsbereich nicht angezeigt. */}
       {accessCode && (
         <div className={assessmentStyles.codePanel}>
           <div>
@@ -380,6 +438,7 @@ export function ResultStep({
         Ihre Angaben wurden erfasst.
       </p>
 
+      {/* Die vollständigen Falldaten werden nur auf ausdrücklichen Wunsch eingeblendet. */}
       <button
         type="button"
         className={`${assessmentStyles.secondaryButton} ${assessmentStyles.dataToggleButton}`}
@@ -457,6 +516,7 @@ export function ResultStep({
             </div>
           </section>
 
+          {/* Beide Exportformate verwenden dieselbe zentral aufbereitete Datenstruktur. */}
           <div className={assessmentStyles.dataActions}>
             <button
               type="button"
@@ -476,6 +536,7 @@ export function ResultStep({
         </div>
       )}
 
+      {/* Stufe 5 verlangt vor dem direkten Anruf einen unübersehbaren Notfallhinweis. */}
       {showEmergencyPopup && (
         <div
           style={{
@@ -537,6 +598,7 @@ export function ResultStep({
 
       <hr className={assessmentStyles.dataDivider} />
 
+      {/* Beendet den Assessment-Ablauf und kehrt zur Startansicht zurück. */}
       <button
         type="button"
         className={assessmentStyles.continueButton}

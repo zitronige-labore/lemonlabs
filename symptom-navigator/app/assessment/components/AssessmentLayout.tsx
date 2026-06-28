@@ -1,24 +1,28 @@
 /*
-  Import des ReactNode-Typs aus React.
+  Gemeinsamer Formularrahmen für alle Schritte der medizinischen Ersteinschätzung.
 
-  ReactNode beschreibt beliebige Inhalte,
-  die innerhalb einer Komponente dargestellt werden können.
+  Das Layout hält wechselnde Schrittinhalte in einem einzigen Formular,
+  zeigt den erreichten Fortschritt und stellt die gemeinsame Fußzeile bereit.
 */
+
+/* ReactNode erlaubt beliebige React-Inhalte als aktuellen Assessment-Schritt. */
 import type { ReactNode } from "react";
 
-/*
-  Import der CSS-Module für das Assessment-Layout.
-*/
+/* Styles für Formularkarte, Fortschrittsanzeige und Fußzeile. */
 import assessmentStyles from "../Assessment.module.css";
 
 /*
   Eigenschaften der AssessmentLayout-Komponente.
 
   children:
-  Inhalt, der innerhalb des Layouts angezeigt wird
+  Der von der Hauptseite ausgewählte aktuelle Assessment-Schritt.
 
   onSubmit:
-  Funktion, die beim Absenden des Formulars ausgeführt wird
+  Verarbeitet den verbindlichen Abschluss des gesamten Assessments.
+
+  progress:
+  Prozentwert für den Fortschrittsbalken. Die Hauptseite berücksichtigt dabei
+  auch den höchsten bereits erreichten Stand, damit Rücksprünge ihn nicht verkürzen.
 */
 type AssessmentLayoutProps = {
   children: ReactNode;
@@ -26,16 +30,7 @@ type AssessmentLayoutProps = {
   progress: number;
 };
 
-/*
-  Diese Komponente bildet das gemeinsame Grundlayout
-  für alle Schritte der Ersteinschätzung.
-
-  Sie enthält:
-  - die Formularkarte
-  - die Hauptüberschrift
-  - den jeweiligen Schrittinhalt
-  - die Fußzeile
-*/
+/* Präsentationskomponente ohne eigenen Zustand oder eigene Ablaufentscheidung. */
 export function AssessmentLayout({
   children,
   onSubmit,
@@ -44,15 +39,17 @@ export function AssessmentLayout({
   return (
     <>
       {/*
-        Hauptformular des Assessment-Bereichs.
-
-        Alle einzelnen Schritte werden
-        innerhalb von {children} angezeigt.
+        Ein gemeinsames Formular verbindet alle dynamisch eingesetzten Schritte.
+        Abgesendet wird es erst durch den Submit-Button der abschließenden Prüfansicht.
       */}
       <form 
       className={assessmentStyles.card} 
       onSubmit={onSubmit}
       onKeyDown={(event) => {
+          /*
+            Enter darf in normalen Eingabefeldern keinen vorzeitigen Abschluss auslösen.
+            In Textareas bleibt die Taste für beabsichtigte Zeilenumbrüche verfügbar.
+          */
           if (
             event.key === "Enter" &&
             (event.target as HTMLElement).tagName !== "TEXTAREA"
@@ -63,6 +60,7 @@ export function AssessmentLayout({
       >
         <h1 className={assessmentStyles.title}>Ersteinschätzung</h1>
 
+        {/* Die Füllbreite wird aus dem zentral berechneten Prozentwert abgeleitet. */}
         <div className={assessmentStyles.progressContainer}>
           <div className={assessmentStyles.progressTrack}>
             <div
@@ -72,11 +70,13 @@ export function AssessmentLayout({
           </div>
         </div>
 
+        {/* Platz für genau den Schritt, den die zentrale Ablaufsteuerung aktiviert. */}
         {children}
       </form>
 
       {/*
-        Globale Fußzeile des Assessment-Bereichs.
+        Einheitliche Fußzeile des Assessment-Bereichs.
+        Die Einträge sind derzeit rein visuell und besitzen noch keine Aktionen.
       */}
       <footer className={assessmentStyles.footer}>
         <button type="button" className={assessmentStyles.footerLink}>

@@ -11,6 +11,7 @@ export default isDev
   ? nextConfig
   : withPWA({
   dest: "public",
+  register: true,
   cacheOnFrontEndNav: true,
   aggressiveFrontEndNavCaching: true,
   reloadOnOnline: false,   

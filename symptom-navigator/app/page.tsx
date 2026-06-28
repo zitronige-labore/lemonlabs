@@ -268,6 +268,11 @@ export default function Home() {
 
         const zielStep = event.state.step as Step;
 
+        if (stepRef.current === "result") {
+          history.pushState({ step: stepRef.current }, "", "#" + stepRef.current);
+          return;
+        }
+
         if (zielStep === "hinweise" && stepRef.current === "redflags") {
           const bestaetigt = window.confirm("Wenn du zurückgehst, gehen deine eingegebenen Daten verloren. Trotzdem zurück?");
           if (!bestaetigt) {
@@ -435,6 +440,12 @@ export default function Home() {
     } else if (region === "Allgemein (ganzer Körper)"){
       setSelectedSubRegion("Keine bestimmte Region / mehrere Stellen");
       return;
+    } else if (region === "Hals") {
+      setSelectedSubRegion("Hals");
+      return;
+    } else if (region === "Nacken") {
+      setSelectedSubRegion("Nacken");
+      return;
     }
     setSelectedSubRegion(null);
   }
@@ -563,13 +574,15 @@ export default function Home() {
 
     let id;
     let triesLeft = 3;
+    let redFlagScanSubmit = false;
 
 
     try {
       const redFlagScanResultLokal = await redFlagScan(basisData, additionalData, selectedSubRegion!, selectedSymptoms, symptomText)
       if (redFlagScanResultLokal[0]) {
-        setRedFlagScanPositive(true)
-        setRedFlagScanResult(redFlagScanResultLokal[1])
+        setRedFlagScanPositive(true);
+        setRedFlagScanResult(redFlagScanResultLokal[1]);
+        redFlagScanSubmit = true;
       }
     }
     catch (error) {
@@ -578,10 +591,25 @@ export default function Home() {
 
     try {
       id = await handleSaveForm();
-      setCaseId(id)
+      setCaseId(id);
     } catch (error) {
       console.error("Error saving data into db:", error);
     }
+
+    //sending fhir bundle
+    try {
+      const fhirServerAnswer = await sendFhirToServer(id)
+    } catch (error) {
+      console.error("Error sending FHIR bundle to server")
+    }
+
+    // return here if redflag is detected
+    if(redFlagScanSubmit) {
+      setIsLoading(false);
+      goToStep("start");
+      return;
+    }
+
 
     // since ai answer goes wring sometimes, up to 3 tries are allowed
     while (triesLeft > 0) {
@@ -596,12 +624,6 @@ export default function Home() {
         triesLeft--;
         console.error("Try fetching Ai answer: ", (3 - triesLeft))
       }
-    }
-
-    try {
-      const fhirServerAnswer = await sendFhirToServer(caseId)
-    } catch (error) {
-      console.error("Error sending FHIR bundle to server")
     }
 
     setIsLoading(false);
