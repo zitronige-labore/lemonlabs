@@ -1,13 +1,37 @@
+/*
+  Prüfansicht vor dem verbindlichen Abschluss des Assessments.
+
+  Sie fasst Basisdaten, Beschwerden und Zusatzangaben zusammen, erlaubt
+  gezielte Korrekturen und stößt anschließend das Absenden des Elternformulars an.
+*/
 import { useState } from "react";
 
+/* Gemeinsame Styles für Datenraster, Listen und Bearbeitungsaktionen. */
 import assessmentStyles from "../Assessment.module.css";
 
+/* Datenmodelle der vorherigen Schritte und Typ der zentralen Navigation. */
 import type {
   AdditionalData,
   BasisData,
   Step,
 } from "../../types/assessment";
 
+/*
+  Eigenschaften der Prüfansicht.
+
+  basisData / additionalData / symptomText / selectedSymptoms:
+  Enthalten sämtliche bisher erfassten Angaben zur Darstellung.
+
+  removeSymptomText / toggleSymptom:
+  Entfernen Freitext- beziehungsweise ausgewählte Symptome aus dem Hauptzustand.
+
+  setCheckInfoActive:
+  Markiert einen Bearbeitungsweg, damit nach der Korrektur wieder diese
+  Prüfansicht statt der regulären linearen Fortsetzung geöffnet wird.
+
+  isOffline:
+  Verhindert den serverabhängigen Abschluss ohne Internetverbindung.
+*/
 type CheckInfoProps = {
   basisData: BasisData;
   additionalData: AdditionalData;
@@ -20,6 +44,7 @@ type CheckInfoProps = {
   isOffline: boolean;
 };
 
+/* Vereinheitlicht leere Einzelwerte und Listen für die Zusammenfassung. */
 function displayValue(value: unknown) {
   if (Array.isArray(value)) {
     return value.length > 0 ? value.join(", ") : "Keine Angabe";
@@ -43,8 +68,10 @@ export function CheckInfo({
   setCheckInfoActive,
   isOffline,
 }: CheckInfoProps) {
+  /* Die umfangreiche Zusammenfassung bleibt bis zur bewussten Prüfung eingeklappt. */
   const [showSavedData, setShowSavedData] = useState(false);
 
+  /* Rendert wiederkehrende Beschriftung-Wert-Paare einheitlich im Datenraster. */
   const renderDataRow = (
     label: string,
     value: unknown,
@@ -62,6 +89,10 @@ export function CheckInfo({
     </div>
   );
 
+  /*
+    Symptome liegen als JSON-Strings vor. Die Funktion bereitet beide Varianten
+    lesbar auf und behält bei nicht parsebaren Altdaten den ursprünglichen Text bei.
+  */
   const renderSymptomList = (
     entries: string[],
     kind: "text" | "selected",
@@ -105,6 +136,7 @@ export function CheckInfo({
                     </div>
                   )}
                 </div>
+                {/* Die passende zentrale Löschfunktion hängt von der Symptomquelle ab. */}
                 <button
                   type="button"
                   className={assessmentStyles.secondaryButton}
@@ -130,6 +162,7 @@ export function CheckInfo({
     );
   };
 
+  /* Stellt die strukturierten Medikationsangaben vollständig und lesbar dar. */
   const renderMedicationList = () => {
     if (!additionalData.medication?.length) {
       return <strong className={assessmentStyles.dataValue}>Keine Angabe</strong>;
@@ -172,6 +205,7 @@ export function CheckInfo({
 
   return (
     <>
+      {/* Öffnet oder schließt die vollständige Zusammenfassung aller Eingaben. */}
       <button
         type="button"
         className={`${assessmentStyles.secondaryButton} ${assessmentStyles.dataToggleButton}`}
@@ -182,6 +216,7 @@ export function CheckInfo({
           : "Daten zur Überprüfung anzeigen"}
       </button>
 
+      {/* Bearbeitungsaktionen sind erst zusammen mit den zugehörigen Daten sichtbar. */}
       {showSavedData && (
         <div className={assessmentStyles.dataPanel}>
           <div className={assessmentStyles.dataHeader}>
@@ -195,6 +230,7 @@ export function CheckInfo({
             </div>
           </div>
 
+          {/* Basisdaten prüfen und bei Bedarf im ursprünglichen Schritt korrigieren. */}
           <section className={assessmentStyles.dataSection}>
             <p className={assessmentStyles.dataSectionTitle}>Basisdaten</p>
             <div className={assessmentStyles.dataGrid}>
@@ -208,6 +244,7 @@ export function CheckInfo({
                 type="button"
                 className={assessmentStyles.secondaryButton}
                 onClick={() => {
+                  /* Rückkehr zur Prüfansicht nach Abschluss der Korrektur vormerken. */
                   setStep("basisStart");
                   setCheckInfoActive(true);
                 }}
@@ -217,6 +254,7 @@ export function CheckInfo({
             </div>
           </section>
 
+          {/* Beschwerden können einzeln entfernt oder um weitere Symptome ergänzt werden. */}
           <section className={assessmentStyles.dataSection}>
             <p className={assessmentStyles.dataSectionTitle}>Beschwerden</p>
             <div className={assessmentStyles.dataGrid}>
@@ -238,6 +276,7 @@ export function CheckInfo({
                 type="button"
                 className={assessmentStyles.secondaryButton}
                 onClick={() => {
+                  /* Neue Symptome starten erneut bei der Auswahl der Körperregion. */
                   setStep("bodyRegion");
                   setCheckInfoActive(true);
                 }}
@@ -247,6 +286,7 @@ export function CheckInfo({
             </div>
           </section>
 
+          {/* Optionale Gesundheitsangaben einschließlich der Medikation prüfen. */}
           <section className={assessmentStyles.dataSection}>
             <p className={assessmentStyles.dataSectionTitle}>Zusatzangaben</p>
             <div className={assessmentStyles.dataGrid}>
@@ -278,6 +318,7 @@ export function CheckInfo({
                 type="button"
                 className={assessmentStyles.secondaryButton}
                 onClick={() => {
+                  /* Zusatzangaben bearbeiten und anschließend hierher zurückkehren. */
                   setStep("additionalInfo");
                   setCheckInfoActive(true);
                 }}
@@ -289,11 +330,13 @@ export function CheckInfo({
         </div>
       )}
 
+      {/* Als Submit-Button löst der Abschluss handleSubmit im AssessmentLayout aus. */}
       {!isOffline && (
         <button type="submit" className={assessmentStyles.primaryButton}>
           Einschätzung abschließen
         </button>
       )}
+      {/* Ohne Verbindung wird kein unvollständiger serverseitiger Abschluss gestartet. */}
       {isOffline && (
         <p>
           Im Offline-Modus können keine Daten bearbeitet werden. Sobald eine
