@@ -342,7 +342,16 @@ function getTutorialContent(
   isOffline?: boolean,
   startFormOffline?: boolean
 ): TutorialContent {
+  /*
+    Wenn sich die Anwendung im Offline-Modus befindet, werden
+    angepasste Hilfetexte für die betroffenen Schritte geladen.
+  */
   if (isOffline) {
+    /*
+      Startseite im Offline-Modus:
+      Erklärt die verfügbaren Offline-Aktionen ("Warnzeichen erkennen"
+      und "Ersteinschätzung offline starten").
+    */
     if (currentStep === "start") {
       return {
         title: "Start (Offline)",
@@ -356,6 +365,11 @@ function getTutorialContent(
         ],
       };
     }
+    /*
+      Warnzeichen-Prüfung im Offline-Modus:
+      Unterscheidet, ob der Nutzer nur Warnzeichen scannt (kehrt danach zur Startseite zurück)
+      oder eine vollständige Offline-Ersteinschätzung fortführt.
+    */
     if (currentStep === "redflags") {
       if (startFormOffline) {
         return {
@@ -381,6 +395,11 @@ function getTutorialContent(
         };
       }
     }
+    /*
+      Zusammenfassung im Offline-Modus:
+      Weist darauf hin, dass die Daten offline geprüft, aber erst bei
+      aktiver Verbindung gesendet werden können.
+    */
     if (currentStep === "checkInfo") {
       return {
         title: "Angaben prüfen (Offline)",
@@ -392,6 +411,10 @@ function getTutorialContent(
         ],
       };
     }
+    /*
+      Andere Anliegen im Offline-Modus:
+      Weist darauf hin, dass externe Online-Dienste eine Verbindung erfordern.
+    */
     if (currentStep === "other") {
       return {
         title: "Andere Anliegen (Offline)",
