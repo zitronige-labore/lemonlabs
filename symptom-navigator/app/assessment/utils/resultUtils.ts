@@ -34,31 +34,7 @@ export function parseSymptomText(s: string): string {
 /**
  * formates ai suspicions
  * @param suspicions: any
- * @returns AssessmentExportData = {
- *   alter: string;
- *   geschlecht: string;
- *   schwangerschaft: string;
- *   stillzeit: string;
- *   worsening: string | undefined;
- *   groesse: string;
- *   gewicht: string;
- *   temperatur: string;
- *   dauer: string;
- *   medikation: string;
- *   allergien: string;
- *   vorerkrankungen: string;
- *   alkoholkonsum: string;
- *   zigaretten: string;
- *   symptome: string;
- *   textSymptome: string;
- *  datum: string;
- *  dringlichkeit: string;
- *  handlungsempfehlung: string;
- *  vermutungen: {
- *    text: string;
- *    wahrscheinlichkeit: string;
- *  }[];
- *}
+ * @returns @returns AssessmentExportData["vermutungen"] - array of { text: string, wahrscheinlichkeit: string }
  */
 export function formatSuspicions(suspicions: any): AssessmentExportData["vermutungen"] {
   if (!suspicions) return [];
@@ -75,6 +51,15 @@ export function formatSuspicions(suspicions: any): AssessmentExportData["vermutu
   }).filter(Boolean) as AssessmentExportData["vermutungen"];
 }
 
+/**
+ * builds export data
+ * @param basisData: BasisData
+ * @param additionalData: AdditionalData
+ * @param symptomText: string[]
+ * @param selectedSymptoms: string[]
+ * @param aiAnswer: any
+ * @returns AssessmentExportData
+ */
 export function buildExportData(
   basisData: BasisData,
   additionalData: AdditionalData,
