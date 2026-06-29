@@ -31,13 +31,14 @@ export const emptyRedFlags: RedFlags = {
   highFeverConfusion: false,
 };
 
-/*
-  Liefert passende Unterregionen
-  zur ausgewählten Hauptregion zurück.
 
-  Beispiel:
-  "Kopf & Gesicht" → ["Kopf", "Augen", ...]
-*/
+/**
+ * returns subregions for a given main region
+ * Example:
+ * "Kopf & Gesicht" → ["Kopf", "Augen", ...]
+ * @param region: MainRegion || null
+ * @returns SubRegion[]
+ */
 export function getSubRegions(
   region: MainRegion | null
 ): SubRegion[] {
@@ -95,6 +96,14 @@ export function getSubRegions(
 }
 
 
+
+/**
+ * returns main region for a given sub region
+ * Example:
+ * "Gesicht" → "Kopf & Gesicht"
+ * @param sub: SubRegion
+ * @returns MainRegion[]
+ */
 export function getMainRegionForSubRegion(sub: SubRegion): MainRegion[] {
   switch (sub) {
     case "Kopf":
@@ -142,12 +151,20 @@ export function getMainRegionForSubRegion(sub: SubRegion): MainRegion[] {
     case "Unterschenkel rechts":
     case "Fuß rechts":
       return ["Beine & Füße rechts"];
+    /* in case no main region is found */
     default:
       return [];
   }
 }
 
 
+/**
+ * returns two sided bodypart for a given side of a body part
+ * Example:
+ * "Oberbauch rechts" → "Oberbauch"
+ * @param sub: SubRegion
+ * @returns SubRegion
+ */
 export function getWholeFromSides(sub: SubRegion): SubRegion {
   switch (sub) {
     case "Oberbauch rechts":
@@ -180,6 +197,7 @@ export function getWholeFromSides(sub: SubRegion): SubRegion {
     case "Fuß links":
     case "Fuß rechts":
       return "Fuß";
+    /* in case no two sided bodypart is found */
     default:
       return sub;
     

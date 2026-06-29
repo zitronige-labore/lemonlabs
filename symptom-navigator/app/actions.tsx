@@ -331,7 +331,8 @@ export async function insertListIntoSymptomsNoCertainCount(list: string[], nameO
  *     extraInfo: string | null
  *   }>,
  *   allergyData: { allergies: string[] },
- *   medicationData: { medication: string[] },
+ *   medicationData:  {case_id: any, medication: any, dose: any, unit: any, taken_since: any
+ *   frequency: any, frequency_unit: any},
  *   conditionsData: { conditions: string[] }
  * }>
  */
