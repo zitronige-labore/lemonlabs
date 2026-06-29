@@ -280,6 +280,44 @@ const tutorialContentByStep: Partial<Record<Exclude<Step, null>, TutorialContent
       "Bei Verschlechterung oder Unsicherheit medizinische Hilfe kontaktieren.",
     ],
   },
+  // English: Help content for the newly added legal and support pages
+  datenschutz: {
+    title: "Datenschutzerklärung",
+    description:
+      "Hier findest du alle Informationen zur sicheren Verarbeitung deiner Gesundheitsdaten.",
+    steps: [
+      "Wir verarbeiten deine medizinischen Angaben vertraulich und verschlüsselt.",
+      "Deine Gesundheitsdaten werden ausschließlich nach deiner ausdrücklichen Einwilligung verarbeitet.",
+      "Die gespeicherten Daten werden nach 7 Tagen automatisch gelöscht, sofern du sie nicht manuell entfernst.",
+    ],
+  },
+  impressum: {
+    title: "Impressum",
+    description: "Die gesetzliche Anbieterkennzeichnung der Symptometer-Plattform.",
+    steps: [
+      "Hier findest du Angaben zum Betreiber der Plattform (Klinikum Musterstadt GmbH).",
+      "Angaben zur Geschäftsführung, zur zuständigen Aufsichtsbehörde und zum Handelsregister.",
+      "Verantwortliche Personen für redaktionelle Inhalte.",
+    ],
+  },
+  kontakt: {
+    title: "Kontakt",
+    description: "Möglichkeiten zur direkten Kontaktaufnahme mit dem Klinikum.",
+    steps: [
+      "Hier findest du die Anschrift und die Telefonnummer des Klinikums Musterstadt.",
+      "Nutze diese Kontaktdaten für allgemeine Anfragen an das Klinikum.",
+      "Bei technischen Problemen oder Fragen zum Symptometer nutze bitte die Support-Seite.",
+    ],
+  },
+  support: {
+    title: "Support & Hilfe",
+    description: "Unterstützung bei technischen Fragen oder Problemen mit dem Symptometer.",
+    steps: [
+      "Schreibe uns eine E-Mail an support.symptometer@klinik-musterstadt.de für technische Unterstützung.",
+      "Der technische Support ist Montag bis Freitag von 08:00 bis 16:00 Uhr erreichbar.",
+      "WICHTIGER HINWEIS: Der Support kann keine medizinischen Auskünfte erteilen. Wende dich bei Notfällen direkt an die 112.",
+    ],
+  },
 };
 
 /*
