@@ -135,18 +135,6 @@ export async function saveFormData(formData: FormData) {
     console.log("Formdata saved in DB");
     console.log("DB return:", dbReturn);
 
-   try {
-      // Wir übergeben ganz einfach nur die ID als String!
-      buildFhirBundle(caseId.toString()).then((fhirBundle) => {
-        if (fhirBundle) {
-          sendFhirToServer(fhirBundle).then((success) => {
-            if (success) console.log(`FHIR Export für Case ${caseId} erfolgreich.`);
-          });
-        }
-      });
-    } catch (fhirError) {
-      console.error("Fehler in der FHIR-Pipeline:", fhirError);
-    }
     return caseId.toString();
 }
 
