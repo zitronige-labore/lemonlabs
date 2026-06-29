@@ -7,6 +7,9 @@
   Die Zustände und die zentrale Ablaufsteuerung bleiben hier in page.tsx.
 */
 import { DatenschutzStep } from "./assessment/components/ DatenschutzStep";
+import { ImpressumStep } from "./assessment/components/ImpressumStep";
+import { KontaktStep } from "./assessment/components/KontaktStep";
+import { SupportStep } from "./assessment/components/SupportStep";
 import { useState, useEffect, useRef } from "react";
 
 import homeStyles from "./Home.module.css";
@@ -74,6 +77,10 @@ export default function Home() {
   */
   const [step, setStep] = useState<Step>("start");
   const [highestAssessmentProgress, setHighestAssessmentProgress] = useState(0);
+  const [datenschutzReferer, setDatenschutzReferer] = useState<Step>("start");
+  const [impressumReferer, setImpressumReferer] = useState<Step>("start");
+  const [kontaktReferer, setKontaktReferer] = useState<Step>("start");
+  const [supportReferer, setSupportReferer] = useState<Step>("start");
 
   // saves case ID
   const [caseId, setCaseId] = useState("")
@@ -309,6 +316,26 @@ export default function Home() {
 
   // replaces setStep so the browser history gets update while setting the step
   function goToStep(nextStep: Step) {
+    if (nextStep === "datenschutz") {
+      if (stepRef.current !== "datenschutz") {
+        setDatenschutzReferer(stepRef.current);
+      }
+    }
+    if (nextStep === "impressum") {
+      if (stepRef.current !== "impressum") {
+        setImpressumReferer(stepRef.current);
+      }
+    }
+    if (nextStep === "kontakt") {
+      if (stepRef.current !== "kontakt") {
+        setKontaktReferer(stepRef.current);
+      }
+    }
+    if (nextStep === "support") {
+      if (stepRef.current !== "support") {
+        setSupportReferer(stepRef.current);
+      }
+    }
     stepRef.current = nextStep;
     history.pushState({ step: nextStep }, "", "#" + nextStep);
     setHighestAssessmentProgress((previousProgress) =>
@@ -631,7 +658,7 @@ export default function Home() {
   return (
     <main
       className={
-        step === "start" || step === "hinweise" || step === "other" || step === "datenschutz"
+        step === "start" || step === "hinweise" || step === "other" || step === "datenschutz" || step === "impressum" || step === "kontakt" || step === "support"
           ? homeStyles.main
           : assessmentStyles.main
       }
@@ -654,6 +681,10 @@ export default function Home() {
           setHinweiseBestaetigt={setHinweiseBestaetigt}
           onBack={() => goToStep("start")}
           onContinue={() => goToStep("redflags")}
+          onOpenDatenschutz={() => goToStep("datenschutz")}
+          onOpenImpressum={() => goToStep("impressum")}
+          onOpenKontakt={() => goToStep("kontakt")}
+          onOpenSupport={() => goToStep("support")}
         />
       )}
       {/* Datenverwaltungs-Seite */}
@@ -681,14 +712,30 @@ export default function Home() {
         />
       )}
       {/* Datenschutzerklärung */}
-{step === "datenschutz" && (
-  <DatenschutzStep onBack={() => goToStep("start")} />
-)}
+      {step === "datenschutz" && (
+        <DatenschutzStep onBack={() => goToStep(datenschutzReferer)} />
+      )}
+      {/* Impressum */}
+      {step === "impressum" && (
+        <ImpressumStep onBack={() => goToStep(impressumReferer)} />
+      )}
+      {/* Kontakt */}
+      {step === "kontakt" && (
+        <KontaktStep onBack={() => goToStep(kontaktReferer)} />
+      )}
+      {/* Support */}
+      {step === "support" && (
+        <SupportStep onBack={() => goToStep(supportReferer)} />
+      )}
       {/* Alle Schritte der eigentlichen Ersteinschätzung */}
-      {step !== "start" && step !== "hinweise" && step !== "manageData" && step !== "other" && step !== "datenschutz" &&(
+      {step !== "start" && step !== "hinweise" && step !== "manageData" && step !== "other" && step !== "datenschutz" && step !== "impressum" && step !== "kontakt" && step !== "support" && (
         <AssessmentLayout
           onSubmit={handleSubmit}
           progress={Math.max(highestAssessmentProgress, getStepProgress(step))}
+          onOpenDatenschutz={() => goToStep("datenschutz")}
+          onOpenImpressum={() => goToStep("impressum")}
+          onOpenKontakt={() => goToStep("kontakt")}
+          onOpenSupport={() => goToStep("support")}
         >
 
           {/* Schritt 1: Warnzeichen prüfen */}

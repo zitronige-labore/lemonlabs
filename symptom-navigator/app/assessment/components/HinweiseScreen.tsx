@@ -32,6 +32,14 @@ type HinweiseScreenProps = {
   onBack: () => void;
 
   onContinue: () => void;
+
+  onOpenDatenschutz: () => void;
+
+  onOpenImpressum: () => void;
+
+  onOpenKontakt: () => void;
+
+  onOpenSupport: () => void;
 };
 
 export function HinweiseScreen({
@@ -39,6 +47,10 @@ export function HinweiseScreen({
   setHinweiseBestaetigt,
   onBack,
   onContinue,
+  onOpenDatenschutz,
+  onOpenImpressum,
+  onOpenKontakt,
+  onOpenSupport,
 }: HinweiseScreenProps) {
   /* Das SOS-Modal ist ein rein lokaler UI-Zustand dieser Seite. */
   const [showSos, setShowSos] = useState(false);
@@ -74,16 +86,35 @@ export function HinweiseScreen({
           </div>
 
           {/* Die kontrollierte Checkbox schreibt die Bestätigung in den Hauptzustand. */}
-          <label className={homeStyles.checkboxLabel}>
+          <label className={homeStyles.checkboxLabel} style={{ display: "flex", gap: "10px", alignItems: "flex-start" }}>
             <input
               type="checkbox"
               checked={hinweiseBestaetigt}
               onChange={(event) =>
                 setHinweiseBestaetigt(event.target.checked)
               }
+              style={{ marginTop: "4px" }}
             />
-
-            Ich habe die Hinweise gelesen und verstanden.
+            <span style={{ fontSize: "0.95rem", lineHeight: "1.4" }}>
+              Ich habe die Hinweise und die{" "}
+              <button
+                type="button"
+                onClick={onOpenDatenschutz}
+                style={{
+                  background: "none",
+                  border: "none",
+                  padding: 0,
+                  color: "var(--primary)",
+                  textDecoration: "underline",
+                  cursor: "pointer",
+                  font: "inherit",
+                  display: "inline",
+                }}
+              >
+                Datenschutzerklärung
+              </button>{" "}
+              gelesen und willige in die Verarbeitung meiner Gesundheitsdaten ein.
+            </span>
           </label>
 
           {/* Fortfahren ist erst nach ausdrücklicher Bestätigung möglich. */}
@@ -122,19 +153,19 @@ export function HinweiseScreen({
 
       {/* Derzeit rein visuelle Fußzeilen-Einträge ohne hinterlegte Navigation. */}
       <footer className={homeStyles.footer}>
-        <button type="button" className={homeStyles.footerLink}>
+        <button type="button" className={homeStyles.footerLink} onClick={onOpenKontakt}>
           Kontakt
         </button>
 
-        <button type="button" className={homeStyles.footerLink}>
+        <button type="button" className={homeStyles.footerLink} onClick={onOpenDatenschutz}>
           Datenschutz
         </button>
 
-        <button type="button" className={homeStyles.footerLink}>
+        <button type="button" className={homeStyles.footerLink} onClick={onOpenSupport}>
           Support
         </button>
 
-        <button type="button" className={homeStyles.footerLink}>
+        <button type="button" className={homeStyles.footerLink} onClick={onOpenImpressum}>
           Impressum
         </button>
       </footer>

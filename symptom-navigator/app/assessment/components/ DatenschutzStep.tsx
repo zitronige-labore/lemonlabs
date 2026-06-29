@@ -1,103 +1,115 @@
 /*
-  Eigenständige Datenschutzerklärung der Anwendung.
+  Independent Privacy Policy (Datenschutzerklärung) page of the application.
 
-  Sie informiert über Art, Zweck und Dauer der Datenverarbeitung sowie über
-  Weitergabe und Betroffenenrechte. Die Seite liegt bewusst außerhalb des
-  eigentlichen Assessment-Formulars und verändert keine Gesundheitsdaten.
+  It informs about the type, purpose, and duration of data processing as well as
+  data transfer and data subject rights. The page is intentionally located outside
+  the actual assessment form and does not modify any health data.
 */
 
-/* Wiederverwendete Karten-, Typografie- und Button-Styles des Assessments. */
+/* Reused card, typography, and button styles of the assessment. */
 import assessmentStyles from "../Assessment.module.css";
 
-/* Rücksprung zur Startseite als einzige Interaktion dieser Informationsseite. */
+/* Return navigation as the only interaction of this information page. */
 type DatenschutzStepProps = {
   onBack: () => void;
 };
 
-/* Reine Darstellungskomponente ohne lokalen Zustand oder Formulareingaben. */
+/* Pure presentational component without local state or form inputs. */
 export function DatenschutzStep({ onBack }: DatenschutzStepProps) {
   return (
     <div className={assessmentStyles.card}>
-      {/* Eindeutige Überschrift für den separat aufgerufenen Startseitenbereich. */}
-      <h1>Datenschutzerklärung</h1>
+      <h1 className={assessmentStyles.title}>Datenschutzerklärung</h1>
 
-      
-      {/* Umfang der erhobenen Angaben und Rechtsgrundlage ihrer Verarbeitung. */}
-      <h2>1. Welche Daten wir erheben</h2>
-      <p>
-        Es werden keine persönlichen Identifikationsdaten erhoben. Es ist
-        kein Name, keine Adresse und keine E-Mail-Adresse erforderlich.
-        Erhoben werden ausschließlich gesundheitsbezogene Angaben, die Sie
-        selbst eingeben (z. B. Symptome, Alter, Geschlecht,
-        Vorerkrankungen), sowie eine technisch erzeugte Fall-ID, die keine
-        Rückschlüsse auf Ihre Identität erlaubt.
-      </p>
+      {/* Scrollable area for excellent readability across all devices */}
+      <div
+        style={{
+          maxHeight: "55vh",
+          overflowY: "auto",
+          textAlign: "left",
+          paddingRight: "12px",
+          marginBottom: "24px",
+          border: "1px solid var(--border)",
+          borderRadius: "var(--radius-small)",
+          padding: "20px",
+          background: "var(--surface-alt)",
+        }}
+      >
+        {/* Scope of collected data and legal basis of its processing. */}
+        <h2 style={{ fontSize: "1.2rem", marginTop: "0", color: "var(--text-primary)" }}>1. Welche Daten wir erheben</h2>
+        <p className={assessmentStyles.text} style={{ margin: "5px 0 20px" }}>
+          Es werden keine persönlichen Identifikationsdaten erhoben. Es ist
+          kein Name, keine Adresse und keine E-Mail-Adresse erforderlich.
+          Erhoben werden ausschließlich gesundheitsbezogene Angaben, die Sie
+          selbst eingeben (z. Z. Symptome, Alter, Geschlecht,
+          Vorerkrankungen), sowie eine technisch erzeugte Fall-ID, die keine
+          Rückschlüsse auf Ihre Identität erlaubt.
+        </p>
 
-      <h2>2. Verarbeitung im Rahmen der Ersteinschätzung</h2>
-      <p>
-        Ihre Angaben werden verarbeitet, um eine unverbindliche
-        Ersteinschätzung Ihrer Beschwerden zu erstellen. Es handelt sich
-        dabei um besondere Kategorien personenbezogener Daten gemäß
-        Art. 9 DSGVO. Die Verarbeitung erfolgt ausschließlich mit Ihrer
-        ausdrücklichen Einwilligung (Art. 9 Abs. 2 lit. a DSGVO).
-      </p>
+        <h2 style={{ fontSize: "1.2rem", marginTop: "20px", color: "var(--text-primary)" }}>2. Verarbeitung im Rahmen der Ersteinschätzung</h2>
+        <p className={assessmentStyles.text} style={{ margin: "5px 0 20px" }}>
+          Ihre Angaben werden verarbeitet, um eine unverbindliche
+          Ersteinschätzung Ihrer Beschwerden zu erstellen. Es handelt sich
+          dabei um besondere Kategorien personenbezogener Daten gemäß
+          Art. 9 DSGVO. Die Verarbeitung erfolgt ausschließlich mit Ihrer
+          ausdrücklichen Einwilligung (Art. 9 Abs. 2 lit. a DSGVO).
+        </p>
 
-      {/* Medizinische Grenzen der Anwendung und Vorrang professioneller Hilfe. */}
-      <h2>3. Hinweis zur Ersteinschätzung</h2>
-      <p>
-        Diese Anwendung dient ausschließlich einer unverbindlichen
-        Ersteinschätzung möglicher gesundheitlicher Beschwerden auf Basis
-        Ihrer Angaben. Sie ersetzt keine ärztliche Diagnose, keine
-        medizinische Beratung und keine Behandlung durch eine Ärztin oder
-        einen Arzt. Bei gesundheitlichen Beschwerden wenden Sie sich bitte
-        immer an eine Ärztin, einen Arzt oder im Notfall an den
-        Rettungsdienst (112).
-      </p>
+        {/* Medical limits of the application and priority of professional help. */}
+        <h2 style={{ fontSize: "1.2rem", marginTop: "20px", color: "var(--text-primary)" }}>3. Hinweis zur Ersteinschätzung</h2>
+        <p className={assessmentStyles.text} style={{ margin: "5px 0 20px" }}>
+          Diese Anwendung dient ausschließlich einer unverbindlichen
+          Ersteinschätzung möglicher gesundheitlicher Beschwerden auf Basis
+          Ihrer Angaben. Sie ersetzt keine ärztliche Diagnose, keine
+          medizinische Beratung und keine Behandlung durch eine Ärztin oder
+          einen Arzt. Bei gesundheitlichen Beschwerden wenden Sie sich bitte
+          immer an eine Ärztin, einen Arzt oder im Notfall an den
+          Rettungsdienst (112).
+        </p>
 
-      {/* Technische Zuordnung, Speicherdauer und mögliche externe Verarbeitung. */}
-      <h2>4. Nutzung ohne Konto</h2>
-      <p>
-        Die Nutzung dieser Anwendung ist ohne Registrierung und ohne
-        Anmeldung möglich. Es wird kein Nutzerkonto angelegt. Ihre Angaben
-        werden ausschließlich über eine technisch erzeugte Fall-ID
-        zugeordnet, nicht über Ihre Person.
-      </p>
+        {/* Technical association, retention period, and possible external processing. */}
+        <h2 style={{ fontSize: "1.2rem", marginTop: "20px", color: "var(--text-primary)" }}>4. Nutzung ohne Konto</h2>
+        <p className={assessmentStyles.text} style={{ margin: "5px 0 20px" }}>
+          Die Nutzung dieser Anwendung ist ohne Registrierung und ohne
+          Anmeldung möglich. Es wird kein Nutzerkonto angelegt. Ihre Angaben
+          werden ausschließlich über eine technisch erzeugte Fall-ID
+          zugeordnet, nicht über Ihre Person.
+        </p>
 
-      <h2>5. Speicherdauer</h2>
-      <p>
-        Ihre Angaben werden automatisch nach 7 Tagen gelöscht.
-      </p>
+        <h2 style={{ fontSize: "1.2rem", marginTop: "20px", color: "var(--text-primary)" }}>5. Speicherdauer</h2>
+        <p className={assessmentStyles.text} style={{ margin: "5px 0 20px" }}>
+          Ihre Angaben werden automatisch nach 7 Tagen gelöscht.
+        </p>
 
-      <h2>6. Weitergabe an Dritte</h2>
-      <p>
-        Zur Erstellung der Ersteinschätzung werden Angaben an einen
-        KI-Dienstleister übermittelt. Eine Weitergabe an sonstige Dritte
-        erfolgt nicht, soweit keine gesetzliche Verpflichtung besteht.
-      </p>
+        <h2 style={{ fontSize: "1.2rem", marginTop: "20px", color: "var(--text-primary)" }}>6. Weitergabe an Dritte</h2>
+        <p className={assessmentStyles.text} style={{ margin: "5px 0 20px" }}>
+          Zur Erstellung der Ersteinschätzung werden Angaben an einen
+          KI-Dienstleister übermittelt. Eine Weitergabe an sonstige Dritte
+          erfolgt nicht, soweit keine gesetzliche Verpflichtung besteht.
+        </p>
 
-      {/* Rechte der betroffenen Personen und Möglichkeit einer Beschwerde. */}
-      <h2>7. Ihre Rechte</h2>
-      <p>
-        Sie haben das Recht auf Auskunft, Berichtigung, Löschung,
-        Einschränkung der Verarbeitung, Datenübertragbarkeit sowie
-        Widerspruch gegen die Verarbeitung Ihrer Daten. Wenden Sie sich
-        hierzu an die oben genannte verantwortliche Stelle.
-      </p>
+        {/* Rights of the data subjects and possibility of complaint. */}
+        <h2 style={{ fontSize: "1.2rem", marginTop: "20px", color: "var(--text-primary)" }}>7. Ihre Rechte</h2>
+        <p className={assessmentStyles.text} style={{ margin: "5px 0 20px" }}>
+          Sie haben das Recht auf Auskunft, Berichtigung, Löschung,
+          Einschränkung der Verarbeitung, Datenübertragbarkeit sowie
+          Widerspruch gegen die Verarbeitung Ihrer Daten. Wenden Sie sich
+          hierzu an die oben genannte verantwortliche Stelle.
+        </p>
 
-      <h2>8. Beschwerderecht</h2>
-      <p>
-        Sie haben das Recht, sich bei einer Datenschutzaufsichtsbehörde
-        über die Verarbeitung Ihrer personenbezogenen Daten zu beschweren.
-      </p>
+        <h2 style={{ fontSize: "1.2rem", marginTop: "20px", color: "var(--text-primary)" }}>8. Beschwerderecht</h2>
+        <p className={assessmentStyles.text} style={{ margin: "5px 0 0" }}>
+          Sie haben das Recht, sich bei einer Datenschutzaufsichtsbehörde
+          über die Verarbeitung Ihrer personenbezogenen Daten zu beschweren.
+        </p>
+      </div>
 
-      {/* Beendet die Informationsansicht und öffnet wieder die Startseite. */}
       <div className={assessmentStyles.buttonGroup}>
         <button
           type="button"
           className={assessmentStyles.continueButton}
           onClick={onBack}
         >
-          Zurück zur Startseite
+          Zurück
         </button>
       </div>
     </div>
