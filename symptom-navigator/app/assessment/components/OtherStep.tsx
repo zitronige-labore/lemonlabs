@@ -1,17 +1,17 @@
 /*
-  Übersichtsseite für Anliegen außerhalb der medizinischen Ersteinschätzung.
+  Overview page for requests outside the medical self-assessment.
 
-  Sie bündelt externe Angebote für Termine und Rezepte und leitet bei der
-  Verwaltung gespeicherter Assessment-Daten in den dafür vorgesehenen Schritt.
+  It provides access to external services for appointments and prescriptions,
+  and opens the dedicated screen for managing saved assessment data.
 */
 import { useState } from "react";
 
-/* Styles der Startseiten-nahen Ansichten und ihrer Aktionsbereiche. */
+/* Styles shared with the home screens and their action areas. */
 import homeStyles from "../../Home.module.css";
 
 /*
-  onBack führt zurück zur Startseite.
-  onManageData öffnet die separate Verwaltung gespeicherter Falldaten.
+  onBack returns the user to the home screen.
+  onManageData opens the dedicated screen for managing saved assessment data.
 */
 type OtherStepProps = {
   onBack: () => void;
@@ -19,12 +19,13 @@ type OtherStepProps = {
 };
 
 /*
-  Kennungen der vorgesehenen Anliegen. Termine und Rezepte werden lokal
-  umgeschaltet; die Datenverwaltung wird derzeit über onManageData geöffnet.
+  Identifiers for the available requests. Appointments and prescriptions
+  are handled locally within this component, while data management
+  is opened through onManageData.
 */
 type OtherConcern = "termine" | "rezepte" | "daten" | null;
 
-/* Lässt externe Links optisch und geometrisch wie die übrigen Buttons erscheinen. */
+/* Makes external links look and behave like the other buttons. */
 const linkButtonStyle = {
   textDecoration: "none",
   display: "inline-flex",
@@ -33,7 +34,7 @@ const linkButtonStyle = {
 };
 
 export function OtherStep({ onBack, onManageData }: OtherStepProps) {
-  /* Steuert nur die Unteransicht innerhalb dieser Seite. */
+  /* Controls only the currently displayed section of this page. */
   const [selectedConcern, setSelectedConcern] = useState<OtherConcern>(null);
 
   return (
@@ -44,7 +45,7 @@ export function OtherStep({ onBack, onManageData }: OtherStepProps) {
         </div>
 
         <div className={homeStyles.panel}>
-          {/* Einstiegsauswahl, solange noch kein lokales Anliegen gewählt wurde. */}
+          {/* Show the main options until a request has been selected. */}
           {!selectedConcern && (
             <section className={homeStyles.actionStack}>
               <h2 className={homeStyles.sectionTitle}>Was möchten Sie tun?</h2>
@@ -65,7 +66,7 @@ export function OtherStep({ onBack, onManageData }: OtherStepProps) {
                 Online Rezepte
               </button>
 
-              {/* Die Datenverwaltung besitzt einen eigenen Schritt im Hauptablauf. */}
+              {/* Data management is handled in its own step of the main workflow. */}
               <button
                 type="button"
                 className={homeStyles.secondaryButton}
@@ -76,7 +77,7 @@ export function OtherStep({ onBack, onManageData }: OtherStepProps) {
             </section>
           )}
 
-          {/* Terminangebote werden als externe Seiten in einem neuen Tab geöffnet. */}
+          {/* Opens external appointment booking services in a new browser tab. */}
           {selectedConcern === "termine" && (
             <section className={homeStyles.actionStack}>
               <h2 className={homeStyles.sectionTitle}>
@@ -105,7 +106,7 @@ export function OtherStep({ onBack, onManageData }: OtherStepProps) {
             </section>
           )}
 
-          {/* Separater externer Einstieg für die digitale Rezeptverwaltung. */}
+          {/* Provides access to an external digital prescription service. */}
           {selectedConcern === "rezepte" && (
             <section className={homeStyles.actionStack}>
               <h2 className={homeStyles.sectionTitle}>Online Rezepte</h2>
@@ -124,7 +125,7 @@ export function OtherStep({ onBack, onManageData }: OtherStepProps) {
 
         </div>
 
-        {/* Der Rücksprung beendet die Unteransicht vollständig und öffnet die Startseite. */}
+        {/* Leaves this page and returns to the home screen. */}
         <div className={homeStyles.buttonBox}>
           <button
             type="button"

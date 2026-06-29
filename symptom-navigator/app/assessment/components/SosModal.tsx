@@ -1,19 +1,19 @@
 /*
-  Styles der Home-Ansichten.
+  Styles used across the Home views.
 
-  Das SOS-Modal wird auf Start-, Hinweis- und Warnzeichen-Seiten genutzt
-  und teilt sich deshalb die globalen Home-Modal-Styles.
+  The SOS modal is shared between the start page, information page,
+  and red flag page, so it uses the common Home modal styles.
 */
 import homeStyles from "../../Home.module.css";
 
 /*
-  Eigenschaften des SOS-Modals.
+  Props for the SOS modal.
 
   isOpen:
-  Steuert, ob das Modal sichtbar ist.
+  Controls whether the modal is visible.
 
   onClose:
-  Schließt das Modal, wenn der Notruf nicht ausgelöst werden soll.
+  Closes the modal when the emergency call should not be started.
 */
 type SosModalProps = {
   isOpen: boolean;
@@ -21,42 +21,42 @@ type SosModalProps = {
 };
 
 /*
-  Modal für akute Notfallsituationen.
+  Modal shown for emergency situations.
 
-  Es bietet einen direkten Telefon-Link zur 112 und zusätzlich
-  den Hinweis, die Nummer manuell zu wählen, falls der Link
-  auf dem Gerät nicht funktioniert.
+  It provides a direct phone link to 112 and also informs the user
+  to dial the number manually if the link is not supported
+  on their device.
 */
 export function SosModal({ isOpen, onClose }: SosModalProps) {
   /*
-    Geschlossenes Modal nicht rendern, damit Overlay,
-    Inhalt und Fokusziele vollständig aus dem DOM verschwinden.
-  */
+     Do not render the modal while it is closed so the overlay,
+     content, and focusable elements are completely removed from the DOM.
+   */
   if (!isOpen) return null;
 
   /*
-    Abdunkelndes Overlay über der aktuellen Seite rendern.
+    Render a darkened overlay above the current page.
   */
   return (
     <div className={homeStyles.sosModalOverlay}>
       <div className={homeStyles.sosModalBox}>
         <h2 className={homeStyles.emergencyTitleModal}>Notruf 112</h2>
-        
+
         <p className={homeStyles.warningText}>
           Bitte wählen Sie die Notrufnummer 112, um medizinische Hilfe zu erhalten.
         </p>
-        
+
         <p className={homeStyles.sosInstruction}>
           Falls die automatische Weiterleitung an Ihre Telefon-App nicht funktioniert, wählen Sie die <strong>112</strong> bitte manuell auf dem Tastenfeld.
         </p>
 
         <div className={homeStyles.buttonBox}>
-          {/* Telefon-Link öffnet auf unterstützten Geräten die Telefon-App */}
+          {/* Opens the phone app on supported devices. */}
           <a href="tel:112" className={homeStyles.emergencyButton}>
             112 anrufen
           </a>
-          
-          {/* Modal schließen, falls kein Anruf gestartet werden soll */}
+
+          {/* Close the modal if no emergency call should be placed. */}
           <button
             type="button"
             className={homeStyles.secondaryButton}
