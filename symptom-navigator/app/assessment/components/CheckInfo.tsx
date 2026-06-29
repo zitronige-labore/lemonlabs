@@ -164,7 +164,7 @@ export function CheckInfo({
 
   /* Stellt die strukturierten Medikationsangaben vollständig und lesbar dar. */
   const renderMedicationList = () => {
-    if (!additionalData.medication?.length) {
+    if (!additionalData.hasMedication || !additionalData.medication?.length) {
       return <strong className={assessmentStyles.dataValue}>Keine Angabe</strong>;
     }
 

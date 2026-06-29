@@ -89,7 +89,7 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
       dauer: data?.additionalInfoData?.[0]?.duration
         ? `${data.additionalInfoData[0].duration} Tage`
         : "Keine Angabe",
-      medikation: medication.join(", ") || "Keine Angabe",
+      medikation: medication?.join(", ") || "Keine Angabe",
       allergien: data?.allergyData?.allergies?.join(", ") || "Keine Angabe",
       vorerkrankungen:
         data?.conditionsData?.conditions?.join(", ") || "Keine Angabe",
@@ -185,7 +185,7 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
 
   /* Gibt die zuvor lesbar aufbereiteten Medikationsangaben als Liste aus. */
   const renderMedicationList = () => {
-    if (!medication.length) {
+    if (medication.length === 0) {
       return <strong className={assessmentStyles.dataValue}>Keine Angabe</strong>;
     }
 
