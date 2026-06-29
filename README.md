@@ -12,8 +12,9 @@ is:issue state:open has:sub-issue in die leiste oben bei den Issues eingeben.
 (nur UI, DB und AI Verbindung funktionieren hier nicht)  
 [https://lemonlabs-plum.vercel.app/](https://lemonlabs-git-develop-lemoblabs-ba86c8a6.vercel.app)
 
-# Anweisungen lokal hosten
-Vorraussetzungen: node.js, postgres mit lemonlabd_db und testlemonlabs_db (beide identisch siehe db setup in skripte)  
+# Anweisungen hosten
+ohne Docker:  
+Vorraussetzungen: kein ARM Prozessor, node.js, postgres installiert mit lemonlabd_db und testlemonlabs_db (setup siehe unten)  
 .env muss mit korrektem Passwort und Username eingefügt werden, bsp.:  
   
 \# Connection URL 
@@ -27,7 +28,11 @@ POSTGRES_DATABASE="lemonlabs_db"
 \# MedGemma API  
 MEDGEMMA_API_URL=http://141.19.140.104:4000/v1/chat/completions  
 MEDGEMMA_API_KEY=api key hier  
-MEDGEMMA_API_MODEL=medgemma:27b  
+MEDGEMMA_API_MODEL=medgemma:27b   
+
+mit Docker:
+Vorraussetzungen:  
+Docker installiert, bei Windows WSL 
 
 \# Fhir Server connection  
 FHIR_SERVER_URL=https://hapi.fhir.org/baseR4  
