@@ -138,12 +138,13 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
     Stellt strukturierte oder frei formulierte Symptome mit Region und Schmerzskala dar.
     textSymptom wählt dabei das passende Beschriftungsfeld des Datenbankobjekts.
   */
-  const renderSymptomList = (
-    symptoms: any[] | undefined,
-    textSymptom = false,
-  ) => {
+  const renderStructuredSymptoms = (symptoms: any[] | undefined) => {
     if (!symptoms?.length) {
-      return <strong className={assessmentStyles.dataValue}>Keine Angabe</strong>;
+      return (
+        <strong className={assessmentStyles.dataValue}>
+          Keine Angabe
+        </strong>
+      );
     }
 
     return (
@@ -151,10 +152,9 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
         {symptoms.map((symptom, index) => (
           <li key={index} className={assessmentStyles.dataListItem}>
             <p className={assessmentStyles.dataListItemHeader}>
-              {textSymptom
-                ? symptom.raw_symptoms || "Beschwerde"
-                : symptom.name_de || "Symptom"}
+              {symptom.name_de || "Symptom"}
             </p>
+
             <div className={assessmentStyles.dataListItemGrid}>
               {symptom.bodyregion && (
                 <div>
@@ -166,13 +166,14 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
                   </strong>
                 </div>
               )}
+
               {symptom.painscale != null && (
                 <div>
                   <span className={assessmentStyles.dataLabel}>
                     Schmerzskala
                   </span>
                   <strong className={assessmentStyles.dataValue}>
-                    {symptom.painscale || "Nicht angegeben"}
+                    {symptom.painscale}
                   </strong>
                 </div>
               )}
@@ -183,9 +184,57 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
     );
   };
 
+
+  const renderTextSymptoms = (symptoms: any[] | undefined) => {
+    if (!symptoms?.length) {
+      return (
+        <strong className={assessmentStyles.dataValue}>
+          Keine Angabe
+        </strong>
+      );
+    }
+
+    return (
+      <ul className={assessmentStyles.dataList}>
+        {symptoms.map((symptom, index) => (
+          <li key={index} className={assessmentStyles.dataListItem}>
+            <p className={assessmentStyles.dataListItemHeader}>
+              {symptom.raw_symptoms || "Beschwerde"}
+            </p>
+
+            <div className={assessmentStyles.dataListItemGrid}>
+              {symptom.bodyregion && (
+                <div>
+                  <span className={assessmentStyles.dataLabel}>
+                    Körperregion
+                  </span>
+                  <strong className={assessmentStyles.dataValue}>
+                    {symptom.bodyregion}
+                  </strong>
+                </div>
+              )}
+
+              {symptom.painscale != null && (
+                <div>
+                  <span className={assessmentStyles.dataLabel}>
+                    Schmerzskala
+                  </span>
+                  <strong className={assessmentStyles.dataValue}>
+                    {symptom.painscale}
+                  </strong>
+                </div>
+              )}
+            </div>
+          </li>
+        ))}
+      </ul>
+    );
+  };
+
+
   /* Gibt die zuvor lesbar aufbereiteten Medikationsangaben als Liste aus. */
   const renderMedicationList = () => {
-    if (medication.length === 0) {
+    if (!medication.name) {
       return <strong className={assessmentStyles.dataValue}>Keine Angabe</strong>;
     }
 
@@ -333,13 +382,13 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
             <div className={assessmentStyles.dataGrid}>
               <div className={`${assessmentStyles.dataRow} ${assessmentStyles.dataRowWide}`}>
                 <span className={assessmentStyles.dataLabel}>Symptome</span>
-                {renderSymptomList(data.symptomData)}
+                {renderStructuredSymptoms(data.symptomData)}
               </div>
               <div className={`${assessmentStyles.dataRow} ${assessmentStyles.dataRowWide}`}>
                 <span className={assessmentStyles.dataLabel}>
                   Selbst beschriebene Beschwerden
                 </span>
-                {renderSymptomList(data.textSymptomData, true)}
+                {renderTextSymptoms(data.textSymptomData)}
               </div>
             </div>
           </section>
