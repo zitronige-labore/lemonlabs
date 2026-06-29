@@ -49,3 +49,7 @@ für build (erstes mal oder bei Änderungen)
 normal:  
 -> docker compose up  
 (auf Linux docker-compose)
+
+## Skript für DB setup
+auf Windows -> Root folder -> .\dbScripts\create_db.ps1   
+auf Unix -> Root folder/dbScripts -> chmod +x create_db.sh -> ./create_db.sh
