@@ -1,6 +1,15 @@
+/*
+helper functions to display result
+*/
+
 import { AssessmentExportData } from "./exportUtils";
 import { BasisData, AdditionalData } from "../../types/assessment";
 
+/**
+ * parses symptom name
+ * @param s: string
+ * @returns string
+ */
 export function parseSymptomName(s: string): string {
   try {
     return JSON.parse(s).name || s;
@@ -9,6 +18,11 @@ export function parseSymptomName(s: string): string {
   }
 }
 
+/**
+ * parses symptom text
+ * @param s: string
+ * @returns string
+ */
 export function parseSymptomText(s: string): string {
   try {
     return JSON.parse(s).text_symptom || s;
@@ -17,6 +31,35 @@ export function parseSymptomText(s: string): string {
   }
 }
 
+/**
+ * formates ai suspicions
+ * @param suspicions: any
+ * @returns AssessmentExportData = {
+ *   alter: string;
+ *   geschlecht: string;
+ *   schwangerschaft: string;
+ *   stillzeit: string;
+ *   worsening: string | undefined;
+ *   groesse: string;
+ *   gewicht: string;
+ *   temperatur: string;
+ *   dauer: string;
+ *   medikation: string;
+ *   allergien: string;
+ *   vorerkrankungen: string;
+ *   alkoholkonsum: string;
+ *   zigaretten: string;
+ *   symptome: string;
+ *   textSymptome: string;
+ *  datum: string;
+ *  dringlichkeit: string;
+ *  handlungsempfehlung: string;
+ *  vermutungen: {
+ *    text: string;
+ *    wahrscheinlichkeit: string;
+ *  }[];
+ *}
+ */
 export function formatSuspicions(suspicions: any): AssessmentExportData["vermutungen"] {
   if (!suspicions) return [];
   

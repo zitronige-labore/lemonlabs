@@ -1,6 +1,11 @@
+/*
+functions for building pdf and txt download
+*/
+
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
+// all necessary data for building the file
 export type AssessmentExportData = {
   alter: string;
   geschlecht: string;
@@ -24,6 +29,11 @@ export type AssessmentExportData = {
   vermutungen: { text: string; wahrscheinlichkeit: string }[];
 };
 
+/**
+ * builds txt format
+ * @param d: AssessmentExportData
+ * @returns string
+ */
 export function formatAssessmentTxt(d: AssessmentExportData): string {
   const rows: string[] = [];
 
@@ -71,6 +81,12 @@ export function formatAssessmentTxt(d: AssessmentExportData): string {
   return rows.join("\n");
 }
 
+
+/**
+ * initiates download
+ * @param d: AssessmentExportData
+ * @returns void
+ */
 export function downloadTxt(d: AssessmentExportData) {
   const text = formatAssessmentTxt(d);
   const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
@@ -82,6 +98,12 @@ export function downloadTxt(d: AssessmentExportData) {
   URL.revokeObjectURL(url);
 }
 
+
+/**
+ * builds pdf format
+ * @param d: AssessmentExportData
+ * @returns string[][]
+ */
 export function formatAssessmentPdfTable(d: AssessmentExportData): string[][] {
   const tableBody: string[][] = [];
 
@@ -119,6 +141,11 @@ export function formatAssessmentPdfTable(d: AssessmentExportData): string[][] {
   return tableBody;
 }
 
+/**
+ * initiates download
+ * @param d: AssessmentExportData
+ * @returns void
+ */
 export function downloadPdf(d: AssessmentExportData) {
   const tableBody = formatAssessmentPdfTable(d);
 

@@ -1,3 +1,6 @@
+/*
+main logic needed in page
+*/
 import { Step, MainRegion, SubRegion, RedFlags } from "../../types/assessment";
 
 export const formularSteps: Step[] = [
@@ -10,6 +13,11 @@ export const formularSteps: Step[] = [
   "additionalInfo",
 ];
 
+/**
+ * gets progress in process to be used in progress bar
+ * @param step: Step
+ * @returns number
+ */
 export function getStepProgress(step: Step): number {
   switch (step) {
     case "redflags":
@@ -86,6 +94,13 @@ export function getStepProgress(step: Step): number {
   }
 }
 
+/**
+ * gets updated prewritten symptoms
+ * @param previousSymptoms: string[]
+ * @param symptom: string
+ * @param painscale?: string
+ * @returns string[]
+ */
 export function getUpdatedSymptoms(
   previousSymptoms: string[],
   symptom: string,
@@ -96,6 +111,12 @@ export function getUpdatedSymptoms(
     : [...previousSymptoms, `${symptom}, "painscale": ${painscale ?? null}`];
 }
 
+/**
+ * gets updated prewritten symptoms
+ * @param previousSymptoms: string[]
+ * @param symptom: string
+ * @returns string[]
+ */
 export function getUpdatedSymptomText(
   previousSymptoms: string[],
   symptom: string
@@ -105,10 +126,21 @@ export function getUpdatedSymptomText(
     : [...previousSymptoms, symptom];
 }
 
+/**
+ * check for emergency
+ * @param redFlags: redFlags
+ * @returns boolean
+ */
 export function calculateHasEmergency(redFlags: RedFlags): boolean {
   return Object.values(redFlags).some(Boolean);
 }
 
+/**
+ * calculate the furthest progress
+ * @param currentHighest: number
+ * @param nextStep: Step
+ * @returns number
+ */
 export function calculateNewHighestProgress(
   currentHighest: number,
   nextStep: Step
@@ -119,6 +151,12 @@ export function calculateNewHighestProgress(
   return Math.max(currentHighest, getStepProgress(nextStep));
 }
 
+/**
+ * checks if region selection is complete
+ * @param selectedMainRegion: MainRegion | null
+ * @param selectedSubRegion: SubRegion | null
+ * @returns boolean
+ */
 export function isRegionSelectionComplete(
   selectedMainRegion: MainRegion | null,
   selectedSubRegion: SubRegion | null
