@@ -51,5 +51,5 @@ normal:
 (auf Linux docker-compose)
 
 ## Skript für DB setup
-auf Windows -> Root folder -> .\dbScripts\create_db.ps1   
-auf Unix -> Root folder/dbScripts -> chmod +x create_db.sh -> ./create_db.sh
+auf Windows -> Root folder -> .\dbScripts\create_db.ps1  -> Passwort + Username eingeben (die anderen 2 Abfragen einfach mit Enter skippen)  
+auf Unix -> Root folder/dbScripts -> chmod +x create_db.sh -> ./create_db.sh -> Passwort + Username eingeben (die anderen 2 Abfragen einfach mit Enter skippen)  
