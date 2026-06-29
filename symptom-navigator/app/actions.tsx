@@ -1482,6 +1482,3 @@ export async function sendFhirToServer(caseId: string): Promise<boolean> {
     return false;
   }
 }
-
-// Exportiert die Funktion zusätzlich unter dem alten Namen für Abwärtskompatibilität
-export { sendFhirToServer as sendToHapiFhir };
