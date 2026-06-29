@@ -1056,13 +1056,8 @@ return prompt;
 
 
 
-
-
-
 /**
  * Maps a symptom value to its SNOMED code.
- * @param name - the symptomValue of a symptom
- * @returns Promise<string|null> - the corresponding SNOMED code, or null if no matching symptom was found
  */
 export async function mapNameToSnomed(name: string) {
   if (!name) return null;
@@ -1077,14 +1072,8 @@ export async function mapNameToSnomed(name: string) {
   }
   return null;
 }
-
-/**
- * Maps a symptom value to its SNOMED code.
- * @param caseId - case id 
- * @returns Promise<{resourceType, type, entry> - fhir
- */
 export async function buildFhirBundle(caseId: string): Promise<any> {
-  
+
   // Daten aus der Datenbank geholt
   const userData = await getUserDataFromDB(caseId);
   if (!userData || !userData.caseData || userData.caseData.length === 0) {
@@ -1096,7 +1085,9 @@ export async function buildFhirBundle(caseId: string): Promise<any> {
   const { sex, age, pregnancy, date } = userData.caseData[0] ?? {};
   const { weight, height, temperature, duration, worsening, breastfeeding, extraInfo, alcohol, smoking } = userData.additionalInfoData[0] ?? {};
   const { allergies } = userData.allergyData ?? {};
-  const { medication } = userData.medicationData ?? {};
+  
+  // Hier nutzen wir das korrekte Feld aus eurem DB-Return (medicationData)
+  const medications = userData.medicationData ?? [];
   const { conditions } = userData.conditionsData ?? {};
 
   // Liste der gegebenen Symptome
@@ -1118,7 +1109,6 @@ export async function buildFhirBundle(caseId: string): Promise<any> {
   );
 
   const temperatureFloat = temperature;
-
 
   const fhirEntries: any[] = [];
   const patientRef = "urn:uuid:patient-1";
@@ -1158,7 +1148,7 @@ export async function buildFhirBundle(caseId: string): Promise<any> {
     });
   }
 
- // Alter (LOINC: 63900-5)
+  // Alter (LOINC: 63900-5)
   if (age) {
     fhirEntries.push({
       resource: {
@@ -1187,7 +1177,7 @@ export async function buildFhirBundle(caseId: string): Promise<any> {
     });
   }
 
-    //Stillzeit
+  // Stillzeit
   if (breastfeeding !== undefined && sex !== "m") {
     fhirEntries.push({
       resource: {
@@ -1203,41 +1193,41 @@ export async function buildFhirBundle(caseId: string): Promise<any> {
     });
   }
 
-if (smoking !== undefined) {
-  fhirEntries.push ({
-    resource: {
-      resourceType: "Observation",
-      status: "final",
-      subject: {reference: patientRef},
-      effectiveDateTime: date,
-      category: [{ coding: [{ system: "http://terminology.hl7.org/CodeSystem/observation-category", code: "social-history", display:" Social History" }]}],
-      code: { coding: [{ system: "http://loinc.org", coce: "72166-2", display: "Tobacco smoking status" }]},
-      valueCodeableConcept: {
-        text: typeof smoking === "boolean"
-        ? (smoking ? "Patient konsumiert Tabak/Zigaretten": "Patient konsumiert keinen Tabak")
-        : `Tabakkonsum: ${smoking}` // Falls Freitext statt Boolean
+  if (smoking !== undefined) {
+    fhirEntries.push({
+      resource: {
+        resourceType: "Observation",
+        status: "final",
+        subject: { reference: patientRef },
+        effectiveDateTime: date,
+        category: [{ coding: [{ system: "http://terminology.hl7.org/CodeSystem/observation-category", code: "social-history", display: "Social History" }] }],
+        code: { coding: [{ system: "http://loinc.org", code: "72166-2", display: "Tobacco smoking status" }] },
+        valueCodeableConcept: {
+          text: typeof smoking === "boolean"
+            ? (smoking ? "Patient konsumiert Tabak/Zigaretten" : "Patient konsumiert keinen Tabak")
+            : `Tabakkonsum: ${smoking}`
+        }
       }
-    }
-  });
-}
+    });
+  }
 
-if (alcohol !== undefined) {
-  fhirEntries.push({
-    resource: {
-      resourceType: "Observation",
-      status: "final",
-      subject: {refernce: patientRef }, 
-      effectiveDateTime: date,
-      category: [{ coding: [{ system: "http://terminology.hl7.org/CodeSystem/observation-category", code: "social-history", display: "Social History" }] }],
-      code: {coding: [{ system:  "http://loinc.org", code: "74013-4", display: "Alcoholic beverage intake" }]},
-      valueCodeableConcept: {
+  if (alcohol !== undefined) {
+    fhirEntries.push({
+      resource: {
+        resourceType: "Observation",
+        status: "final",
+        subject: { reference: patientRef }, 
+        effectiveDateTime: date,
+        category: [{ coding: [{ system: "http://terminology.hl7.org/CodeSystem/observation-category", code: "social-history", display: "Social History" }] }],
+        code: { coding: [{ system: "http://loinc.org", code: "74013-4", display: "Alcoholic beverage intake" }] },
+        valueCodeableConcept: {
           text: typeof alcohol === "boolean"
             ? (alcohol ? "Patient konsumiert regelmäßig Alkohol" : "Patient konsumiert keinen Alkohol")
-            : `Alkoholkonsum: ${alcohol}` // Falls Freitext statt Boolean
-    }
+            : `Alkoholkonsum: ${alcohol}`
+        }
+      }
+    });
   }
-  });
-}
 
   // Gegebene Symptome
   for (const symptom of symptoms) {
@@ -1307,7 +1297,7 @@ if (alcohol !== undefined) {
     });
   }
 
-if (height) {
+  if (height) {
     fhirEntries.push({
       resource: {
         resourceType: "Observation",
@@ -1319,7 +1309,6 @@ if (height) {
       }
     });
   }
-
 
   if (duration) {
     fhirEntries.push({
@@ -1333,23 +1322,22 @@ if (height) {
     });
   }
 
-
-  //Symptomverschlimmerung als Observation
+  // Symptomverschlimmerung als Observation
   if (worsening !== undefined) {
     fhirEntries.push({
       resource: {
         resourceType: "Observation",
         status: "final",
-        subject: { reference: patientRef},
-        code: { coding: [{ system:"http://loinc.org", code: "88724-0", display: "Symptom worsening status" }]},
+        subject: { reference: patientRef },
+        code: { coding: [{ system: "http://loinc.org", code: "88724-0", display: "Symptom worsening status" }] },
         valueCodeableConcept: {
           text: worsening ? "Symptome haben sich verschlimmert" : "Symptome haben sich nicht verschlimmert"
+        }
       }
-    } 
-    })
+    });
   }
 
-   // Freitext für extraInfo als Observation
+  // Freitext für extraInfo als Observation
   if (extraInfo) {
     fhirEntries.push({
       resource: {
@@ -1362,7 +1350,7 @@ if (height) {
     });
   }
 
-// E. Strukturierte Anamnese (Allergien, Medikamente, Vorerkrankungen)
+  // E. Strukturierte Anamnese (Allergien, Medikamente, Vorerkrankungen)
   if (allergies && Array.isArray(allergies)) {
     for (const allergy of allergies) {
       if (allergy) {
@@ -1378,15 +1366,52 @@ if (height) {
     }
   }
 
-  if (medication && Array.isArray(medication)) {
-    for (const med of medication) {
-      if (med) {
+  if (medications && Array.isArray(medications)) {
+    interface DBMedication {
+      medication?: string;
+      dose?: string;
+      unit?: string;
+      frequency?: string;
+      frequency_unit?: string;
+      taken_since?: string;
+    }
+
+    for (const rawMed of medications) {
+      const med = rawMed as DBMedication;
+      if (med && med.medication) {
         fhirEntries.push({
           resource: {
             resourceType: "MedicationStatement",
             status: "recorded",
             subject: { reference: patientRef },
-            medication: { concept: { text: med } }
+            effectiveDateTime: date,
+            medication: {
+              concept: {
+                text: med.medication
+              }
+            },
+            ...(med.dose || med.unit ? {
+              dosage: [{
+                doseAndRate: [{
+                  doseQuantity: {
+                    value: med.dose ? parseFloat(med.dose) : undefined,
+                    unit: med.unit || undefined
+                  }
+                }],
+                ...(med.frequency || med.frequency_unit ? {
+                  timing: {
+                    repeat: {
+                      frequency: med.frequency ? parseInt(med.frequency) : undefined,
+                      period: 1,
+                      periodUnit: med.frequency_unit === "täglich" ? "d" : (med.frequency_unit === "wöchentlich" ? "wk" : undefined)
+                    }
+                  }
+                } : {})
+              }]
+            } : {}),
+            ...(med.taken_since ? {
+              note: [{ text: `Eingenommen seit: ${med.taken_since}` }]
+            } : {})
           }
         });
       }
@@ -1421,17 +1446,20 @@ if (height) {
     }))
   };
 }
+
 // 3. HAPI FHIR SERVER EXPORT
 
 /**
  * Sendet ein generiertes FHIR-Bundle an den HAPI FHIR Test-Server.
- * @param accessCode der access code des zu sendenden cases
+ * @param caseId die ID des zu sendenden Falles
  * @returns Promise<boolean>
  */
-
-export async function sendFhirToServer(accessCode: string): Promise<boolean> {
-
-  const caseId = await getCaseIdFromAccessCode(accessCode);
+export async function sendFhirToServer(caseId: string): Promise<boolean> {
+  if (!caseId) {
+    console.error("Senden abgebrochen: Keine caseId übergeben.");
+    return false;
+  }
+  
   const fhirBundle = await buildFhirBundle(caseId);
 
   if (!fhirBundle) {
@@ -1439,7 +1467,7 @@ export async function sendFhirToServer(accessCode: string): Promise<boolean> {
     return false;
   }
 
-  const HAPI_FHIR_URL = process.env.FHIR_SERVER_URL!;
+  const HAPI_FHIR_URL = "https://hapi.fhir.org/baseR4";
 
   try {
     const response = await fetch(HAPI_FHIR_URL, {
@@ -1467,3 +1495,5 @@ export async function sendFhirToServer(accessCode: string): Promise<boolean> {
   }
 }
 
+// Exportiert die Funktion zusätzlich unter dem alten Namen für Abwärtskompatibilität
+export { sendFhirToServer as sendToHapiFhir };
