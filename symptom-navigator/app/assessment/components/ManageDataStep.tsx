@@ -138,7 +138,7 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
     Stellt strukturierte oder frei formulierte Symptome mit Region und Schmerzskala dar.
     textSymptom wählt dabei das passende Beschriftungsfeld des Datenbankobjekts.
   */
-  const renderSymptomList = (
+   const renderSymptomList = (
     symptoms: any[] | undefined,
     textSymptom = false,
   ) => {
@@ -183,9 +183,10 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
     );
   };
 
+
   /* Gibt die zuvor lesbar aufbereiteten Medikationsangaben als Liste aus. */
   const renderMedicationList = () => {
-    if (medication.length === 0) {
+    if (!medication.name) {
       return <strong className={assessmentStyles.dataValue}>Keine Angabe</strong>;
     }
 
@@ -339,7 +340,7 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
                 <span className={assessmentStyles.dataLabel}>
                   Selbst beschriebene Beschwerden
                 </span>
-                {renderSymptomList(data.textSymptomData, true)}
+                {renderSymptomList(data.textSymptomData)}
               </div>
             </div>
           </section>
