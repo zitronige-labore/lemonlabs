@@ -122,6 +122,10 @@
   flex: 0 0 auto;
 }
 
+.offlineNotices {
+  margin-bottom: 5%;
+}
+
 /*
   Vertikale Aktionsbereiche.
 

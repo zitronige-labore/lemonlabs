@@ -111,7 +111,12 @@ export function StartScreen({
             */}
             {isOffline && (
               <>
-                <p>Hier Offline Hinweise oder Buttons einfügen</p>
+                <p className={homeStyles.offlineNotices}>
+                Offline kann keine umfangreicher Einschätzung von Symptomen erfolgen. <br></br>
+                Falls ein Notfall vorliegt wählen Sie die 112 oder nutzen Sie den SOS Button. <br></br>
+                Falls Sie nicht Wissen, ob es sich um einen Notfall handelt, können Sie unter “Warnzeichen erkennen” einige Notfallsituationen feststellen. <br></br>
+                Falls unter “Warnzeichen erkennen” Ihre Situation nicht vorliegt rufen Sie den Ärztlichen Notdienst unter der Nummer 116117 an. <br></br>
+                </p>
 
                 <button
                   type="button"
