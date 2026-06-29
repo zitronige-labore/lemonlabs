@@ -15,139 +15,127 @@ import { connectionPool } from "./dbs/db"; // for database queries
  */
 export async function saveFormData(formData: FormData) {
 
+    
+    // parsing formdata to right format
+    const {age, sex, pregnancy, weight, height, medicationList, conditionList, allergyList, temperatureFloat, 
+      duration, worseningBool, breastfeedingBool, extraInfo, symptomListJson, symptomTextListJson, timestamp,
+      symptomList, symptomTextList, alcoholPerWeek, cigarettesPerDay} 
+      = parseFormDataToDbUsable(formData)
 
-  // parsing formdata to right format
-  const { age, sex, pregnancy, weight, height, medicationList, conditionList, allergyList, temperatureFloat,
-    duration, worseningBool, breastfeedingBool, extraInfo, symptomListJson, symptomTextListJson, timestamp,
-    symptomList, symptomTextList, alcoholPerWeek, cigarettesPerDay }
-    = parseFormDataToDbUsable(formData)
 
-
-  // writing data into db and returning id for later use
-  // try catch blocks are added around suitabel inserts (with no dependencies)
-  // to ensure as much data as possible is saved if there is an error
-
-  const dbReturn = await connectionPool.query(
-    `
+    // writing data into db and returning id for later use
+    // try catch blocks are added around suitabel inserts (with no dependencies)
+    // to ensure as much data as possible is saved if there is an error
+    
+    const dbReturn = await connectionPool.query(
+        `
         Insert into cases (age, sex, pregnancy, date)
         VALUES ($1, $2, $3, $4)
 
         returning case_id, access_code;
         `,
-    [age, sex, pregnancy, timestamp]
-  );
+        [age, sex, pregnancy, timestamp]
+    );
 
-  const caseId = dbReturn.rows[0].case_id;
+    const caseId = dbReturn.rows[0].case_id;
 
 
-  // writing additional info into db
+    // writing additional info into db
 
-  // insert for singular values
-  try {
-    await connectionPool.query(
-      `
+    // insert for singular values
+    try{
+      await connectionPool.query(
+          `
           Insert into additional_information 
           (case_id, weight, height, temperature, duration, 
           worsening, breastfeeding, extrainfo, cigarettes_per_day, alcohol_per_week)
           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);
           `,
-      [caseId, weight || null, height || null, temperatureFloat || null, duration || null,
-        worseningBool, breastfeedingBool, extraInfo || null, cigarettesPerDay || null, alcoholPerWeek || null]
-    );
-  }
-  catch {
-    console.log("Error saving additional info")
-  }
+          [caseId, weight || null, height || null, temperatureFloat|| null, duration|| null, 
+          worseningBool, breastfeedingBool, extraInfo|| null, cigarettesPerDay || null, alcoholPerWeek || null]
+      );
+    }
+    catch {
+      console.log("Error saving additional info")
+    }
 
 
-  // insert for multiple values
+    // insert for multiple values
 
-  // allergies
-  try {
-    await insertListIntoSymptomsNoCertainCount(allergyList, "allergy", caseId);
-  }
-  catch {
-    console.log("Error saving allergies")
-  }
+    // allergies
+    try {
+      await insertListIntoSymptomsNoCertainCount(allergyList, "allergy", caseId);
+    }
+    catch {
+      console.log("Error saving allergies")
+    }
+    
+    // conditions
+    try {
+      await insertListIntoSymptomsNoCertainCount(conditionList, "condition", caseId);
+    }
+    catch {
+      console.log("Error saving conditions")
+    }
 
-  // conditions
-  try {
-    await insertListIntoSymptomsNoCertainCount(conditionList, "condition", caseId);
-  }
-  catch {
-    console.log("Error saving conditions")
-  }
-
-  // medication
-  try {
-    for (let i = 0; i < medicationList.length; i++) {
-      await connectionPool.query(
-        `
+    // medication
+    try {
+      for(let i = 0; i < medicationList.length; i++) {
+        await connectionPool.query(
+            `
             Insert into medication 
             (case_id, medication, dose, unit, frequency, frequency_unit, taken_since)
             VALUES ($1, $2, $3, $4, $5, $6, $7);
             `,
-        [caseId, medicationList[i].name || null, medicationList[i].dose || null, medicationList[i].unit || null,
-          medicationList[i].frequency || null, medicationList[i].frequencyUnit || null, medicationList[i].since || null]
-      );
+            [caseId, medicationList[i].name || null, medicationList[i].dose || null , medicationList[i].unit || null, 
+            medicationList[i].frequency || null, medicationList[i].frequencyUnit || null, medicationList[i].since || null]
+        );
+      }
     }
-  }
-  catch {
-    console.log("Error saving medication entries")
-  }
+    catch {
+      console.log("Error saving medication entries")
+    }
 
-  // writing raw text symptoms in db
-  let raw_id = null;
-  if (symptomTextList[0] != '' && symptomTextList[0] != null && symptomTextList[0] != undefined) {
-    for (let i = 0; i < (symptomTextList.length); i++) {
-      raw_id = await connectionPool.query(
-        `
+    // writing raw text symptoms in db
+    let raw_id = null;
+    if(symptomTextList[0]!='' && symptomTextList[0]!=null && symptomTextList[0]!=undefined){
+      for(let i=0; i<(symptomTextList.length); i++) {
+        raw_id = await connectionPool.query(
+            `
             insert into raw_text_symptoms (raw_symptoms)
             VALUES ($1)
             returning raw_id;
             `,
-        [symptomTextListJson[i].text_symptom]
-      );
+            [symptomTextListJson[i].text_symptom]
+        );
 
-      await connectionPool.query(
-        `
+        await connectionPool.query(
+            `
             insert into case_symptoms (raw_id, case_id, painscale, bodyregion)
             VALUES ($1, $2, $3, $4)
             `,
-        [raw_id.rows[0].raw_id, caseId, symptomTextListJson[i].painscale, symptomTextListJson[i].bodyregion || null]
-      );
-    }
-  }
-
-  // writing prewritten symptoms into case_symptoms
-  if (symptomListJson[0] != '' && symptomListJson[0] != null && symptomListJson[0] != undefined) {
-    for (let i = 0; i < symptomList.length; i++) {
-      await connectionPool.query(
-        `INSERT INTO case_symptoms (name_de, case_id, bodyregion, painscale) 
-          VALUES ($1, $2, $3, $4)`,
-        [symptomListJson[i].name, caseId, symptomListJson[i].bodyRegion, symptomListJson[i].painscale]
-      );
-    }
-  }
-
-
-  // test logs
-  console.log("Formdata saved in DB");
-  console.log("DB return:", dbReturn);
-
-  try {
-    // Wir übergeben ganz einfach nur die ID als String!
-    buildFhirBundle(caseId.toString()).then((fhirBundle) => {
-      if (fhirBundle) {
-        sendFhirToServer(fhirBundle).then((success) => {
-          if (success) console.log(`FHIR Export für Case ${caseId} erfolgreich.`);
-        });
+            [raw_id.rows[0].raw_id, caseId, symptomTextListJson[i].painscale, symptomTextListJson[i].bodyregion || null]
+        );
       }
-    });
-  } catch (fhirError) {
-    console.error("Fehler in der FHIR-Pipeline:", fhirError);
-  }
-  return caseId.toString();
+    }
+
+    // writing prewritten symptoms into case_symptoms
+    if(symptomListJson[0]!='' && symptomListJson[0]!=null && symptomListJson[0]!=undefined){
+      for(let i=0; i<symptomList.length; i++) {
+        await connectionPool.query(
+          `INSERT INTO case_symptoms (name_de, case_id, bodyregion, painscale) 
+          VALUES ($1, $2, $3, $4)`,
+          [symptomListJson[i].name, caseId, symptomListJson[i].bodyRegion, symptomListJson[i].painscale]
+        );
+      }
+    }
+
+
+    // test logs
+    console.log("Formdata saved in DB");
+    console.log("DB return:", dbReturn);
+
+    return caseId.toString();
 }
 
 
@@ -161,128 +149,126 @@ export async function saveFormData(formData: FormData) {
  * @returns Promise<{ age, sex, pregnancy, weight, height, medicationList, ... }> - parsed data
  */
 function parseFormDataToDbUsable(formData: FormData) {
-
+  
   // form data is saved in variables and converted to the correct type
 
 
-  // age
-  const age = parseInt(formData.get("age") as string);
+    // age
+    const age = parseInt(formData.get("age") as string);
 
-  //sex
-  const sexString = formData.get("gender") as string;
-  let sex = '';
-  if (sexString === "weiblich") {
-    sex = 'w';
-  } else if (sexString === "männlich") {
-    sex = 'm';
-  } else if (sexString === "divers") {
-    sex = 'd';
-  }
-
-  //pregnancy
-  let pregnancy = false;
-  if (formData.get("pregnancy") === "ja") {
-    pregnancy = true;
-  }
-
-  //weight
-  const weight = parseInt(formData.get("weight") as string);
-
-  // height
-  const height = parseInt(formData.get("height") as string);
-
-  // medication
-  const medication = formData.get("medication") as string;
-  const medicationList = JSON.parse(medication)
-
-  // alcohol
-  const alcoholPerWeek = parseInt(formData.get("alcoholPerWeek") as string)
-
-  // smoking
-  const cigarettesPerDay = parseInt(formData.get("cigarettesPerDay") as string)
-
-  // conditions
-  const conditions = formData.get("conditions") as string;
-  const conditionList = conditions.split(",").map(s => s.trim()).filter(s => s !== "");;
-
-  // allergies
-  const allergies = formData.get("allergies") as string;
-  const allergyList = allergies.split(",").map(s => s.trim()).filter(s => s !== "");;
-
-  // temperature
-  const temperature = formData.get("temperature") as string;
-  const temperatureFloat = parseFloat(temperature.replace(",", "."));
-
-  // duration
-  const duration = parseInt(formData.get("duration") as string);
-
-  // worsening
-  const worsening = formData.get("worsening") as string;
-  let worseningBool = null;
-  if (worsening == "ja") {
-    worseningBool = true;
-  }
-  else if (worsening == "nein") {
-    worseningBool = false;
-  }
-  console.log("worsening: ", worseningBool)
-
-  // breastfeeding
-  const breastfeeding = formData.get("breastfeeding") as string;
-  let breastfeedingBool = null;
-  if (breastfeeding === "ja") {
-    breastfeedingBool = true;
-  }
-  else if (breastfeeding === "nein") {
-    breastfeedingBool = false;
-  }
-  console.log("breastfeeding: ", breastfeedingBool)
-
-  const extraInfo = formData.get("extraInfo") as string;
-  console.log("extrainfo: ", extraInfo)
-
-  // symptoms (prewritten, raw Text), getting list as string, splitting into list and parsing as json
-  // json format made from name/text, painscale and bodyregion
-
-  // for prewritten symptoms
-  const selectedSymptoms = formData.get("selectedSymptoms") as string;
-  const symptomList = selectedSymptoms.split("|||");
-
-  let symptomListJson = [];
-  if (symptomList[0] != "") {
-    for (let i = 0; i < symptomList.length; i++) {
-      symptomListJson[i] = JSON.parse(symptomList[i])
+    //sex
+    const sexString = formData.get("gender") as string;
+    let sex = '';
+    if (sexString === "weiblich") {
+        sex = 'w';
+    } else if (sexString === "männlich") {
+        sex = 'm';
+    } else if (sexString === "divers") {
+        sex = 'd';
     }
-  }
 
-  //test log for prewritten symptomList
-  console.log("test SymptomList:", symptomList, "filled?", (symptomListJson[0] != '' && symptomListJson[0] != null && symptomListJson[0] != undefined));
-
-
-  const symptomText = formData.get("symptomText") as string;
-  const symptomTextList = symptomText.split("|||");
-
-  // log for raw text symptomlist
-  console.log("test RawSymptomList:", symptomTextList, "filled?", (symptomTextList[0] != '' && symptomTextList[0] != null && symptomTextList[0] != undefined));
-
-  let symptomTextListJson = [];
-  if (symptomTextList[0] != "") {
-    for (let i = 0; i < symptomTextList.length; i++) {
-      symptomTextListJson[i] = JSON.parse(symptomTextList[i])
+    //pregnancy
+    let pregnancy = false;
+    if (formData.get("pregnancy") === "ja") {
+        pregnancy = true;
     }
-  }
+
+    //weight
+    const weight = parseInt(formData.get("weight") as string);
+
+    // height
+    const height = parseInt(formData.get("height") as string); 
+
+    // medication
+    const medication = formData.get("medication") as string;
+    const medicationList = JSON.parse(medication)
+
+    // alcohol
+    const alcoholPerWeek = parseInt(formData.get("alcoholPerWeek") as string)
+
+    // smoking
+    const cigarettesPerDay = parseInt(formData.get("cigarettesPerDay") as string)
+
+    // conditions
+    const conditions = formData.get("conditions") as string;
+    const conditionList = conditions.split(",").map(s => s.trim()).filter(s => s !== "");;
+
+    // allergies
+    const allergies = formData.get("allergies") as string;
+    const allergyList = allergies.split(",").map(s => s.trim()).filter(s => s !== "");;
+
+    // temperature
+    const temperature = formData.get("temperature") as string;
+    const temperatureFloat = parseFloat(temperature.replace(",", "."));
+
+    // duration
+    const duration = parseInt(formData.get("duration") as string);
+
+    // worsening
+    const worsening = formData.get("worsening") as string;
+    let worseningBool = null;
+    if(worsening == "ja") {
+      worseningBool = true; 
+    }
+    else if(worsening == "nein") {
+      worseningBool = false;
+    }
+    console.log("worsening: ", worseningBool)
+
+    // breastfeeding
+    const breastfeeding = formData.get("breastfeeding") as string;
+    let breastfeedingBool = null;
+    if(breastfeeding === "ja") {
+      breastfeedingBool = true; 
+    }
+    else if(breastfeeding === "nein") {
+      breastfeedingBool = false;
+    }
+    console.log("breastfeeding: ", breastfeedingBool)
+
+    const extraInfo = formData.get("extraInfo") as string;
+    console.log("extrainfo: ", extraInfo)
+
+    // symptoms (prewritten, raw Text), getting list as string, splitting into list and parsing as json
+    // json format made from name/text, painscale and bodyregion
+
+    // for prewritten symptoms
+    const selectedSymptoms = formData.get("selectedSymptoms") as string;
+    const symptomList = selectedSymptoms.split("|||");
+
+    let symptomListJson = [];
+    if (symptomList[0]!="") {
+      for(let i = 0; i<symptomList.length; i++) {
+        symptomListJson[i] = JSON.parse(symptomList[i])
+      }
+    }
+
+    //test log for prewritten symptomList
+    console.log("test SymptomList:", symptomList, "filled?", (symptomListJson[0]!='' && symptomListJson[0]!=null && symptomListJson[0]!=undefined));
 
 
+    const symptomText = formData.get("symptomText") as string;
+    const symptomTextList = symptomText.split("|||");
 
-  // create timestamp
-  const timestamp = new Date();
+    // log for raw text symptomlist
+    console.log("test RawSymptomList:", symptomTextList, "filled?", (symptomTextList[0]!='' && symptomTextList[0]!=null && symptomTextList[0]!=undefined));
+    
+    let symptomTextListJson = [];
+    if (symptomTextList[0]!="") {
+      for(let i = 0; i<symptomTextList.length; i++) {
+        symptomTextListJson[i] = JSON.parse(symptomTextList[i])
+      }
+    }
+
+    
+
+    // create timestamp
+    const timestamp = new Date();
 
 
-  return {
-    age, sex, pregnancy, weight, height, medicationList, conditionList, allergyList, temperatureFloat,
+  return { age, sex, pregnancy, weight, height, medicationList, conditionList, allergyList, temperatureFloat, 
     duration, worseningBool, breastfeedingBool, extraInfo, symptomListJson, symptomTextListJson, timestamp,
-    symptomList, symptomTextList, alcoholPerWeek, cigarettesPerDay
-  };
+  symptomList, symptomTextList, alcoholPerWeek, cigarettesPerDay};
 }
 
 
@@ -297,16 +283,16 @@ function parseFormDataToDbUsable(formData: FormData) {
  */
 export async function insertListIntoSymptomsNoCertainCount(list: string[], nameOfCategory: string, case_id: BigInteger) {
 
-  for (const element of list) {
-    await connectionPool.query(
-      `
+  for(const element of list) {
+      await connectionPool.query(
+        `
         Insert into details_no_certain_count 
         (case_id, category, detail)
         VALUES ($1, $2, $3);
         `,
-      [case_id, nameOfCategory, element || null]
+        [case_id, nameOfCategory, element || null]
     );
-  }
+    }
 
 }
 
@@ -345,7 +331,8 @@ export async function insertListIntoSymptomsNoCertainCount(list: string[], nameO
  *     extraInfo: string | null
  *   }>,
  *   allergyData: { allergies: string[] },
- *   medicationData: { medication: string[] },
+ *   medicationData:  {case_id: any, medication: any, dose: any, unit: any, taken_since: any
+ *   frequency: any, frequency_unit: any},
  *   conditionsData: { conditions: string[] }
  * }>
  */
@@ -366,6 +353,7 @@ export async function getUserDataFromDB(caseId: string) {
     SELECT name_de, painscale, bodyregion
     FROM case_symptoms
     WHERE case_id = $1
+    AND raw_id IS NULL
     ;
     `,
     [caseId]
@@ -407,13 +395,13 @@ export async function getUserDataFromDB(caseId: string) {
 
   // return rows
   return {
-    caseData: caseData.rows,
-    symptomData: symptomData.rows,
-    textSymptomData: textSymptomData.rows,
-    additionalInfoData: additionalInfoData.rows,
-    allergyData,
-    medicationData: medicationData.rows,
-    conditionsData
+  caseData: caseData.rows,
+  symptomData: symptomData.rows,
+  textSymptomData: textSymptomData.rows,
+  additionalInfoData: additionalInfoData.rows,
+  allergyData,
+  medicationData: medicationData.rows,
+  conditionsData
   }
 
 }
@@ -467,7 +455,7 @@ export async function deleteCaseData(caseId: string) {
     DELETE FROM cases
     WHERE case_id = $1
   `,
-    [caseId]
+  [caseId]
   );
 
   await connectionPool.query(`
@@ -476,42 +464,42 @@ export async function deleteCaseData(caseId: string) {
     WHERE case_symptoms.raw_id = raw_text_symptoms.raw_id
     AND case_id = $1
   `,
-    [caseId]
+  [caseId]
   );
 
   await connectionPool.query(`
     DELETE FROM case_symptoms
     WHERE case_id = $1
   `,
-    [caseId]
+  [caseId]
   );
 
   await connectionPool.query(`
     DELETE FROM details_no_certain_count
     WHERE case_id = $1
   `,
-    [caseId]
+  [caseId]
   );
 
   await connectionPool.query(`
     DELETE FROM additional_information
     WHERE case_id = $1
   `,
-    [caseId]
+  [caseId]
   );
 
   await connectionPool.query(`
     DELETE FROM medication
     WHERE case_id = $1
   `,
-    [caseId]
+  [caseId]
   );
 
   await connectionPool.query(`
     DELETE FROM recommendations
     WHERE case_id = $1
   `,
-    [caseId]
+  [caseId]
   );
 }
 
@@ -523,7 +511,7 @@ export async function deleteCaseData(caseId: string) {
  * @returns Promise<any> - caseId
  */
 export async function getCaseIdFromAccessCode(accessCode: string) {
-  // DB query to get case id from access code
+    // DB query to get case id from access code
   const caseId = await connectionPool.query(`
     SELECT case_id FROM cases
     WHERE access_code = $1
@@ -602,7 +590,7 @@ export async function accessDataWithAccessCode(accessCode: string) {
  */
 export async function accessAiDataWithAccessCode(accessCode: string) {
 
-  // DB query to get case id from access code
+    // DB query to get case id from access code
   const caseId = await connectionPool.query(`
     SELECT case_id FROM cases
     WHERE access_code = $1
@@ -664,7 +652,7 @@ export async function deleteOldCases() {
  * @returns Promise<{ [listName]: string[] }> - object with a dynamic key whose value is an array of "detail" values
  */
 export async function getDetailsNoCertainCount(category: string, listName: string, case_id: string) {
-
+  
   const DataList = await connectionPool.query(`
     SELECT detail
     FROM details_no_certain_count
@@ -675,7 +663,7 @@ export async function getDetailsNoCertainCount(category: string, listName: strin
     [case_id, category]
   );
 
-  return { [listName]: DataList.rows.map((row: any) => row.detail) };
+  return {[listName]: DataList.rows.map((row: any) => row.detail)};
 }
 
 
@@ -688,7 +676,7 @@ export async function getDetailsNoCertainCount(category: string, listName: strin
  * @returns Promise<string> - the access_code of the case (assumes case_id exists; no null check)
  */
 export async function getAccessCode(caseId: string) {
-
+  
 
   const accessCode = await connectionPool.query(`
     SELECT access_code
@@ -742,7 +730,7 @@ export async function sendDataToAi(basisData?: BasisData, additionalData?: Addit
     cacheData = await buildUnifiedData(basisData, additionalData, symptomText, selectedymptoms)
   }
 
-  if (cacheData == null && caseId) {
+  if(cacheData == null && caseId) {
     // get data from db
     DBdata = await getUserDataFromDB(caseId);
   }
@@ -754,17 +742,17 @@ export async function sendDataToAi(basisData?: BasisData, additionalData?: Addit
     console.error("Keine Daten verfügbar (weder Cache noch DB).");
     return;
   }
-
+  
 
   // define promt
   const prompt = await buildAiPrompt(data)
 
-  console.log("case data used for promt: ",
-    data.caseData,
-    "additionalInfo: ", data.additionalInfoData,
-    "symptoms: ", data.symptomData, "text symptoms: ", data.textSymptomData,
-    "conditions: ", data.conditionsData.conditions, "allergies: ", data.allergyData.allergies,
-    "medication: ", data.medicationData.medication,
+  console.log("case data used for promt: ", 
+    data.caseData, 
+    "additionalInfo: ", data.additionalInfoData, 
+    "symptoms: ", data.symptomData, "text symptoms: ", data.textSymptomData, 
+    "conditions: ", data.conditionsData.conditions, "allergies: ", data.allergyData.allergies, 
+    "medication: ", data.medicationData.medication, 
     "\npromt: ", prompt)
 
   // JSON schema for ai answer (looks weird because it used to be xml (yes there was a reason for that too, it was not just because I felt like it))
@@ -801,17 +789,17 @@ export async function sendDataToAi(basisData?: BasisData, additionalData?: Addit
     };
 
     // printing response
-    console.log('medgemma response as object:', result,
-      "\nsuspicion1:", result.assessment.suspicions.suspicion1.reasonForSuspicion1,
-      result.assessment.suspicions.suspicion1.probability1,
-      "\nsuspicion2:", result.assessment.suspicions.suspicion2.reasonForSuspicion2,
-      result.assessment.suspicions.suspicion2.probability2,
-      "\nsuspicion3:", result.assessment.suspicions.suspicion3.reasonForSuspicion3,
-      result.assessment.suspicions.suspicion3.probability3,
-      "\nsuspicion4:", result.assessment.suspicions.suspicion4.reasonForSuspicion4,
-      result.assessment.suspicions.suspicion4.probability4,
-      "\nsuspicion5:", result.assessment.suspicions.suspicion5.reasonForSuspicion5,
-      result.assessment.suspicions.suspicion5.probability5);
+    console.log('medgemma response as object:', result, 
+    "\nsuspicion1:", result.assessment.suspicions.suspicion1.reasonForSuspicion1, 
+    result.assessment.suspicions.suspicion1.probability1,
+    "\nsuspicion2:", result.assessment.suspicions.suspicion2.reasonForSuspicion2, 
+    result.assessment.suspicions.suspicion2.probability2,
+    "\nsuspicion3:", result.assessment.suspicions.suspicion3.reasonForSuspicion3, 
+    result.assessment.suspicions.suspicion3.probability3,
+    "\nsuspicion4:", result.assessment.suspicions.suspicion4.reasonForSuspicion4, 
+    result.assessment.suspicions.suspicion4.probability4,
+    "\nsuspicion5:", result.assessment.suspicions.suspicion5.reasonForSuspicion5, 
+    result.assessment.suspicions.suspicion5.probability5);
 
 
     // writing result into db
@@ -898,7 +886,7 @@ export async function buildUnifiedData(
       breastfeeding: additionalData.breastfeeding,
       extraInfo: additionalData.extraInfo,
       cigarettesPerDay: additionalData.cigarettesPerDay,
-      alcoholPerWeek: additionalData.alcoholPerWeek,
+    alcoholPerWeek: additionalData.alcoholPerWeek,
     },
     allergyData: { allergies: additionalData.allergies },
     medicationData: { medication: additionalData.medication },
@@ -958,20 +946,20 @@ export async function buildAiPrompt(
   hier sind Prompt injections möglich
 `;
 
-  return prompt;
+return prompt;
 }
 
 
 
 
 // JSON schema for ai answer (looks weird because it used to be xml (yes there was a reason for that too, it was not just because I felt like it))
-const aiAnswerFormat = {
+  const aiAnswerFormat = {
   type: "object",
   properties: {
     assessment: {
       type: "object",
       properties: {
-        urgency: {
+        urgency: { 
           type: "number",
           minimum: 1,
           maximum: 5
@@ -1036,7 +1024,7 @@ const aiAnswerFormat = {
               type: "object",
               properties: {
                 reasonForSuspicion5: { type: "string" },
-                probability5: {
+                probability5:  {
                   type: "number",
                   minimum: 0,
                   maximum: 1,
@@ -1086,7 +1074,7 @@ export async function mapNameToSnomed(name: string) {
  * @returns Promise<{resourceType, type, entry> - fhir
  */
 export async function buildFhirBundle(caseId: string): Promise<any> {
-
+  
   // Daten aus der Datenbank geholt
   const userData = await getUserDataFromDB(caseId);
   if (!userData || !userData.caseData || userData.caseData.length === 0) {
@@ -1136,7 +1124,7 @@ export async function buildFhirBundle(caseId: string): Promise<any> {
   });
 
   // Demografie als Observations 
-
+  
   // Geburtsgeschlecht (LOINC: 76689-9)
   if (sex) {
     let fhirSexDisplay = "Unknown";
@@ -1160,7 +1148,7 @@ export async function buildFhirBundle(caseId: string): Promise<any> {
     });
   }
 
-  // Alter (LOINC: 63900-5)
+ // Alter (LOINC: 63900-5)
   if (age) {
     fhirEntries.push({
       resource: {
@@ -1189,7 +1177,7 @@ export async function buildFhirBundle(caseId: string): Promise<any> {
     });
   }
 
-  //Stillzeit
+    //Stillzeit
   if (breastfeeding !== undefined && sex !== "m") {
     fhirEntries.push({
       resource: {
@@ -1205,41 +1193,41 @@ export async function buildFhirBundle(caseId: string): Promise<any> {
     });
   }
 
-  if (smoking !== undefined) {
-    fhirEntries.push({
-      resource: {
-        resourceType: "Observation",
-        status: "final",
-        subject: { reference: patientRef },
-        effectiveDateTime: date,
-        category: [{ coding: [{ system: "http://terminology.hl7.org/CodeSystem/observation-category", code: "social-history", display: " Social History" }] }],
-        code: { coding: [{ system: "http://loinc.org", coce: "72166-2", display: "Tobacco smoking status" }] },
-        valueCodeableConcept: {
-          text: typeof smoking === "boolean"
-            ? (smoking ? "Patient konsumiert Tabak/Zigaretten" : "Patient konsumiert keinen Tabak")
-            : `Tabakkonsum: ${smoking}` // Falls Freitext statt Boolean
-        }
+if (smoking !== undefined) {
+  fhirEntries.push ({
+    resource: {
+      resourceType: "Observation",
+      status: "final",
+      subject: {reference: patientRef},
+      effectiveDateTime: date,
+      category: [{ coding: [{ system: "http://terminology.hl7.org/CodeSystem/observation-category", code: "social-history", display:" Social History" }]}],
+      code: { coding: [{ system: "http://loinc.org", coce: "72166-2", display: "Tobacco smoking status" }]},
+      valueCodeableConcept: {
+        text: typeof smoking === "boolean"
+        ? (smoking ? "Patient konsumiert Tabak/Zigaretten": "Patient konsumiert keinen Tabak")
+        : `Tabakkonsum: ${smoking}` // Falls Freitext statt Boolean
       }
-    });
-  }
+    }
+  });
+}
 
-  if (alcohol !== undefined) {
-    fhirEntries.push({
-      resource: {
-        resourceType: "Observation",
-        status: "final",
-        subject: { refernce: patientRef },
-        effectiveDateTime: date,
-        category: [{ coding: [{ system: "http://terminology.hl7.org/CodeSystem/observation-category", code: "social-history", display: "Social History" }] }],
-        code: { coding: [{ system: "http://loinc.org", code: "74013-4", display: "Alcoholic beverage intake" }] },
-        valueCodeableConcept: {
+if (alcohol !== undefined) {
+  fhirEntries.push({
+    resource: {
+      resourceType: "Observation",
+      status: "final",
+      subject: {refernce: patientRef }, 
+      effectiveDateTime: date,
+      category: [{ coding: [{ system: "http://terminology.hl7.org/CodeSystem/observation-category", code: "social-history", display: "Social History" }] }],
+      code: {coding: [{ system:  "http://loinc.org", code: "74013-4", display: "Alcoholic beverage intake" }]},
+      valueCodeableConcept: {
           text: typeof alcohol === "boolean"
             ? (alcohol ? "Patient konsumiert regelmäßig Alkohol" : "Patient konsumiert keinen Alkohol")
             : `Alkoholkonsum: ${alcohol}` // Falls Freitext statt Boolean
-        }
-      }
-    });
+    }
   }
+  });
+}
 
   // Gegebene Symptome
   for (const symptom of symptoms) {
@@ -1309,7 +1297,7 @@ export async function buildFhirBundle(caseId: string): Promise<any> {
     });
   }
 
-  if (height) {
+if (height) {
     fhirEntries.push({
       resource: {
         resourceType: "Observation",
@@ -1342,16 +1330,16 @@ export async function buildFhirBundle(caseId: string): Promise<any> {
       resource: {
         resourceType: "Observation",
         status: "final",
-        subject: { reference: patientRef },
-        code: { coding: [{ system: "http://loinc.org", code: "88724-0", display: "Symptom worsening status" }] },
+        subject: { reference: patientRef},
+        code: { coding: [{ system:"http://loinc.org", code: "88724-0", display: "Symptom worsening status" }]},
         valueCodeableConcept: {
           text: worsening ? "Symptome haben sich verschlimmert" : "Symptome haben sich nicht verschlimmert"
-        }
       }
+    } 
     })
   }
 
-  // Freitext für extraInfo als Observation
+   // Freitext für extraInfo als Observation
   if (extraInfo) {
     fhirEntries.push({
       resource: {
@@ -1364,7 +1352,7 @@ export async function buildFhirBundle(caseId: string): Promise<any> {
     });
   }
 
-  // E. Strukturierte Anamnese (Allergien, Medikamente, Vorerkrankungen)
+// E. Strukturierte Anamnese (Allergien, Medikamente, Vorerkrankungen)
   if (allergies && Array.isArray(allergies)) {
     for (const allergy of allergies) {
       if (allergy) {
