@@ -140,7 +140,7 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
   */
   const renderSymptomList = (
     symptoms: any[] | undefined,
-    textSymptom = false,
+    textSymptom: boolean,
   ) => {
     if (!symptoms?.length) {
       return <strong className={assessmentStyles.dataValue}>Keine Angabe</strong>;
@@ -333,7 +333,7 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
             <div className={assessmentStyles.dataGrid}>
               <div className={`${assessmentStyles.dataRow} ${assessmentStyles.dataRowWide}`}>
                 <span className={assessmentStyles.dataLabel}>Symptome</span>
-                {renderSymptomList(data.symptomData)}
+                {renderSymptomList(data.symptomData, false)}
               </div>
               <div className={`${assessmentStyles.dataRow} ${assessmentStyles.dataRowWide}`}>
                 <span className={assessmentStyles.dataLabel}>
