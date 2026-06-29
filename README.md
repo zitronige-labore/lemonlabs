@@ -33,7 +33,11 @@ MEDGEMMA_API_MODEL=medgemma:27b
 FHIR_SERVER_URL=https://hapi.fhir.org/baseR4  
 
 ## für developer run
-Root folder -> Terminal öffnen -> npm install -> npm dev run  
+Root folder -> Terminal öffnen -> npm install -> npm run dev  
+
+## für developer test run (e2e)
+Root folder -> Terminal öffnen -> npm install -> npm run dev:test -> neues Terminal öffnen ->  npm run test:e2e:ui  
+
 
 ## für build start
 Root folder -> Terminal öffnen -> npm install -> npm run build -> npm start
