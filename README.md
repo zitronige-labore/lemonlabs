@@ -41,3 +41,11 @@ Root folder -> Terminal öffnen -> npm install -> npm run dev:test -> neues Term
 
 ## für build start
 Root folder -> Terminal öffnen -> npm install -> npm run build -> npm start
+
+## für docker
+Root folder -> Terminal öffnen ->  
+für build (erstes mal oder bei Änderungen)  
+-> docker compose up --build  
+normal:  
+-> docker compose up  
+(auf Linux docker-compose)
