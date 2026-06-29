@@ -188,7 +188,7 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
 
   /* Displays the previously formatted medication entries as a list. */
   const renderMedicationList = () => {
-    if (medication.length === 0) {
+    if (!medication.name) {
       return <strong className={assessmentStyles.dataValue}>Keine Angabe</strong>;
     }
 
@@ -338,7 +338,7 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
                 <span className={assessmentStyles.dataLabel}>
                   Selbst beschriebene Beschwerden
                 </span>
-                {renderSymptomList(data.textSymptomData, true)}
+                {renderSymptomList(data.textSymptomData)}
               </div>
             </div>
           </section>

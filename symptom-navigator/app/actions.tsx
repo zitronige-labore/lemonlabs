@@ -353,6 +353,7 @@ export async function getUserDataFromDB(caseId: string) {
     SELECT name_de, painscale, bodyregion
     FROM case_symptoms
     WHERE case_id = $1
+    AND raw_id IS NULL
     ;
     `,
     [caseId]
