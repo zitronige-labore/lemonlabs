@@ -138,13 +138,12 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
     Stellt strukturierte oder frei formulierte Symptome mit Region und Schmerzskala dar.
     textSymptom wählt dabei das passende Beschriftungsfeld des Datenbankobjekts.
   */
-  const renderStructuredSymptoms = (symptoms: any[] | undefined) => {
+   const renderSymptomList = (
+    symptoms: any[] | undefined,
+    textSymptom = false,
+  ) => {
     if (!symptoms?.length) {
-      return (
-        <strong className={assessmentStyles.dataValue}>
-          Keine Angabe
-        </strong>
-      );
+      return <strong className={assessmentStyles.dataValue}>Keine Angabe</strong>;
     }
 
     return (
@@ -152,9 +151,10 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
         {symptoms.map((symptom, index) => (
           <li key={index} className={assessmentStyles.dataListItem}>
             <p className={assessmentStyles.dataListItemHeader}>
-              {symptom.name_de || "Symptom"}
+              {textSymptom
+                ? symptom.raw_symptoms || "Beschwerde"
+                : symptom.name_de || "Symptom"}
             </p>
-
             <div className={assessmentStyles.dataListItemGrid}>
               {symptom.bodyregion && (
                 <div>
@@ -166,61 +166,13 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
                   </strong>
                 </div>
               )}
-
               {symptom.painscale != null && (
                 <div>
                   <span className={assessmentStyles.dataLabel}>
                     Schmerzskala
                   </span>
                   <strong className={assessmentStyles.dataValue}>
-                    {symptom.painscale}
-                  </strong>
-                </div>
-              )}
-            </div>
-          </li>
-        ))}
-      </ul>
-    );
-  };
-
-
-  const renderTextSymptoms = (symptoms: any[] | undefined) => {
-    if (!symptoms?.length) {
-      return (
-        <strong className={assessmentStyles.dataValue}>
-          Keine Angabe
-        </strong>
-      );
-    }
-
-    return (
-      <ul className={assessmentStyles.dataList}>
-        {symptoms.map((symptom, index) => (
-          <li key={index} className={assessmentStyles.dataListItem}>
-            <p className={assessmentStyles.dataListItemHeader}>
-              {symptom.raw_symptoms || "Beschwerde"}
-            </p>
-
-            <div className={assessmentStyles.dataListItemGrid}>
-              {symptom.bodyregion && (
-                <div>
-                  <span className={assessmentStyles.dataLabel}>
-                    Körperregion
-                  </span>
-                  <strong className={assessmentStyles.dataValue}>
-                    {symptom.bodyregion}
-                  </strong>
-                </div>
-              )}
-
-              {symptom.painscale != null && (
-                <div>
-                  <span className={assessmentStyles.dataLabel}>
-                    Schmerzskala
-                  </span>
-                  <strong className={assessmentStyles.dataValue}>
-                    {symptom.painscale}
+                    {symptom.painscale || "Nicht angegeben"}
                   </strong>
                 </div>
               )}
@@ -382,13 +334,13 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
             <div className={assessmentStyles.dataGrid}>
               <div className={`${assessmentStyles.dataRow} ${assessmentStyles.dataRowWide}`}>
                 <span className={assessmentStyles.dataLabel}>Symptome</span>
-                {renderStructuredSymptoms(data.symptomData)}
+                {renderSymptomList(data.symptomData)}
               </div>
               <div className={`${assessmentStyles.dataRow} ${assessmentStyles.dataRowWide}`}>
                 <span className={assessmentStyles.dataLabel}>
                   Selbst beschriebene Beschwerden
                 </span>
-                {renderTextSymptoms(data.textSymptomData)}
+                {renderSymptomList(data.textSymptomData)}
               </div>
             </div>
           </section>
