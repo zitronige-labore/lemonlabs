@@ -179,7 +179,7 @@ export function ResultStep({
 
   /* Bereitet die strukturierten Medikationsangaben als lesbare Liste auf. */
   const renderMedicationList = () => {
-    if (!additionalData.medication?.length) {
+    if (!additionalData.hasMedication || !additionalData.medication?.length) {
       return <strong className={assessmentStyles.dataValue}>Keine Angabe</strong>;
     }
 

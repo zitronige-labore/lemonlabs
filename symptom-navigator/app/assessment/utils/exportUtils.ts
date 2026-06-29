@@ -41,7 +41,12 @@ export function formatAssessmentTxt(d: AssessmentExportData): string {
     rows.push(`Schwangerschaft: ${d.schwangerschaft}`);
     rows.push(`Stillzeit: ${d.stillzeit}`);
   }
-  rows.push(`Medikation: ${d.medikation}`);
+  if (d.medikation.length < 0) {
+    rows.push(`Medikation: ${d.medikation}`);
+  }
+  else {
+    rows.push("Medikation: Keine Angabe");
+  }
   rows.push(`Allergien: ${d.allergien || "Keine Angabe"}`);
   rows.push(`Vorerkrankungen: ${d.vorerkrankungen.length > 0 ? d.vorerkrankungen : "Keine Angabe"}`);
   rows.push(`Alkoholkonsum (Getränke/Woche): ${d.alkoholkonsum || "Keine Angabe"}`);
@@ -84,7 +89,12 @@ export function formatAssessmentPdfTable(d: AssessmentExportData): string[][] {
   tableBody.push(["Geschlecht", d.geschlecht]);
   tableBody.push(["Größe", d.groesse]);
   tableBody.push(["Gewicht", d.gewicht]);
-  tableBody.push(["Medikation", d.medikation]);
+  if (d.medikation.length < 0) {
+    tableBody.push(["Medikation", d.medikation]);
+  }
+  else {
+    tableBody.push(["Medikation", "Keine Angabe"]);
+  }
   tableBody.push(["Allergien", d.allergien || "Keine Angabe"]);
   tableBody.push(["Vorerkrankungen", d.vorerkrankungen.length > 0 ? d.vorerkrankungen : "Keine Angabe"]);
   tableBody.push(["Alkoholkonsum (Getränke/Woche)", d.alkoholkonsum || "Keine Angabe"]);
