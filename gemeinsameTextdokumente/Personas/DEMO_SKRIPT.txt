@@ -1,0 +1,32 @@
+
+
+----------------------------------------------------------------------
+TEIL 1: Hausarzt-Fall / Mandelentzündung
+----------------------------------------------------------------------
+
+
+"Das ist Aylin Demir, 22 Jahre, Studentin. Sie lebt alleine und neigt bei 
+Beschwerden schnell zur Verunsicherung. Es ist Freitagmorgen und sie wacht 
+mit starken Schluckbeschwerden und Fieber auf. Ein Blick in den Spiegel 
+zeigt eitrige Mandeln. Das Internet warnt sofort vor gefährlichen Abszessen 
+und schürt Panik. Aylin will eigentlich in die Notaufnahme, sucht aber vorher 
+eine objektive Einschätzung – und öffnet 'Symptomer'."
+
+ DEMO 1
+
+
+----------------------------------------------------------------------
+TEIL 2: Notaufnahme-Fall / Herzbeutelentzündung
+----------------------------------------------------------------------
+
+
+"Zwei Wochen später. Die Mandelentzündung schien abgeklungen, doch Aylins 
+Immunsystem hat auf den Infekt überreagiert. Plötzlich spürt sie einen 
+messerscharfen, stechenden Schmerz in der Brust. Jedes Mal, wenn sie tief 
+einatmet oder sich flach ins Bett legt, wird der Schmerz unerträglich. 
+Todesangst macht sich breit – ist das mit 22 Jahren ein Herzinfarkt? 
+In völliger Panik greift sie zu 'Symptomer'."
+
+ DEMO 2
+
+======================================================================
