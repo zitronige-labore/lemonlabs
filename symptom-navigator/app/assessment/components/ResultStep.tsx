@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 
 /* Shared styles for result sections, data tables, and action buttons. */
 import assessmentStyles from "../Assessment.module.css";
+import homeStyles from "../../Home.module.css";
 
 /* Retrieves the access code associated with the saved case from the server. */
 import { getAccessCode } from "../../actions";
@@ -19,12 +20,14 @@ import { downloadTxt, downloadPdf } from "../utils/exportUtils";
 import type {
   AdditionalData,
   BasisData,
+  Step,
 } from "../../types/assessment";
 import {
   buildExportData,
   parseSymptomName,
   parseSymptomText
 } from "../utils/resultUtils";
+import { SosModal } from "./SosModal";
 
 /*
   All result data is provided by the central workflow controller.
@@ -260,13 +263,23 @@ export function ResultStep({
 
     if (urgency >= 5) {
       return (
+        <>
         <button
           type="button"
-          className={assessmentStyles.continueButton}
+          className={homeStyles.emergencyButton}
           onClick={() => setShowEmergencyPopup(true)}
         >
-          Notfallhinweis anzeigen
+          SOS
         </button>
+
+        {/* Urgency level 5 requires a clearly visible emergency notice before initiating a direct emergency call. */}
+        {showEmergencyPopup && (
+          <SosModal
+              isOpen={showEmergencyPopup}
+              onClose={() => setShowEmergencyPopup(false)}
+          />
+        )}
+        </>
       );
     }
 
@@ -539,65 +552,6 @@ export function ResultStep({
         </div>
       )}
 
-      {/* Urgency level 5 requires a clearly visible emergency notice before initiating a direct emergency call. */}
-      {showEmergencyPopup && (
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(15, 23, 42, 0.55)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1000,
-            padding: "16px",
-          }}
-        >
-          <div
-            style={{
-              width: "100%",
-              maxWidth: "440px",
-              background: "#ffffff",
-              borderRadius: "16px",
-              padding: "24px",
-              boxShadow: "0 20px 40px rgba(15, 23, 42, 0.25)",
-              textAlign: "left",
-            }}
-          >
-            <h2 style={{ marginTop: 0, color: "#b91c1c" }}>
-              Möglicher Notfall
-            </h2>
-
-            <p>
-              Die Angaben deuten auf eine sehr hohe Dringlichkeit hin. Bei
-              akuten oder lebensbedrohlichen Beschwerden sollte sofort der
-              Notruf kontaktiert werden.
-            </p>
-
-            <a
-              href="tel:112"
-              className={assessmentStyles.continueButton}
-              style={{
-                display: "block",
-                textAlign: "center",
-                textDecoration: "none",
-                marginTop: "16px",
-              }}
-            >
-              112 anrufen
-            </a>
-
-            <button
-              type="button"
-              className={assessmentStyles.secondaryButton}
-              onClick={() => setShowEmergencyPopup(false)}
-              style={{ width: "100%", marginTop: "12px" }}
-            >
-              Schließen
-            </button>
-          </div>
-        </div>
-      )}
 
       <hr className={assessmentStyles.dataDivider} />
 

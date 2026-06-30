@@ -667,6 +667,7 @@ export default function Home() {
           onOpenSupport={() => goToStep("support")}
         />
       )}
+
       {/* Data management page */}
       {step === "manageData" && (
         <form className={assessmentStyles.card} onSubmit={(e) => { e.preventDefault(); goToStep("start"); }}>
@@ -684,6 +685,7 @@ export default function Home() {
           </div>
         </form>
       )}
+
       {/* Appointments */}
       {step === "other" && (
         <OtherStep
@@ -691,22 +693,27 @@ export default function Home() {
           onManageData={() => goToStep("manageData")}
         />
       )}
+
       {/* privacy policy */}
       {step === "datenschutz" && (
         <DatenschutzStep onBack={() => window.history.back()} />
       )}
+
       {/* Impressum */}
       {step === "impressum" && (
         <ImpressumStep onBack={() => window.history.back()} />
       )}
+
       {/* Kontakt */}
       {step === "kontakt" && (
         <KontaktStep onBack={() => window.history.back()} />
       )}
+
       {/* Support */}
       {step === "support" && (
         <SupportStep onBack={() => window.history.back()} />
       )}
+
       {/* all steps from assessment */}
       {step !== "start" && step !== "hinweise" && step !== "manageData" && step !== "other" && step !== "datenschutz" && step !== "impressum" && step !== "kontakt" && step !== "support" && (
         <AssessmentLayout
