@@ -49,7 +49,7 @@ export function getSymptomList(gender?: string) {
     symptoms:
         [
         { symptomName: "Konzentrationsmangel", schmerzen: false, symptomValue: "Konzentrationsmangel: Konzentrationsstörungen mit Schwierigkeiten, Gesprächen oder Tätigkeiten über längere Zeit zu folgen.",  snomedCode: "26329005" },
-        { symptomName: "Veränderte Wahrnehmung", schmerzen: false, symptomValue: "Veränderte Wahrnehmung: Gefühl, dass die Umwelt oder man selbst fremd oder unwirklich erscheint.", snomedCode: "1157237004" },
+        { symptomName: "Veränderte/Verzerrte Wahrnehmung", schmerzen: false, symptomValue: "Veränderte Wahrnehmung: Gefühl, dass die Umwelt oder man selbst fremd oder unwirklich erscheint.", snomedCode: "1157237004" },
         ]
     },
      {step: "psycheKrise",
@@ -67,7 +67,7 @@ export function getSymptomList(gender?: string) {
     symptoms:
         [
         { symptomName: "Schmerz beim Drücken auf den Tragus", schmerzen: true, symptomValue: "Schmerz beim Drücken auf den kleinen Knorpel vor dem Gehörgang",  snomedCode: "301385004" },
-        { symptomName: "Ohrmuschel-Ziehschmerz", schmerzen: true, symptomValue: "Ohrmuschel-Ziehschmerz: Schmerz beim Ziehen am Ohrläppchen oder Knorpel", snomedCode: "281248006" },
+        { symptomName: "ziehender Schmerz in der Ohrmuschel", schmerzen: true, symptomValue: "Ohrmuschel-Ziehschmerz: Schmerz beim Ziehen am Ohrläppchen oder Knorpel", snomedCode: "281248006" },
         { symptomName: "Starkes Jucken im Gehörgang", schmerzen: false, symptomValue: "Juckreiz im Gehörgang: Starkes Jucken, oft verbunden mit Schuppung", snomedCode: "162235002"},
         { symptomName: "Ausfluss (Wässrig, eitrig, blutig)", schmerzen: false, symptomValue: "Ausfluss: Wässrig, eitrig, blutig oder bröckelig", snomedCode: "302141004" },
         { symptomName: "Gefühl das Ohr sei zugeschwollen", schmerzen: false, symptomValue: "Gehörgangs-Schwellung: Gefühl, das Ohr sei „zugeschwollen“", snomedCode: "247361005" },
@@ -78,7 +78,7 @@ export function getSymptomList(gender?: string) {
     {step: "innenOhr", 
         symptoms: 
         [
-        { symptomName: "Pulsierender Schmerz (Herzrhythmus)", schmerzen: true, symptomValue: "Pulsierender Schmerz: Schmerz im Rhythmus des Herzschlags", snomedCode: "274130008" },
+        { symptomName: "Pulsierender Schmerz (spürbarer Herzrhythmus)", schmerzen: true, symptomValue: "Pulsierender Schmerz: Schmerz im Rhythmus des Herzschlags", snomedCode: "274130008" },
         { symptomName: "Plötzlich einschießender, stechender Schmerz", schmerzen: true, symptomValue: "Stechender Schmerz: Plötzlich einschießend", snomedCode: "274133001" },
         { symptomName: "Gefühl von Wasser im Ohr", schmerzen: false, symptomValue: "Völlegefühl: Gefühl, als wäre Wasser im Ohr", snomedCode: "247372007" },
         { symptomName: "Eigene Stimme hallt unangenehm laut", schmerzen: false, symptomValue: "Die eigene Stimme hallt unangenehm laut im Ohr wider", snomedCode: "247380004" },
@@ -94,7 +94,7 @@ export function getSymptomList(gender?: string) {
         symptoms: [
         { symptomName: "Plötzlicher Sehverlust / Erblindung (einseitig)", schmerzen: false, symptomValue: "Sehverlust: Akute, schmerzlose Erblindung oder massive Sehverschlechterung auf einem Auge innerhalb von Sekunden/Minuten (Verdacht auf Gefäßverschluss).", snomedCode: "397540003" },
             { symptomName: "Sehen von Doppelbildern ", schmerzen: false, symptomValue: "Doppelbilder: Gleichzeitiges Sehen von zwei Bildern eines einzelnen Objekts (wichtiges neurologisches Warnsignal).", snomedCode: "246534002" },
-            { symptomName: "Heftiger Augenschmerz + Rötung + Sehfehlen", schmerzen: true, symptomValue: "Glaukom-Anfall: Extrem starker, akuter Augenschmerz, oft ausstrahlend in den Kopf, begleitet von einem geröteten, steinharten Auge und Sehverschlechterung (Sehen von Regenbogenhöfen).", snomedCode: "274134007" },
+            { symptomName: "Heftiger Augenschmerz mit Rötung und Sehfehlen", schmerzen: true, symptomValue: "Glaukom-Anfall: Extrem starker, akuter Augenschmerz, oft ausstrahlend in den Kopf, begleitet von einem geröteten, steinharten Auge und Sehverschlechterung (Sehen von Regenbogenhöfen).", snomedCode: "274134007" },
             { symptomName: "Lichtblitze oder herabfallender Rußregen", schmerzen: false, symptomValue: "Netzhaut-Warnsignale: Wahrnehmung von plötzlichen Lichtblitzen (besonders bei Augenbewegung) oder massenhaft dunklen Punkten/Schleiern (Rußregen).", snomedCode: "698308003" },
             { symptomName: "Zunehmender Schatten / Vorhang im Gesichtsfeld", schmerzen: false, symptomValue: "Gesichtsfeldausfall: Von oben, unten oder der Seite heranziehender dunkler Schatten oder Vorhang (Verdacht auf Netzhautablösung).", snomedCode: "399719002" },
             { symptomName: "Starke Fremdkörper- oder Hornhautschmerzen", schmerzen: true, symptomValue: "Hornhautverletzung: Stechender, kontinuierlicher Schmerz, extremes Fremdkörpergefühl, starker Tränenfluss und krampfhaftes Schließen der Augenlider.", snomedCode: "247445007"},
@@ -108,7 +108,7 @@ export function getSymptomList(gender?: string) {
         symptoms: 
         [
             { symptomName: "Starkes, unstillbares Nasenbluten", schmerzen: false, symptomValue: "Nasenbluten heftig: Ununterbrochener, starker Blutfluss (auch im Rachen spürbar), der sich durch normale Kompression (Nasenflügel zusammendrücken) nach 10-15 Minuten nicht stoppen lässt.", snomedCode: "64531003" },
-            { symptomName: "Eitriger Schnupfen + drückender Gesichtsschmerz", schmerzen: true, symptomValue: "Akute Sinusitis: Gelb-grünes, zähflüssiges Nasensekret gepaart mit drückendem oder klopfendem Schmerz über den Stirn- oder Kieferhöhlen, der sich beim Bücken oder Auftreten massiv verstärkt.", snomedCode: "247416002" },
+            { symptomName: "Eitriger Schnupfen und drückender Gesichtsschmerz", schmerzen: true, symptomValue: "Akute Sinusitis: Gelb-grünes, zähflüssiges Nasensekret gepaart mit drückendem oder klopfendem Schmerz über den Stirn- oder Kieferhöhlen, der sich beim Bücken oder Auftreten massiv verstärkt.", snomedCode: "247416002" },
             { symptomName: "Völliger oder plötzlicher Verlust des Geruchssinns", schmerzen: false, symptomValue: "Anosmie: Akuter, vollständiger Verlust der Riechfähigkeit (und konsequent des Geschmackssinns) ohne oder mit Schnupfen.", snomedCode: "44169009" },
             { symptomName: "Einseitige Verstopfung mit üblem Geruch", schmerzen: false, symptomValue: "Einseitige nasale Obstruktion: Nur ein Nasenloch ist chronisch verstopft, oft begleitet von eitrig-blutigem, auffällig faulig oder übel riechendem Sekret (Verdacht auf Fremdkörper oder Gewebeveränderung).", snomedCode: "697968004"},
             { symptomName: "Wässriges Dauerrinnen + Niesreiz", schmerzen: false, symptomValue: "Rhinitis (allergisch): Ständiges Fließsymptom mit glasklarem, wässrigem Sekret, Attacken von Serien-Niesen, oft juckende oder brennende Nasenschleimhaut.", snomedCode: "232209000" },
@@ -141,7 +141,8 @@ export function getSymptomList(gender?: string) {
         [
             { symptomName: "Starke Übelkeit oder Drang zum Erbrechen", schmerzen: false, symptomValue: "Starke Übelkeit, flauer Magen oder Drang zum Erbrechen", snomedCode: "422587007" },
             { symptomName: "Extreme Licht- oder Lärmempfindlichkeit", schmerzen: false, symptomValue: "Extreme Empfindlichkeit gegen normales Licht, Fernseher oder laute Geräusche", snomedCode: "162243003" },
-            { symptomName: "Sehen von Flimmern, Zacken oder Mustern ", schmerzen: false, symptomValue: "Sehen von Flimmern, Zacken, Mustern oder hellen Punkten (bevor der Schmerz anfängt)", snomedCode: "442685003" }
+            { symptomName: "Sehen von Flimmern, Zacken oder Mustern ", schmerzen: false, symptomValue: "Sehen von Flimmern, Zacken, Mustern oder hellen Punkten (bevor der Schmerz anfängt)", snomedCode: "442685003" },
+            { symptomName: "Schwindel", schmerzen: false, sympromValue: "Schwindel: Unsicherheitsgefühl im Raum, Gefühl von Drehen, Schwanken oder drohender Ohnmacht.", snomedCode: "162058000"}
         ]
         },
         {step: "kopfWarnsignale",
@@ -155,7 +156,7 @@ export function getSymptomList(gender?: string) {
         {step: "nackenBewegung",
         symptoms:
         [
-            { symptomName: "Schmerzhafte Muskelverhärtung (Myogelose)", schmerzen: true, symptomValue: "Nackensteife muskulär: Deutlich tastbare, harte und schmerzhafte Knubbel oder Stränge in der Nacken- und Schultermuskulatur.", snomedCode: "241988008" },
+            { symptomName: "Schmerzhafte Muskelverhärtung", schmerzen: true, symptomValue: "Nackensteife muskulär: Deutlich tastbare, harte und schmerzhafte Knubbel oder Stränge in der Nacken- und Schultermuskulatur.", snomedCode: "241988008" },
             { symptomName: "Eingeschränkte Drehung / Steifer Hals", schmerzen: true, symptomValue: "Bewegungseinschränkung: Der Kopf lässt sich nur unter starken Schmerzen oder blockiert zu einer Seite drehen oder neigen.", snomedCode: "249822005" },
             { symptomName: "Knirschen bei Kopfbewegungen", schmerzen: false, symptomValue: "HWS-Krepitation: Hörbares oder spürbares Reiben und Knacken in der Halswirbelsäule beim Kreisen des Kopfes.", snomedCode: "289452003" },
             { symptomName: "Ziehender Schmerz strahlt in den Hinterkopf", schmerzen: true, symptomValue: "Zervikalgie: Schmerzen im Nacken, die bandförmig nach oben in den Hinterkopf ziehen und dort Kopfschmerzen auslösen.", snomedCode: "302914008" }
@@ -184,9 +185,9 @@ export function getSymptomList(gender?: string) {
         symptoms:
         [
             { symptomName: "Zahnfleischbluten beim Zähneputzen", schmerzen: false, symptomValue: "Gingivitis: Leicht auslösbare Blutungen am Zahnfleischrand, oft begleitet von Rötung und Schwellung." , snomedCode: "442497006"},
-            { symptomName: "Schmerzhafte, kleine Bläschen/Geschwüre (Aphten)", schmerzen: true, symptomValue: "Aphten: Kleine, rundliche, weiß-gelblich belegte Schleimhautdefekte mit rotem Rand, die beim Essen und Sprechen stark brennen.", snomedCode: "110321004" },
-            { symptomName: "Weißer, abwischbarer Belag (Mundsoor)", schmerzen: false, symptomValue: "Candidose: Trockenes Gefühl im Mund gepaart mit stippchenartigen, weißen Belägen auf der Zunge oder Wangeninnenseite, die sich abwischen lassen.", snomedCode: "5154007" },
-            { symptomName: "Anhaltende Mundtrockenheit (Xerostomie)", schmerzen: false, symptomValue: "Mundtrockenheit: Zu geringer Speichelfluss, brennendes Gefühl auf der Zunge, Erschwerung beim Schlucken trockener Nahrung.",  snomedCode: "87715008" },
+            { symptomName: "Schmerzhafte, kleine Bläschen/Geschwüre", schmerzen: true, symptomValue: "Aphten: Kleine, rundliche, weiß-gelblich belegte Schleimhautdefekte mit rotem Rand, die beim Essen und Sprechen stark brennen.", snomedCode: "110321004" },
+            { symptomName: "Weißer, abwischbarer Belag", schmerzen: false, symptomValue: "Candidose: Trockenes Gefühl im Mund gepaart mit stippchenartigen, weißen Belägen auf der Zunge oder Wangeninnenseite, die sich abwischen lassen.", snomedCode: "5154007" },
+            { symptomName: "Anhaltende Mundtrockenheit", schmerzen: false, symptomValue: "Mundtrockenheit: Zu geringer Speichelfluss, brennendes Gefühl auf der Zunge, Erschwerung beim Schlucken trockener Nahrung.",  snomedCode: "87715008" },
             { symptomName: "Chronisch gerötete, brennende Zunge", schmerzen: true, symptomValue: "Zungenbrennen: Missempfindungen oder brennender Schmerz auf der Zungenoberfläche ohne sichtbare Verletzung (z.B. bei Vitaminmangel).", snomedCode: "1230003" }
         ]
         },
@@ -245,11 +246,9 @@ export function getSymptomList(gender?: string) {
             { symptomName: "Knirschen/Reibegeräusche im Schultergelenk", schmerzen: false, symptomValue: "Knirschen (Krepitation): Hörbare oder spürbare Reibegeräusche im Gelenk bei kreisenden Bewegungen.", snomedCode: "289452003" },
             { symptomName: "Plötzlicher Knall mit Muskelvorwölbung", schmerzen: true, symptomValue: "Bizepssehnen-Ruptur: Plötzlicher Knall mit anschließender Vorwölbung des Muskelbauchs (Popeye-Syndrom).", snomedCode: "281630009" },
             { symptomName: "Punktueller, messerscharfer Schmerz bei Bewegung", schmerzen: true, symptomValue: "Muskelkater vs. Riss: Diffuser Druckschmerz nach Sport vs. punktueller, messerscharfer Schmerz bei Bewegung.", snomedCode: "297120005" },
-            { symptomName: "Härte, knöcherne Verdickungen an Fingergelenken", schmerzen: true, symptomValue: "Arthrose-Knoten: Harte, knöcherne Verdickungen an den Fingergelenken (Heberden- & Bouchard-Knoten).", snomedCode: "111531001"  },
             { symptomName: "Brennen, Kribbeln oder Ameisenlaufen", schmerzen: false, symptomValue: "Parästhesien: Brennen, Kribbeln oder Ameisenlaufen ohne äußeren Reiz.", snomedCode: "43214002" },
             { symptomName: "Normale Berührung wird als schmerzhaft empfunden", schmerzen: true, symptomValue: "Dysästhesie: Missempfindung: Normale Berührung wird als unangenehm oder schmerzhaft empfunden.", snomedCode: "225184000" },
             { symptomName: "Verlust der Trennung von zwei Berührungspunkten", schmerzen: false, symptomValue: "Diskriminierung: Verlust der Fähigkeit, zwei Berührungspunkte getrennt wahrzunehmen.", snomedCode: "249955000" },
-            { symptomName: "Fingernagel braucht > 2 Sek. um rosa zu werden", schmerzen: false, symptomValue: "Kapillarfüllzeit: Nach Druck auf den Nagel dauert es länger als 2 Sek., bis er wieder rosa wird.", snomedCode: "274094002" },
             { symptomName: "Unerträglicher Schmerz, Haut blass & kalt", schmerzen: true, symptomValue: "Ischämieschmerz: Unerträglicher Schmerz bei blasser, kalter Haut (Gefäßverschluss - Notfall!).", snomedCode: "274138005" }
         ]
         },
@@ -258,14 +257,11 @@ export function getSymptomList(gender?: string) {
         [
             { symptomName: "Stechender Schmerz beim seitlichen Anheben", schmerzen: true, symptomValue: "Impingement-Syndrom: Stechender Schmerz beim seitlichen Anheben des Arms (zwischen 60° und 120°).", snomedCode: "289061007" },
             { symptomName: "Starkes Schulterpochen nachts (Liegen unmöglich)", schmerzen: true, symptomValue: "Nachtschmerz: Starkes Pochen in der Schulter; Liegen auf der betroffenen Seite ist unmöglich.", snomedCode: "247351002" },
-            { symptomName: "Knirschen/Reibegeräusche im Schultergelenk", schmerzen: false, symptomValue: "Knirschen (Krepitation): Hörbare oder spürbare Reibegeräusche im Gelenk bei kreisenden Bewegungen.", snomedCode: "289452003" },
             { symptomName: "Plötzlicher Knall mit Muskelvorwölbung", schmerzen: true, symptomValue: "Bizepssehnen-Ruptur: Plötzlicher Knall mit anschließender Vorwölbung des Muskelbauchs (Popeye-Syndrom).", snomedCode: "281630009" },
             { symptomName: "Punktueller, messerscharfer Schmerz bei Bewegung", schmerzen: true, symptomValue: "Muskelkater vs. Riss: Diffuser Druckschmerz nach Sport vs. punktueller, messerscharfer Schmerz bei Bewegung.", snomedCode: "297120005" },
-            { symptomName: "Härte, knöcherne Verdickungen an Fingergelenken", schmerzen: true, symptomValue: "Arthrose-Knoten: Harte, knöcherne Verdickungen an den Fingergelenken (Heberden- & Bouchard-Knoten).", snomedCode: "111531001" },
             { symptomName: "Brennen, Kribbeln oder Ameisenlaufen", schmerzen: false, symptomValue: "Parästhesien: Brennen, Kribbeln oder Ameisenlaufen ohne äußeren Reiz.", snomedCode: "43214002" },
             { symptomName: "Normale Berührung wird als schmerzhaft empfunden", schmerzen: true, symptomValue: "Dysästhesie: Missempfindung: Normale Berührung wird als unangenehm oder schmerzhaft empfunden.", snomedCode: "225184000" },
             { symptomName: "Verlust der Trennung von zwei Berührungspunkten", schmerzen: false, symptomValue: "Diskriminierung: Verlust der Fähigkeit, zwei Berührungspunkte getrennt wahrzunehmen.", snomedCode: "249955000" },
-            { symptomName: "Fingernagel braucht > 2 Sek. um rosa zu werden", schmerzen: false, symptomValue: "Kapillarfüllzeit: Nach Druck auf den Nagel dauert es länger als 2 Sek., bis er wieder rosa wird.", snomedCode: "274094002" },
             { symptomName: "Unerträglicher Schmerz, Haut blass & kalt", schmerzen: true, symptomValue: "Ischämieschmerz: Unerträglicher Schmerz bei blasser, kalter Haut (Gefäßverschluss - Notfall!).", snomedCode: "274138005" }
         ]
         },
@@ -273,7 +269,6 @@ export function getSymptomList(gender?: string) {
         symptoms:
         [
             { symptomName: "Elektrisierende Schläge bis in den Ringfinger", schmerzen: true, symptomValue: "Sulcus-Ulnaris-Syndrom: Elektrisierende Schläge bis in den Ringfinger bei Druck auf die Ellbogen-Innenseite.", snomedCode: "230190008" },
-            { symptomName: "Rote, heiße Schwellung auf der Ellbogenspitze", schmerzen: true, symptomValue: "Bursitis (Schleimbeutel): Prall-elastische, oft rote und heiße Schwellung direkt auf der Ellbogenspitze." , snomedCode: "302302001"},
             { symptomName: "Schmerz beim kräftigen Ausdrehen der Hand", schmerzen: true, symptomValue: "Suppinationsschmerz: Schmerz beim kräftigen Ausdrehen der Hand (z. B. Schraubbewegung).", snomedCode: "443370002" },
             { symptomName: "Einschlafen der Hand nachts (Daumen/Mittelfinger)", schmerzen: false, symptomValue: "Karpaltunnelsyndrom: Einschlafen der Hand nachts (Daumen bis Mittelfinger), Schmerzlinderung durch Schütteln.", snomedCode: "51599000" },
             { symptomName: "Sichtbares Loch / flacher Daumenballen", schmerzen: false, symptomValue: "Karpaltunnel-Atrophie: Sichtbares Loch oder flacher Daumenballen durch langjährigen Nervendruck.", snomedCode: "249911005" },
@@ -293,17 +288,13 @@ export function getSymptomList(gender?: string) {
         [
             { symptomName: "Elektrisierende Schläge bis in den Ringfinger", schmerzen: true, symptomValue: "Sulcus-Ulnaris-Syndrom: Elektrisierende Schläge bis in den Ringfinger bei Druck auf die Ellbogen-Innenseite.", snomedCode: "230190008" },
             { symptomName: "Rote, heiße Schwellung auf der Ellbogenspitze", schmerzen: true, symptomValue: "Bursitis (Schleimbeutel): Prall-elastische, oft rote und heiße Schwellung direkt auf der Ellbogenspitze.", snomedCode: "302302001" },
-            { symptomName: "Schmerz beim kräftigen Ausdrehen der Hand", schmerzen: true, symptomValue: "Suppinationsschmerz: Schmerz beim kräftigen Ausdrehen der Hand (z. B. Schraubbewegung).", snomedCode: "443370002" },
             { symptomName: "Einschlafen der Hand nachts (Daumen/Mittelfinger)", schmerzen: false, symptomValue: "Karpaltunnelsyndrom: Einschlafen der Hand nachts (Daumen bis Mittelfinger), Schmerzlinderung durch Schütteln.", snomedCode: "51599000" },
             { symptomName: "Sichtbares Loch / flacher Daumenballen", schmerzen: false, symptomValue: "Karpaltunnel-Atrophie: Sichtbares Loch oder flacher Daumenballen durch langjährigen Nervendruck.", snomedCode: "249911005" },
             { symptomName: "Unfähigkeit die Hand nach oben zu strecken", schmerzen: false, symptomValue: "Fallhand: Unfähigkeit, die Hand im Handgelenk nach oben zu strecken (Radialis-Lähmung).", snomedCode: "302029007" },
-            { symptomName: "Tastbare Knoten in Innenhand (Strecken unmöglich)", schmerzen: false, symptomValue: "Dupuytren-Kontraktur: Tastbare Knoten oder Stränge in der Innenhand; Finger lassen sich nicht mehr flach auflegen.", snomedCode: "414165007" },
-            { symptomName: "Finger bleibt in Beugung hängen und schnappt", schmerzen: true, symptomValue: "Trigger-Finger: Finger bleibt in Beugung hängen und schnappt erst bei Kraftaufwand auf.", snomedCode: "59382006" },
             { symptomName: "Härte, knöcherne Verdickungen an Fingergelenken", schmerzen: true, symptomValue: "Arthrose-Knoten: Harte, knöcherne Verdickungen an den Fingergelenken (Heberden- & Bouchard-Knoten).", snomedCode: "111531001" },
             { symptomName: "Brennen, Kribbeln oder Ameisenlaufen", schmerzen: false, symptomValue: "Parästhesien: Brennen, Kribbeln oder Ameisenlaufen ohne äußeren Reiz." , snomedCode: "43214002" },
             { symptomName: "Normale Berührung wird als schmerzhaft empfunden", schmerzen: true, symptomValue: "Dysästhesie: Missempfindung: Normale Berührung wird als unangenehm oder schmerzhaft empfunden.", snomedCode: "225184000" },
             { symptomName: "Verlust der Trennung von zwei Berührungspunkten", schmerzen: false, symptomValue: "Diskriminierung: Verlust der Fähigkeit, zwei Berührungspunkte getrennt wahrzunehmen.", snomedCode: "249955000" },
-            { symptomName: "Fingernagel braucht > 2 Sek. um rosa zu werden", schmerzen: false, symptomValue: "Kapillarfüllzeit: Nach Druck auf den Nagel dauert es länger als 2 Sek., bis er wieder rosa wird.", snomedCode: "274094002" },
             { symptomName: "Unerträglicher Schmerz, Haut blass & kalt", schmerzen: true, symptomValue: "Ischämieschmerz: Unerträglicher Schmerz bei blasser, kalter Haut (Gefäßverschluss - Notfall!).", snomedCode: "274138005" }
         ]
         },
@@ -348,8 +339,8 @@ export function getSymptomList(gender?: string) {
         {step: "Brust links",
         symptoms:
         [
-            { symptomName: "Engegefühl, massiver Druck oder Brennen (Red Flag)", schmerzen: true, symptomValue: "Akuter Brustschmerz: Dumpfer, drückender oder brennender Schmerz („Elefant auf der Brust“), evtl. Ausstrahlung in Arm/Kiefer (Sofortiger Notfall!).", snomedCode: "29857009" },
-            { symptomName: "Atemnot / Luftnot schon im Ruhezustand (Red Flag)", schmerzen: false, symptomValue: "Ruhedyspnoe: Akut aufgetretene, schwere Atembeschwerden oder das Gefühl, nicht genug Sauerstoff zu bekommen.", snomedCode: "271825005" },
+            { symptomName: "Engegefühl, massiver Druck oder Brennen", schmerzen: true, symptomValue: "Akuter Brustschmerz: Dumpfer, drückender oder brennender Schmerz („Elefant auf der Brust“), evtl. Ausstrahlung in Arm/Kiefer (Sofortiger Notfall!).", snomedCode: "29857009" },
+            { symptomName: "Atemnot / Luftnot schon im Ruhezustand", schmerzen: false, symptomValue: "Ruhedyspnoe: Akut aufgetretene, schwere Atembeschwerden oder das Gefühl, nicht genug Sauerstoff zu bekommen.", snomedCode: "271825005" },
             { symptomName: "Stechender, atemabhängiger Brustschmerz", schmerzen: true, symptomValue: "Pleuritischer Schmerz: Schmerz verstärkt sich messerscharf beim tiefen Einatmen oder Husten.", snomedCode: "274135008" },
             { symptomName: "Herzrasen, Herzstolpern oder Aussetzer", schmerzen: false, symptomValue: "Palpitationen: Spürbar unregelmäßiger, stolpernder oder extrem beschleunigter Herzschlag im Brustkorb.", snomedCode: "80313002" },
             { symptomName: "Husten mit blutigem Schleim oder Auswurf", schmerzen: false, symptomValue: "Hämoptoe: Husten mit Beimengung von frischem Blut oder bräunlichem Auswurf.", snomedCode: "66857006" }
@@ -358,8 +349,8 @@ export function getSymptomList(gender?: string) {
         {step: "Brust rechts",
         symptoms:
         [
-            { symptomName: "Engegefühl, massiver Druck oder Brennen (Red Flag)", schmerzen: true, symptomValue: "Akuter Brustschmerz: Dumpfer, drückender oder brennender Schmerz („Elefant auf der Brust“), evtl. Ausstrahlung in Arm/Kiefer (Sofortiger Notfall!).", snomedCode: "29857009" },
-            { symptomName: "Atemnot / Luftnot schon im Ruhezustand (Red Flag)", schmerzen: false, symptomValue: "Ruhedyspnoe: Akut aufgetretene, schwere Atembeschwerden oder das Gefühl, nicht genug Sauerstoff zu bekommen.", snomedCode: "271825005" },
+            { symptomName: "Engegefühl, massiver Druck oder Brennen", schmerzen: true, symptomValue: "Akuter Brustschmerz: Dumpfer, drückender oder brennender Schmerz („Elefant auf der Brust“), evtl. Ausstrahlung in Arm/Kiefer (Sofortiger Notfall!).", snomedCode: "29857009" },
+            { symptomName: "Atemnot / Luftnot schon im Ruhezustand", schmerzen: false, symptomValue: "Ruhedyspnoe: Akut aufgetretene, schwere Atembeschwerden oder das Gefühl, nicht genug Sauerstoff zu bekommen.", snomedCode: "271825005" },
             { symptomName: "Stechender, atemabhängiger Brustschmerz", schmerzen: true, symptomValue: "Pleuritischer Schmerz: Schmerz verstärkt sich messerscharf beim tiefen Einatmen oder Husten." , snomedCode: "274135008"},
             { symptomName: "Herzrasen, Herzstolpern oder Aussetzer", schmerzen: false, symptomValue: "Palpitationen: Spürbar unregelmäßiger, stolpernder oder extrem beschleunigter Herzschlag im Brustkorb.", snomedCode: "80313002" },
             { symptomName: "Husten mit blutigem Schleim oder Auswurf", schmerzen: false, symptomValue: "Hämoptoe: Husten mit Beimengung von frischem Blut oder bräunlichem Auswurf.", snomedCode: "66857006" }
@@ -386,10 +377,10 @@ export function getSymptomList(gender?: string) {
         {step: "genitalHarnwege",
         symptoms:
         [
-            { symptomName: "Brennen oder Schmerzen beim Wasserlassen (Dysurie)", schmerzen: true, symptomValue: "Dysurie: Brennender, stechender Schmerz in der Harnröhre während oder direkt nach dem Urinieren.", snomedCode: "47826000" },
-            { symptomName: "Ständiger, starker Harndrang (Pollakisurie)", schmerzen: false, symptomValue: "Pollakisurie: Häufiges Aufsuchen der Toilette bei jeweils nur sehr geringen Urinmengen.", snomedCode: "162215003" },
+            { symptomName: "Brennen oder Schmerzen beim Wasserlassen", schmerzen: true, symptomValue: "Dysurie: Brennender, stechender Schmerz in der Harnröhre während oder direkt nach dem Urinieren.", snomedCode: "47826000" },
+            { symptomName: "Ständiger, starker Harndrang", schmerzen: false, symptomValue: "Pollakisurie: Häufiges Aufsuchen der Toilette bei jeweils nur sehr geringen Urinmengen.", snomedCode: "162215003" },
             { symptomName: "Erschwertes Wasserlassen / Abgeschwächter Harnstrahl", schmerzen: false, symptomValue: "Harnretention-Anfang: Das Wasserlassen beginnt verzögert, der Harnstrahl ist auffällig schwach oder unterbrochen.", snomedCode: "53526005" },
-            { symptomName: "Sichtbares Blut im Urin (Hämaturie)", schmerzen: false, symptomValue: "Makrohämaturie: Der Urin ist rötlich, fleischwasserfarben oder dunkelbraun verfärbt.", snomedCode: "266141005" }
+            { symptomName: "Sichtbares Blut im Urin", schmerzen: false, symptomValue: "Makrohämaturie: Der Urin ist rötlich, fleischwasserfarben oder dunkelbraun verfärbt.", snomedCode: "266141005" }
         ]
         },
         {step: "genitalSymptomeWeiblich",
@@ -398,7 +389,7 @@ export function getSymptomList(gender?: string) {
             { symptomName: "Auffälliger Ausfluss (Farbe/Geruch verändert)", schmerzen: false, symptomValue: "Pathologischer Fluor: Vermehrter Ausfluss, der gelblich, grünlich oder krümelig-weiß ist, oder fischig/unangenehm riecht.", snomedCode: "248986005" },
             { symptomName: "Starker Juckreiz oder Brennen im Intimbereich", schmerzen: false, symptomValue: "Vaginaler Juckreiz: Quälendes Jucken oder Brennen an den Schamlippen oder am Scheideneingang (z.B. Verdacht auf Pilzinfektion).", snomedCode: "248984007" },
             { symptomName: "Zwischenblutungen oder unregelmäßige Zyklen", schmerzen: false, symptomValue: "Metrorrhagie: Blutungen außerhalb der normalen Menstruation oder nach den Wechseljahren.", snomedCode: "41312005" },
-            { symptomName: "Starke Schmerzen bei der Menstruation (Dysmenorrhö)", schmerzen: true, symptomValue: "Dysmenorrhö: Krampfartige, stark einschränkende Unterleibsschmerzen während der Periode.", snomedCode: "302787002" },
+            { symptomName: "Starke Schmerzen bei der Menstruation", schmerzen: true, symptomValue: "Dysmenorrhö: Krampfartige, stark einschränkende Unterleibsschmerzen während der Periode.", snomedCode: "302787002" },
             { symptomName: "Schmerzen beim oder nach dem Geschlechtsverkehr", schmerzen: true, symptomValue: "Dyspareunie: Schmerzen im Bereich der Scheide oder tief im Unterleib bei sexueller Intimität.", snomedCode: "5080000" },
             { symptomName: "Tastbare Knoten oder Schwellung der Schamlippen", schmerzen: false, symptomValue: "Schwellung im Intimbereich: Tastbare Verhärtungen oder schmerzhafte Schwellungen (z.B. Bartholini-Zyste).", snomedCode: "248981009" }
         ]
@@ -408,7 +399,7 @@ export function getSymptomList(gender?: string) {
         [
             { symptomName: "Schwellung oder Verhärtung des Hodens (schmerzlos)", schmerzen: false, symptomValue: "Hodenschwellung: Neu aufgetretene, schmerzlose Vergrößerung oder harter Knoten im Hoden (wichtiges Abklärungssignal!).",  snomedCode: "248853005" },
             { symptomName: "Ziehender Schmerz im Hoden oder Leistenbereich", schmerzen: true, symptomValue: "Hodenbeschwerden: Dumpfer, ziehender Schmerz im Hoden, der sich beim Stehen oder Gehen verstärken kann." , snomedCode: "274140003"},
-            { symptomName: "Ausfluss aus der Harnröhre (Bonjour-Tropfen)", schmerzen: false, symptomValue: "Urethraler Ausfluss: Wässriger, schleimiger oder eitriger Ausfluss aus dem Penis außerhalb des Wasserlassens.", snomedCode: "248821008" },
+            { symptomName: "Ausfluss aus der Harnröhre", schmerzen: false, symptomValue: "Urethraler Ausfluss: Wässriger, schleimiger oder eitriger Ausfluss aus dem Penis außerhalb des Wasserlassens.", snomedCode: "248821008" },
             { symptomName: "Schmerzen oder Druckgefühl zwischen Anus und Genital", schmerzen: true, symptomValue: "Prostatitis-Verdacht: Schmerzen im Dammbereich, oft ausstrahlend in den unteren Rücken oder Hoden.", snomedCode: "248843003" },
             { symptomName: "Rötung, Juckreiz oder Belag auf Eichel/Vorhaut", schmerzen: false, symptomValue: "Balanitis: Entzündung der Eichel mit Juckreiz, Rötung oder weißen, trockenen Belägen.", snomedCode: "266112002" }
         ]
@@ -426,10 +417,10 @@ export function getSymptomList(gender?: string) {
         {step: "genitalWarnsignale",
         symptoms:
         [
-            { symptomName: "Plötzlicher, extremer Hodenschmerz (Notfall!)", schmerzen: true, symptomValue: "Hoden-Red-Flag: Akut einsetzender, unerträglicher Schmerz in einem Hoden (Verdacht auf Hodentorsion - sofortiger Notfall bei biologisch männlich).", snomedCode: "274140003" },
+            { symptomName: "Plötzlicher, extremer Hodenschmerz", schmerzen: true, symptomValue: "Hoden-Red-Flag: Akut einsetzender, unerträglicher Schmerz in einem Hoden (Verdacht auf Hodentorsion - sofortiger Notfall bei biologisch männlich).", snomedCode: "274140003" },
             { symptomName: "Vollständige Harnsperre (Unfähigkeit zu urinieren)", schmerzen: true, symptomValue: "Akuter Harnverhalt: Trotz extremer, schmerzhafter Drangbeschwerden kann kein Urin abgegeben werden (Akuter Notfall!).", snomedCode: "28442001" },
-            { symptomName: "Schmerzhafte Dauererektion > 4 Std. (Priapismus)", schmerzen: true, symptomValue: "Priapismus: Schmerzhafte Erektion des Penises ohne sexuelle Stimulation (Gefahr von Gewebeschäden).", snomedCode: "30588006" },
-            { symptomName: "Akuter, heftigster Unterleibsschmerz (akutes Abdomen)", schmerzen: true, symptomValue: "Unterbauch-Katastrophe: Plötzlich einschießende, messerscharfe Unterleibsschmerzen mit harter Bauchdecke, Kreislaufschwäche oder Fieber (z.B. Verdacht auf Eileiterschwangerschaft/Zystenruptur bei biologisch weiblich).",  snomedCode: "9209005" }
+            { symptomName: "Schmerzhafte Dauererektion > 4 Std.", schmerzen: true, symptomValue: "Priapismus: Schmerzhafte Erektion des Penises ohne sexuelle Stimulation (Gefahr von Gewebeschäden).", snomedCode: "30588006" },
+            { symptomName: "Akuter, heftigster Unterleibsschmerz", schmerzen: true, symptomValue: "Unterbauch-Katastrophe: Plötzlich einschießende, messerscharfe Unterleibsschmerzen mit harter Bauchdecke, Kreislaufschwäche oder Fieber (z.B. Verdacht auf Eileiterschwangerschaft/Zystenruptur bei biologisch weiblich).",  snomedCode: "9209005" }
         ]
         },
         {step: "beineGelenke",
@@ -469,7 +460,7 @@ export function getSymptomList(gender?: string) {
         {step: "beineWarnsignale",
         symptoms:
         [
-            { symptomName: "Einseitig stark geschwollene, heiße, rote Wade (Notfall!)", schmerzen: true, symptomValue: "Thrombose-Red-Flag: Einseitige Umfangszunahme des Unterschenkels, die Haut glänzt, ist überwärmt, gerötet und schmerzt wie ein Muskelkater (Akuter Notfall!).", snomedCode: "274138005" },
+            { symptomName: "Einseitig stark geschwollene, heiße, rote Wade", schmerzen: true, symptomValue: "Thrombose-Red-Flag: Einseitige Umfangszunahme des Unterschenkels, die Haut glänzt, ist überwärmt, gerötet und schmerzt wie ein Muskelkater (Akuter Notfall!).", snomedCode: "274138005" },
             { symptomName: "Plötzlicher, unerträglicher Beinschmerz + Blässe + Kälte", schmerzen: true, symptomValue: "Akuter Arterienverschluss: Schlagartig einsetzender, heftigster Schmerz, der Fuß/das Bein wird eiskalt, blass und der Puls am Fuß ist nicht mehr tastbar (Sofortiger Notfall!).", snomedCode: "274134007" },
             { symptomName: "Lähmung / Fuß kann nicht mehr angehoben werden", schmerzen: false, symptomValue: "Peroneuslähmung / Fußheberparese: Plötzliche Unfähigkeit, die Fußspitze beim Gehen anzuheben (Schlurfender Gang / neurologisches Warnsignal).", snomedCode: "249948006"},
             { symptomName: "Schlecht heilende Wunden oder Geschwüre am Fuß", schmerzen: false, symptomValue: "Ulkus / Diabetischer Fuß: Offene, nicht abheilende Hautstellen, Gewebeveränderungen oder dunkle Flecken an den Zehen oder Fersen (besonders riskant bei Diabetes)." , snomedCode: "232353008"},
