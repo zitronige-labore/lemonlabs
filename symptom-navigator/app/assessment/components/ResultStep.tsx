@@ -1,21 +1,21 @@
 /*
-  Abschlussansicht des Assessments.
+  Final screen of the assessment.
 
-  Sie stellt die KI-Einschätzung und die erfassten Falldaten dar,
-  bietet passende nächste Schritte an und ermöglicht den Export sowie
-  den späteren Zugriff über den persönlichen Zugangscode.
+  It presents the AI assessment together with the collected case data,
+  provides appropriate next steps, and allows users to export their data
+  or access it later using their personal access code.
 */
 import { useEffect, useState } from "react";
 
-/* Gemeinsame Styles für Ergebnisbereiche, Datentabellen und Aktionen. */
+/* Shared styles for result sections, data tables, and action buttons. */
 import assessmentStyles from "../Assessment.module.css";
 
-/* Serverzugriff für den zum gespeicherten Fall gehörenden Zugangscode. */
+/* Retrieves the access code associated with the saved case from the server. */
 import { getAccessCode } from "../../actions";
-/* Erstellt die herunterladbaren TXT- und PDF-Dateien im Browser. */
+/* Generates downloadable TXT and PDF files in the browser. */
 import { downloadTxt, downloadPdf } from "../utils/exportUtils";
 
-/* Datenmodelle der vorherigen Assessment-Schritte. */
+/* Data models from the previous assessment steps. */
 import type {
   AdditionalData,
   BasisData,
@@ -27,9 +27,9 @@ import {
 } from "../utils/resultUtils";
 
 /*
-  Sämtliche Ergebnisse werden von der zentralen Ablaufsteuerung übergeben.
-  Die Komponente verändert diese Daten nicht, sondern bereitet sie nur für
-  Anzeige, Download und weitere Aktionen auf.
+  All result data is provided by the central workflow controller.
+  This component does not modify the data. It only prepares it for
+  display, export, and further user actions.
 */
 type ResultStepProps = {
   basisData: BasisData;
@@ -41,7 +41,7 @@ type ResultStepProps = {
   onGoHome: () => void;
 };
 
-/* Vereinheitlicht leere Einzelwerte und Listen für die Ergebnisdarstellung. */
+/* Displays empty values and lists consistently in the result view. */
 function displayValue(value: unknown) {
   if (Array.isArray(value)) {
     return value.length > 0 ? value.join(", ") : "Keine Angabe";
@@ -63,14 +63,14 @@ export function ResultStep({
   caseId,
   onGoHome,
 }: ResultStepProps) {
-  /* Sichtbarkeit der optional aufklappbaren Ergebnisbereiche und des Notfallhinweises. */
+/* Controls the visibility of the optional expandable sections and the emergency notice. */
   const [showSavedData, setShowSavedData] = useState(false);
   const [showAiReasoning, setShowAiReasoning] = useState(false);
   const [showEmergencyPopup, setShowEmergencyPopup] = useState(false);
   const [accessCode, setAccessCode] = useState<string | null>(null);
   const [accessCodeCopied, setAccessCodeCopied] = useState(false);
 
-  /* Optionale Verkettung hält die Ansicht auch bei unvollständigen KI-Antworten stabil. */
+/* Optional chaining keeps the view stable even if the AI response is incomplete. */
   const suspicions = aiAnswer?.assessment?.suspicions;
   const urgency = Number(aiAnswer?.assessment?.urgency);
 
@@ -84,14 +84,14 @@ export function ResultStep({
       ? additionalData.conditions
       : "Keine Angabe";
 
-  /* Lädt den Zugangscode nach, sobald ein gespeicherter Fall verfügbar ist. */
+/* Loads the access code as soon as a saved case is available. */
   useEffect(() => {
     if (caseId) {
       getAccessCode(caseId).then(setAccessCode);
     }
   }, [caseId]);
 
-  /* Gibt kurzzeitig visuelles Feedback, wenn der Zugangscode kopiert wurde. */
+/* Briefly displays visual feedback after the access code has been copied. */
   const handleCopyAccessCode = async () => {
     if (!accessCode) return;
 
@@ -104,7 +104,7 @@ export function ResultStep({
     }
   };
 
-  /* Rendert wiederkehrende Beschriftung-Wert-Paare einheitlich im Datenraster. */
+/* Renders recurring label-value pairs consistently within the data grid. */
   const renderDataRow = (
     label: string,
     value: unknown,
@@ -120,9 +120,9 @@ export function ResultStep({
   );
 
   /*
-    Symptome werden im Ablauf als JSON-Strings gespeichert. Bei älteren oder
-    fehlerhaften Einträgen bleibt durch den Fallback trotzdem der Rohtext sichtbar.
-  */
+  Symptoms are stored as JSON strings during the assessment.
+  Older or malformed entries fall back to displaying the raw text.
+*/
   const renderSymptomList = (entries: string[], kind: "text" | "selected") => {
     if (!entries.length) {
       return <strong className={assessmentStyles.dataValue}>Keine Angabe</strong>;
@@ -177,9 +177,9 @@ export function ResultStep({
     );
   };
 
-  /* Bereitet die strukturierten Medikationsangaben als lesbare Liste auf. */
+/* Formats the structured medication data as a readable list. */
   const renderMedicationList = () => {
-    if (!additionalData.medication?.length) {
+    if (!additionalData.hasMedication || !additionalData.medication?.length) {
       return <strong className={assessmentStyles.dataValue}>Keine Angabe</strong>;
     }
 
@@ -225,9 +225,10 @@ export function ResultStep({
     "https://www.google.com/maps/search/Notaufnahme+in+der+Umgebung";
 
   /*
-    Übersetzt die Dringlichkeitsstufe in eine konkrete Folgeaktion:
-    Arztsuche, Suche nach einer Notaufnahme oder unmittelbarer Notfallhinweis.
-  */
+  Maps the urgency level to an appropriate follow-up action:
+  doctor search, emergency department search, or an immediate
+  emergency notice.
+*/
   const renderUrgencyAction = () => {
     if (!urgency) return null;
 
@@ -273,9 +274,10 @@ export function ResultStep({
   };
 
   /*
-    Liest die dynamisch benannten Felder der KI-Vermutungen aus.
-    Solange keine Auswertung vorliegt, erklärt ein Platzhalter den fehlenden Inhalt.
-  */
+  Reads the dynamically named AI suspicion fields.
+  If no assessment is available, a placeholder explains why
+  no information is displayed.
+*/
   const renderSuspicions = () => {
     if (!suspicions) {
       return (
@@ -339,9 +341,10 @@ export function ResultStep({
   };
 
   /*
-    Vorbereitete Farbwerte der fünf Dringlichkeitsstufen. Die sichtbaren
-    Statusflächen werden aktuell über die stufenabhängigen CSS-Klassen gewählt.
-  */
+  Color values for the five urgency levels.
+  The visible status panels are currently selected using
+  urgency-specific CSS classes.
+*/
   let urgencyColor = "";
   if (urgency === 1) urgencyColor = "#6600FF";
   if (urgency === 2) urgencyColor = "#66CC00";
@@ -354,7 +357,7 @@ export function ResultStep({
     className={
       assessmentStyles.resultBox
       }>
-      {/* Zentrale KI-Einschätzung mit stufenabhängiger Hervorhebung und Aktion. */}
+      {/* Displays the main AI assessment with urgency-specific styling and actions. */}
       {aiAnswer?.assessment?.urgency ? (
         <div className={
           urgency === 1 ? assessmentStyles.statusPanel: 
@@ -385,7 +388,7 @@ export function ResultStep({
         <p>Die KI Auswertung ist fehlgeschlagen</p>
       )}
 
-      {/* Die medizinische Begründung bleibt zunächst eingeklappt. */}
+      {/* The medical reasoning remains collapsed until the user chooses to view it. */}
       <button
         type="button"
         className={`${assessmentStyles.secondaryButton} ${assessmentStyles.dataToggleButton}`}
@@ -410,7 +413,7 @@ export function ResultStep({
         </div>
       )}
 
-      {/* Ohne erfolgreich geladenen Code wird der Zugangsbereich nicht angezeigt. */}
+      {/* The access code section is only shown after the code has been successfully loaded. */}
       {accessCode && (
         <div className={assessmentStyles.codePanel}>
           <div>
@@ -438,7 +441,7 @@ export function ResultStep({
         Ihre Angaben wurden erfasst.
       </p>
 
-      {/* Die vollständigen Falldaten werden nur auf ausdrücklichen Wunsch eingeblendet. */}
+      {/* The complete case data is only displayed when explicitly requested by the user. */}
       <button
         type="button"
         className={`${assessmentStyles.secondaryButton} ${assessmentStyles.dataToggleButton}`}
@@ -516,7 +519,7 @@ export function ResultStep({
             </div>
           </section>
 
-          {/* Beide Exportformate verwenden dieselbe zentral aufbereitete Datenstruktur. */}
+          {/* Both export formats use the same centrally prepared data structure. */}
           <div className={assessmentStyles.dataActions}>
             <button
               type="button"
@@ -536,7 +539,7 @@ export function ResultStep({
         </div>
       )}
 
-      {/* Stufe 5 verlangt vor dem direkten Anruf einen unübersehbaren Notfallhinweis. */}
+      {/* Urgency level 5 requires a clearly visible emergency notice before initiating a direct emergency call. */}
       {showEmergencyPopup && (
         <div
           style={{
@@ -598,7 +601,7 @@ export function ResultStep({
 
       <hr className={assessmentStyles.dataDivider} />
 
-      {/* Beendet den Assessment-Ablauf und kehrt zur Startansicht zurück. */}
+      {/* ends assesment und takes user back to starting page */}
       <button
         type="button"
         className={assessmentStyles.continueButton}

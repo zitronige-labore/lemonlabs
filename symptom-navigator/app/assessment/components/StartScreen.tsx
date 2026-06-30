@@ -1,41 +1,42 @@
 import { useState } from "react";
 
 /*
-  Styles und Typen für die Startseite.
+  Styles and types used by the start page.
 
-  Die Startseite verwendet die Home-Styles,
-  weil sie außerhalb des Assessment-Formularlayouts angezeigt wird.
+  The start page uses the Home styles because it is displayed
+  outside the assessment form layout.
 */
 import homeStyles from "../../Home.module.css";
 import type { Step } from "../../types/assessment";
 
 /*
-  Modal für den direkten Zugriff auf Notfallinformationen.
+  Modal providing quick access to emergency information.
 */
 import { SosModal } from "./SosModal";
 
 /*
-  Eigenschaften der StartScreen-Komponente.
+  Props for the StartScreen component.
 
   onStartAssessment:
-  Wechselt in den Hinweis- beziehungsweise Assessment-Ablauf.
+  Starts the information page and assessment flow.
 
   resetProcess:
-  Löscht vorherige Eingaben, damit ein neuer Durchlauf
-  nicht mit alten Daten startet.
+  Clears previous input so a new assessment
+  always starts with a clean state.
 
   setStep:
-  Navigiert zu Startseiten-Bereichen wie "Andere Anliegen"
-  oder Datenschutz.
+  Navigates to other start page sections such as
+  "Andere Anliegen" or the privacy page.
 
   isOffline:
-  Entscheidet, ob die Online- oder Offline-Variante der Startseite
-  angezeigt wird.
+  Determines whether the online or offline version
+  of the start page is displayed.
 
   setStartFormOffline:
-  Merkt, ob die Ersteinschätzung im eingeschränkten Offline-Modus
-  begonnen wurde.
+  Stores whether the assessment was started
+  in offline mode.
 */
+
 type StartScreenProps = {
   onStartAssessment: () => void;
   resetProcess: () => void;
@@ -51,17 +52,17 @@ export function StartScreen({
   setStartFormOffline,
   isOffline,
 }: StartScreenProps) {
-  /*
-    Speichert, ob das SOS-Modal auf der Startseite geöffnet ist.
+   /*
+    Tracks whether the SOS modal is open and saves it.
   */
   const [showSos, setShowSos] = useState(false);
 
   return (
     <>
-      {/* Hauptbereich der Startseite mit Logo und Einstiegsauswahl */}
+      {/* Main start page section with branding and entry options. */}
       <div className={homeStyles.hauptbox}>
         <div className={homeStyles.kopfbox}>
-          {/* Kopfbereich mit Produktname und Branding */}
+          {/* Header containing the product name and branding. */}
           <div className={homeStyles.header}>
             <h1 className={homeStyles.title}>Symptometer</h1>
 
@@ -70,12 +71,12 @@ export function StartScreen({
             </h2>
           </div>
 
-          {/* Auswahl der möglichen Startaktionen */}
+          {/* Available actions on the start page. */}
           <div className={homeStyles.buttonBox}>
             {/*
-              Online-Modus:
-              Die vollständige Ersteinschätzung und weitere Anliegen
-              sind verfügbar.
+              Online mode:
+              The full assessment and additional services
+              are available.
             */}
             {!isOffline && (
               <>
@@ -83,9 +84,9 @@ export function StartScreen({
                   type="button"
                   className={`${homeStyles.primaryButton} ${homeStyles.startActionButton}`}
                   onClick={() => {
-                    /*
-                      Alte Angaben werden vor dem Start gelöscht,
-                      damit der neue Durchlauf sauber beginnt.
+                       /*
+                      Clear any previous data before starting
+                      a new assessment.
                     */
                     onStartAssessment();
                     resetProcess();
@@ -104,14 +105,19 @@ export function StartScreen({
               </>
             )}
 
-            {/*
-              Offline-Modus:
-              Der Ablauf wird eingeschränkt gestartet, weil serverbasierte
-              Funktionen nicht zuverlässig verfügbar sind.
+             {/*
+              Offline mode:
+              The workflow is limited because server-based
+              features are not available.
             */}
             {isOffline && (
               <>
-                <p>Hier Offline Hinweise oder Buttons einfügen</p>
+                <p className={homeStyles.offlineNotices}>
+                Offline kann keine umfangreicher Einschätzung von Symptomen erfolgen. <br></br>
+                Falls ein Notfall vorliegt wählen Sie die 112 oder nutzen Sie den SOS Button. <br></br>
+                Falls Sie nicht Wissen, ob es sich um einen Notfall handelt, können Sie unter “Warnzeichen erkennen” einige Notfallsituationen feststellen. <br></br>
+                Falls unter “Warnzeichen erkennen” Ihre Situation nicht vorliegt rufen Sie den Ärztlichen Notdienst unter der Nummer 116117 an. <br></br>
+                </p>
 
                 <button
                   type="button"
@@ -119,9 +125,9 @@ export function StartScreen({
                   onClick={() => {
                     onStartAssessment();
                     resetProcess();
-                    /*
-                      Nur die Warnzeichenprüfung wird vorbereitet.
-                      Danach soll kein vollständiges Offline-Formular starten.
+                     /*
+                      Only prepare the red flag check.
+                      A complete offline assessment should not start.
                     */
                     setStartFormOffline(false)
                   }}
@@ -135,9 +141,10 @@ export function StartScreen({
                   onClick={() => {
                     onStartAssessment();
                     resetProcess();
-                    /*
-                      Merkt den Offline-Start, damit spätere Schritte
-                      den eingeschränkten Ablauf berücksichtigen können.
+                     /*
+                      Store that the assessment was started
+                      in offline mode so later steps can
+                      follow the limited workflow.
                     */
                     setStartFormOffline(true)
                   }}
@@ -150,7 +157,7 @@ export function StartScreen({
         </div>
       </div>
 
-      {/* Schnellzugriff auf Notfallhilfe, unabhängig vom gewählten Startpfad */}
+      {/* Emergency help is always available, regardless of the selected entry path. */}
       <button
         type="button"
         onClick={() => setShowSos(true)}
@@ -160,16 +167,16 @@ export function StartScreen({
         SOS
       </button>
 
-      {/* Notfall-Modal der Startseite */}
+      {/* SOS modal displayed from the start page. */}
       <SosModal isOpen={showSos} onClose={() => setShowSos(false)} />
 
-      {/* Fußzeile mit Startseiten-Navigation */}
+      {/* Footer containing navigation links. */}
       <footer className={homeStyles.footer}>
         <button type="button" className={homeStyles.footerLink} onClick={() => setStep("kontakt")}>
           Kontakt
         </button>
 
-        {/* Datenschutz ist als eigener Schritt im Startseitenbereich eingebunden */}
+        {/* The privacy page is implemented as a separate application step. */}
         <button type="button" className={homeStyles.footerLink}onClick={() => setStep("datenschutz")}>
           Datenschutz
         </button>

@@ -63,7 +63,7 @@ test("Datenabruf und -löschung über Zugriffscode", async ({ page }) => {
   await expect(page.getByText("männlich")).toBeVisible();
   await expect(page.getByText("Alter")).toBeVisible();
   await expect(page.getByText("33", { exact: true })).toBeVisible();
-  await expect(page.getByText("Heiserkeit: Rauigkeit, behauchte Stimme, Wegbrechen der Stimme")).toBeVisible();
+  await expect(page.getByText("Heiserkeit: Rauigkeit, behauchte Stimme")).toBeVisible();
 
   // 8. Daten löschen
   await page.getByRole("button", { name: "Löschen" }).click();

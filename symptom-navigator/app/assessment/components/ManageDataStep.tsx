@@ -1,25 +1,25 @@
 /*
-  Verwaltung bereits gespeicherter Assessment-Daten.
+  Management of previously stored assessment data.
 
-  Über einen persönlichen Zugriffscode können Falldaten und die zugehörige
-  KI-Auswertung abgerufen, dargestellt, exportiert oder vollständig gelöscht werden.
+  Using a personal access code, users can retrieve, display, export,
+  or permanently delete case data and its associated AI assessment.
 */
 import { useState } from "react";
 
-/* Gemeinsame Styles für Datenbereiche, Formulare und Ergebnislisten. */
+/* Shared styles for data sections, forms, and result lists. */
 import assessmentStyles from "../Assessment.module.css";
 
-/* Serveraktionen für Abruf und Löschung der zum Zugriffscode gehörenden Daten. */
+/* Server actions for retrieving and deleting data associated with an access code. */
 import {
   accessAiDataWithAccessCode,
   accessDataWithAccessCode,
   deleteDataOnAccessCode,
 } from "../../actions";
-/* Typ der zentralen Seitennavigation. */
+/* Type for the central page navigation. */
 import type { Step } from "../../types/assessment";
-/* Übersetzt codierte Datenbankwerte in lesbare deutsche Angaben. */
+/* Converts encoded database values into readable German labels. */
 import { makeDBDataReadable } from "../utils/assessmentData";
-/* Gemeinsame Exportfunktionen und ihr erwartetes Datenformat. */
+/* Shared export functions and their expected data format. */
 import {
   downloadPdf,
   downloadTxt,
@@ -27,15 +27,15 @@ import {
 } from "../utils/exportUtils";
 
 /*
-  Navigationswerte werden von der Hauptseite übergeben, sind in der aktuellen
-  Darstellung aber noch nicht direkt erforderlich.
+  Navigation values are provided by the main page but are not yet
+  directly required in the current view.
 */
 type ManageDataStepProps = {
   step: Step;
   setStep: (step: Step) => void;
 };
 
-/* Vereinheitlicht leere Werte und Listen für die Anzeige in den Datenzeilen. */
+/* Normalizes empty values and lists for display in data rows. */
 function displayValue(value: unknown) {
   if (Array.isArray(value)) {
     return value.length > 0 ? value.join(", ") : "Keine Angabe";
@@ -49,27 +49,28 @@ function displayValue(value: unknown) {
 }
 
 export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
-  /* Getrennte Zustände für medizinische Falldaten und die optionale KI-Auswertung. */
-  const [data, setData] = useState<any | null>(null);
+/* Separate state for medical case data and the optional AI assessment. */  const [data, setData] = useState<any | null>(null);
   const [aiData, setAiData] = useState<any | null>(null);
 
-  /* Eingabe-, Validierungs- und Rückmeldungszustände des Zugriffscode-Formulars. */
+  /* Input, validation, and feedback state for the access code form. */
   const [code, setCode] = useState("");
   const [codeError, setCodeError] = useState("");
   const [lastDeleted, setLastDeleted] = useState<string>("")
 
-  /* Zugriffscodes werden als UUID gespeichert und vor der Serveranfrage formal geprüft. */
+  /* Access codes are stored as UUIDs and validated for format before the server request. */
   const uuidPattern =
     /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-  /* Für Nutzer schwer lesbare Datenbankwerte werden zentral aufbereitet. */
+  /* Converts hard-to-read database values into user-friendly representations. */
   const [geschlecht, schwangerschaft, stillzeit, worsening, medication] =
     makeDBDataReadable(data);
 
   /*
-    Führt die verteilten Datenbankergebnisse in das gemeinsame Exportformat zusammen.
-    Fehlende Teilbereiche erhalten dieselben Fallbacks wie in der sichtbaren Ansicht.
-  */
+   Combines the distributed database results into a shared export format.
+ 
+   Missing sections receive the same fallback values as shown
+   in the displayed result view.
+ */
   function buildExportData(): AssessmentExportData {
     return {
       alter: data?.caseData?.[0]?.age || "Keine Angabe",
@@ -89,7 +90,7 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
       dauer: data?.additionalInfoData?.[0]?.duration
         ? `${data.additionalInfoData[0].duration} Tage`
         : "Keine Angabe",
-      medikation: medication.join(", ") || "Keine Angabe",
+      medikation: medication?.join(", ") || "Keine Angabe",
       allergien: data?.allergyData?.allergies?.join(", ") || "Keine Angabe",
       vorerkrankungen:
         data?.conditionsData?.conditions?.join(", ") || "Keine Angabe",
@@ -118,16 +119,15 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
     };
   }
 
-  /* Rendert wiederkehrende Beschriftung-Wert-Paare einheitlich im Datenraster. */
+  /* Renders recurring label-value pairs consistently within the data grid. */
   const renderDataRow = (
     label: string,
     value: unknown,
     wide = false,
   ) => (
     <div
-      className={`${assessmentStyles.dataRow} ${
-        wide ? assessmentStyles.dataRowWide : ""
-      }`}
+      className={`${assessmentStyles.dataRow} ${wide ? assessmentStyles.dataRowWide : ""
+        }`}
     >
       <span className={assessmentStyles.dataLabel}>{label}</span>
       <strong className={assessmentStyles.dataValue}>{displayValue(value)}</strong>
@@ -135,9 +135,12 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
   );
 
   /*
-    Stellt strukturierte oder frei formulierte Symptome mit Region und Schmerzskala dar.
-    textSymptom wählt dabei das passende Beschriftungsfeld des Datenbankobjekts.
-  */
+   Displays structured and free-text symptoms together with
+   their body region and pain scale.
+ 
+   The textSymptom flag selects the appropriate label field
+   from the database object.
+ */
   const renderSymptomList = (
     symptoms: any[] | undefined,
     textSymptom = false,
@@ -183,9 +186,9 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
     );
   };
 
-  /* Gibt die zuvor lesbar aufbereiteten Medikationsangaben als Liste aus. */
+  /* Displays the previously formatted medication entries as a list. */
   const renderMedicationList = () => {
-    if (!medication.length) {
+    if (!medication.name) {
       return <strong className={assessmentStyles.dataValue}>Keine Angabe</strong>;
     }
 
@@ -201,9 +204,11 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
   };
 
   /*
-    Lädt zuerst die Falldaten. Nur bei einem Treffer wird anschließend auch
-    die getrennt gespeicherte KI-Auswertung für denselben Code angefordert.
-  */
+   First retrieves the medical case data.
+ 
+   Only if matching data is found, the separately stored AI assessment
+   is requested using the same access code.
+ */
   const handleFetchData = async () => {
     const result = await accessDataWithAccessCode(code);
 
@@ -223,8 +228,7 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
     <div className={assessmentStyles.resultBox}>
       <p className={assessmentStyles.selectedText}>Datenverwaltung</p>
 
-      {/* Zugriffscode eingeben, prüfen und für Abruf oder Löschung verwenden. */}
-      <div className={assessmentStyles.dataPanel}>
+      {/* Enter, validate, and use the access code to retrieve or delete stored data. */}      <div className={assessmentStyles.dataPanel}>
         <div className={assessmentStyles.dataHeader}>
           <div>
             <p className={assessmentStyles.dataTitle}>Zugriffscode</p>
@@ -240,8 +244,7 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
             placeholder="Code hier eingeben"
             className={assessmentStyles.input}
             onChange={(event) => {
-              /* Leerzeichen entfernen und nur die formale UUID-Struktur validieren. */
-              const value = event.target.value.trim();
+            /* Remove whitespace and validate only the UUID format. */              const value = event.target.value.trim();
               setCode(value);
 
               if (value === "") {
@@ -263,12 +266,11 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
           >
             Abrufen
           </button>
-          {/* Die Löschaktion behandelt auch fehlgeschlagene Serveranfragen kontrolliert. */}
-          <button
+          {/* The delete action also handles failed server requests gracefully. */}          <button
             type="button"
             className={assessmentStyles.secondaryButton}
             onClick={async () => {
-              let deletion:boolean;
+              let deletion: boolean;
               try {
                 deletion = await deleteDataOnAccessCode(code)
               }
@@ -276,10 +278,10 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
                 deletion = false
               }
 
-              if(deletion) {
+              if (deletion) {
                 setLastDeleted(code)
               }
-              else{
+              else {
                 setLastDeleted("Löschung fehlgeschlagen")
               }
             }}
@@ -295,8 +297,7 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
         </div>
       </div>
 
-      {/* Ergebnisbereiche erscheinen erst nach einem erfolgreichen Datenabruf. */}
-      {data && (
+      {/* Result sections are displayed only after data has been successfully retrieved. */}      {data && (
         <div className={assessmentStyles.dataPanel}>
           <div className={assessmentStyles.dataHeader}>
             <div>
@@ -307,8 +308,7 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
             </div>
           </div>
 
-          {/* Allgemeine Falldaten einschließlich des Erfassungszeitpunkts. */}
-          <section className={assessmentStyles.dataSection}>
+          {/* General case information, including the date and time of data collection. */}          <section className={assessmentStyles.dataSection}>
             <p className={assessmentStyles.dataSectionTitle}>Basisdaten</p>
             <div className={assessmentStyles.dataGrid}>
               {renderDataRow("Geschlecht", geschlecht)}
@@ -327,8 +327,7 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
             </div>
           </section>
 
-          {/* Strukturierte Auswahl und selbst beschriebene Beschwerden getrennt anzeigen. */}
-          <section className={assessmentStyles.dataSection}>
+          {/* Display structured symptom selections and free-text complaints separately. */}          <section className={assessmentStyles.dataSection}>
             <p className={assessmentStyles.dataSectionTitle}>Beschwerden</p>
             <div className={assessmentStyles.dataGrid}>
               <div className={`${assessmentStyles.dataRow} ${assessmentStyles.dataRowWide}`}>
@@ -339,12 +338,12 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
                 <span className={assessmentStyles.dataLabel}>
                   Selbst beschriebene Beschwerden
                 </span>
-                {renderSymptomList(data.textSymptomData, true)}
+                {renderSymptomList(data.textSymptomData)}
               </div>
             </div>
           </section>
 
-          {/* Ergänzende Gesundheits- und Lebensstilinformationen. */}
+          {/* Additional health and lifestyle information. */}
           <section className={assessmentStyles.dataSection}>
             <p className={assessmentStyles.dataSectionTitle}>Zusatzangaben</p>
             <div className={assessmentStyles.dataGrid}>
@@ -403,7 +402,7 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
             </div>
           </section>
 
-          {/* Die KI-Einschätzung ist optional und wird nur bei vorhandenen Daten gezeigt. */}
+          {/* The AI assessment is optional and displayed only if corresponding data exists. */}
           {aiData?.[0] && (
             <section className={assessmentStyles.dataSection}>
               <p className={assessmentStyles.dataSectionTitle}>KI-Einschätzung</p>
@@ -413,8 +412,7 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
                 <div className={`${assessmentStyles.dataRow} ${assessmentStyles.dataRowWide}`}>
                   <span className={assessmentStyles.dataLabel}>Vermutungen</span>
                   <ul className={assessmentStyles.dataList}>
-                    {/* Die Datenbank reserviert bis zu fünf nummerierte Vermutungen. */}
-                    {[1, 2, 3, 4, 5].map((index) => {
+                    {/* The database reserves space for up to five numbered diagnostic suspicions. */}                    {[1, 2, 3, 4, 5].map((index) => {
                       const suspicion = aiData[0][`suspicion${index}`];
                       const probability = aiData[0][`probability${index}`];
                       if (!suspicion) return null;
@@ -452,8 +450,7 @@ export function ManageDataStep({ step, setStep }: ManageDataStepProps) {
             </section>
           )}
 
-          {/* PDF und TXT basieren auf derselben normalisierten Exportstruktur. */}
-          <div className={assessmentStyles.dataActions}>
+          {/* PDF and TXT exports are both generated from the same normalized export structure. */}          <div className={assessmentStyles.dataActions}>
             <button
               type="button"
               className={assessmentStyles.secondaryButton}

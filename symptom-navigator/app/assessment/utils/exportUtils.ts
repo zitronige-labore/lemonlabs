@@ -1,6 +1,11 @@
+/*
+functions for building pdf and txt download
+*/
+
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
+// all necessary data for building the file
 export type AssessmentExportData = {
   alter: string;
   geschlecht: string;
@@ -24,6 +29,11 @@ export type AssessmentExportData = {
   vermutungen: { text: string; wahrscheinlichkeit: string }[];
 };
 
+/**
+ * builds txt format
+ * @param d: AssessmentExportData
+ * @returns string
+ */
 export function formatAssessmentTxt(d: AssessmentExportData): string {
   const rows: string[] = [];
 
@@ -41,7 +51,12 @@ export function formatAssessmentTxt(d: AssessmentExportData): string {
     rows.push(`Schwangerschaft: ${d.schwangerschaft}`);
     rows.push(`Stillzeit: ${d.stillzeit}`);
   }
-  rows.push(`Medikation: ${d.medikation}`);
+  if (d.medikation.length > 0) {
+    rows.push(`Medikation: ${d.medikation}`);
+  }
+  else {
+    rows.push("Medikation: Keine Angabe");
+  }
   rows.push(`Allergien: ${d.allergien || "Keine Angabe"}`);
   rows.push(`Vorerkrankungen: ${d.vorerkrankungen.length > 0 ? d.vorerkrankungen : "Keine Angabe"}`);
   rows.push(`Alkoholkonsum (Getränke/Woche): ${d.alkoholkonsum || "Keine Angabe"}`);
@@ -66,6 +81,12 @@ export function formatAssessmentTxt(d: AssessmentExportData): string {
   return rows.join("\n");
 }
 
+
+/**
+ * initiates download
+ * @param d: AssessmentExportData
+ * @returns void
+ */
 export function downloadTxt(d: AssessmentExportData) {
   const text = formatAssessmentTxt(d);
   const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
@@ -77,6 +98,12 @@ export function downloadTxt(d: AssessmentExportData) {
   URL.revokeObjectURL(url);
 }
 
+
+/**
+ * builds pdf format
+ * @param d: AssessmentExportData
+ * @returns string[][]
+ */
 export function formatAssessmentPdfTable(d: AssessmentExportData): string[][] {
   const tableBody: string[][] = [];
 
@@ -84,7 +111,12 @@ export function formatAssessmentPdfTable(d: AssessmentExportData): string[][] {
   tableBody.push(["Geschlecht", d.geschlecht]);
   tableBody.push(["Größe", d.groesse]);
   tableBody.push(["Gewicht", d.gewicht]);
-  tableBody.push(["Medikation", d.medikation]);
+  if (d.medikation.length > 0) {
+    tableBody.push(["Medikation", d.medikation]);
+  }
+  else {
+    tableBody.push(["Medikation", "Keine Angabe"]);
+  }
   tableBody.push(["Allergien", d.allergien || "Keine Angabe"]);
   tableBody.push(["Vorerkrankungen", d.vorerkrankungen.length > 0 ? d.vorerkrankungen : "Keine Angabe"]);
   tableBody.push(["Alkoholkonsum (Getränke/Woche)", d.alkoholkonsum || "Keine Angabe"]);
@@ -109,6 +141,11 @@ export function formatAssessmentPdfTable(d: AssessmentExportData): string[][] {
   return tableBody;
 }
 
+/**
+ * initiates download
+ * @param d: AssessmentExportData
+ * @returns void
+ */
 export function downloadPdf(d: AssessmentExportData) {
   const tableBody = formatAssessmentPdfTable(d);
 

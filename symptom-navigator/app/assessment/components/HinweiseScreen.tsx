@@ -1,28 +1,29 @@
 /*
-  Verbindliche Hinweis-Seite vor Beginn der medizinischen Ersteinschätzung.
+  Mandatory information screen before starting the medical initial assessment.
 
-  Sie grenzt die Anwendung von Diagnose und Beratung ab, weist auf akute
-  Notfälle hin und verlangt eine bewusste Bestätigung vor der Red-Flag-Prüfung.
+  It clearly distinguishes the application from medical diagnosis and advice,
+  highlights acute emergencies, and requires explicit confirmation before the
+  red flag screening begins.
 */
 import { useState } from "react";
 
-/* Gemeinsame Styles für Startseite, Hinweise, Navigation und Notfallzugriff. */
+/* Shared styles for the start page, information, navigation, and emergency access. */
 import homeStyles from "../../Home.module.css";
 
-/* Wiederverwendbarer Dialog mit direktem Telefon-Link zur 112. */
+/* Reusable modal with a direct phone link to the emergency number (112). */
 import { SosModal } from "./SosModal";
 
 /*
-  Eigenschaften der Hinweis-Seite.
+  Properties of the information screen.
 
   hinweiseBestaetigt / setHinweiseBestaetigt:
-  Lesen und aktualisieren die Bestätigung im zentralen Zustand der Hauptseite.
+  Read and update the confirmation state stored in the application's central state.
 
   onBack:
-  Führt ohne Start des Assessments zur Startseite zurück.
+  Returns to the home page without starting the assessment.
 
   onContinue:
-  Öffnet nach der Bestätigung als Nächstes die medizinische Warnzeichen-Prüfung.
+  Opens the medical warning signs (red flag) screening after confirmation.
 */
 type HinweiseScreenProps = {
   hinweiseBestaetigt: boolean;
@@ -52,15 +53,15 @@ export function HinweiseScreen({
   onOpenKontakt,
   onOpenSupport,
 }: HinweiseScreenProps) {
-  /* Das SOS-Modal ist ein rein lokaler UI-Zustand dieser Seite. */
+  /* The SOS modal is a local UI state used only on this screen. */
   const [showSos, setShowSos] = useState(false);
 
   return (
     <>
-      {/* Eigenständige Hinweisansicht im Layout der Startseite. */}
+      {/* Standalone information screen using the home page layout. */}
       <div className={homeStyles.hauptbox}>
         <div className={homeStyles.kopfbox}>
-          {/* Produktkopf zur eindeutigen Zuordnung vor Beginn des Ablaufs. */}
+          {/* Product header for clear identification before the assessment starts. */}
           <div className={homeStyles.header}>
             <h1 className={homeStyles.title}>Symptometer</h1>
 
@@ -69,7 +70,7 @@ export function HinweiseScreen({
             </h2>
           </div>
 
-          {/* Zweck und medizinische Grenzen der Anwendung klar voneinander trennen. */}
+          {/* Clearly communicate the purpose and medical limitations of the application. */}
           <p className={homeStyles.warningText}>
             Diese Anwendung unterstützt Sie nur bei einer ersten Einschätzung
             Ihrer Beschwerden.
@@ -79,7 +80,7 @@ export function HinweiseScreen({
             Sie ersetzt keine ärztliche Diagnose und keine medizinische Beratung.
           </p>
 
-          {/* Akute Warnzeichen haben immer Vorrang vor der digitalen Ersteinschätzung. */}
+          {/* Emergency warning signs always take priority over the digital assessment. */}
           <div className={homeStyles.notrufBox}>
             Bei akuten Beschwerden wie Atemnot, Bewusstlosigkeit oder starken
             Brustschmerzen wählen Sie sofort den Notruf 112.
@@ -117,7 +118,7 @@ export function HinweiseScreen({
             </span>
           </label>
 
-          {/* Fortfahren ist erst nach ausdrücklicher Bestätigung möglich. */}
+          {/* Continuing is only possible after explicit confirmation. */}
           <div className={homeStyles.buttonBox}>
             <button
               type="button"
@@ -138,7 +139,7 @@ export function HinweiseScreen({
         </div>
       </div>
 
-      {/* Der Notruf bleibt unabhängig von der Bestätigung direkt erreichbar. */}
+      {/* Emergency access remains available regardless of confirmation. */}
       <button
         type="button"
         onClick={() => setShowSos(true)}
@@ -148,10 +149,10 @@ export function HinweiseScreen({
         SOS
       </button>
 
-      {/* Das Modal wird erst bei Bedarf inhaltlich sichtbar. */}
+      {/* The modal content is only displayed when needed. */}
       <SosModal isOpen={showSos} onClose={() => setShowSos(false)} />
 
-      {/* Derzeit rein visuelle Fußzeilen-Einträge ohne hinterlegte Navigation. */}
+      {/* Footer entries are currently visual only and have no navigation assigned yet. */}
       <footer className={homeStyles.footer}>
         <button type="button" className={homeStyles.footerLink} onClick={onOpenKontakt}>
           Kontakt

@@ -1,28 +1,28 @@
 /*
-  Gemeinsamer Formularrahmen für alle Schritte der medizinischen Ersteinschätzung.
+  Shared form layout for all steps of the medical self assessment.
 
-  Das Layout hält wechselnde Schrittinhalte in einem einzigen Formular,
-  zeigt den erreichten Fortschritt und stellt die gemeinsame Fußzeile bereit.
+  The layout keeps all step content inside a single form,
+  displays the current progress, and provides the shared footer.
 */
 
-/* ReactNode erlaubt beliebige React-Inhalte als aktuellen Assessment-Schritt. */
+// ReactNode allows any React content to be rendered as the current assessment step.
 import type { ReactNode } from "react";
 
-/* Styles für Formularkarte, Fortschrittsanzeige und Fußzeile. */
+// Styles for the form card, progress bar, and footer.
 import assessmentStyles from "../Assessment.module.css";
 
 /*
-  Eigenschaften der AssessmentLayout-Komponente.
+  Props for the AssessmentLayout component.
 
   children:
-  Der von der Hauptseite ausgewählte aktuelle Assessment-Schritt.
+  The currently selected assessment step provided by the main page.
 
   onSubmit:
-  Verarbeitet den verbindlichen Abschluss des gesamten Assessments.
+  Handles the final submission of the complete assessment.
 
   progress:
-  Prozentwert für den Fortschrittsbalken. Die Hauptseite berücksichtigt dabei
-  auch den höchsten bereits erreichten Stand, damit Rücksprünge ihn nicht verkürzen.
+  Percentage value for the progress bar. The main page also keeps track of
+  the highest completed progress so it does not decrease when navigating back.
 */
 type AssessmentLayoutProps = {
   children: ReactNode;
@@ -34,7 +34,7 @@ type AssessmentLayoutProps = {
   onOpenSupport: () => void;
 };
 
-/* Präsentationskomponente ohne eigenen Zustand oder eigene Ablaufentscheidung. */
+// Presentation component without its own state or navigation logic.
 export function AssessmentLayout({
   children,
   onSubmit,
@@ -47,16 +47,16 @@ export function AssessmentLayout({
   return (
     <>
       {/*
-        Ein gemeinsames Formular verbindet alle dynamisch eingesetzten Schritte.
-        Abgesendet wird es erst durch den Submit-Button der abschließenden Prüfansicht.
+        A single shared formular wraps all dynamically rendered steps.
+        It is submitted only by the submit button in the final review step.
       */}
       <form 
       className={assessmentStyles.card} 
       onSubmit={onSubmit}
       onKeyDown={(event) => {
           /*
-            Enter darf in normalen Eingabefeldern keinen vorzeitigen Abschluss auslösen.
-            In Textareas bleibt die Taste für beabsichtigte Zeilenumbrüche verfügbar.
+            Prevent the Enter key from submitting the formular in regular input fields.
+            Textareas still allow Enter for intended line breaks.
           */
           if (
             event.key === "Enter" &&
@@ -68,7 +68,7 @@ export function AssessmentLayout({
       >
         <h1 className={assessmentStyles.title}>Ersteinschätzung</h1>
 
-        {/* Die Füllbreite wird aus dem zentral berechneten Prozentwert abgeleitet. */}
+        {/* The progress bar width is based on the calculated percentage value. */}
         <div className={assessmentStyles.progressContainer}>
           <div className={assessmentStyles.progressTrack}>
             <div
@@ -78,13 +78,13 @@ export function AssessmentLayout({
           </div>
         </div>
 
-        {/* Platz für genau den Schritt, den die zentrale Ablaufsteuerung aktiviert. */}
+        {/*Renders the assessment step selected by the central navigation logic. */}
         {children}
       </form>
 
       {/*
-        Einheitliche Fußzeile des Assessment-Bereichs.
-        Die Einträge sind derzeit rein visuell und besitzen noch keine Aktionen.
+        Shared footer for the assessment section.
+        The buttons are currently visual placeholders without functionality.
       */}
       <footer className={assessmentStyles.footer}>
         <button type="button" className={assessmentStyles.footerLink} onClick={onOpenKontakt}>

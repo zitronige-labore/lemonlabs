@@ -1,41 +1,43 @@
 /*
-  Import der CSS-Module für den Assessment-Bereich.
+  Import the CSS module used by the assessment views.
 */
 import assessmentStyles from "../Assessment.module.css";
 
 /*
-  useState wird für die lokale Freitexteingabe,
-  die optionale Schmerzskala und die Schmerz-Auswahl benötigt.
+  useState is used for the local symptom text,
+  the optional pain scale, and the pain selection.
 */
 import { useState } from "react";
 
 /*
-  Import der benötigten Typdefinitionen.
+  Import the required type definitions.
 
   SubRegion:
-  Ausgewählte Unterregion der Körperkarte
+  The selected body map subregion.
 */
 import type {
   SubRegion,
 } from "../../types/assessment";
 
 /*
-  Eigenschaften der SymptomTextInputStep-Komponente.
+  Props for the SymptomTextInputStep component.
 
   selectedSubRegion:
-  Die zuletzt ausgewählte Unterregion der Körperkarte.
-  Sie wird zusammen mit dem Freitext gespeichert.
+  The most recently selected body map subregion.
+  It is stored together with the symptom description.
 
   symptomText:
-  Bereits gespeicherte Freitextsymptome.
-  Der Wert wird hier nicht direkt gerendert, bleibt aber Teil
-  der Schnittstelle zum zentralen Assessment-State.
+  Previously saved free-text symptoms.
+  The value is not rendered here directly but remains
+  part of the shared assessment state.
 
   addSymptomText:
-  Übergibt den neu formulierten Freitext an page.tsx.
+  Passes the newly entered symptom description
+  to page.tsx.
 
   onContinue:
-  Wechselt nach dem Speichern zum nächsten Schritt.
+  Navigates to the next assessment step
+  after the symptom has been saved.
 */
 type SymptomTextInputStepProps = {
   selectedSubRegion: SubRegion | null;
@@ -48,8 +50,8 @@ type SymptomTextInputStepProps = {
 };
 
 /*
-  Dieser Schritt ermöglicht die eigentliche Eingabe
-  der Beschwerden.
+  This step allows the user to describe
+  their symptoms in free text.
 */
 export function SymptomTextInputStep({
   selectedSubRegion,
@@ -59,33 +61,34 @@ export function SymptomTextInputStep({
 }: SymptomTextInputStepProps) {
 
   /*
-    Speichert den aktuell eingegebenen Freitext,
-    bevor er in die zentrale Symptomliste übernommen wird.
-  */
+  Stores the currently entered symptom description
+  before it is added to the central symptom list.
+*/
   const [currentText, setCurrentText] = useState("");
 
-  /*
-    Speichert die optionale Schmerzstärke.
+   /*
+    Stores the optional pain intensity.
 
-    Der Wert kommt vom Range-Input als String,
-    kann aber fachlich als Zahl verstanden werden.
+    The value comes from the range input as a string,
+    but conceptually represents a numeric value.
   */
   const [painscale, setPainscale] = useState<string | number>();
 
   /*
-    Steuert, ob die zusätzliche Schmerzskala eingeblendet wird.
+    Controls whether the pain scale
+    is displayed.
   */
   const [isPainSymptom, setIsPainSymptom] = useState(false);
 
   return (
     <>
-      {/* Anzeige der ausgewählten Unterregion */}
+      {/* Display the selected body region. */}
       <p className={assessmentStyles.text}>
         Ausgewählte Region:{" "}
         <strong>{selectedSubRegion}</strong>
       </p>
 
-      {/* Formularbereich für Beschwerden */}
+      {/* Symptom input formular. */}
       <fieldset className={assessmentStyles.fieldset}>
         <legend className={assessmentStyles.legend}>
           Beschwerden
@@ -103,13 +106,13 @@ export function SymptomTextInputStep({
             maxLength={1000}
           />
 
-          {/* Anzeige der aktuellen Zeichenanzahl */}
+          {/* Display the current character count. */}
           <span className={assessmentStyles.characterCounter}>
             {currentText.length}/1000 Zeichen
           </span>
         </label>
 
-        {/* Optionale Einordnung, ob die freie Beschwerde Schmerzen enthält */}
+        {/* Optional indication whether the symptom involves pain. */}
         <label className={assessmentStyles.label}>
           <input
             type="checkbox"
@@ -123,10 +126,10 @@ export function SymptomTextInputStep({
 
         {isPainSymptom && (
           /*
-            Schmerzskala nur anzeigen, wenn der Freitext
-            als Schmerzsymptom markiert wurde.
+            Show the pain scale only if the symptom
+            has been marked as pain.
           */
-           <fieldset className={assessmentStyles.fieldset}>
+          <fieldset className={assessmentStyles.fieldset}>
             <legend className={assessmentStyles.legend}>
               Schmerzstärke
             </legend>
@@ -148,18 +151,18 @@ export function SymptomTextInputStep({
             <p className={assessmentStyles.sliderHint}>
               0 = kein Schmerz · 10 = stärkster vorstellbarer Schmerz
             </p>
-            </fieldset>
+          </fieldset>
         )}
 
-        {/* Speichert den Freitext mit Region und optionaler Schmerzstärke */}
+        {/* Save the symptom together with the selected region and optional pain scale. */}
         <button
           type="button"
           className={assessmentStyles.primaryButton}
           onClick={() => {
             /*
-              Der Freitext wird als JSON-ähnlicher String gespeichert,
-              weil CheckInfo, ResultStep und Datenverwaltung diese Struktur
-              später wieder auslesen.
+              The symptom is stored as a JSON-like string because
+              CheckInfo, ResultStep, and the data management view
+              later read and parse the same structure.
             */
             addSymptomText(
               `{"text_symptom":"${currentText}","bodyregion":"${selectedSubRegion}","painscale":${isPainSymptom ? painscale ?? null : null}}`
