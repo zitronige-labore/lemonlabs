@@ -1,43 +1,43 @@
 /*
-  Erster medizinischer Prüfschritt des Assessments.
+  First medical screening step of the assessment.
 
-  Akute Warnzeichen unterbrechen den normalen Ablauf und führen zum
-  Notfallhinweis. Nur wenn ausdrücklich kein Warnzeichen vorliegt,
-  kann die reguläre Ersteinschätzung fortgesetzt werden.
+  Acute warning signs interrupt the normal workflow and lead to the
+  emergency notice. The assessment can only continue if the user
+  explicitly confirms that no warning signs are present.
 */
 import { useState } from "react";
 
-/* Gemeinsame Styles für Formular, Warnhinweis und Aktionen. */
+/* Shared styles for the form, emergency notice, and action buttons. */
 import assessmentStyles from "../Assessment.module.css";
 
-/* Bestätigungsdialog vor dem direkten Anruf der Notrufnummer. */
+/* Confirmation dialog before directly calling the emergency number. */
 import { SosModal } from "./SosModal";
 
-/* Typen für die Warnzeichen und die zentrale Schrittnavigation. */
+/* Types for warning signs and the central step navigation. */
 import type { RedFlags, Step } from "../../types/assessment";
 
-/* Zentrale Konfiguration der auswählbaren Warnzeichen und ihrer Beschriftungen. */
-import { redFlagCheckboxes} from "../medicalLogic/redFlagCheckboxes";
+/* Central configuration for the available warning signs and their labels. */
+import { redFlagCheckboxes } from "../medicalLogic/redFlagCheckboxes";
 
 /*
-  Eigenschaften des Red-Flag-Schritts.
+  Props for the Red Flags step.
 
   redFlags / noRedFlags:
-  Enthalten die aktuelle Auswahl. Beide Zustände schließen sich durch
-  die Aktualisierungsfunktionen der übergeordneten Seite gegenseitig aus.
+  Store the current selection. The parent component ensures that both
+  states are mutually exclusive through its update functions.
 
   hasEmergency:
-  Zeigt an, ob mindestens eines der Warnzeichen ausgewählt wurde.
+  Indicates whether at least one warning sign has been selected.
 
   isOffline / startFormOffline:
-  Unterscheiden einen bewusst offline begonnenen Ablauf von einem
-  Verbindungsverlust während einer ursprünglich online gestarteten Prüfung.
+  Distinguish between an assessment that was intentionally started
+  offline and one that lost its internet connection after starting online.
 
   updateRedFlag / selectNoRedFlags:
-  Aktualisieren die zentral gespeicherten Antworten.
+  Update the centrally stored responses.
 
   onContinue / setStep:
-  Führen regulär zum nächsten Assessment-Schritt oder zurück zur Startseite.
+  Continue to the next assessment step or return to the start page.
 */
 type RedFlagsStepProps = {
   redFlags: RedFlags;
@@ -69,18 +69,20 @@ export function RedFlagsStep({
   setStep,
   isOffline,
 }: RedFlagsStepProps) {
-  /* Steuert den SOS-Dialog, ohne den zentralen Assessment-Zustand zu verändern. */
+  /* Controls the SOS dialog without changing the central assessment state. */
   const [showSos, setShowSos] = useState(false);
 
   /*
-    Merkt die bewusste Interaktion mit "Keines davon trifft zu".
-    Dies ermöglicht bei einem zwischenzeitlichen Verbindungsverlust die Rückkehr.
-  */
+   Tracks whether the user explicitly selected "Keines davon trifft zu".
+
+   This allows the assessment to return safely if the connection
+   is lost during the process.
+ */
   const [specificallyNoEmergency, setSpecificallyNoEmergency] = useState(false);
 
   return (
     <>
-      {/* Die Warnzeichen werden vor allen weiteren Gesundheitsdaten abgefragt. */}
+      {/* Warning signs are checked before collecting any other health information. */}
       <p className={assessmentStyles.text}>
         Bitte prüfen Sie zuerst, ob akute Warnzeichen vorliegen.
       </p>
@@ -90,7 +92,7 @@ export function RedFlagsStep({
           Warnzeichen
         </legend>
 
-        {/* Die zentrale Liste hält Datenmodell und angezeigte Auswahl synchron. */}
+        {/* The central configuration keeps the data model and displayed options in sync. */}
         {redFlagCheckboxes.map(({ key, label }) => (
           <label key={key} className={assessmentStyles.label}>
             <input
@@ -102,12 +104,12 @@ export function RedFlagsStep({
           </label>
         ))}
 
-        {/* Eine eindeutige Negativauswahl ist Voraussetzung für das Fortfahren. */}
+        {/* An explicit negative selection is required before continuing. */}
         <label className={assessmentStyles.label}>
           <input
             type="checkbox"
             checked={noRedFlags}
-            onChange={(event) =>{
+            onChange={(event) => {
               selectNoRedFlags(event.target.checked);
               setSpecificallyNoEmergency(true);
             }}
@@ -116,7 +118,7 @@ export function RedFlagsStep({
         </label>
       </fieldset>
 
-      {/* Jedes ausgewählte Warnzeichen stoppt den normalen Assessment-Ablauf. */}
+      {/* Any selected warning sign interrupts the normal assessment flow. */}
       {hasEmergency && (
         <div className={assessmentStyles.emergencyBox}>
           <h2 className={assessmentStyles.emergencyTitle}>
@@ -137,13 +139,13 @@ export function RedFlagsStep({
         </div>
       )}
 
-      {/* Der eigentliche Telefon-Link liegt im wiederverwendbaren SOS-Modal. */}
+      {/* The actual phone link is provided by the reusable SOS modal. */}
       <SosModal
         isOpen={showSos}
         onClose={() => setShowSos(false)}
       />
 
-      {/* Online oder bewusst offline gestartet: regulär zum nächsten Schritt. */}
+      {/* Continue normally if online or if the assessment was intentionally started offline. */}
       {!hasEmergency && (!isOffline || startFormOffline) && (
         <button
           type="button"
@@ -155,8 +157,9 @@ export function RedFlagsStep({
         </button>
       )}
       {/*
-        Bricht die Prüfung kontrolliert ab, wenn die Verbindung erst nach einem
-        Online-Start verloren ging und keine servergestützte Fortsetzung möglich ist.
+        Ends the assessment in a controlled way if the connection
+        was lost after an online start and a server-based continuation
+        is no longer possible.
       */}
       {!hasEmergency && isOffline && specificallyNoEmergency && !startFormOffline && (
         <button

@@ -1,28 +1,28 @@
 /*
-  Eigenständige Datenschutzerklärung der Anwendung.
+  Standalone privacy policy page of the application.
 
-  Sie informiert über Art, Zweck und Dauer der Datenverarbeitung sowie über
-  Weitergabe und Betroffenenrechte. Die Seite liegt bewusst außerhalb des
-  eigentlichen Assessment-Formulars und verändert keine Gesundheitsdaten.
+  Explains how personal data is collected, processed, stored, and shared.
+  This page is intentionally separated from the assessment flow and does not
+  modify any health-related data.
 */
 
-/* Wiederverwendete Karten-, Typografie- und Button-Styles des Assessments. */
+// Reuses the shared assessment styles
 import assessmentStyles from "../Assessment.module.css";
 
-/* Rücksprung zur Startseite als einzige Interaktion dieser Informationsseite. */
+//returning to home page
 type DatenschutzStepProps = {
   onBack: () => void;
 };
 
-/* Reine Darstellungskomponente ohne lokalen Zustand oder Formulareingaben. */
+// Displays the application's privacy policy
 export function DatenschutzStep({ onBack }: DatenschutzStepProps) {
   return (
     <div className={assessmentStyles.card}>
-      {/* Eindeutige Überschrift für den separat aufgerufenen Startseitenbereich. */}
+      {/* Main heading of the privacy policy page. */}
       <h1>Datenschutzerklärung</h1>
 
-      
-      {/* Umfang der erhobenen Angaben und Rechtsgrundlage ihrer Verarbeitung. */}
+
+      {/* Describes the collected data */}
       <h2>1. Welche Daten wir erheben</h2>
       <p>
         Es werden keine persönlichen Identifikationsdaten erhoben. Es ist
@@ -42,7 +42,7 @@ export function DatenschutzStep({ onBack }: DatenschutzStepProps) {
         ausdrücklichen Einwilligung (Art. 9 Abs. 2 lit. a DSGVO).
       </p>
 
-      {/* Medizinische Grenzen der Anwendung und Vorrang professioneller Hilfe. */}
+      {/* Explains the medical limitations of the assessment */}
       <h2>3. Hinweis zur Ersteinschätzung</h2>
       <p>
         Diese Anwendung dient ausschließlich einer unverbindlichen
@@ -54,7 +54,7 @@ export function DatenschutzStep({ onBack }: DatenschutzStepProps) {
         Rettungsdienst (112).
       </p>
 
-      {/* Technische Zuordnung, Speicherdauer und mögliche externe Verarbeitung. */}
+      {/* Explains how data is stored, retained, and shared with third parties. */}
       <h2>4. Nutzung ohne Konto</h2>
       <p>
         Die Nutzung dieser Anwendung ist ohne Registrierung und ohne
@@ -75,7 +75,7 @@ export function DatenschutzStep({ onBack }: DatenschutzStepProps) {
         erfolgt nicht, soweit keine gesetzliche Verpflichtung besteht.
       </p>
 
-      {/* Rechte der betroffenen Personen und Möglichkeit einer Beschwerde. */}
+      {/* Lists the user's data protection rights. */}
       <h2>7. Ihre Rechte</h2>
       <p>
         Sie haben das Recht auf Auskunft, Berichtigung, Löschung,
@@ -90,7 +90,7 @@ export function DatenschutzStep({ onBack }: DatenschutzStepProps) {
         über die Verarbeitung Ihrer personenbezogenen Daten zu beschweren.
       </p>
 
-      {/* Beendet die Informationsansicht und öffnet wieder die Startseite. */}
+      {/* Returns to the home page. */}
       <div className={assessmentStyles.buttonGroup}>
         <button
           type="button"

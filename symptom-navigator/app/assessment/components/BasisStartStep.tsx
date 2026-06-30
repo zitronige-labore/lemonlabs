@@ -1,35 +1,34 @@
 /*
-  Erfasst die grundlegenden Personendaten zu Beginn des Assessments.
+  Collects the user's basic personal information at the beginning of the assessment.
 
-  Alter und Geschlecht werden immer abgefragt. Eine Schwangerschaft kann
-  zusätzlich angegeben werden, wenn sie anhand der Geschlechtsauswahl relevant
-  oder nicht sicher auszuschließen ist.
+  Age and gender are always required. Pregnancy can be provided additionally
+  if it is relevant based on the selected gender or cannot be ruled out.
 */
 
-/* Gemeinsame Styles für Formularfelder, Validierung und Navigation. */
+/* Shared styles for form fields, validation, and navigation. */
 import assessmentStyles from "../Assessment.module.css";
 
-/* Datenmodell der Basisangaben und Typ der zentralen Schrittnavigation. */
+/* Data model for the basic information and the assessment step type. */
 import type { BasisData, Step } from "../../types/assessment";
 
-/* Lokaler Zustand für die unmittelbare Validierungsrückmeldung. */
+/* Local state for immediate validation feedback. */
 import { useState } from "react";
 
 
 /*
-  Eigenschaften der BasisStartStep-Komponente.
+  Properties for the BasisStartStep component.
 
   basisData:
-  Enthält die aktuell eingegebenen Basisdaten
+  Contains the currently entered basic information.
 
   setBasisData:
-  Aktualisiert die kontrollierten Eingaben im zentralen Zustand.
+  Updates the controlled input values stored in the shared state.
 
   onContinue:
-  Führt im regulären Ablauf zur Auswahl der Körperregion.
+  Continues to the body region selection during the normal workflow.
 
   checkInfoActive / setStep:
-  Ermöglichen nach einer Korrektur den direkten Rücksprung zur Prüfansicht.
+  Allows returning directly to the review step after editing the data.
 */
 type BasisStartStepProps = {
   basisData: BasisData;
@@ -39,7 +38,7 @@ type BasisStartStepProps = {
   setStep: (step: Step) => void;
 };
 
-/* Formularschritt für Alter, Geschlecht und gegebenenfalls Schwangerschaft. */
+//Form step for entering age, gender, and pregnancy if applicable.
 export function BasisStartStep({
   basisData,
   setBasisData,
@@ -47,23 +46,23 @@ export function BasisStartStep({
   checkInfoActive,
   setStep
 }: BasisStartStepProps) {
-  /* Bleibt leer, solange das Alter eine ganze Zahl zwischen 0 und 120 ist. */
+  /* Remains empty as long as the age is a whole number between 0 and 120. */
   const [ageError, setAgeError] = useState("");
 
   return (
     <>
-      {/* Kurze Einordnung vor den kontrollierten Basisdatenfeldern. */}
+      {/* Brief introduction before the basic information fields. */}
       <p className={assessmentStyles.text}>
         Bitte machen Sie zuerst einige allgemeine Angaben.
       </p>
 
-      {/* Zusammengehörige allgemeine Angaben als eigener Formularbereich. */}
+      {/* Groups all general information into a separate formular section. */}
       <fieldset className={assessmentStyles.fieldset}>
         <legend className={assessmentStyles.legend}>
           Allgemeine Angaben
         </legend>
 
-        {/* Textfeld für den Rohwert; inputMode öffnet auf Mobilgeräten die Zahlentastatur. */}
+        {/* Uses a text field while inputMode opens the numeric keyboard on mobile devices. */}
         <label className={assessmentStyles.formLabel}>
           Alter
 
@@ -73,7 +72,7 @@ export function BasisStartStep({
             inputMode="numeric"
             value={basisData.age}
             onChange={(event) => {
-              /* Eingabe unverändert zentral speichern und numerisch validieren. */
+              /* Stores the raw input value and validates it as a number. */
               const value = event.target.value;
 
 
@@ -81,7 +80,7 @@ export function BasisStartStep({
                 ...basisData,
                 age: value,
               });
-
+              //validates wether age is an integer between 0 and 120 
               const age = Number(value);
               if (
                 value === "" ||
@@ -104,7 +103,7 @@ export function BasisStartStep({
 
         </label>
 
-        {/* Die Geschlechtsauswahl steuert zugleich die Schwangerschaftsabfrage. */}
+        {/* The selected gender also determines whether the pregnancy field is shown. */}
         <label className={assessmentStyles.formLabel}>
           Geschlecht
 
@@ -117,13 +116,13 @@ export function BasisStartStep({
                 gender: event.target.value,
 
                 /*
-                  Eine vorhandene Schwangerschaftsangabe bleibt nur erhalten,
-                  solange die gewählte Option die Zusatzfrage weiterhin anzeigt.
+                  Keeps the current pregnancy value only if the selected
+                  gender still requires the additional question.
                 */
                 pregnancy:
                   event.target.value === "weiblich" ||
-                  event.target.value === "divers" ||
-                  event.target.value === "keine Angabe"
+                    event.target.value === "divers" ||
+                    event.target.value === "keine Angabe"
                     ? basisData.pregnancy
                     : "",
               })
@@ -137,16 +136,17 @@ export function BasisStartStep({
           </select>
         </label>
 
-        {/*
-          Zusätzliche Auswahl zur Schwangerschaft.
+        { /*
+          Additional pregnancy selection.
 
-          Sie wird bei "weiblich", "divers" oder der Auswahl "Keine Angabe"
-          angezeigt; im aktuellen Pflichtschema ist sie nur bei "weiblich" zwingend.
+          It is shown for the options "weiblich", "divers", and
+          "keine Angabe". In the current validation logic,
+          it is only mandatory when "female" is selected.
         */}
         {(
           basisData.gender === "weiblich" ||
           basisData.gender === "divers" ||
-          basisData.gender === "keine Angabe" 
+          basisData.gender === "keine Angabe"
         ) && (
             <label className={assessmentStyles.formLabel}>
               Schwangerschaft
@@ -170,7 +170,7 @@ export function BasisStartStep({
           )}
       </fieldset>
 
-      {/* Im normalen Ablauf führt der Schritt anschließend zur Körperkarte. */}
+      {/* Continues to the body map during the normal assessment workflow. */}
       {!checkInfoActive && (
         <>
           <button
@@ -179,8 +179,8 @@ export function BasisStartStep({
             onClick={onContinue}
 
             /*
-              Nur vollständige Pflichtangaben und ein gültiges Alter erlauben
-              die Navigation in den nächsten regulären Assessment-Schritt.
+              Navigation to the next step is only possible if all required
+              fields are completed and the age is valid.
             */
             disabled={
               !basisData.age ||
@@ -195,7 +195,7 @@ export function BasisStartStep({
         </>
       )}
 
-      {/* Im Korrekturmodus wird der restliche lineare Ablauf übersprungen. */}
+      {/* Skips the remaining workflow and returns to the review step. */}
       {checkInfoActive && (
         <button
           type="button"

@@ -1,28 +1,29 @@
 /*
-  Blockierende Ladeanzeige während der abschließenden Assessment-Verarbeitung.
+  Blocking loading screen shown while the assessment is being processed.
 
-  Die Hauptseite blendet sie ein, solange Falldaten verarbeitet und die
-  KI-Auswertung angefordert wird. Sichtbarkeit und Lebenszyklus werden deshalb
-  vollständig außerhalb dieser Komponente gesteuert.
+  The main page displays this component while the case data is processed
+  and the AI evaluation is requested. Therefore, its visibility and lifecycle
+  are completely controlled by the parent component.
 */
 import type { Step } from "../../types/assessment";
 
-/* Wiederverwendete Overlay-, Dialog- und Spinner-Styles der Home-Ansichten. */
+/* Reusable overlay, dialog, and spinner styles shared across the home screens. */
 import homeStyles from "../../Home.module.css";
 import { X } from "@phosphor-icons/react";
 
 
 /*
-  Reine Darstellungskomponente ohne Props oder eigenen Zustand.
-  Durch das Entfernen aus dem Komponentenbaum endet auch die Spinner-Animation.
+  Pure presentation component without props or internal state.
+  The loading animation stops automatically when this component
+  is removed from the component tree.
 */
 export function LoadingPopup() {
 
   return (
-    /* Das Overlay hält die laufende Auswertung als aktuellen Fokus der Ansicht sichtbar. */
+    /* Keeps the ongoing AI evaluation as the current focus of the interface. */
     <div className={homeStyles.tutorialOverlay}>
       <div className={homeStyles.loadingPopup}>
-        {/* Der Spinner ist dekorativ; der folgende Text vermittelt den Ladestatus. */}
+        {/* The spinner is decorative; the text below communicates the loading status. */}
         <div className={homeStyles.loadingSpinner} aria-hidden="true" />
         <p className={homeStyles.loadingText}>KI-Antwort wird geladen...</p>
       </div>

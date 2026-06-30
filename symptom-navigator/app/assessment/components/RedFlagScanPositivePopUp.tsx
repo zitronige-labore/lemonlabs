@@ -1,25 +1,26 @@
 /*
-  Notfall-Modal für einen positiven automatischen Red-Flag-Scan.
+  Emergency dialog shown when the automatic Red Flag scan detects
+  one or more critical warning signs.
 
-  Anders als die Warnzeichen-Abfrage zu Beginn reagiert diese Komponente
-  auf kritische Kombinationen in den vollständig erfassten Beschwerden
-  und zeigt die vom Scan ermittelten Gründe an.
+  Unlike the initial Red Flag questionnaire, this component reacts
+  to the user's completed assessment and displays the reasons
+  identified by the scan.
 */
 
-/* Wiederverwendete Styles für Overlay, Notfallhinweis und Aktionsbuttons. */
+/* Reusable styles for the overlay, emergency message, and action buttons. */
 import homeStyles from "../../Home.module.css";
 
 /*
-  Eigenschaften des Scan-Ergebnis-Modals.
+  Props for the Red Flag result dialog.
 
   redFlagScanResult:
-  Enthält die medizinischen Warnhinweise, die den Scan ausgelöst haben.
+  Contains the medical warning signs that triggered the scan result.
 
   isOpen:
-  Steuert, ob der Notfallhinweis sichtbar ist.
+  Controls whether the emergency dialog is visible.
 
   onClose:
-  Schließt das Modal, wenn kein direkter Anruf gestartet werden soll.
+  Closes the dialog when the user chooses not to call emergency services.
 */
 type RedFlagPositivePopUpProps = {
   redFlagScanResult: string[];
@@ -28,22 +29,22 @@ type RedFlagPositivePopUpProps = {
 };
 
 /*
-  Zeigt die erkannten Warnsignale und bietet einen direkten Telefon-Link
-  zur Notrufnummer 112 an.
+  Displays the detected warning signs and provides a direct
+  phone link to the emergency number (112).
 */
 export function RedFlagPositivePopUp({ redFlagScanResult, isOpen, onClose }: RedFlagPositivePopUpProps) {
-  /* Im geschlossenen Zustand bleiben Overlay und Dialog vollständig aus dem DOM. */
+  /* Keep the dialog out of the DOM while it is closed. */
   if (!isOpen) return null;
 
   return (
-    /* Das Overlay legt den Notfallhinweis deutlich über den laufenden Assessment-Ablauf. */
+    /* Displays the emergency dialog above the current assessment. */
     <div className={homeStyles.sosModalOverlay}>
       <div className={homeStyles.sosModalBox}>
         <h2 className={homeStyles.emergencyTitleModal}>Ein Warnsignal wurde erkannt</h2>
         
         <p className={homeStyles.sosInstruction}>
           diese Angaben haben dazu gefuehrt: <br></br>
-          {/* Jeder vom Scan zurückgegebene Auslöser wird separat aufgeführt. */}
+          {/* Display each warning returned by the Red Flag scan separately. */}
           {redFlagScanResult.map((reason, index) => (
             <span key={index}>{reason}<br /></span>
           ))}
@@ -60,12 +61,12 @@ export function RedFlagPositivePopUp({ redFlagScanResult, isOpen, onClose }: Red
         </p>
 
         <div className={homeStyles.buttonBox}>
-          {/* Öffnet auf unterstützten Geräten direkt die Telefon-App mit der 112. */}
+          {/* Opens the phone app with 112 on supported devices. */}
           <a href="tel:112" className={homeStyles.emergencyButton}>
             112 anrufen
           </a>
           
-          {/* Schließt nur den Hinweis; die erfassten Assessment-Daten bleiben erhalten. */}
+          {/* Closes the dialog without deleting the assessment data. */}
           <button
             type="button"
             className={homeStyles.secondaryButton}
