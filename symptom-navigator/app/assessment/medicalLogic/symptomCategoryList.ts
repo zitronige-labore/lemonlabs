@@ -45,7 +45,7 @@ export function getSymptomCategoryList(gender: string) {
         categories: [
           { category: "Spannung & Druck im Kopf", step: "kopfSpannung" },
           { category: "Migräne & Pulsieren", step: "kopfMigraene" },
-          { category: "Cluster-Schmerz & Bohren", step: "kopfCluster" },
+          { category: "Cluster-Schmerz: extrem heftige, (einseitige) Schmerzattacken", step: "kopfCluster" },
           { category: "Begleiterscheinungen (Kopf)", step: "kopfBegleitung" },
           { category: "Dringende Warnsignale (Kopf)", step: "kopfWarnsignale" }
         ]
