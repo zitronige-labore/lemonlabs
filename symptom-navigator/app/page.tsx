@@ -77,10 +77,6 @@ export default function Home() {
   */
   const [step, setStep] = useState<Step>("start");
   const [highestAssessmentProgress, setHighestAssessmentProgress] = useState(0);
-  const [datenschutzReferer, setDatenschutzReferer] = useState<Step>("start");
-  const [impressumReferer, setImpressumReferer] = useState<Step>("start");
-  const [kontaktReferer, setKontaktReferer] = useState<Step>("start");
-  const [supportReferer, setSupportReferer] = useState<Step>("start");
 
   // saves case ID
   const [caseId, setCaseId] = useState("")
@@ -316,26 +312,6 @@ export default function Home() {
 
   // replaces setStep so the browser history gets update while setting the step
   function goToStep(nextStep: Step) {
-    if (nextStep === "datenschutz") {
-      if (stepRef.current !== "datenschutz") {
-        setDatenschutzReferer(stepRef.current);
-      }
-    }
-    if (nextStep === "impressum") {
-      if (stepRef.current !== "impressum") {
-        setImpressumReferer(stepRef.current);
-      }
-    }
-    if (nextStep === "kontakt") {
-      if (stepRef.current !== "kontakt") {
-        setKontaktReferer(stepRef.current);
-      }
-    }
-    if (nextStep === "support") {
-      if (stepRef.current !== "support") {
-        setSupportReferer(stepRef.current);
-      }
-    }
     stepRef.current = nextStep;
     history.pushState({ step: nextStep }, "", "#" + nextStep);
     setHighestAssessmentProgress((previousProgress) =>
@@ -713,19 +689,19 @@ export default function Home() {
       )}
       {/* Datenschutzerklärung */}
       {step === "datenschutz" && (
-        <DatenschutzStep onBack={() => goToStep(datenschutzReferer)} />
+        <DatenschutzStep onBack={() => window.history.back()} />
       )}
       {/* Impressum */}
       {step === "impressum" && (
-        <ImpressumStep onBack={() => goToStep(impressumReferer)} />
+        <ImpressumStep onBack={() => window.history.back()} />
       )}
       {/* Kontakt */}
       {step === "kontakt" && (
-        <KontaktStep onBack={() => goToStep(kontaktReferer)} />
+        <KontaktStep onBack={() => window.history.back()} />
       )}
       {/* Support */}
       {step === "support" && (
-        <SupportStep onBack={() => goToStep(supportReferer)} />
+        <SupportStep onBack={() => window.history.back()} />
       )}
       {/* Alle Schritte der eigentlichen Ersteinschätzung */}
       {step !== "start" && step !== "hinweise" && step !== "manageData" && step !== "other" && step !== "datenschutz" && step !== "impressum" && step !== "kontakt" && step !== "support" && (
