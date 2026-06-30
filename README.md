@@ -13,7 +13,7 @@ Wir arbeiten zum coden auf dem branch develop
 [https://lemonlabs-plum.vercel.app/](https://lemonlabs-git-develop-lemoblabs-ba86c8a6.vercel.app)
 
 # Anweisungen hosten
-## ohne Docker
+ohne Docker:
 Vorraussetzungen: kein ARM Prozessor, node.js, postgres installiert mit lemonlabd_db und testlemonlabs_db (setup siehe unten)  
 .env muss mit korrektem Passwort und Username eingefügt werden, bsp.:  
   
@@ -30,7 +30,7 @@ MEDGEMMA_API_URL=http://141.19.140.104:4000/v1/chat/completions
 MEDGEMMA_API_KEY=api key hier  
 MEDGEMMA_API_MODEL=medgemma:27b   
 
-## mit Docker:
+mit Docker:
 Vorraussetzungen:  
 Docker installiert, bei Windows WSL 
 
