@@ -6,7 +6,8 @@ Bitte keine gemeinsamen Textdateien ändern, ohne Absprache mit dem Team.
 Am bestenn vor Ort, wenn nicht Anwesend Vorschläge bitte auf Discord in "änderungsvorschläge".
 
 # Hinweis zum Code
-Wir arbeiten zum coden auf dem branch develop
+Wir arbeiten zum coden auf dem branch develop  
+der next-root-folder (unten mehrfach erwaehnt) ist symptom-navigator
 
 # Unser Link zum Ausprobieren  
 (nur UI, DB und AI Verbindung funktionieren hier nicht)  
@@ -14,7 +15,7 @@ Wir arbeiten zum coden auf dem branch develop
 
 # Anweisungen hosten
 ### ohne Docker:
-Vorraussetzungen: kein ARM Prozessor, node.js, postgres installiert mit lemonlabd_db und testlemonlabs_db (setup siehe unten)  
+Vorraussetzungen: kein ARM Prozessor, node.js, postgres installiert mit lemonlabs_db und testlemonlabs_db (setup siehe unten)  
 .env muss mit korrektem Passwort und Username eingefügt werden, bsp.:  
   
 \# Connection URL 
