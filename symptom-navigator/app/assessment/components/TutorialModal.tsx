@@ -20,6 +20,8 @@ type TutorialModalProps = {
   isOpen: boolean;
   onClose: () => void;
   currentStep: Step;
+  isOffline?: boolean;
+  startFormOffline?: boolean;
 };
 
 /*
@@ -282,6 +284,44 @@ const tutorialContentByStep: Partial<Record<Exclude<Step, null>, TutorialContent
       "Bei Verschlechterung oder Unsicherheit medizinische Hilfe kontaktieren.",
     ],
   },
+  // English: Help content for the newly added legal and support pages
+  datenschutz: {
+    title: "Datenschutzerklärung",
+    description:
+      "Hier findest du alle Informationen zur sicheren Verarbeitung deiner Gesundheitsdaten.",
+    steps: [
+      "Wir verarbeiten deine medizinischen Angaben vertraulich und verschlüsselt.",
+      "Deine Gesundheitsdaten werden ausschließlich nach deiner ausdrücklichen Einwilligung verarbeitet.",
+      "Die gespeicherten Daten werden nach 7 Tagen automatisch gelöscht, sofern du sie nicht manuell entfernst.",
+    ],
+  },
+  impressum: {
+    title: "Impressum",
+    description: "Die gesetzliche Anbieterkennzeichnung der Symptometer-Plattform.",
+    steps: [
+      "Hier findest du Angaben zum Betreiber der Plattform (Klinikum Musterstadt GmbH).",
+      "Angaben zur Geschäftsführung, zur zuständigen Aufsichtsbehörde und zum Handelsregister.",
+      "Verantwortliche Personen für redaktionelle Inhalte.",
+    ],
+  },
+  kontakt: {
+    title: "Kontakt",
+    description: "Möglichkeiten zur direkten Kontaktaufnahme mit dem Klinikum.",
+    steps: [
+      "Hier findest du die Anschrift und die Telefonnummer des Klinikums Musterstadt.",
+      "Nutze diese Kontaktdaten für allgemeine Anfragen an das Klinikum.",
+      "Bei technischen Problemen oder Fragen zum Symptometer nutze bitte die Support-Seite.",
+    ],
+  },
+  support: {
+    title: "Support & Hilfe",
+    description: "Unterstützung bei technischen Fragen oder Problemen mit dem Symptometer.",
+    steps: [
+      "Schreibe uns eine E-Mail an support.symptometer@klinik-musterstadt.de für technische Unterstützung.",
+      "Der technische Support ist Montag bis Freitag von 08:00 bis 16:00 Uhr erreichbar.",
+      "WICHTIGER HINWEIS: Der Support kann keine medizinischen Auskünfte erteilen. Wende dich bei Notfällen direkt an die 112.",
+    ],
+  },
 };
 
 /*
@@ -339,7 +379,96 @@ const fallbackTutorialContent: TutorialContent = {
   3. Shared content for symptom selection pages
   4. Fallback content for all remaining steps
 */
-function getTutorialContent(currentStep: Step): TutorialContent {
+function getTutorialContent(
+  currentStep: Step,
+  isOffline?: boolean,
+  startFormOffline?: boolean
+): TutorialContent {
+  /*
+    Wenn sich die Anwendung im Offline-Modus befindet, werden
+    angepasste Hilfetexte für die betroffenen Schritte geladen.
+  */
+  if (isOffline) {
+    /*
+      Startseite im Offline-Modus:
+      Erklärt die verfügbaren Offline-Aktionen ("Warnzeichen erkennen"
+      und "Ersteinschätzung offline starten").
+    */
+    if (currentStep === "start") {
+      return {
+        title: "Start (Offline)",
+        description:
+          "Du befindest dich im Offline-Modus. Du kannst Notfall-Warnzeichen prüfen oder eine Ersteinschätzung offline vorbereiten.",
+        steps: [
+          "Wähle 'Warnzeichen erkennen', um direkt zu überprüfen ob ein Notfall vorliegt",
+          "Wähle 'Ersteinschätzung von Symptomen offline starten', um deine Symptome offline einzugeben.",
+          "Der SOS-Button ist jederzeit für akute Notfälle erreichbar.",
+          "Hinweis: Zum Absenden der Einschätzung wird später eine Internetverbindung benötigt.",
+        ],
+      };
+    }
+    /*
+      Warnzeichen-Prüfung im Offline-Modus:
+      Unterscheidet, ob der Nutzer nur Warnzeichen scannt (kehrt danach zur Startseite zurück)
+      oder eine vollständige Offline-Ersteinschätzung fortführt.
+    */
+    if (currentStep === "redflags") {
+      if (startFormOffline) {
+        return {
+          title: "Warnzeichen (Offline)",
+          description:
+            "Dieser Schritt prüft offline, ob Anzeichen für einen medizinischen Notfall vorliegen.",
+          steps: [
+            "Markiere alle Warnzeichen, die aktuell zutreffen.",
+            "Wenn nichts davon zutrifft, wähle 'Keines davon trifft zu', um mit der Offline-Einschätzung fortzufahren.",
+            "Bei einem Warnzeichen empfiehlt die App den Notruf.",
+          ],
+        };
+      } else {
+        return {
+          title: "Warnzeichen-Scan (Offline)",
+          description:
+            "Dieser Schritt prüft offline, ob Anzeichen für einen medizinischen Notfall vorliegen.",
+          steps: [
+            "Markiere alle Warnzeichen, die aktuell zutreffen.",
+            "Wenn nichts davon zutrifft, wähle 'Keines davon trifft zu'.",
+            "Da du offline bist und keine Ersteinschätzung gestartet hast, kehrst du danach zur Startseite zurück.",
+          ],
+        };
+      }
+    }
+    /*
+      Zusammenfassung im Offline-Modus:
+      Weist darauf hin, dass die Daten offline geprüft, aber erst bei
+      aktiver Verbindung gesendet werden können.
+    */
+    if (currentStep === "checkInfo") {
+      return {
+        title: "Angaben prüfen (Offline)",
+        description: "Prüfe deine Angaben im Offline-Modus.",
+        steps: [
+          "Kontrolliere, ob alle Beschwerden und Zusatzangaben stimmen.",
+          "Nutze Bearbeiten, falls du etwas korrigieren möchtest.",
+          "Im Offline-Modus können die Angaben erst abgesendet werden, wenn wieder eine Internetverbindung besteht.",
+        ],
+      };
+    }
+    /*
+      Andere Anliegen im Offline-Modus:
+      Weist darauf hin, dass externe Online-Dienste eine Verbindung erfordern.
+    */
+    if (currentStep === "other") {
+      return {
+        title: "Andere Anliegen (Offline)",
+        description: "Die Online-Dienste sind zurzeit nicht verfügbar.",
+        steps: [
+          "Terminbuchungen und Online-Rezepte erfordern eine aktive Internetverbindung.",
+          "Sobald du wieder online bist, stehen diese Funktionen wieder zur Verfügung.",
+        ],
+      };
+    }
+  }
+
   if (currentStep && tutorialContentByStep[currentStep]) {
     return tutorialContentByStep[currentStep];
   }
@@ -366,6 +495,8 @@ export function TutorialModal({
   isOpen,
   onClose,
   currentStep,
+  isOffline,
+  startFormOffline,
 }: TutorialModalProps) {
   /*
     Do not render anything while the modal is closed.
@@ -376,7 +507,7 @@ export function TutorialModal({
   /*
     Load the tutorial content for the current application step.
   */
-  const tutorialContent = getTutorialContent(currentStep);
+  const tutorialContent = getTutorialContent(currentStep, isOffline, startFormOffline);
 
   return (
     /* Overlay displayed above the current page. */

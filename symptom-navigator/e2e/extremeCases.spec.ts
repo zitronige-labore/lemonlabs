@@ -12,7 +12,7 @@ test("Extremfall: Mehr als 10 Symptome aus unterschiedlichen Körperregionen aus
   await page.goto("/");
   await page.getByRole("button", { name: "Ersteinschätzung von Symptomen" }).click();
 
-  await page.getByLabel("Ich habe die Hinweise gelesen und verstanden.").check();
+  await page.getByRole("checkbox").check();
   await page.getByRole("button", { name: "Weiter zur Ersteinschätzung" }).click();
 
   await page.getByLabel("Keines davon trifft zu").check();

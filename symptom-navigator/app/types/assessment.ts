@@ -1,6 +1,6 @@
 /*
-  Beschreibt alle möglichen Schritte des gesamten Ablaufs
-  der Ersteinschätzung innerhalb der Anwendung.
+  Describes all possible steps of the initial
+  medical assessment workflow within the application.
 */
 
 // importy of steps from category list
@@ -23,6 +23,9 @@ export type symptomChoiceStep =
 export type Step =
   | "start"
   | "datenschutz"
+  | "impressum"
+  | "kontakt"
+  | "support"
   | "hinweise"
   | "redflags"
   | "basisStart"
@@ -42,7 +45,7 @@ export type Step =
   | symptomChoiceStep;
 
 /*
-  Zusatzangaben der Nutzerin oder des Nutzers.
+  Additional information provided by the user.
 */
 export type AdditionalData = {
   medication?: MedicationEntry[];
@@ -73,10 +76,10 @@ export type AdditionalData = {
 };
 
 /*
-  Hauptregionen der interaktiven Körperkarte.
+  Main regions of the interactive body map.
 
-  Diese Bereiche werden zuerst ausgewählt,
-  bevor eine genauere Unterregion bestimmt wird.
+  These regions are selected first
+  before a more specific subregion is chosen.
 */
 export type MainRegion =
   | "Kopf & Gesicht"
@@ -94,10 +97,10 @@ export type MainRegion =
   | "Allgemein (ganzer Körper)";
 
 /*
-  Genauere Unterregionen innerhalb einer Hauptregion.
+  More specific subregions within a main region.
 
-  Diese Auswahl dient dazu, Beschwerden
-  präziser zuzuordnen.
+  This selection allows symptoms
+  to be assigned more precisely.
 */
 export type SubRegion =
   | "Kopf"
@@ -150,16 +153,15 @@ export type SubRegion =
 
   
 /*
-  Enthält alle möglichen Warnzeichen,
-  die auf einen medizinischen Notfall
-  hinweisen können.
+  Contains all possible warning signs
+  that may indicate a medical emergency.
 */
 export type { RedFlags } from "../assessment/medicalLogic/redFlagCheckboxes";
 
 /*
-  Speichert allgemeine Angaben der Nutzerin
-  oder des Nutzers sowie zusätzliche Informationen
-  zu den Beschwerden.
+  Stores general user information
+  as well as additional details
+  about the reported symptoms.
 */
 export type BasisData = {
   age: string;

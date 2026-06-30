@@ -20,7 +20,7 @@ test("männlicher Patient mit Hals-Symptomen ohne Zusatzangaben wird korrekt ges
   await page.getByRole("button", { name: "Ersteinschätzung von Symptomen" }).click();
 
   // confirm disclaimer checkbox and continue
-  await page.getByLabel("Ich habe die Hinweise gelesen und verstanden.").check();
+  await page.getByRole("checkbox").check();
   await page.getByRole("button", { name: "Weiter zur Ersteinschätzung" }).click();
 
   // select "none of the above" for red flags and continue

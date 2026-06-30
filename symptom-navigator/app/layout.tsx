@@ -59,10 +59,10 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/images/symptometer192x192px.png", sizes: "192x192", type: "image/png" },
-      { url: "/images/symptometer512x512px.png", sizes: "512x512", type: "image/png" }
+      { url: "/images/symptometer192x192px.png?v=2", sizes: "192x192", type: "image/png" },
+      { url: "/images/symptometer512x512px.png?v=2", sizes: "512x512", type: "image/png" }
     ],
-    apple: "/images/symptometer192x192px.png",
+    apple: "/images/symptometer192x192px.png?v=2",
   },
 };
 

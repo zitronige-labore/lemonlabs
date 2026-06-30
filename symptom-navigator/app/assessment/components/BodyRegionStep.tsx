@@ -78,6 +78,7 @@ export function BodyRegionStep({
       d={d}
       transform={transform}
       role="button"
+      tabIndex={0}
       aria-label={region}
       className={`${assessmentStyles.bodyPartMain} ${selectedMainRegion === region &&
         (!selectedSubRegion || ["Hals", "Nacken", "Psyche", "Allgemein (ganzer Körper)"].includes(region))
@@ -87,6 +88,12 @@ export function BodyRegionStep({
       onMouseEnter={() => setHoveredPart(region)}
       onMouseLeave={() => setHoveredPart(null)}
       onClick={() => selectMainRegion(region)}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          selectMainRegion(region);
+        }
+      }}
     />
   );
 
@@ -157,6 +164,7 @@ export function BodyRegionStep({
         height={height}
         rx="117"
         role="button"
+        tabIndex={0}
         aria-label={region}
         className={`${assessmentStyles.bodyPartMain} ${selectedMainRegion === region &&
           (!selectedSubRegion || ["Hals", "Nacken", "Psyche", "Allgemein (ganzer Körper)"].includes(region))
@@ -166,6 +174,12 @@ export function BodyRegionStep({
         onMouseEnter={() => setHoveredPart(region)}
         onMouseLeave={() => setHoveredPart(null)}
         onClick={() => selectMainRegion(region)}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            selectMainRegion(region);
+          }
+        }}
       />
 
       <text

@@ -172,7 +172,7 @@ export function StartScreen({
 
       {/* Footer containing navigation links. */}
       <footer className={homeStyles.footer}>
-        <button type="button" className={homeStyles.footerLink}>
+        <button type="button" className={homeStyles.footerLink} onClick={() => setStep("kontakt")}>
           Kontakt
         </button>
 
@@ -181,11 +181,11 @@ export function StartScreen({
           Datenschutz
         </button>
 
-        <button type="button" className={homeStyles.footerLink}>
+        <button type="button" className={homeStyles.footerLink} onClick={() => setStep("support")}>
           Support
         </button>
 
-        <button type="button" className={homeStyles.footerLink}>
+        <button type="button" className={homeStyles.footerLink} onClick={() => setStep("impressum")}>
           Impressum
         </button>
       </footer>

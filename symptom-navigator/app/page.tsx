@@ -7,6 +7,9 @@
   State management and the central workflow logic remain here in page.tsx.
 */
 import { DatenschutzStep } from "./assessment/components/ DatenschutzStep";
+import { ImpressumStep } from "./assessment/components/ImpressumStep";
+import { KontaktStep } from "./assessment/components/KontaktStep";
+import { SupportStep } from "./assessment/components/SupportStep";
 import { useState, useEffect, useRef } from "react";
 
 import homeStyles from "./Home.module.css";
@@ -635,7 +638,7 @@ export default function Home() {
   return (
     <main
       className={
-        step === "start" || step === "hinweise" || step === "other" || step === "datenschutz"
+        step === "start" || step === "hinweise" || step === "other" || step === "datenschutz" || step === "impressum" || step === "kontakt" || step === "support"
           ? homeStyles.main
           : assessmentStyles.main
       }
@@ -658,6 +661,10 @@ export default function Home() {
           setHinweiseBestaetigt={setHinweiseBestaetigt}
           onBack={() => goToStep("start")}
           onContinue={() => goToStep("redflags")}
+          onOpenDatenschutz={() => goToStep("datenschutz")}
+          onOpenImpressum={() => goToStep("impressum")}
+          onOpenKontakt={() => goToStep("kontakt")}
+          onOpenSupport={() => goToStep("support")}
         />
       )}
       {/* Data management page */}
@@ -684,15 +691,31 @@ export default function Home() {
           onManageData={() => goToStep("manageData")}
         />
       )}
-      {/* Privacy policy */}
+      {/* privacy policy */}
       {step === "datenschutz" && (
-        <DatenschutzStep onBack={() => goToStep("start")} />
+        <DatenschutzStep onBack={() => window.history.back()} />
       )}
-      {/* All assessment steps */}
-      {step !== "start" && step !== "hinweise" && step !== "manageData" && step !== "other" && step !== "datenschutz" && (
+      {/* Impressum */}
+      {step === "impressum" && (
+        <ImpressumStep onBack={() => window.history.back()} />
+      )}
+      {/* Kontakt */}
+      {step === "kontakt" && (
+        <KontaktStep onBack={() => window.history.back()} />
+      )}
+      {/* Support */}
+      {step === "support" && (
+        <SupportStep onBack={() => window.history.back()} />
+      )}
+      {/* all steps from assessment */}
+      {step !== "start" && step !== "hinweise" && step !== "manageData" && step !== "other" && step !== "datenschutz" && step !== "impressum" && step !== "kontakt" && step !== "support" && (
         <AssessmentLayout
           onSubmit={handleSubmit}
           progress={Math.max(highestAssessmentProgress, getStepProgress(step))}
+          onOpenDatenschutz={() => goToStep("datenschutz")}
+          onOpenImpressum={() => goToStep("impressum")}
+          onOpenKontakt={() => goToStep("kontakt")}
+          onOpenSupport={() => goToStep("support")}
         >
 
           {/* Step 1: Check for red flags */}
@@ -840,6 +863,8 @@ export default function Home() {
         isOpen={isTutorialOpen}
         onClose={() => setIsTutorialOpen(false)}
         currentStep={step}
+        isOffline={isOffline}
+        startFormOffline={startFormOffline}
       />
     </main>
   );

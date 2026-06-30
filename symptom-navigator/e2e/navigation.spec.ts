@@ -37,7 +37,7 @@ test.describe("Navigation & UI-Verhalten", () => {
     await page.goto("/");
     await page.getByRole("button", { name: "Ersteinschätzung von Symptomen" }).click();
 
-    await page.getByLabel("Ich habe die Hinweise gelesen und verstanden.").check();
+    await page.getByRole("checkbox").check();
 
     const weiterButton = page.getByRole("button", { name: "Weiter zur Ersteinschätzung" });
     await expect(weiterButton).toBeEnabled();
@@ -58,7 +58,7 @@ test.describe("Navigation & UI-Verhalten", () => {
   test("Red Flags: Weiter-Button ist deaktiviert ohne Auswahl", async ({ page }) => {
     await page.goto("/");
     await page.getByRole("button", { name: "Ersteinschätzung von Symptomen" }).click();
-    await page.getByLabel("Ich habe die Hinweise gelesen und verstanden.").check();
+    await page.getByRole("checkbox").check();
     await page.getByRole("button", { name: "Weiter zur Ersteinschätzung" }).click();
 
     // Kein Red Flag ausgewählt → "Weiter" deaktiviert
@@ -69,7 +69,7 @@ test.describe("Navigation & UI-Verhalten", () => {
   test("Red Flags: Notfallhinweis erscheint bei Red-Flag-Auswahl", async ({ page }) => {
     await page.goto("/");
     await page.getByRole("button", { name: "Ersteinschätzung von Symptomen" }).click();
-    await page.getByLabel("Ich habe die Hinweise gelesen und verstanden.").check();
+    await page.getByRole("checkbox").check();
     await page.getByRole("button", { name: "Weiter zur Ersteinschätzung" }).click();
 
     // Warnzeichen auswählen
@@ -83,7 +83,7 @@ test.describe("Navigation & UI-Verhalten", () => {
   test("Red Flags: '112 anrufen' Button erscheint bei Red-Flag-Auswahl", async ({ page }) => {
     await page.goto("/");
     await page.getByRole("button", { name: "Ersteinschätzung von Symptomen" }).click();
-    await page.getByLabel("Ich habe die Hinweise gelesen und verstanden.").check();
+    await page.getByRole("checkbox").check();
     await page.getByRole("button", { name: "Weiter zur Ersteinschätzung" }).click();
 
     await page.getByLabel("Atemnot oder starke Atemprobleme").check();
@@ -94,7 +94,7 @@ test.describe("Navigation & UI-Verhalten", () => {
   test("Red Flags: Notfallhinweis verschwindet wenn Auswahl aufgehoben wird", async ({ page }) => {
     await page.goto("/");
     await page.getByRole("button", { name: "Ersteinschätzung von Symptomen" }).click();
-    await page.getByLabel("Ich habe die Hinweise gelesen und verstanden.").check();
+    await page.getByRole("checkbox").check();
     await page.getByRole("button", { name: "Weiter zur Ersteinschätzung" }).click();
 
     // Red Flag setzen und wieder entfernen
@@ -118,7 +118,7 @@ test.describe("Navigation & UI-Verhalten", () => {
   test("Basisdaten: Weiblich zeigt Schwangerschaftsfeld an", async ({ page }) => {
     await page.goto("/");
     await page.getByRole("button", { name: "Ersteinschätzung von Symptomen" }).click();
-    await page.getByLabel("Ich habe die Hinweise gelesen und verstanden.").check();
+    await page.getByRole("checkbox").check();
     await page.getByRole("button", { name: "Weiter zur Ersteinschätzung" }).click();
     await page.getByLabel("Keines davon trifft zu").check();
     await page.getByRole("button", { name: "Weiter" }).click();
@@ -132,7 +132,7 @@ test.describe("Navigation & UI-Verhalten", () => {
   test("Basisdaten: Männlich zeigt kein Schwangerschaftsfeld an", async ({ page }) => {
     await page.goto("/");
     await page.getByRole("button", { name: "Ersteinschätzung von Symptomen" }).click();
-    await page.getByLabel("Ich habe die Hinweise gelesen und verstanden.").check();
+    await page.getByRole("checkbox").check();
     await page.getByRole("button", { name: "Weiter zur Ersteinschätzung" }).click();
     await page.getByLabel("Keines davon trifft zu").check();
     await page.getByRole("button", { name: "Weiter" }).click();
@@ -146,7 +146,7 @@ test.describe("Navigation & UI-Verhalten", () => {
   test("Körperregion: Auswahl einer Region zeigt Unterregionen an", async ({ page }) => {
     await page.goto("/");
     await page.getByRole("button", { name: "Ersteinschätzung von Symptomen" }).click();
-    await page.getByLabel("Ich habe die Hinweise gelesen und verstanden.").check();
+    await page.getByRole("checkbox").check();
     await page.getByRole("button", { name: "Weiter zur Ersteinschätzung" }).click();
     await page.getByLabel("Keines davon trifft zu").check();
     await page.getByRole("button", { name: "Weiter" }).click();
@@ -165,7 +165,7 @@ test.describe("Navigation & UI-Verhalten", () => {
   test("Körperregion: Weiter-Button ohne Unterregion ist deaktiviert", async ({ page }) => {
     await page.goto("/");
     await page.getByRole("button", { name: "Ersteinschätzung von Symptomen" }).click();
-    await page.getByLabel("Ich habe die Hinweise gelesen und verstanden.").check();
+    await page.getByRole("checkbox").check();
     await page.getByRole("button", { name: "Weiter zur Ersteinschätzung" }).click();
     await page.getByLabel("Keines davon trifft zu").check();
     await page.getByRole("button", { name: "Weiter" }).click();

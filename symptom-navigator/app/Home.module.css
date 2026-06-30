@@ -1,8 +1,9 @@
 /*
-  Grundlayout für Start-, Hinweis- und weitere Home-nahe Seiten.
+  Base layout for the home, information,
+  and other home-related pages.
 
-  Die Seite nimmt die gesamte Viewport-Höhe ein und hält den Inhalt
-  mittig auf der gemeinsamen Projektbreite.
+  The layout fills the full viewport height
+  and keeps the content centered within the project's standard content width.
 */
 .main {
   min-height: 100vh;
@@ -16,10 +17,10 @@
 }
 
 /*
-  Zentrale Inhaltsbox der Home-Ansichten.
+  Central content container for the home views.
 
-  hauptbox richtet die Fläche im Viewport aus,
-  kopfbox bildet den sichtbaren Inhaltsbereich.
+  hauptbox positions the content within the viewport,
+  while kopfbox defines the main visible content area.
 */
 .hauptbox {
   width: 100%;
@@ -38,7 +39,8 @@
 }
 
 /*
-  Branding und kurze Einführungstexte der Start- und Hinweisseiten.
+  Branding and introductory text
+  for the home and information pages.
 */
 .header {
   color: var(--text-primary);
@@ -77,7 +79,8 @@
 }
 
 /*
-  Warn- und Bestätigungstexte vor dem Start der Ersteinschätzung.
+  Warning and confirmation messages
+  displayed before starting the initial assessment.
 */
 .warningText {
   color: var(--text-secondary);
@@ -127,10 +130,10 @@
 }
 
 /*
-  Vertikale Aktionsbereiche.
+  Vertical action sections.
 
-  buttonBox wird auf der Startseite und in Hinweisdialogen genutzt,
-  actionStack für gestapelte Aktionskarten.
+  buttonBox is used on the home page and in informational dialogs,
+  while actionStack is used for stacked action cards.
 */
 .buttonBox,
 .actionStack {
@@ -152,8 +155,8 @@
 }
 
 /*
-  Karten und Panels für größere Startseiten-Aktionen
-  oder erklärende Zwischenbereiche.
+  Cards and panels for larger home page actions
+  or informational sections.
 */
 .actionCard {
   width: 100%;
@@ -199,10 +202,10 @@
 }
 
 /*
-  Einheitliche Button-Basis für Home-nahe Seiten.
+  Shared button base for home-related pages.
 
-  Die Varianten definieren anschließend ihre jeweilige Gewichtung:
-  primär, sekundär, Fortfahren oder Notfall.
+  Individual variants then define their specific purpose:
+  primary, secondary, continue, or emergency.
 */
 .emergencyButton,
 .primaryButton,
@@ -320,9 +323,10 @@
 }
 
 /*
-  Fester SOS-Schnellzugriff.
+  Fixed SOS quick access.
 
-  Der Button bleibt unabhängig vom aktuellen Startseiteninhalt erreichbar.
+  The button remains accessible
+  regardless of the current start page content.
 */
 .sosButton {
   position: fixed;
@@ -361,7 +365,8 @@
 }
 
 /*
-  Gemeinsame Overlay- und Modalflächen für SOS, Tutorial und Ladezustand.
+  Shared overlay and modal styles
+  for SOS, tutorial, and loading states.
 */
 .sosModalOverlay,
 .tutorialOverlay {
@@ -403,7 +408,7 @@
 }
 
 /*
-  Globaler Tutorial-Zugriff und Tutorial-Inhalte.
+  global Tutorial-Access and Tutorial-content.
 */
 .tutorialButton {
   position: fixed;
@@ -510,7 +515,8 @@
 }
 
 /*
-  Ladeanzeige für Prozesse, die eine kurze Wartezeit benötigen.
+  Loading indicator for processes
+  that require a short waiting time.
 */
 .loadingPopup {
   display: flex;
@@ -542,7 +548,7 @@
 }
 
 /*
-  Fußzeile der Home-Ansichten.
+  footer from homescreen.
 */
 .footer {
   width: 100%;
@@ -572,10 +578,10 @@
 }
 
 /*
-  Mobile Anpassungen.
+  Mobile adjustments.
 
-  Auf kleinen Bildschirmen werden Abstände reduziert,
-  Buttons verbreitert und schwebende Schnellzugriffe kleiner dargestellt.
+  On smaller screens, spacing is reduced,
+  buttons are widened, and floating quick access elements are displayed in a more compact size.
 */
 @media (max-width: 600px) {
   .main {
