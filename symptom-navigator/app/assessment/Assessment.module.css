@@ -454,6 +454,13 @@ textarea.input {
     filter 0.18s ease;
 }
 
+.bodyPartMain:focus-visible {
+  outline: none;
+  stroke: var(--primary);
+  stroke-width: 20px;
+  filter: drop-shadow(0 0 12px rgba(28, 134, 255, 0.65));
+}
+
 .bodyPartSub {
   fill: #d8e6f400;
   stroke: var(--text-muted);
