@@ -142,7 +142,7 @@ export function getSymptomList(gender?: string) {
             { symptomName: "Starke Übelkeit oder Drang zum Erbrechen", schmerzen: false, symptomValue: "Starke Übelkeit, flauer Magen oder Drang zum Erbrechen", snomedCode: "422587007" },
             { symptomName: "Extreme Licht- oder Lärmempfindlichkeit", schmerzen: false, symptomValue: "Extreme Empfindlichkeit gegen normales Licht, Fernseher oder laute Geräusche", snomedCode: "162243003" },
             { symptomName: "Sehen von Flimmern, Zacken oder Mustern ", schmerzen: false, symptomValue: "Sehen von Flimmern, Zacken, Mustern oder hellen Punkten (bevor der Schmerz anfängt)", snomedCode: "442685003" },
-            { symptomName: "Schwindel", schmerzen: false, sympromValue: "Schwindel: Unsicherheitsgefühl im Raum, Gefühl von Drehen, Schwanken oder drohender Ohnmacht.", snomedCode: "162058000"}
+            { symptomName: "Schwindel", schmerzen: false, symptomValue: "Schwindel: Unsicherheitsgefühl im Raum, Gefühl von Drehen, Schwanken oder drohender Ohnmacht.", snomedCode: "162058000"}
         ]
         },
         {step: "kopfWarnsignale",

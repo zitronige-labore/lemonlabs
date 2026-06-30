@@ -312,12 +312,13 @@ export function ResultStep({
             {key.replace("suspicion", "Vermutung ")}
           </p>
           <div className={assessmentStyles.dataListItemGrid}>
-            <div>
-              <span className={assessmentStyles.dataLabel}>Einordnung</span>
-              <strong className={assessmentStyles.dataValue}>
-                {displayValue(name)}
-              </strong>
-            </div>
+          
+            {reason && (
+              <div className={assessmentStyles.dataRowWide}>
+                <span className={assessmentStyles.dataLabel}></span>
+                <strong className={assessmentStyles.dataValue}>{reason}</strong>
+              </div>
+            )}
             {probability && (
               <div>
                 <span className={assessmentStyles.dataLabel}>
@@ -326,12 +327,6 @@ export function ResultStep({
                 <strong className={assessmentStyles.dataValue}>
                   {probability * 100}%
                 </strong>
-              </div>
-            )}
-            {reason && (
-              <div className={assessmentStyles.dataRowWide}>
-                <span className={assessmentStyles.dataLabel}>Begründung</span>
-                <strong className={assessmentStyles.dataValue}>{reason}</strong>
               </div>
             )}
           </div>
