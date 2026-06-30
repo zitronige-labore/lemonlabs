@@ -35,9 +35,6 @@ yarn-error.log*
 .env*
 .env
 
-# environment in docker
-docker-compose.yml
-
 # vercel
 .vercel
 

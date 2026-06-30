@@ -1,0 +1,1058 @@
+/*
+  Base layout of the assessment section.
+
+  These styles apply to all steps after the start and information screens.
+  The content is vertically centered while remaining constrained
+  to the project's maximum content width.
+*/
+.main {
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--background);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: var(--space-3) var(--space-2);
+}
+
+/*
+  Shared formular container for individual assessment steps.
+*/
+.card {
+  width: 100%;
+  max-width: var(--content-width);
+  background: var(--surface);
+  padding: clamp(32px, 6vw, 48px);
+  text-align: center;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+/*
+  Progress indicator used in the AssessmentLayout.
+
+  The width of .progressFill is set dynamically in React
+  based on the current step.
+*/
+.progressContainer {
+  width: 100%;
+  margin-bottom: var(--space-3);
+}
+
+.progressTrack {
+  width: 100%;
+  height: 9px;
+  border-radius: 999px;
+  background: #dbe7f4;
+  overflow: hidden;
+}
+
+.progressFill {
+  width: 0;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--primary);
+  transition: width 0.3s ease;
+}
+
+/*
+  General text styles for headings, descriptions,
+  and contextual hints within the assessment steps.
+*/
+.title {
+  color: var(--text-primary);
+  font-size: clamp(1.7rem, 6vw, 2.2rem);
+  font-weight: 800;
+  line-height: 1.2;
+  margin: 0 0 var(--space-3);
+  text-align: center;
+}
+
+.text {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  line-height: 1.75;
+  margin: 0 auto var(--space-3);
+  max-width: var(--reading-width);
+}
+
+.optionalHint,
+.selectionHint {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  color: var(--text-secondary);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.65;
+  margin: 0 auto var(--space-3);
+  max-width: var(--reading-width);
+  padding: 18px 20px;
+}
+
+.selectionHint {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+}
+
+/*
+  Animated arrow that points to the next expected
+  interaction area during body region selection.
+*/
+.hintArrow {
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  background: var(--primary);
+  color: #ffffff;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  font-weight: 800;
+  font-size: 1.1rem;
+  animation: hintArrowBounce 1.25s ease-in-out infinite;
+}
+
+.selectedText {
+  margin: var(--space-2) auto;
+  max-width: var(--reading-width);
+  color: var(--text-primary);
+  font-weight: 750;
+  font-size: 1.04rem;
+  line-height: 1.55;
+  text-align: center;
+}
+
+/*
+  Formular groups and input elements.
+
+  These classes are shared by the basic information,
+  additional information, free text input,
+  and symptom selection steps.
+*/
+.fieldset {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: clamp(18px, 4vw, 24px);
+  margin-bottom: var(--space-3);
+  color: var(--text-primary);
+  line-height: 1.65;
+  text-align: left;
+}
+
+.legend {
+  color: var(--text-primary);
+  font-weight: 760;
+  line-height: 1.35;
+  padding: 0 var(--space-1);
+}
+
+.label {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  color: var(--text-primary);
+  margin-bottom: 14px;
+  cursor: pointer;
+  line-height: 1.6;
+  font-size: 1rem;
+}
+
+.label input {
+  width: 22px;
+  height: 22px;
+  margin-top: 2px;
+  accent-color: var(--primary);
+  flex: 0 0 auto;
+}
+
+.symptomOtherOption {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  color: var(--text-primary);
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 0 0 var(--space-3);
+  padding: clamp(16px, 4vw, 20px);
+  font: inherit;
+  font-size: 1rem;
+  line-height: 1.6;
+  text-align: left;
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    transform 0.14s ease,
+    box-shadow 0.18s ease;
+}
+
+.symptomOtherOption:hover {
+  background: var(--secondary-hover);
+  border-color: var(--info);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(15, 35, 64, 0.08);
+}
+
+.fakeCheckbox {
+  width: 22px;
+  height: 22px;
+  margin-top: 2px;
+  border: 2px solid var(--border-strong);
+  border-radius: 5px;
+  background: var(--surface);
+  flex: 0 0 auto;
+}
+
+.formLabel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  color: var(--text-primary);
+  font-weight: 700;
+  margin-bottom: var(--space-2);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.input {
+  width: 100%;
+  min-height: 54px;
+  padding: 13px 15px;
+  border-radius: var(--radius-small);
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--text-primary);
+  font-size: 1rem;
+  line-height: 1.45;
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--info);
+  box-shadow: 0 0 0 4px var(--focus-ring);
+}
+
+textarea.input {
+  min-height: 156px;
+  resize: vertical;
+}
+
+.characterCounter,
+.sliderHint {
+  color: var(--text-subtle);
+  font-size: 0.88rem;
+  font-weight: 550;
+}
+
+.characterCounter {
+  text-align: right;
+}
+
+.errorText {
+  color: var(--danger-hover);
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin: 4px 0 0;
+  line-height: 1.5;
+}
+
+/*
+  Shared button base styles for primary, secondary,
+  and region selection buttons.
+
+  Individual button variants override colors,
+  borders, and shadows.
+*/
+.primaryButton,
+.secondaryButton,
+.emergencyButton,
+.continueButton,
+.regionButton {
+  width: 100%;
+  max-width: var(--button-width);
+  min-height: var(--button-height);
+  border: 1px solid transparent;
+  border-radius: var(--radius-control);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 24px;
+  font-size: 1.04rem;
+  font-weight: 760;
+  line-height: 1.25;
+  text-align: center;
+  text-decoration: none;
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease,
+    transform 0.14s ease,
+    box-shadow 0.18s ease;
+}
+
+.primaryButton,
+.continueButton {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #ffffff;
+  box-shadow: var(--shadow-control);
+}
+
+.primaryButton:hover,
+.continueButton:hover {
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-control-hover);
+}
+
+.primaryButton:active,
+.continueButton:active {
+  background: var(--primary-active);
+  border-color: var(--primary-active);
+  transform: translateY(0);
+}
+
+.primaryButton:disabled,
+.continueButton:disabled {
+  background: #9aadc0;
+  border-color: #9aadc0;
+  color: #ffffff;
+  cursor: not-allowed;
+  opacity: 0.78;
+  transform: none;
+  box-shadow: none;
+}
+
+.secondaryButton,
+.regionButton {
+  background: var(--surface);
+  border-color: var(--border-strong);
+  color: var(--primary);
+  gap: 8px;
+  box-shadow: 0 8px 18px rgba(15, 35, 64, 0.07);
+}
+
+.secondaryButton:hover,
+.regionButton:hover {
+  background: var(--secondary-hover);
+  border-color: var(--info);
+  color: var(--text-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 22px rgba(15, 35, 64, 0.1);
+}
+
+.secondaryButton:active,
+.regionButton:active {
+  background: var(--primary-soft);
+  transform: translateY(0);
+}
+
+/*
+  Vertical action groups.
+
+  buttonGroup is used for step navigation,
+  while quickSelect is used for compact selections
+  such as body regions or symptom categories.
+*/
+.buttonGroup,
+.quickSelect {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: center;
+}
+
+.buttonGroup {
+  margin-top: var(--space-2);
+}
+
+.quickSelect {
+  margin: var(--space-3) 0 12px;
+}
+
+/*
+  Emergency and warning sections.
+
+  These elements visually highlight medically urgent
+  information and separate it from the regular form flow.
+*/
+.emergencyButton {
+  background: var(--danger);
+  border-color: var(--danger);
+  color: #ffffff;
+  margin-top: 10px;
+  box-shadow: var(--shadow-danger);
+}
+
+.emergencyButton:hover {
+  background: var(--danger-hover);
+  border-color: var(--danger-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(255, 65, 65, 0.32);
+}
+
+.emergencyBox {
+  background: var(--danger-soft);
+  border: 1px solid var(--danger-border);
+  border-radius: var(--radius-control);
+  color: #8f1f1f;
+  padding: 18px 20px;
+  margin-bottom: var(--space-3);
+  line-height: 1.7;
+  text-align: left;
+}
+
+.emergencyTitle {
+  color: var(--danger-hover);
+  font-size: clamp(1.3rem, 5vw, 1.6rem);
+  line-height: 1.2;
+  margin: 0 0 var(--space-1);
+}
+
+/*
+  Interactive body map.
+
+  Main and sub regions have separate base styles,
+  but share the same hover and selection states.
+*/
+.bodyWrapper {
+  width: 100%;
+  max-width: 480px;
+  margin: var(--space-3) auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: var(--space-2);
+}
+
+.bodyMap {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3230 / 3950;
+  max-height: 560px;
+  display: block;
+}
+
+.bodyPartMain {
+  fill: #d8e6f4;
+  stroke: var(--text-muted);
+  stroke-width: 10;
+  stroke-color: #495062;
+  cursor: pointer;
+  transition:
+    fill 0.18s ease,
+    stroke 0.18s ease,
+    filter 0.18s ease;
+}
+
+.bodyPartMain:focus-visible {
+  outline: none;
+  stroke: var(--primary);
+  stroke-width: 20px;
+  filter: drop-shadow(0 0 12px rgba(28, 134, 255, 0.65));
+}
+
+.bodyPartSub {
+  fill: #d8e6f400;
+  stroke: var(--text-muted);
+  stroke-width: 10;
+  stroke-color: #49506200;
+  cursor: pointer;
+  transition:
+    fill 0.18s ease,
+    stroke 0.18s ease,
+    filter 0.18s ease;
+}
+
+.bodyPart:hover {
+  fill: rgba(27, 51, 78, 0.14);
+  stroke: var(--primary);
+}
+
+.selectedBodyPart,
+.selectedBodyPart:hover {
+  fill: rgba(255, 65, 65, 0.38);
+  stroke: var(--danger);
+  filter: drop-shadow(0 0 8px rgba(255, 65, 65, 0.42));
+}
+
+.selectedRegion,
+.selectedRegion:hover {
+  background: var(--secondary-hover);
+  border-color: var(--info);
+  color: var(--text-primary);
+}
+
+/*
+  Slider used for pain scales and other
+  continuous input values.
+*/
+.slider {
+  width: 100%;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+
+/*
+  Result and summary sections.
+
+  resultBox contains the assessment result,
+  while dataPanel and the data* classes organize
+  stored information, AI responses, and detailed data.
+*/
+.resultBox {
+  width: 100%;
+  margin-top: var(--space-3);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  align-items: center;
+  padding: var(--space-3);
+  line-height: 1.65;
+}
+
+.statusPanel1 {
+  width: 100%;
+  background: var(--primary-soft);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-card);
+  color: var(--text-primary);
+  padding: clamp(16px, 4vw, 20px);
+  margin-bottom: var(--space-3);
+  text-align: left;
+  border-color: #0a3b74;
+  background-color: #c9e1fc;
+  color: #0a3b74;
+}
+
+.statusPanel2 {
+  width: 100%;
+  background: var(--primary-soft);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-card);
+  color: var(--text-primary);
+  padding: clamp(16px, 4vw, 20px);
+  margin-bottom: var(--space-3);
+  text-align: left;
+  border-color: #204d2c;
+  color: #204d2c;
+  background-color: #e1ffea;
+}
+
+.statusPanel3 {
+  width: 100%;
+  background: var(--primary-soft);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-card);
+  color: var(--text-primary);
+  padding: clamp(16px, 4vw, 20px);
+  margin-bottom: var(--space-3);
+  text-align: left;
+  border-color: #363605;
+  color: #363605;
+  background-color: #fdfdcd;
+}
+
+.statusPanel4 {
+  width: 100%;
+  background: var(--primary-soft);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-card);
+  color: var(--text-primary);
+  padding: clamp(16px, 4vw, 20px);
+  margin-bottom: var(--space-3);
+  text-align: left;
+  border-color: #82550e;
+  color: #82550e;
+  background-color: #ffe5ba;
+}
+
+.statusPanel5 {
+  width: 100%;
+  background: var(--primary-soft);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-card);
+  color: var(--text-primary);
+  padding: clamp(16px, 4vw, 20px);
+  margin-bottom: var(--space-3);
+  text-align: left;
+  border-color: #820e0e;
+  color: #820e0e;
+  background-color: #ffe6e4;
+}
+
+.resultBox p {
+  margin: 0;
+  line-height: 1.65;
+}
+
+.resultBox ul {
+  margin: 10px 0 0;
+  padding-left: 1.25rem;
+}
+
+.resultBox li {
+  line-height: 1.65;
+}
+
+.dataPanel {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  color: var(--text-primary);
+  padding: clamp(18px, 4vw, 24px);
+  margin-bottom: var(--space-3);
+  text-align: left;
+  box-shadow: 0 10px 26px rgba(15, 35, 64, 0.06);
+}
+
+.dataPanel p {
+  margin: 0;
+}
+
+.dataHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding-bottom: var(--space-2);
+  margin-bottom: var(--space-2);
+  border-bottom: 1px solid var(--border);
+}
+
+.dataTitle {
+  color: var(--text-primary);
+  font-size: 1.08rem;
+  font-weight: 800;
+  line-height: 1.35;
+  margin: 0;
+}
+
+.dataMeta {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-weight: 650;
+  line-height: 1.45;
+  margin: 4px 0 0;
+}
+
+.dataMetaUrgency {
+  font-size: 1.5rem;
+  font-weight: 650;
+  line-height: 1.45;
+  margin: 4px 0 0;
+
+}
+
+.dataSection {
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.dataSection:first-of-type {
+  padding-top: 0;
+}
+
+.dataSection:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.dataSectionTitle {
+  color: var(--primary);
+  font-size: 0.95rem;
+  font-weight: 800;
+  line-height: 1.35;
+  margin: 0 0 12px;
+  text-transform: uppercase;
+}
+
+.dataGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.dataRow {
+  min-width: 0;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-small);
+  padding: 12px 14px;
+}
+
+.dataRowWide {
+  grid-column: 1 / -1;
+}
+
+.dataLabel {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.84rem;
+  font-weight: 720;
+  line-height: 1.35;
+  margin-bottom: 4px;
+}
+
+.dataValue {
+  display: block;
+  color: var(--text-primary);
+  font-size: 0.98rem;
+  font-weight: 750;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.dataList {
+  display: grid;
+  gap: 12px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.dataListItem {
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-small);
+  padding: 14px;
+}
+
+.dataListItemHeader {
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1.45;
+  margin: 0 0 10px;
+  overflow-wrap: anywhere;
+}
+
+.dataListItemGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 14px;
+}
+
+.dataListItem .secondaryButton {
+  margin-top: 12px;
+}
+
+.dataActions {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: var(--space-2);
+}
+
+.dataActions .primaryButton,
+.dataActions .secondaryButton,
+.dataActions .continueButton {
+  width: auto;
+  min-width: min(100%, 190px);
+}
+
+.dataToggleButton {
+  margin-bottom: 16px;
+}
+
+.dataDivider {
+  width: 100%;
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: var(--space-3) 0;
+}
+
+.statusPanel {
+  width: 100%;
+  background: var(--primary-soft);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-card);
+  color: var(--text-primary);
+  padding: clamp(16px, 4vw, 20px);
+  margin-bottom: var(--space-3);
+  text-align: left;
+}
+
+.statusPanel p {
+  margin: 0;
+}
+
+.codePanel {
+  width: 100%;
+  display: grid;
+  gap: 12px;
+  background: var(--primary-soft);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-card);
+  padding: clamp(16px, 4vw, 20px);
+  margin-bottom: var(--space-3);
+  text-align: left;
+}
+
+.codeValue {
+  color: var(--primary);
+  font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+  font-size: 0.96rem;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  overflow-wrap: anywhere;
+}
+
+/*
+  Footer displayed within the assessment section.
+*/
+.footer {
+  width: 100%;
+  flex: 0 0 auto;
+  padding: var(--space-3) 0 0;
+  margin-top: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: 0.88rem;
+}
+
+.footerLink {
+  background: none;
+  border: none;
+  color: var(--text-subtle);
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 650;
+  padding: 4px 6px;
+}
+
+.footerLink:hover {
+  color: var(--text-primary);
+  text-decoration: underline;
+}
+
+/*
+  Expandable additional information sections.
+
+  These classes are primarily used in AdditionalInfoStep,
+  where optional sections become visible after
+  selecting a checkbox.
+*/
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  cursor: pointer;
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.checkboxLabel input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+
+.expandedSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3) 0 var(--space-3) var(--space-3);
+  border-left: 3px solid var(--primary);
+  margin-bottom: var(--space-3);
+}
+
+.listEntry {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.listEntry .input {
+  flex: 1;
+  min-width: 140px;
+}
+
+.addButton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  background: none;
+  border: 1px dashed var(--primary);
+  color: var(--primary);
+  border-radius: var(--radius);
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: background 0.15s;
+  align-self: flex-start;
+}
+
+.addButton:hover {
+  background: color-mix(in srgb, var(--primary) 8%, transparent);
+}
+
+.removeButton {
+  background: none;
+  border: none;
+  color: var(--error, #c0392b);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: var(--radius);
+  flex-shrink: 0;
+}
+
+.removeButton:hover {
+  background: color-mix(in srgb, var(--error, #c0392b) 10%, transparent);
+}
+
+/*
+  Specialized input card for medications.
+
+  The fields are arranged in two columns, while
+  the medication name and duration fields can span
+  the full width when needed.
+*/
+.medicationEntry {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  background: var(--surface);
+  border: 3px solid var(--border);
+  border-radius: var(--radius-small);
+  border-color: #1b334e;
+  position: relative;
+}
+
+.medicationEntry label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+/* Medication name and duration: full width */
+.medicationEntry .fullWidth {
+  grid-column: 1 / -1;
+}
+
+/* Remove-Button top right corner (absolut) */
+.medicationEntry .removeButton {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+}
+
+/*
+  Animation of the hint arrow displayed during
+  body region selection.
+*/
+@keyframes hintArrowBounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(6px);
+  }
+}
+
+/*
+  Mobile layout adjustments.
+
+  On smaller screens, spacing is reduced, buttons
+  become wider, and data grids switch to a single-column layout.
+*/
+@media (max-width: 600px) {
+  .main {
+    padding: var(--space-2) 12px max(var(--space-2), env(safe-area-inset-bottom));
+  }
+
+  .card {
+    padding: 24px 18px;
+  }
+
+  .primaryButton,
+  .secondaryButton,
+  .emergencyButton,
+  .continueButton,
+  .regionButton {
+    max-width: 100%;
+    min-height: 60px;
+  }
+
+  .bodyWrapper {
+    max-width: 100%;
+    padding: 12px;
+  }
+
+  .bodyMap {
+    max-height: none;
+  }
+
+  .resultBox {
+    padding: var(--space-2);
+  }
+
+  .dataPanel {
+    padding: 16px;
+  }
+
+  .dataHeader {
+    flex-direction: column;
+  }
+
+  .dataGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .dataListItemGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .dataActions {
+    flex-direction: column;
+  }
+
+  .dataActions .primaryButton,
+  .dataActions .secondaryButton,
+  .dataActions .continueButton {
+    width: 100%;
+  }
+
+  .footer {
+    gap: 10px;
+    flex-wrap: wrap;
+    padding-top: var(--space-2);
+    padding-bottom: 0;
+    line-height: 1.5;
+  }
+}

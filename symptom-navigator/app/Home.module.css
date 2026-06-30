@@ -1,0 +1,648 @@
+/*
+  Base layout for the home, information,
+  and other home-related pages.
+
+  The layout fills the full viewport height
+  and keeps the content centered within the project's standard content width.
+*/
+.main {
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--background);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: var(--space-3) var(--space-2);
+}
+
+/*
+  Central content container for the home views.
+
+  hauptbox positions the content within the viewport,
+  while kopfbox defines the main visible content area.
+*/
+.hauptbox {
+  width: 100%;
+  max-width: var(--content-width);
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.kopfbox {
+  width: 100%;
+  background: var(--surface);
+  padding: clamp(32px, 6vw, 48px);
+}
+
+/*
+  Branding and introductory text
+  for the home and information pages.
+*/
+.header {
+  color: var(--text-primary);
+  margin-bottom: var(--space-4);
+  text-align: center;
+}
+
+.title {
+  color: var(--text-primary);
+  font-size: clamp(2.35rem, 8vw, 3.6rem);
+  font-weight: 800;
+  line-height: 1.05;
+  margin: 0;
+}
+
+.subtitle {
+  color: var(--text-secondary);
+  font-size: 0.98rem;
+  font-weight: 650;
+  line-height: 1.45;
+  margin: var(--space-1) 0 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+}
+
+.intro {
+  color: var(--text-primary);
+  font-size: clamp(1.25rem, 4vw, 1.55rem);
+  font-weight: 750;
+  line-height: 1.35;
+  margin: 0 auto var(--space-3);
+  max-width: var(--reading-width);
+  text-align: center;
+}
+
+/*
+  Warning and confirmation messages
+  displayed before starting the initial assessment.
+*/
+.warningText {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  line-height: 1.75;
+  margin: 0 auto var(--space-2);
+  max-width: var(--reading-width);
+}
+
+.notrufBox {
+  background: var(--danger-soft);
+  color: #8f1f1f;
+  border: 1px solid var(--danger-border);
+  border-radius: var(--radius-control);
+  margin: var(--space-3) auto;
+  max-width: var(--reading-width);
+  line-height: 1.7;
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 18px 20px;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 650;
+  line-height: 1.6;
+  text-align: left;
+  max-width: var(--reading-width);
+  margin: 0 auto;
+}
+
+.checkboxLabel input {
+  width: 22px;
+  height: 22px;
+  margin-top: 2px;
+  accent-color: var(--primary);
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+
+.offlineNotices {
+  margin-bottom: 5%;
+}
+
+/*
+  Vertical action sections.
+
+  buttonBox is used on the home page and in informational dialogs,
+  while actionStack is used for stacked action cards.
+*/
+.buttonBox,
+.actionStack {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  align-items: center;
+}
+
+.buttonBox {
+  margin-top: var(--space-3);
+}
+
+.piktogramm {
+  width: 10%;
+  height: 10%;
+  margin-right: 7.5%;
+}
+
+/*
+  Cards and panels for larger home page actions
+  or informational sections.
+*/
+.actionCard {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.primaryActionCard {
+  border-color: rgba(27, 51, 78, 0.22);
+  background: var(--surface);
+}
+
+.actionDescription {
+  color: var(--text-muted);
+  font-size: 0.98rem;
+  line-height: 1.65;
+  margin: 0;
+  text-align: left;
+}
+
+.panel {
+  width: 100%;
+  margin-top: var(--space-3);
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: var(--space-3);
+  text-align: center;
+  line-height: 1.7;
+}
+
+.sectionTitle {
+  color: var(--text-primary);
+  font-size: 1.2rem;
+  font-weight: 760;
+  line-height: 1.35;
+  margin: 0;
+}
+
+/*
+  Shared button base for home-related pages.
+
+  Individual variants then define their specific purpose:
+  primary, secondary, continue, or emergency.
+*/
+.emergencyButton,
+.primaryButton,
+.secondaryButton,
+.continueButton {
+  width: 100%;
+  max-width: var(--button-width);
+  min-height: var(--button-height);
+  border: 1px solid transparent;
+  border-radius: var(--radius-control);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 24px;
+  color: #ffffff;
+  font-size: 1.04rem;
+  font-weight: 760;
+  line-height: 1.25;
+  text-align: center;
+  text-decoration: none;
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease,
+    transform 0.14s ease,
+    box-shadow 0.18s ease;
+}
+
+.primaryButton,
+.continueButton {
+  background: var(--primary);
+  border-color: var(--primary);
+  box-shadow: var(--shadow-control);
+}
+
+.primaryButton:hover,
+.continueButton:hover {
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-control-hover);
+}
+
+.primaryButton:active,
+.continueButton:active {
+  background: var(--primary-active);
+  border-color: var(--primary-active);
+  transform: translateY(0);
+  box-shadow: var(--shadow-control);
+}
+
+.primaryButton:disabled,
+.continueButton:disabled {
+  background: #9aadc0;
+  border-color: #9aadc0;
+  color: #ffffff;
+  cursor: not-allowed;
+  opacity: 0.78;
+  transform: none;
+  box-shadow: none;
+}
+
+.secondaryButton {
+  background: var(--surface);
+  border-color: var(--border-strong);
+  color: var(--primary);
+  box-shadow: 0 8px 18px rgba(15, 35, 64, 0.07);
+}
+
+.secondaryButton:hover {
+  background: var(--secondary-hover);
+  border-color: var(--info);
+  color: var(--text-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 22px rgba(15, 35, 64, 0.1);
+}
+
+.secondaryButton:active {
+  background: var(--primary-soft);
+  transform: translateY(0);
+}
+
+.startActionButton {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #ffffff;
+  box-shadow: var(--shadow-control);
+}
+
+.startActionButton:hover {
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
+  color: #ffffff;
+  box-shadow: var(--shadow-control-hover);
+}
+
+.startActionButton:active {
+  background: var(--primary-active);
+  border-color: var(--primary-active);
+}
+
+.emergencyButton {
+  background: var(--danger);
+  border-color: var(--danger);
+  color: #ffffff;
+  box-shadow: var(--shadow-danger);
+}
+
+.emergencyButton:hover {
+  background: var(--danger-hover);
+  border-color: var(--danger-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(255, 65, 65, 0.32);
+}
+
+/*
+  Fixed SOS quick access.
+
+  The button remains accessible
+  regardless of the current start page content.
+*/
+.sosButton {
+  position: fixed;
+  right: max(16px, env(safe-area-inset-right));
+  bottom: max(24px, env(safe-area-inset-bottom));
+  width: 72px;
+  height: 72px;
+  background: var(--danger);
+  color: #ffffff;
+  border: none;
+  border-radius: 999px;
+  box-shadow: var(--shadow-danger);
+  z-index: 30;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 850;
+  letter-spacing: 0;
+  transition:
+    background 0.18s ease,
+    transform 0.14s ease,
+    box-shadow 0.18s ease;
+}
+
+.sosButton:hover {
+  background: var(--danger-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(255, 65, 65, 0.32);
+}
+
+.sosButton:active {
+  background: var(--danger-active);
+  transform: translateY(0);
+}
+
+/*
+  Shared overlay and modal styles
+  for SOS, tutorial, and loading states.
+*/
+.sosModalOverlay,
+.tutorialOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 35, 64, 0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 200;
+  padding: var(--space-2);
+}
+
+.sosModalBox,
+.tutorialModalBox,
+.loadingPopup {
+  width: min(100%, 560px);
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: clamp(24px, 6vw, 36px);
+  text-align: center;
+  box-shadow: var(--shadow-card);
+}
+
+.emergencyTitleModal {
+  color: var(--danger);
+  font-size: clamp(1.65rem, 6vw, 2.1rem);
+  line-height: 1.12;
+  margin: 0 0 var(--space-2);
+}
+
+.sosInstruction {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  line-height: 1.7;
+  margin: 0 auto var(--space-3);
+  max-width: var(--reading-width);
+}
+
+/*
+  global Tutorial-Access and Tutorial-content.
+*/
+.tutorialButton {
+  position: fixed;
+  left: max(16px, env(safe-area-inset-left));
+  bottom: max(24px, env(safe-area-inset-bottom));
+  width: 54px;
+  height: 54px;
+  background: var(--info);
+  color: #ffffff;
+  border: none;
+  border-radius: 999px;
+  box-shadow: 0 10px 22px rgba(28, 134, 255, 0.24);
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition:
+    background 0.18s ease,
+    transform 0.14s ease,
+    box-shadow 0.18s ease;
+  z-index: 30;
+}
+
+.tutorialButton:hover {
+  background: var(--info-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px rgba(28, 134, 255, 0.3);
+}
+
+.tutorialModalBox {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.closeTutorialButton {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 6px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 999px;
+}
+
+.closeTutorialButton:hover {
+  color: var(--text-primary);
+  background: var(--surface);
+}
+
+.tutorialTitle {
+  color: var(--text-primary);
+  font-size: clamp(1.45rem, 5vw, 1.85rem);
+  line-height: 1.2;
+  margin: 0 0 var(--space-2);
+}
+
+.tutorialContent {
+  width: 100%;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  line-height: 1.7;
+  margin-bottom: var(--space-3);
+  text-align: left;
+}
+
+.tutorialContent p {
+  margin: 0 0 var(--space-2);
+  text-align: center;
+}
+
+.tutorialList {
+  display: grid;
+  gap: 12px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.tutorialList li {
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  gap: 12px;
+  align-items: start;
+  color: var(--text-primary);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-small);
+  padding: 14px;
+  font-size: 0.98rem;
+  line-height: 1.6;
+}
+
+.tutorialList svg {
+  color: var(--info);
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+/*
+  Loading indicator for processes
+  that require a short waiting time.
+*/
+.loadingPopup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.loadingSpinner {
+  width: 56px;
+  height: 56px;
+  border: 5px solid rgba(27, 51, 78, 0.16);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loadingText {
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 750;
+  margin: 0;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/*
+  footer from homescreen.
+*/
+.footer {
+  width: 100%;
+  flex: 0 0 auto;
+  padding: var(--space-3) 0 0;
+  margin-top: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: 0.88rem;
+}
+
+.footerLink {
+  background: none;
+  border: none;
+  color: var(--text-subtle);
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 650;
+  padding: 4px 6px;
+}
+
+.footerLink:hover {
+  color: var(--text-primary);
+  text-decoration: underline;
+}
+
+/*
+  Mobile adjustments.
+
+  On smaller screens, spacing is reduced,
+  buttons are widened, and floating quick access elements are displayed in a more compact size.
+*/
+@media (max-width: 600px) {
+  .main {
+    padding: var(--space-2) 12px max(var(--space-2), env(safe-area-inset-bottom));
+  }
+
+  .hauptbox {
+    align-items: center;
+    padding-bottom: var(--space-2);
+  }
+
+  .kopfbox {
+    padding: 24px 18px;
+  }
+
+  .header {
+    margin-bottom: var(--space-3);
+  }
+
+  .title {
+    font-size: clamp(2rem, 12vw, 2.8rem);
+  }
+
+  .buttonBox {
+    gap: 14px;
+  }
+
+  .primaryButton,
+  .secondaryButton,
+  .continueButton,
+  .emergencyButton {
+    max-width: 100%;
+    min-height: 60px;
+  }
+
+  .panel {
+    padding: var(--space-2);
+  }
+
+  .sosButton {
+    width: 52px;
+    height: 52px;
+    right: max(10px, env(safe-area-inset-right));
+    bottom: calc(34px + env(safe-area-inset-bottom));
+    font-size: 0.95rem;
+    box-shadow: 0 8px 18px rgba(255, 65, 65, 0.28);
+  }
+
+  .tutorialButton {
+    width: 44px;
+    height: 44px;
+    left: max(10px, env(safe-area-inset-left));
+    bottom: calc(38px + env(safe-area-inset-bottom));
+    box-shadow: 0 8px 18px rgba(28, 134, 255, 0.22);
+  }
+
+  .footer {
+    gap: 10px;
+    flex-wrap: wrap;
+    padding-top: var(--space-2);
+    padding-bottom: 0;
+    line-height: 1.5;
+  }
+}
