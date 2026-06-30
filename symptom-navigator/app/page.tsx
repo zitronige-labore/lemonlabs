@@ -16,7 +16,8 @@ import homeStyles from "./Home.module.css";
 import assessmentStyles from "./assessment/Assessment.module.css";
 
 import { useSaveForm } from "./useSaveForm";
-import { sendDataToAi, sendFhirToServer } from "./actions";
+import { sendFhirToServer } from "./assessment/actions/fhirActions";
+import { sendDataToAi } from "./assessment/actions/aiActions";
 import { redFlagScan } from "./assessment/medicalLogic/redFlagScan";
 
 import SelectMoreSymptoms from "./assessment/components/SelectMoreSymptomsStep";
