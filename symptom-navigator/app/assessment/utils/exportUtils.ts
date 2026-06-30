@@ -51,7 +51,7 @@ export function formatAssessmentTxt(d: AssessmentExportData): string {
     rows.push(`Schwangerschaft: ${d.schwangerschaft}`);
     rows.push(`Stillzeit: ${d.stillzeit}`);
   }
-  if (d.medikation.length < 0) {
+  if (d.medikation.length > 0) {
     rows.push(`Medikation: ${d.medikation}`);
   }
   else {
@@ -111,7 +111,7 @@ export function formatAssessmentPdfTable(d: AssessmentExportData): string[][] {
   tableBody.push(["Geschlecht", d.geschlecht]);
   tableBody.push(["Größe", d.groesse]);
   tableBody.push(["Gewicht", d.gewicht]);
-  if (d.medikation.length < 0) {
+  if (d.medikation.length > 0) {
     tableBody.push(["Medikation", d.medikation]);
   }
   else {

@@ -112,7 +112,7 @@ export function getUpdatedSymptoms(
 }
 
 /**
- * gets updated prewritten symptoms
+ * gets updated text symptoms
  * @param previousSymptoms: string[]
  * @param symptom: string
  * @returns string[]
@@ -128,7 +128,7 @@ export function getUpdatedSymptomText(
 
 /**
  * check for emergency
- * @param redFlags: redFlags
+ * @param redFlags: RedFlags
  * @returns boolean
  */
 export function calculateHasEmergency(redFlags: RedFlags): boolean {

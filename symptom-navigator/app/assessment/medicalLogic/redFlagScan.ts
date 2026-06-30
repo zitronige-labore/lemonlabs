@@ -11,7 +11,7 @@ import { AdditionalData, BasisData, SubRegion } from "@/app/types/assessment";
  * @param subRegion 
  * @param symptomList 
  * @param textSymptomList 
- * @returns Promise<[boolean, string[]] (redFlagDetected, reasons)
+* @returns Promise<[boolean, string[]]> - [redFlagDetected, reasons]
  */
 export async function redFlagScan(
     basisData: BasisData, 

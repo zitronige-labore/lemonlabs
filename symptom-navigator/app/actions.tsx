@@ -145,7 +145,7 @@ export async function saveFormData(formData: FormData) {
 
 /**
  * Truns formdata into correct format to save to db.
- * @param @param formData - FormData object containing all form fields
+ * @param formData - FormData object containing all form fields
  * @returns Promise<{ age, sex, pregnancy, weight, height, medicationList, ... }> - parsed data
  */
 function parseFormDataToDbUsable(formData: FormData) {
@@ -718,7 +718,13 @@ export async function getAccessCode(caseId: string) {
  *   }
  * } | undefined> - undefined on error or missing data. Also writes the result to the recommendations table.
  */
-export async function sendDataToAi(basisData?: BasisData, additionalData?: AdditionalData, symptomText?: string[], selectedymptoms?: string[], caseId?: string) {
+export async function sendDataToAi(
+  basisData?: BasisData, 
+  additionalData?: AdditionalData, 
+  symptomText?: string[], 
+  selectedymptoms?: string[], 
+  caseId?: string
+) {
 
 
   // using cashe or db data depending on arguments given
@@ -1071,7 +1077,8 @@ export async function mapNameToSnomed(name: string) {
 /**
  * Maps a symptom value to its SNOMED code.
  * @param caseId - case id 
- * @returns Promise<{resourceType, type, entry> - fhir
+ * @returns Promise<{ resourceType: string, type: string, entry: any[] } 
+ * | null> - FHIR Bundle object, or null if no data found
  */
 export async function buildFhirBundle(caseId: string): Promise<any> {
   
@@ -1416,7 +1423,7 @@ if (height) {
 /**
  * Sendet ein generiertes FHIR-Bundle an den HAPI FHIR Test-Server.
  * @param accessCode der access code des zu sendenden cases
- * @returns Promise<boolean>
+ * @returns Promise<boolean> - true if the FHIR bundle was sent successfully, false otherwise
  */
 
 export async function sendFhirToServer(accessCode: string): Promise<boolean> {
