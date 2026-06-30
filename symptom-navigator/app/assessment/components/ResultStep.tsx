@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 import assessmentStyles from "../Assessment.module.css";
 
 /* Retrieves the access code associated with the saved case from the server. */
-import { getAccessCode } from "../../actions";
+import { getAccessCode } from "../../actions/dbActions";
 /* Generates downloadable TXT and PDF files in the browser. */
 import { downloadTxt, downloadPdf } from "../utils/exportUtils";
 

@@ -83,11 +83,19 @@ import {
   deleteOldCases,
   getDetailsNoCertainCount,
   getAccessCode,
+} from "../app/actions/dbActions";
+
+// import functions to test
+import {
   sendDataToAi,
   buildUnifiedData,
   buildAiPrompt,
+} from "../app/actions/aiActions";
+
+// import functions to test
+import {
   mapNameToSnomed,
-} from "../app/actions";
+} from "../app/actions/fhirActions";
 
 
 

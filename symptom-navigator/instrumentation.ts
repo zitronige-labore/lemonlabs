@@ -1,7 +1,7 @@
 export async function register() {
   // execute only in nodejs environment, not in edge runtime
   if (process.env.NEXT_RUNTIME === 'nodejs') {
-    const { deleteOldCases } = await import('./app/actions');
+    const { deleteOldCases } = await import('./app/actions/dbActions');
 
     // execute deleteOldCases immediately on startup
     await deleteOldCases();

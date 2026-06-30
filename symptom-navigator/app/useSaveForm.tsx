@@ -1,7 +1,7 @@
 "use client"
 
 import { AdditionalData, BasisData } from "./types/assessment";
-import { saveFormData} from "./actions"; // form data is being importet here so it will be called in page when function is called
+import { saveFormData} from "./actions/dbActions"; // form data is being importet here so it will be called in page when function is called
 import { useCallback } from "react";
 
 export function useSaveForm(basisData: BasisData, additionalData: AdditionalData, redFlags: any, selectedMainRegion: any, selectedSubRegion: any, selectedSymptoms: string[], symptomText: string[], ) {
