@@ -1,5 +1,10 @@
 @import "tailwindcss";
+/*
+  Global design tokens.
 
+  Central color palette, spacing, typography,
+  shadows, and layout variables used throughout the application.
+*/
 :root {
   --background: #ffffff;
   --foreground: #0f2340;
@@ -58,7 +63,9 @@
   --button-width: 340px;
   --button-height: 65px;
 }
-
+ /*
+  Expose CSS variables to Tailwind.
+*/
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -66,7 +73,9 @@
   --font-sans: var(--font-base);
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
-
+/*
+  Global reset and base layout.
+*/
 * {
   box-sizing: border-box;
 }
@@ -87,14 +96,20 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
 }
-
+/*
+  Use the application's default typography
+  for all form controls.
+*/
 button,
 input,
 select,
 textarea {
   font: inherit;
 }
-
+/*
+  Keep letter spacing consistent across
+  common text and form elements.
+*/
 p,
 li,
 label,
@@ -104,7 +119,10 @@ textarea,
 button {
   letter-spacing: 0;
 }
-
+/*
+  Visible keyboard focus indicator
+  for accessibility.
+*/
 button:focus-visible,
 a:focus-visible,
 input:focus-visible,

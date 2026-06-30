@@ -1,9 +1,9 @@
 /*
-  Grundlayout des Assessment-Bereichs.
+  Base layout of the assessment section.
 
-  Diese Styles greifen für alle Schritte nach der Start- und Hinweisseite.
-  Der Inhalt wird vertikal zentriert, bleibt aber auf die zentrale
-  Projektbreite begrenzt.
+  These styles apply to all steps after the start and information screens.
+  The content is vertically centered while remaining constrained
+  to the project's maximum content width.
 */
 .main {
   min-height: 100vh;
@@ -17,7 +17,7 @@
 }
 
 /*
-  Gemeinsame Formularfläche für die einzelnen Assessment-Schritte.
+  Shared formular container for individual assessment steps.
 */
 .card {
   width: 100%;
@@ -30,9 +30,10 @@
 }
 
 /*
-  Fortschrittsanzeige im AssessmentLayout.
+  Progress indicator used in the AssessmentLayout.
 
-  Die Breite von .progressFill wird in React pro Schritt gesetzt.
+  The width of .progressFill is set dynamically in React
+  based on the current step.
 */
 .progressContainer {
   width: 100%;
@@ -56,8 +57,8 @@
 }
 
 /*
-  Allgemeine Textbausteine für Überschriften, Beschreibungstexte
-  und kontextbezogene Hinweise innerhalb der Schritte.
+  General text styles for headings, descriptions,
+  and contextual hints within the assessment steps.
 */
 .title {
   color: var(--text-primary);
@@ -98,8 +99,8 @@
 }
 
 /*
-  Animierter Pfeil, der bei der Körperregion-Auswahl auf den nächsten
-  erwarteten Interaktionspunkt hinweist.
+  Animated arrow that points to the next expected
+  interaction area during body region selection.
 */
 .hintArrow {
   width: 30px;
@@ -127,10 +128,11 @@
 }
 
 /*
-  Formulargruppen und Eingabeelemente.
+  Formular groups and input elements.
 
-  Diese Klassen werden von Basisdaten, Zusatzangaben, Freitext
-  und Symptomauswahl gemeinsam genutzt.
+  These classes are shared by the basic information,
+  additional information, free text input,
+  and symptom selection steps.
 */
 .fieldset {
   background: var(--surface);
@@ -266,9 +268,11 @@ textarea.input {
 }
 
 /*
-  Einheitliche Button-Basis für primäre, sekundäre und regionale Aktionen.
+  Shared button base styles for primary, secondary,
+  and region selection buttons.
 
-  Die Varianten überschreiben anschließend Farbe, Rahmen und Schatten.
+  Individual button variants override colors,
+  borders, and shadows.
 */
 .primaryButton,
 .secondaryButton,
@@ -357,10 +361,11 @@ textarea.input {
 }
 
 /*
-  Vertikale Aktionsgruppen.
+  Vertical action groups.
 
-  buttonGroup wird für Schritt-Navigation genutzt,
-  quickSelect für kompakte Auswahlreihen wie Regionen oder Kategorien.
+  buttonGroup is used for step navigation,
+  while quickSelect is used for compact selections
+  such as body regions or symptom categories.
 */
 .buttonGroup,
 .quickSelect {
@@ -380,10 +385,10 @@ textarea.input {
 }
 
 /*
-  Warn- und Notfallbereiche.
+  Emergency and warning sections.
 
-  Diese Elemente heben medizinisch dringliche Informationen sichtbar
-  vom normalen Formularfluss ab.
+  These elements visually highlight medically urgent
+  information and separate it from the regular form flow.
 */
 .emergencyButton {
   background: var(--danger);
@@ -419,10 +424,10 @@ textarea.input {
 }
 
 /*
-  Interaktive Körperkarte.
+  Interactive body map.
 
-  Haupt- und Unterregionen haben eigene Grundflächen, teilen sich aber
-  Hover- und Auswahlzustände.
+  Main and sub regions have separate base styles,
+  but share the same hover and selection states.
 */
 .bodyWrapper {
   width: 100%;
@@ -493,7 +498,8 @@ textarea.input {
 }
 
 /*
-  Slider für Schmerzskalen und andere stufenlose Eingaben.
+  Slider used for pain scales and other
+  continuous input values.
 */
 .slider {
   width: 100%;
@@ -502,10 +508,11 @@ textarea.input {
 }
 
 /*
-  Ergebnis- und Zusammenfassungsbereiche.
+  Result and summary sections.
 
-  resultBox rahmt die Auswertung, dataPanel und die data*-Klassen
-  strukturieren gespeicherte Angaben, KI-Antworten und Details.
+  resultBox contains the assessment result,
+  while dataPanel and the data* classes organize
+  stored information, AI responses, and detailed data.
 */
 .resultBox {
   width: 100%;
@@ -813,7 +820,7 @@ textarea.input {
 }
 
 /*
-  Fußzeile innerhalb des Assessment-Bereichs.
+  Footer displayed within the assessment section.
 */
 .footer {
   width: 100%;
@@ -843,10 +850,11 @@ textarea.input {
 }
 
 /*
-  Aufklappbare Zusatzangaben.
+  Expandable additional information sections.
 
-  Diese Klassen werden vor allem in AdditionalInfoStep verwendet,
-  wenn optionale Bereiche nach einer Checkbox-Eingabe sichtbar werden.
+  These classes are primarily used in AdditionalInfoStep,
+  where optional sections become visible after
+  selecting a checkbox.
 */
 .checkboxLabel {
   display: flex;
@@ -923,10 +931,11 @@ textarea.input {
 }
 
 /*
-  Spezielle Eingabekarte für Medikamente.
+  Specialized input card for medications.
 
-  Die Felder sind zweispaltig angeordnet; Name und Zeitraum können bei Bedarf
-  die volle Breite einnehmen.
+  The fields are arranged in two columns, while
+  the medication name and duration fields can span
+  the full width when needed.
 */
 .medicationEntry {
   display: grid;
@@ -949,12 +958,12 @@ textarea.input {
   color: var(--text-secondary);
 }
 
-/* Medikament-Name und seit wann: volle Breite */
+/* Medication name and duration: full width */
 .medicationEntry .fullWidth {
   grid-column: 1 / -1;
 }
 
-/* Remove-Button oben rechts absolut */
+/* Remove-Button top right corner (absolut) */
 .medicationEntry .removeButton {
   position: absolute;
   top: 8px;
@@ -962,7 +971,8 @@ textarea.input {
 }
 
 /*
-  Bewegung des Hinweis-Pfeils bei der Körperregion-Auswahl.
+  Animation of the hint arrow displayed during
+  body region selection.
 */
 @keyframes hintArrowBounce {
   0%,
@@ -976,10 +986,10 @@ textarea.input {
 }
 
 /*
-  Mobile Anpassungen.
+  Mobile layout adjustments.
 
-  Auf kleinen Bildschirmen werden Abstände reduziert, Buttons verbreitert
-  und Datenraster einspaltig dargestellt.
+  On smaller screens, spacing is reduced, buttons
+  become wider, and data grids switch to a single-column layout.
 */
 @media (max-width: 600px) {
   .main {
