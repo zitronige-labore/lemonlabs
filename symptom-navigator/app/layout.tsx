@@ -1,30 +1,30 @@
 /*
-  Import des Metadata-Typs von Next.js.
+  Import the Metadata type from Next.js.
 
-  Damit können Seitentitel, Beschreibung,
-  Manifest-Dateien und weitere Metadaten
-  typisiert definiert werden.
+  This allows page titles, descriptions,
+  manifest files, and other metadata
+  to be defined with proper typing.
 */
 import type { Metadata } from "next";
 
 /*
-  Import der Schriftarten "Geist" und "Geist Mono"
-  über das integrierte Font-System von Next.js.
+  Import the "Geist" and "Geist Mono" fonts
+  using Next.js' built-in font system.
 */
 import { Geist, Geist_Mono } from "next/font/google";
 
 /*
-  Import der globalen CSS-Datei.
+  Import the global stylesheet.
 
-  Diese Styles gelten für die gesamte Anwendung.
+  These styles apply to the entire application.
 */
 import "./globals.css";
 
 /*
-  Konfiguration der Hauptschriftart.
+  Configure the primary font.
 
-  Die Schrift wird als CSS-Variable bereitgestellt
-  und enthält nur lateinische Zeichen.
+  The font is exposed as a CSS variable
+  and only includes Latin characters.
 */
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,10 +32,10 @@ const geistSans = Geist({
 });
 
 /*
-  Konfiguration der Monospace-Schriftart.
+  Configure the monospace font.
 
-  Diese kann beispielsweise für Code-Darstellungen
-  verwendet werden.
+  It can be used, for example,
+  for displaying code.
 */
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
@@ -43,11 +43,10 @@ const geistMono = Geist_Mono({
 });
 
 /*
-  Globale Metadaten der Anwendung.
+  Global application metadata.
 
-  Diese Informationen werden unter anderem
-  im Browser-Tab, bei Suchmaschinen
-  und für PWA-Funktionen verwendet.
+  This information is used for browser tabs,
+  search engines, and PWA features.
 */
 export const metadata: Metadata = {
   title: "Symptometer",
@@ -68,10 +67,10 @@ export const metadata: Metadata = {
 };
 
 /*
-  RootLayout ist das globale Grundlayout der gesamten Anwendung.
+  RootLayout defines the global layout
+  of the entire application.
 
-  Alle Seiten der App werden innerhalb von {children}
-  gerendert.
+  All pages are rendered inside {children}.
 */
 export default function RootLayout({
   children,
@@ -80,15 +79,16 @@ export default function RootLayout({
 }>) {
   return (
     /*
-      Das html-Element definiert die Hauptsprache
-      und bindet die Schriftarten global ein.
-    */
+    The html element defines the application's language
+    and applies the fonts globally.
+  */
     <html
       lang="de"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       {/*
-        Der body enthält den eigentlichen Inhalt der Anwendung.
+        The body element contains
+        the application's main content.
       */}
       <body className="min-h-full flex flex-col">{children}</body>
     </html>

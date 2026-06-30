@@ -1,10 +1,10 @@
 "use client";
 
 /*
-  Diese Datei steuert den gesamten Ablauf der Anwendung.
+  This file controls the entire application workflow.
 
-  Die sichtbaren Bereiche wurden in einzelne Komponenten ausgelagert.
-  Die Zustände und die zentrale Ablaufsteuerung bleiben hier in page.tsx.
+  The visible sections are split into separate components.
+  State management and the central workflow logic remain here in page.tsx.
 */
 import { DatenschutzStep } from "./assessment/components/ DatenschutzStep";
 import { ImpressumStep } from "./assessment/components/ImpressumStep";
@@ -63,8 +63,8 @@ import {
 
 export default function Home() {
   /*
-    Speichert, ob das globale Tutorial-Popup geöffnet ist.
-  */
+  Stores whether the global tutorial popup is open.
+*/
   const [isTutorialOpen, setIsTutorialOpen] = useState(false);
 
   /*
@@ -73,8 +73,8 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
 
   /*
-    Speichert, welcher Schritt im Ablauf aktuell angezeigt wird.
-  */
+  Stores the currently active step of the assessment.
+*/
   const [step, setStep] = useState<Step>("start");
   const [highestAssessmentProgress, setHighestAssessmentProgress] = useState(0);
 
@@ -85,45 +85,45 @@ export default function Home() {
   const stepRef = useRef<Step>("start");
 
   /*
-    Speichert, ob die Hinweise auf der Hinweis-Seite bestätigt wurden.
-  */
+   Stores whether the instructions have been acknowledged.
+ */
   const [hinweiseBestaetigt, setHinweiseBestaetigt] = useState(false);
 
   /*
-    Speichert die ausgewählten medizinischen Warnzeichen.
-  */
+  Stores the selected medical red flags.
+*/
   const [redFlags, setRedFlags] = useState<RedFlags>(emptyRedFlags);
 
   /*
-    Speichert, ob bewusst ausgewählt wurde,
-    dass keines der Warnzeichen zutrifft.
-  */
+   Stores whether the user explicitly selected
+   that none of the red flags apply.
+ */
   const [noRedFlags, setNoRedFlags] = useState(false);
 
   /*
-    Speichert die ausgewählte Hauptregion der Körperkarte.
-  */
+   Stores the selected main body region.
+ */
   const [selectedMainRegion, setSelectedMainRegion] =
     useState<MainRegion | null>(null);
 
   /*
-    Speichert die ausgewählte Unterregion der Körperkarte.
-  */
+  Stores the selected body subregion.
+*/
   const [selectedSubRegion, setSelectedSubRegion] =
     useState<SubRegion | null>(null);
 
   /*
-    Speichert die Freitextbeschreibung der Beschwerden.
+    Stores the free-text symptom descriptions.
   */
   const [symptomText, setSymptomText] = useState<string[]>([]);
 
   /*
-    Speichert die ausgewählten Symptome aus der Symptomauswahl.
-  */
+   Stores the selected symptoms.
+ */
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
-
   /*
-    Speichert die PainScale-Werte, damit sie beim Zurückgehen erhalten bleiben.
+    Stores the pain scale values
+    so they are preserved when navigating back.
   */
   const [copyPainScale, setCopyPainScale] = useState<Record<string, string>>({});
 
@@ -179,8 +179,8 @@ export default function Home() {
 
 
   /*
-    Speichert allgemeine Angaben und Detailangaben zu den Beschwerden.
-  */
+   Stores general user information and symptom details.
+ */
   const [basisData, setBasisData] = useState<BasisData>({
     age: "",
     gender: "",
@@ -188,9 +188,9 @@ export default function Home() {
   });
 
   /*
-    Speichert optionale Zusatzangaben.
-    Diese Angaben sind nicht verpflichtend.
-  */
+   Stores optional additional information.
+   These fields are not required.
+ */
   const [additionalData, setAdditionalData] = useState<AdditionalData>({
     medication: [],
     hasMedication: false,
@@ -220,13 +220,13 @@ export default function Home() {
   });
 
   /*
-    Prüft, ob mindestens ein Warnzeichen ausgewählt wurde.
-  */
+  Checks whether at least one red flag has been selected.
+*/
   const hasEmergency = Object.values(redFlags).some(Boolean);
 
   /*
-    Speichert die Formulardaten.
-  */
+   Saves the formular data.
+ */
   const handleSaveForm = useSaveForm(
     basisData,
     additionalData,
@@ -238,8 +238,8 @@ export default function Home() {
   );
 
   /*
-    Speichert die Antwort der KI.
-  */
+  Stores the AI response.
+*/
   const [aiAnswer, setAiAnswer] = useState<any>(null);
 
   // defines all steps which are part of the form
@@ -333,7 +333,7 @@ export default function Home() {
         return 60;
       case "manageData":
         return 0;
-      // Alle Symptom-Kategorien (werden angezeigt bevor man eine Unterkategorie wählt)
+      // all symptom-category (appears before selecting a sub regions)
       case "Ohren":
       case "Kopf":
       case "Nacken":
@@ -357,7 +357,7 @@ export default function Home() {
       case "Keine bestimmte Region / mehrere Stellen":
       case "Psyche":
         return 60;
-      // Alle Symptom-Kategorie-Steps
+      // all Symptom-Category-Steps
       case "innenOhr":
       case "aussenOhr":
       case "kopfSpannung":
@@ -399,10 +399,11 @@ export default function Home() {
     }
   }
   /*
-    Aktualisiert ein einzelnes Warnzeichen.
-    Sobald ein Warnzeichen ausgewählt wird, wird
-    "Keines davon trifft zu" automatisch deaktiviert.
-  */
+   Updates a single red flag.
+ 
+   If a red flag is selected,
+   the "None of the above" option is automatically deselected.
+ */
   function updateRedFlag(key: keyof RedFlags, checked: boolean) {
     setRedFlags({
       ...redFlags,
@@ -413,10 +414,10 @@ export default function Home() {
   }
 
   /*
-    Aktiviert oder deaktiviert die Auswahl "Keines davon trifft zu".
-
-    Wenn diese Option aktiviert wird, werden alle Warnzeichen zurückgesetzt.
-  */
+   Enables or disables the "None of the above" option.
+ 
+   If selected, all red flags are reset.
+ */
   function selectNoRedFlags(checked: boolean) {
     setNoRedFlags(checked);
 
@@ -426,17 +427,17 @@ export default function Home() {
   }
 
   /*
-    Speichert die ausgewählte Hauptregion.
-
-    Gleichzeitig werden vorherige Detailauswahlen zurückgesetzt,
-    damit keine alten Symptome oder Unterregionen übernommen werden.
+    Stores the selected main body region.
+  
+    Previous detailed selections are reset
+    to prevent outdated symptoms or subregions from being reused.
   */
   function selectMainRegion(region: MainRegion) {
     setSelectedMainRegion(region);
     if (region === "Psyche") {
       setSelectedSubRegion("Psyche");
       return;
-    } else if (region === "Allgemein (ganzer Körper)"){
+    } else if (region === "Allgemein (ganzer Körper)") {
       setSelectedSubRegion("Keine bestimmte Region / mehrere Stellen");
       return;
     } else if (region === "Hals") {
@@ -450,16 +451,16 @@ export default function Home() {
   }
 
   /*
-    Speichert die ausgewählte Unterregion.
-  */
+  Stores the selected subregion.
+*/
   function selectSubRegion(region: SubRegion) {
     setSelectedSubRegion(region);
   }
 
   /*
-    Führt nur dann zum nächsten Schritt,
-    wenn Hauptregion und Unterregion ausgewählt wurden.
-  */
+  Continues to the next step only
+  if both a main region and a subregion have been selected.
+*/
   function continueAfterRegionSelection() {
     if (selectedMainRegion && selectedSubRegion) {
       goToStep("symptomChoice");
@@ -467,9 +468,9 @@ export default function Home() {
   }
 
   /*
-    Fügt ein Symptom zur Auswahl hinzu oder entfernt es wieder.
-    Optional kann zusätzlich ein PainScale-Wert gespeichert werden.
-  */
+   Adds or removes a symptom from the selection.
+   Optionally stores the associated pain scale value.
+ */
   function toggleSymptom(symptom: string, painscale?: string) {
     console.log("togglelog: ", symptom, painscale);
 
@@ -484,8 +485,9 @@ export default function Home() {
   }
 
   /*
-    Fügt ein Freitext-Symptom zur Freitextliste hinzu oder entfernt es wieder.
-  */
+   Adds or removes a free-text symptom
+   from the symptom list.
+ */
   function addSymptomText(symptom: string) {
     setSymptomText((previousSymptoms) =>
       previousSymptoms.includes(symptom)
@@ -502,8 +504,9 @@ export default function Home() {
   }
 
   /*
-    Setzt beim Neustart die wichtigsten Auswahlen zurück.
-  */
+   Resets the assessment
+   and clears all user input.
+ */
   function resetProcess() {
     setSelectedMainRegion(null);
     setSelectedSubRegion(null);
@@ -553,8 +556,9 @@ export default function Home() {
 
 
   /*
-    Wird beim Abschließen des Formulars ausgeführt.
-  */
+  Handles form submission
+  after the assessment has been completed.
+*/
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -603,7 +607,7 @@ export default function Home() {
     }
 
     // return here if redflag is detected
-    if(redFlagScanSubmit) {
+    if (redFlagScanSubmit) {
       setIsLoading(false);
       goToStep("start");
       return;
@@ -639,7 +643,7 @@ export default function Home() {
           : assessmentStyles.main
       }
     >
-      {/* Startseite */}
+      {/*   Start screen */}
       {step === "start" && (
         <StartScreen
           onStartAssessment={() => goToStep("hinweise")}
@@ -650,7 +654,7 @@ export default function Home() {
         />
       )}
 
-      {/* Hinweis-Seite vor Beginn der Ersteinschätzung */}
+      {/* Information screen shown before the assessment starts */}
       {step === "hinweise" && (
         <HinweiseScreen
           hinweiseBestaetigt={hinweiseBestaetigt}
@@ -663,7 +667,7 @@ export default function Home() {
           onOpenSupport={() => goToStep("support")}
         />
       )}
-      {/* Datenverwaltungs-Seite */}
+      {/* Data management page */}
       {step === "manageData" && (
         <form className={assessmentStyles.card} onSubmit={(e) => { e.preventDefault(); goToStep("start"); }}>
           <ManageDataStep
@@ -680,14 +684,14 @@ export default function Home() {
           </div>
         </form>
       )}
-      {/* Terminvergabe */}
+      {/* Appointments */}
       {step === "other" && (
         <OtherStep
           onBack={() => goToStep("start")}
           onManageData={() => goToStep("manageData")}
         />
       )}
-      {/* Datenschutzerklärung */}
+      {/* privacy policy */}
       {step === "datenschutz" && (
         <DatenschutzStep onBack={() => window.history.back()} />
       )}
@@ -703,7 +707,7 @@ export default function Home() {
       {step === "support" && (
         <SupportStep onBack={() => window.history.back()} />
       )}
-      {/* Alle Schritte der eigentlichen Ersteinschätzung */}
+      {/* all steps from assessment */}
       {step !== "start" && step !== "hinweise" && step !== "manageData" && step !== "other" && step !== "datenschutz" && step !== "impressum" && step !== "kontakt" && step !== "support" && (
         <AssessmentLayout
           onSubmit={handleSubmit}
@@ -714,7 +718,7 @@ export default function Home() {
           onOpenSupport={() => goToStep("support")}
         >
 
-          {/* Schritt 1: Warnzeichen prüfen */}
+          {/* Step 1: Check for red flags */}
           {step === "redflags" && (
             <RedFlagsStep
               redFlags={redFlags}
@@ -729,7 +733,7 @@ export default function Home() {
             />
           )}
 
-          {/* Schritt 2: Allgemeine Angaben */}
+          {/* Step 2: General information */}
           {step === "basisStart" && (
             <BasisStartStep
               basisData={basisData}
@@ -740,7 +744,7 @@ export default function Home() {
             />
           )}
 
-          {/* Schritt 3: Körperregion auswählen */}
+          {/* Step 3: Select a body region */}
           {step === "bodyRegion" && (
             <BodyRegionStep
               selectedMainRegion={selectedMainRegion}
@@ -752,7 +756,7 @@ export default function Home() {
             />
           )}
 
-          {/* Schritt 4: Symptombaum navigieren */}
+          {/* Step 4: Navigate the symptom tree */}
           <SymptomTree
             step={step}
             setStep={goToStep}
@@ -765,7 +769,7 @@ export default function Home() {
             basisdata={basisData}
           />
 
-          {/* Schritt 5: Textinput, falls im Symptombaum aufgerufen */}
+          {/* Step 5: Free-text symptom input */}
           {step === "textInput" && (
             <SymptomTextInputStep
               selectedSubRegion={selectedSubRegion}
@@ -775,7 +779,7 @@ export default function Home() {
             />
           )}
 
-          {/* Schritt 5,5: weitere Symptomangabe */}
+          {/* Step 5.5: Add additional symptoms */}
           {step === "selectMoreSymptoms" && (
             <SelectMoreSymptoms
               setSelectedMainRegion={setSelectedMainRegion}
@@ -785,7 +789,7 @@ export default function Home() {
             />
           )}
 
-          {/* Schritt 6: Optionale Zusatzangaben */}
+          {/* Step 6: Optional additional information */}
           {step === "additionalInfo" && (
             <AdditionalInfoStep
               additionalData={additionalData}
@@ -796,7 +800,7 @@ export default function Home() {
             />
           )}
 
-          {/* Schritt 6.25: checking information */}
+          {/* Step 6.25: Review entered information */}
           {step === "checkInfo" && (
             <CheckInfo
               additionalData={additionalData}
@@ -812,13 +816,13 @@ export default function Home() {
           )}
 
 
-          {/* Schritt 6.5: Ladeanzeige */}
+          {/* Step 6.5: Loading indicator */}
           {isLoading === true && (
             <LoadingPopup
             />
           )}
 
-          {/* Schritt 7: Ergebnis und Zusammenfassung */}
+          {/* Step 7: Results and summary */}
           {step === "result" && (
             <ResultStep
               basisData={basisData}
@@ -834,7 +838,7 @@ export default function Home() {
       )}
 
 
-      {/* SOS ausloesen */}
+      {/* SOS popup */}
       {redFlagScanPositive && (
         <RedFlagPositivePopUp
           redFlagScanResult={redFlagScanResult}
@@ -844,7 +848,7 @@ export default function Home() {
       )}
 
 
-      {/* Globaler Tutorial Button */}
+      {/* global tutorial button */}
       <button
         type="button"
         className={homeStyles.tutorialButton}
@@ -854,7 +858,7 @@ export default function Home() {
         <Question size={28} weight="bold" />
       </button>
 
-      {/* Globales Tutorial Modal */}
+      {/* Global tutorial modal */}
       <TutorialModal
         isOpen={isTutorialOpen}
         onClose={() => setIsTutorialOpen(false)}
