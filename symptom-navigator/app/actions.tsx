@@ -1052,7 +1052,24 @@ return prompt;
 
 
 
-
+/**
+ * Maps a symptom value to its SNOMED code.
+ * @param name - the symptomValue of a symptom
+ * @returns Promise<string|null> - the corresponding SNOMED code, or null if no matching symptom was found
+ */
+export async function mapNameToSnomed(name: string) {
+  if (!name) return null;
+  const symptomList = getSymptomList() as any[];
+  for (const category of symptomList) {
+    if (category && category.symptoms) {
+      const match = category.symptoms.find(
+        (s: any) => s.symptomValue?.toLowerCase().trim() === name.toLowerCase().trim()
+      );
+      if (match) return match.snomedCode;
+    }
+  }
+  return null;
+}
 
 
 /**
