@@ -46,8 +46,8 @@ export function getSymptomCategoryList(gender: string) {
           { category: "Spannung & Druck im Kopf", step: "kopfSpannung" },
           { category: "Migräne & Pulsieren", step: "kopfMigraene" },
           { category: "Cluster-Schmerz & Bohren", step: "kopfCluster" },
-          { category: "Begleiterscheinungen (Kopf)", step: "kopfBegleitung" },
-          { category: "Dringende Warnsignale (Kopf)", step: "kopfWarnsignale" }
+          { category: "Zusätzliche Begleitbeschwerden", step: "kopfBegleitung" },
+          { category: "Allgemein starke Schmerzen", step: "kopfWarnsignale" }
         ]
       },
       {
@@ -55,7 +55,7 @@ export function getSymptomCategoryList(gender: string) {
         categories:
           [
             { category: "Verspannung & Bewegungsschmerz", step: "nackenBewegung" },
-            { category: "Dringende Warnsignale (Nacken)", step: "nackenWarnsignale" }
+            { category: "Starke Nackenbeschwerden", step: "nackenWarnsignale" }
           ]
       },
       {
@@ -145,7 +145,7 @@ export function getSymptomCategoryList(gender: string) {
             { category: "Gelenkschmerzen & Steifheit", step: "beineGelenke" },
             { category: "Muskelbeschwerden & Krämpfe", step: "beineMuskeln" },
             { category: "Nerven, Gefäße & Durchblutung", step: "beineNervenGefaese" },
-            { category: "Dringende Warnsignale (Beine)", step: "beineWarnsignale" }
+            { category: "Stärkere Beschwerden", step: "beineWarnsignale" }
           ]
       },
       {
@@ -155,7 +155,7 @@ export function getSymptomCategoryList(gender: string) {
             { category: "Gelenkschmerzen & Steifheit", step: "beineGelenke" },
             { category: "Muskelbeschwerden & Krämpfe", step: "beineMuskeln" },
             { category: "Nerven, Gefäße & Durchblutung", step: "beineNervenGefaese" },
-            { category: "Dringende Warnsignale (Beine)", step: "beineWarnsignale" }
+            { category: "Stärkere Beschwerden", step: "beineWarnsignale" }
           ]
       },
       {
@@ -165,7 +165,7 @@ export function getSymptomCategoryList(gender: string) {
             { category: "Gelenkschmerzen & Steifheit", step: "beineGelenke" },
             { category: "Muskelbeschwerden & Krämpfe", step: "beineMuskeln" },
             { category: "Nerven, Gefäße & Durchblutung", step: "beineNervenGefaese" },
-            { category: "Dringende Warnsignale (Beine)", step: "beineWarnsignale" }
+            { category: "Stärkere Beschwerden", step: "beineWarnsignale" }
           ]
       },
       {
@@ -175,7 +175,7 @@ export function getSymptomCategoryList(gender: string) {
             { category: "Gelenkschmerzen & Steifheit", step: "beineGelenke" },
             { category: "Muskelbeschwerden & Krämpfe", step: "beineMuskeln" },
             { category: "Nerven, Gefäße & Durchblutung", step: "beineNervenGefaese" },
-            { category: "Dringende Warnsignale (Beine)", step: "beineWarnsignale" }
+            { category: "Stärkere Beschwerden", step: "beineWarnsignale" }
           ]
       }
     ]
