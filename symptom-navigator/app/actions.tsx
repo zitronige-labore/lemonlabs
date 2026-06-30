@@ -1079,21 +1079,21 @@ export async function mapNameToSnomed(name: string) {
  */
 export async function buildFhirBundle(caseId: string): Promise<any> {
 
-  // Daten aus der Datenbank geholt
+  // Data fetched from the database
   const userData = await getUserDataFromDB(caseId);
   if (!userData || !userData.caseData || userData.caseData.length === 0) {
     console.error("Keine Daten für FHIR-Export in der DB gefunden.");
     return null;
   }
 
-  // Übernommen von Franziska
+  // "unpacking" values
   const { sex, age, pregnancy, date } = userData.caseData[0] ?? {};
   const { weight, height, temperature, duration, worsening, breastfeeding, extraInfo, alcohol, smoking } = userData.additionalInfoData[0] ?? {};
   const { allergies } = userData.allergyData ?? {};
   const { medications } = userData.medicationData ?? [];
   const { conditions } = userData.conditionsData ?? {};
 
-  // Liste der gegebenen Symptome
+  // List of given symptoms
   const symptoms = userData.symptomData.map(
     ({ name_de, painscale, bodyregion }: { name_de: string; painscale: number | null; bodyregion: string | null }) => ({
       name_de,
@@ -1102,7 +1102,7 @@ export async function buildFhirBundle(caseId: string): Promise<any> {
     })
   );
 
-  // Liste der Freitext Symptome 
+  // List of raw-text symptoms
   const textSymptoms = userData.textSymptomData.map(
     ({ raw_symptoms, painscale, bodyregion }: { raw_symptoms: string; painscale: number | null; bodyregion: string | null }) => ({
       raw_symptoms,
@@ -1117,7 +1117,7 @@ export async function buildFhirBundle(caseId: string): Promise<any> {
   const fhirEntries: any[] = [];
   const patientRef = "urn:uuid:patient-1";
 
-  // Patienten-Anker 
+  // Patient anchor
   fhirEntries.push({
     fullUrl: patientRef,
     resource: {
@@ -1127,9 +1127,9 @@ export async function buildFhirBundle(caseId: string): Promise<any> {
     }
   });
 
-  // Demografie als Observations 
+  // Demographics as Observations
   
-  // Geburtsgeschlecht (LOINC: 76689-9)
+  // Sex assigned at birth (LOINC: 76689-9)
   if (sex) {
     let fhirSexDisplay = "Unknown";
     let fhirSexCode = "unknown";
@@ -1152,7 +1152,7 @@ export async function buildFhirBundle(caseId: string): Promise<any> {
     });
   }
 
- // Alter (LOINC: 63900-5)
+ // Age (LOINC: 63900-5)
   if (age) {
     fhirEntries.push({
       resource: {
@@ -1165,7 +1165,7 @@ export async function buildFhirBundle(caseId: string): Promise<any> {
     });
   }
 
-  // Schwangerschaftsstatus (LOINC: 82810-3)
+  // Pregnancy status (LOINC: 82810-3)
   if (pregnancy !== undefined && sex !== "m") {
     fhirEntries.push({
       resource: {
@@ -1181,7 +1181,7 @@ export async function buildFhirBundle(caseId: string): Promise<any> {
     });
   }
 
-    //Stillzeit
+  // Breastfeeding
   if (breastfeeding !== undefined && sex !== "m") {
     fhirEntries.push({
       resource: {
@@ -1197,43 +1197,43 @@ export async function buildFhirBundle(caseId: string): Promise<any> {
     });
   }
 
-if (smoking !== undefined) {
-  fhirEntries.push ({
-    resource: {
-      resourceType: "Observation",
-      status: "final",
-      subject: {reference: patientRef},
-      effectiveDateTime: date,
-      category: [{ coding: [{ system: "http://terminology.hl7.org/CodeSystem/observation-category", code: "social-history", display:" Social History" }]}],
-      code: { coding: [{ system: "http://loinc.org", coce: "72166-2", display: "Tobacco smoking status" }]},
-      valueCodeableConcept: {
-        text: typeof smoking === "boolean"
-        ? (smoking ? "Patient konsumiert Tabak/Zigaretten": "Patient konsumiert keinen Tabak")
-        : `Tabakkonsum: ${smoking}` // Falls Freitext statt Boolean
+  if (smoking !== undefined) {
+    fhirEntries.push ({
+      resource: {
+        resourceType: "Observation",
+        status: "final",
+        subject: {reference: patientRef},
+        effectiveDateTime: date,
+        category: [{ coding: [{ system: "http://terminology.hl7.org/CodeSystem/observation-category", code: "social-history", display:" Social History" }]}],
+        code: { coding: [{ system: "http://loinc.org", coce: "72166-2", display: "Tobacco smoking status" }]},
+        valueCodeableConcept: {
+          text: typeof smoking === "boolean"
+          ? (smoking ? "Patient konsumiert Tabak/Zigaretten": "Patient konsumiert keinen Tabak")
+          : `Tabakkonsum: ${smoking}` // in case raw text instead of boolean
+        }
+      }
+    });
+  }
+
+  if (alcohol !== undefined) {
+    fhirEntries.push({
+      resource: {
+        resourceType: "Observation",
+        status: "final",
+        subject: {refernce: patientRef }, 
+        effectiveDateTime: date,
+        category: [{ coding: [{ system: "http://terminology.hl7.org/CodeSystem/observation-category", code: "social-history", display: "Social History" }] }],
+        code: {coding: [{ system:  "http://loinc.org", code: "74013-4", display: "Alcoholic beverage intake" }]},
+        valueCodeableConcept: {
+            text: typeof alcohol === "boolean"
+              ? (alcohol ? "Patient konsumiert regelmäßig Alkohol" : "Patient konsumiert keinen Alkohol")
+              : `Alkoholkonsum: ${alcohol}` // in case raw text instead of boolean
       }
     }
-  });
-}
-
-if (alcohol !== undefined) {
-  fhirEntries.push({
-    resource: {
-      resourceType: "Observation",
-      status: "final",
-      subject: {refernce: patientRef }, 
-      effectiveDateTime: date,
-      category: [{ coding: [{ system: "http://terminology.hl7.org/CodeSystem/observation-category", code: "social-history", display: "Social History" }] }],
-      code: {coding: [{ system:  "http://loinc.org", code: "74013-4", display: "Alcoholic beverage intake" }]},
-      valueCodeableConcept: {
-          text: typeof alcohol === "boolean"
-            ? (alcohol ? "Patient konsumiert regelmäßig Alkohol" : "Patient konsumiert keinen Alkohol")
-            : `Alkoholkonsum: ${alcohol}` // Falls Freitext statt Boolean
-    }
+    });
   }
-  });
-}
 
-  // Gegebene Symptome
+  // Given Symptoms
   for (const symptom of symptoms) {
     const snomedCodeFromTree = await mapNameToSnomed(symptom.name_de);
     fhirEntries.push({
@@ -1253,7 +1253,7 @@ if (alcohol !== undefined) {
     });
   }
 
-  // Freitext Symptome
+  // raw/text Symptoms
   for (const tSymptom of textSymptoms) {
     const snomedCodeFromTree = await mapNameToSnomed(tSymptom.raw_symptoms);
     fhirEntries.push({
@@ -1273,7 +1273,7 @@ if (alcohol !== undefined) {
     });
   }
 
-  // D. Vitalwerte & Untersuchungsparameter via LOINC
+  // D. Vital signs & examination parameters via LOINC
   if (temperatureFloat) {
     fhirEntries.push({
       resource: {
@@ -1328,7 +1328,7 @@ if (height) {
   }
 
 
-  //Symptomverschlimmerung als Observation
+  // Symptom worsening as Observation
   if (worsening !== undefined) {
     fhirEntries.push({
       resource: {
@@ -1343,7 +1343,7 @@ if (height) {
     })
   }
 
-   // Freitext für extraInfo als Observation
+   // Free text for extraInfo as Observation
   if (extraInfo) {
     fhirEntries.push({
       resource: {
@@ -1356,7 +1356,7 @@ if (height) {
     });
   }
 
-// E. Strukturierte Anamnese (Allergien, Medikamente, Vorerkrankungen)
+// E. Structured medical history (allergies, medications, pre-existing conditions)
   if (allergies && Array.isArray(allergies)) {
     for (const allergy of allergies) {
       if (allergy) {
@@ -1445,12 +1445,10 @@ if (height) {
 }
 
 
-// 3. HAPI FHIR SERVER EXPORT
-
 /**
- * Sendet ein generiertes FHIR-Bundle an den HAPI FHIR Test-Server.
- * @param accessCode der access code des zu sendenden cases
- * @returns Promise<boolean>
+ * Sends a generated FHIR bundle to the HAPI FHIR test server.
+ * @param accessCode access code of the case being sent
+ * @returns Promise<boolean> - true if the FHIR bundle was sent successfully, false otherwise
  */
 
 export async function sendFhirToServer(caseId: string): Promise<boolean> {
