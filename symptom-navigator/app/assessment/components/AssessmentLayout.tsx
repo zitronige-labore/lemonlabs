@@ -28,6 +28,10 @@ type AssessmentLayoutProps = {
   children: ReactNode;
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
   progress: number;
+  onOpenDatenschutz: () => void;
+  onOpenImpressum: () => void;
+  onOpenKontakt: () => void;
+  onOpenSupport: () => void;
 };
 
 // Presentation component without its own state or navigation logic.
@@ -35,6 +39,10 @@ export function AssessmentLayout({
   children,
   onSubmit,
   progress,
+  onOpenDatenschutz,
+  onOpenImpressum,
+  onOpenKontakt,
+  onOpenSupport,
 }: AssessmentLayoutProps) {
   return (
     <>
@@ -79,19 +87,19 @@ export function AssessmentLayout({
         The buttons are currently visual placeholders without functionality.
       */}
       <footer className={assessmentStyles.footer}>
-        <button type="button" className={assessmentStyles.footerLink}>
+        <button type="button" className={assessmentStyles.footerLink} onClick={onOpenKontakt}>
           Kontakt
         </button>
 
-        <button type="button" className={assessmentStyles.footerLink}>
+        <button type="button" className={assessmentStyles.footerLink} onClick={onOpenDatenschutz}>
           Datenschutz
         </button>
 
-        <button type="button" className={assessmentStyles.footerLink}>
+        <button type="button" className={assessmentStyles.footerLink} onClick={onOpenSupport}>
           Support
         </button>
 
-        <button type="button" className={assessmentStyles.footerLink}>
+        <button type="button" className={assessmentStyles.footerLink} onClick={onOpenImpressum}>
           Impressum
         </button>
       </footer>

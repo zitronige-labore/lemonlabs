@@ -28,7 +28,7 @@ test("Globales Tutorial öffnen und kontextsensitiv durchgehen", async ({ page }
   await page.getByRole("button", { name: "Verstanden" }).click();
 
   // 4. Gehe zu den Red Flags (Warnzeichen)
-  await page.getByLabel("Ich habe die Hinweise gelesen und verstanden.").check();
+  await page.getByRole("checkbox").check();
   await page.getByRole("button", { name: "Weiter zur Ersteinschätzung" }).click();
 
   // Tutorial auf Red Flags Seite öffnen

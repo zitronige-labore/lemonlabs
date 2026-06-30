@@ -19,7 +19,7 @@ test("schwangere Patientin mit Brustschmerz, Fieber und Verschlimmerung wird kor
   await page.getByRole("button", { name: "Ersteinschätzung von Symptomen" }).click();
 
   // confirm disclaimer checkbox and continue
-  await page.getByLabel("Ich habe die Hinweise gelesen und verstanden.").check();
+  await page.getByRole("checkbox").check();
   await page.getByRole("button", { name: "Weiter zur Ersteinschätzung" }).click();
 
   // select "none of the above" for red flags and continue

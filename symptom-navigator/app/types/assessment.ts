@@ -23,6 +23,9 @@ export type symptomChoiceStep =
 export type Step =
   | "start"
   | "datenschutz"
+  | "impressum"
+  | "kontakt"
+  | "support"
   | "hinweise"
   | "redflags"
   | "basisStart"
