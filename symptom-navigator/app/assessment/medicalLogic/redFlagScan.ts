@@ -35,7 +35,7 @@ export async function redFlagScan(
     // Sepsis-Verdacht / Systemische Infektion
     if (
         hasAny(combined, "Verwirrtheit", "Schläfrigkeit") &&
-        hasAny(combined, "Atembeschwerden") &&
+        hasAny(combined, "Atembeschwerden", "Atemnot") &&
         hasAny(combined, "Fieber", "Schüttelfrost")
     ) {
         return[true, ["Verwirrtheit, Schläfrigkeit & Atembeschwerden + Fieber ODER Schüttelfrost"]];
