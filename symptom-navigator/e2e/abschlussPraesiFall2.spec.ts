@@ -52,6 +52,8 @@ test("Fall 2: Fieber, Schüttelfrost, Verwirrtheit, Atemnot -> Sepsis-Verdacht l
   await expect(page.getByRole("heading", { name: "Notruf 112" })).toBeVisible();
   await expect(page.getByRole("link", { name: "112 anrufen" })).toBeVisible();
 
+   await page.waitForTimeout(1000 * 60 * 1000); 
+
   // Fall wird trotz Notfall-Kurzschluss in der DB gespeichert (handleSaveForm läuft immer)
   const dbCase = await getCaseFromDb();
   expect(dbCase).not.toBeNull();

@@ -10,6 +10,9 @@ test.beforeEach(async () => {
 test.describe("KI-Dringlichkeitsstufen Validierung", () => {
 
   test("Mittlere Dringlichkeit (Stufe 2-3) bei Nackenschmerzen mit Bewegungseinschränkung", async ({ page }) => {
+
+    await page.screencast.start({ path: 'demo.webm', size: { width: 2560, height: 1440 }, quality: 100 });
+
     // 1. Starte Assessment
     await page.goto("/");
     await page.getByRole("button", { name: "Ersteinschätzung von Symptomen" }).click();
@@ -107,6 +110,8 @@ test.describe("KI-Dringlichkeitsstufen Validierung", () => {
 
     // 2. Warte auf das KI-Ergebnis
     await expect(page.getByText(/Dringlichkeitsstufe/)).toBeVisible({ timeout: 150_000 });
+
+    await page.screencast.stop();
 
     // 3. Extrahiere den Zugangscode
     const codeLocator = page.getByText(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i);

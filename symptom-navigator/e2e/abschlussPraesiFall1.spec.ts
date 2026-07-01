@@ -12,6 +12,9 @@ test.beforeEach(async () => {
 });
 
 test("Fall 1: Mandelentzündung) -> Dringlichkeit 2-3", async ({ page }) => {
+
+  await page.screencast.start({ path: 'demo.webm', size: { width: 2560, height: 1440 }, quality: 100 })
+
   await page.goto("/");
   await page.getByRole("button", { name: "Ersteinschätzung von Symptomen" }).click();
 
@@ -88,6 +91,9 @@ test("Fall 1: Mandelentzündung) -> Dringlichkeit 2-3", async ({ page }) => {
   await page.getByRole("button", { name: "Einschätzung abschließen" }).click();
 
   await expect(page.getByText(/Dringlichkeitsstufe/)).toBeVisible({ timeout: 60_000 });
+
+  await page.waitForTimeout(1000000 * 60 * 1000); 
+  await page.screencast.stop();
 
   const dbCase = await getCaseFromDb();
   expect(dbCase).not.toBeNull();
