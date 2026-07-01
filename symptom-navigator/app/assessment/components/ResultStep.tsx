@@ -550,7 +550,7 @@ export function ResultStep({
 
       <hr className={assessmentStyles.dataDivider} />
 
-      {/* ends assesment und takes user back to starting page */}
+      {/* Ends the assessment and takes the user back to the start page. */}
       <button
         type="button"
         className={assessmentStyles.continueButton}
