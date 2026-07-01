@@ -124,8 +124,7 @@ export function BodyRegionStep({
       <path
         d={d}
         transform={transform}
-        role="button"
-        aria-label={region}
+        aria-hidden="true"
         className={`${assessmentStyles.bodyPartSub} ${selectedSubRegion === region ||
           (belongsToActive && !selectedSubRegion)
           ? assessmentStyles.selectedBodyPart

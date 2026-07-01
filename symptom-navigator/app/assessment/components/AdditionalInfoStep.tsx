@@ -214,8 +214,9 @@ export function AdditionalInfoStep({
           Enabling it automatically creates the first entry, while
           existing entries are preserved.
         */}
-        <label className={assessmentStyles.checkboxLabel}>
+        <label htmlFor="has-medication-checkbox" className={assessmentStyles.checkboxLabel}>
           <input
+            id="has-medication-checkbox"
             type="checkbox"
             checked={additionalData.hasMedication ?? false}
             onChange={(e) =>
@@ -244,9 +245,10 @@ export function AdditionalInfoStep({
                   >✕</button>
                 )}
 
-                <label className={assessmentStyles.fullWidth}>
+                <label htmlFor={`med-name-${index}`} className={assessmentStyles.fullWidth}>
                   Medikament*
                   <input
+                    id={`med-name-${index}`}
                     className={assessmentStyles.input}
                     placeholder="z. B. Ibuprofen"
                     value={entry.name}
@@ -255,13 +257,16 @@ export function AdditionalInfoStep({
                   />
                 </label>
 
-                <label>
+                <label htmlFor={`med-dose-${index}`}>
                   Dosis*
                   <input
+                    id={`med-dose-${index}`}
                     className={assessmentStyles.input}
                     type="text"
                     inputMode="numeric"
                     required
+                    aria-invalid={!!doseError[index]}
+                    aria-describedby={doseError[index] ? `med-dose-error-${index}` : undefined}
                     placeholder="z. B. 400"
                     value={entry.dose}
                     onChange={(e) => {
@@ -275,12 +280,13 @@ export function AdditionalInfoStep({
                       }));
                     }}
                   />
-                  {doseError[index] && <p className={assessmentStyles.errorText}>{doseError[index]}</p>}
+                  {doseError[index] && <p id={`med-dose-error-${index}`} className={assessmentStyles.errorText}>{doseError[index]}</p>}
                 </label>
 
-                <label>
+                <label htmlFor={`med-unit-${index}`}>
                   Einheit*
                   <select
+                    id={`med-unit-${index}`}
                     required
                     className={assessmentStyles.input}
                     value={entry.unit}
@@ -297,13 +303,16 @@ export function AdditionalInfoStep({
                   </select>
                 </label>
 
-                <label>
+                <label htmlFor={`med-freq-${index}`}>
                   Wie oft*
                   <input
+                    id={`med-freq-${index}`}
                     className={assessmentStyles.input}
                     required
                     type="text"
                     inputMode="numeric"
+                    aria-invalid={!!frequencyError[index]}
+                    aria-describedby={frequencyError[index] ? `med-freq-error-${index}` : undefined}
                     placeholder="z. B. 3"
                     value={entry.frequency}
                     onChange={(e) => {
@@ -317,12 +326,13 @@ export function AdditionalInfoStep({
                       }));
                     }}
                   />
-                  {frequencyError[index] && <p className={assessmentStyles.errorText}>{frequencyError[index]}</p>}
+                  {frequencyError[index] && <p id={`med-freq-error-${index}`} className={assessmentStyles.errorText}>{frequencyError[index]}</p>}
                 </label>
 
-                <label>
+                <label htmlFor={`med-freq-unit-${index}`}>
                   pro*
                   <select
+                    id={`med-freq-unit-${index}`}
                     required
                     className={assessmentStyles.input}
                     value={entry.frequencyUnit}
@@ -336,9 +346,10 @@ export function AdditionalInfoStep({
                   </select>
                 </label>
 
-                <label className={assessmentStyles.fullWidth}>
+                <label htmlFor={`med-since-${index}`} className={assessmentStyles.fullWidth}>
                   seit wann*
                   <input
+                    id={`med-since-${index}`}
                     required
                     className={assessmentStyles.input}
                     type="date"
@@ -360,8 +371,9 @@ export function AdditionalInfoStep({
         )}
 
         {/* Pre-existing conditions as a dynamic list with at least one entry when enabled. */}
-        <label className={assessmentStyles.checkboxLabel}>
+        <label htmlFor="has-conditions-checkbox" className={assessmentStyles.checkboxLabel}>
           <input
+            id="has-conditions-checkbox"
             type="checkbox"
             checked={additionalData.hasConditions ?? false}
             onChange={(e) =>
@@ -381,21 +393,22 @@ export function AdditionalInfoStep({
           <div className={assessmentStyles.expandedSection}>
             {additionalData.conditions.map((condition, index) => (
               <div key={index} className={assessmentStyles.listEntry}>
-                <label>
-                  *
-                  <input
-                    className={assessmentStyles.input}
-                    placeholder="Vorerkrankung (z. B. Diabetes, Bluthochdruck)"
-                    value={condition}
-                    onChange={(e) => updateCondition(index, e.target.value)}
-                  />
+                <label htmlFor={`condition-input-${index}`} className="sr-only">
+                  Vorerkrankung {index + 1}
                 </label>
+                <input
+                  id={`condition-input-${index}`}
+                  className={assessmentStyles.input}
+                  placeholder="Vorerkrankung (z. B. Diabetes, Bluthochdruck)"
+                  value={condition}
+                  onChange={(e) => updateCondition(index, e.target.value)}
+                />
                 {additionalData.conditions.length > 1 && (
                   <button
                     type="button"
                     className={assessmentStyles.removeButton}
                     onClick={() => removeCondition(index)}
-                    aria-label="Vorerkrankung entfernen"
+                    aria-label={`Vorerkrankung ${index + 1} entfernen`}
                   >
                     ✕
                   </button>
@@ -413,8 +426,9 @@ export function AdditionalInfoStep({
         )}
 
         {/* Smoking status with a conditionally required and limited daily amount. */}
-        <label className={assessmentStyles.checkboxLabel}>
+        <label htmlFor="smokes-checkbox" className={assessmentStyles.checkboxLabel}>
           <input
+            id="smokes-checkbox"
             type="checkbox"
             checked={additionalData.smokescigarettes ?? false}
             onChange={(e) =>
@@ -426,44 +440,44 @@ export function AdditionalInfoStep({
 
         {additionalData.smokescigarettes && (
           <div className={assessmentStyles.expandedSection}>
-            <label className={assessmentStyles.formLabel}>
+            <label htmlFor="cigarettes-input" className={assessmentStyles.formLabel}>
               Wie viele Zigaretten pro Tag?
-              <label>
-                *
-                <input
-                  className={assessmentStyles.input}
-                  type="text"
-                  inputMode="numeric"
-                  placeholder="z. B. 10"
-                  value={additionalData.cigarettesPerDay}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    setAdditionalData({ ...additionalData, cigarettesPerDay: value });
-                    const n = Number(value);
-
-                    setCigarettesError(
-                      value !== "" &&
-                        (!Number.isInteger(n) || n < 0 || n > 200)
-                        ? "Bitte gültige Anzahl Zigaretten eingeben."
-                        : ""
-                    );
-                  }}
-                />
-                {cigarettesError && (
-                  <p className={assessmentStyles.errorText}>
-                    {cigarettesError}
-                  </p>
-                )}
-              </label>
             </label>
+            <input
+              id="cigarettes-input"
+              className={assessmentStyles.input}
+              type="text"
+              inputMode="numeric"
+              aria-invalid={!!cigarettesError}
+              aria-describedby={cigarettesError ? "cigarettes-error" : undefined}
+              placeholder="z. B. 10"
+              value={additionalData.cigarettesPerDay}
+              onChange={(e) => {
+                const value = e.target.value;
+                setAdditionalData({ ...additionalData, cigarettesPerDay: value });
+                const n = Number(value);
+
+                setCigarettesError(
+                  value !== "" &&
+                    (!Number.isInteger(n) || n < 0 || n > 200)
+                    ? "Bitte gültige Anzahl Zigaretten eingeben."
+                    : ""
+                );
+              }}
+            />
+            {cigarettesError && (
+              <p id="cigarettes-error" className={assessmentStyles.errorText}>
+                {cigarettesError}
+              </p>
+            )}
           </div>
         )}
 
         {/* Alcohol consumption with a conditionally required and limited weekly amount. */}
-        <label className={assessmentStyles.checkboxLabel}>
+        <label htmlFor="drinks-checkbox" className={assessmentStyles.checkboxLabel}>
           <input
+            id="drinks-checkbox"
             type="checkbox"
-
             checked={additionalData.drinksAlcohol ?? false}
             onChange={(e) =>
               setAdditionalData({ ...additionalData, drinksAlcohol: e.target.checked, alcoholPerWeek: "" })
@@ -474,47 +488,48 @@ export function AdditionalInfoStep({
 
         {additionalData.drinksAlcohol && (
           <div className={assessmentStyles.expandedSection}>
-            <label className={assessmentStyles.formLabel}>
+            <label htmlFor="alcohol-input" className={assessmentStyles.formLabel}>
               Wie viele alkoholische Getränke pro Woche?
-              <label>
-                *
-                <input
-                  className={assessmentStyles.input}
-                  type="text"
-                  inputMode="numeric"
-                  placeholder="z. B. 3"
-                  value={additionalData.alcoholPerWeek}
-                  onChange={(e) => {
-                    const value = e.target.value;
-
-                    setAdditionalData({
-                      ...additionalData,
-                      alcoholPerWeek: value,
-                    });
-
-                    const n = Number(value);
-
-                    setAlcoholError(
-                      value !== "" &&
-                        (!Number.isInteger(n) || n < 0 || n > 100)
-                        ? "Bitte gültige Anzahl Getränke eingeben."
-                        : ""
-                    );
-                  }}
-                />
-                {alcoholError && (
-                  <p className={assessmentStyles.errorText}>
-                    {alcoholError}
-                  </p>
-                )}
-              </label>
             </label>
+            <input
+              id="alcohol-input"
+              className={assessmentStyles.input}
+              type="text"
+              inputMode="numeric"
+              aria-invalid={!!alcoholError}
+              aria-describedby={alcoholError ? "alcohol-error" : undefined}
+              placeholder="z. B. 3"
+              value={additionalData.alcoholPerWeek}
+              onChange={(e) => {
+                const value = e.target.value;
+
+                setAdditionalData({
+                  ...additionalData,
+                  alcoholPerWeek: value,
+                });
+
+                const n = Number(value);
+
+                setAlcoholError(
+                  value !== "" &&
+                    (!Number.isInteger(n) || n < 0 || n > 100)
+                    ? "Bitte gültige Anzahl Getränke eingeben."
+                    : ""
+                );
+              }}
+            />
+            {alcoholError && (
+              <p id="alcohol-error" className={assessmentStyles.errorText}>
+                {alcoholError}
+              </p>
+            )}
           </div>
         )}
 
         {/* Allergies as a dynamic list with at least one entry when enabled. */}
-        <label className={assessmentStyles.checkboxLabel}>
+        <label htmlFor="has-allergies-checkbox" className={assessmentStyles.checkboxLabel}>
           <input
+            id="has-allergies-checkbox"
             type="checkbox"
             checked={additionalData.hasAllergies ?? false}
             onChange={(e) =>
@@ -534,25 +549,26 @@ export function AdditionalInfoStep({
           <div className={assessmentStyles.expandedSection}>
             {additionalData.allergies.map((allergy, index) => (
               <div key={index} className={assessmentStyles.listEntry}>
-                <label>
-                  *
-                  <input
-                    className={assessmentStyles.input}
-                    placeholder="Allergien z.B. Pollen, Penicillin..."
-                    value={allergy}
-                    onChange={(e) => updateAllergy(index, e.target.value)}
-                  />
-                  {additionalData.allergies.length > 1 && (
-                    <button
-                      type="button"
-                      className={assessmentStyles.removeButton}
-                      onClick={() => removeAllergy(index)}
-                      aria-label="Allergie entfernen"
-                    >
-                      ✕
-                    </button>
-                  )}
+                <label htmlFor={`allergy-input-${index}`} className="sr-only">
+                  Allergie {index + 1}
                 </label>
+                <input
+                  id={`allergy-input-${index}`}
+                  className={assessmentStyles.input}
+                  placeholder="Allergien z.B. Pollen, Penicillin..."
+                  value={allergy}
+                  onChange={(e) => updateAllergy(index, e.target.value)}
+                />
+                {additionalData.allergies.length > 1 && (
+                  <button
+                    type="button"
+                    className={assessmentStyles.removeButton}
+                    onClick={() => removeAllergy(index)}
+                    aria-label={`Allergie ${index + 1} entfernen`}
+                  >
+                    ✕
+                  </button>
+                )}
               </div>
             ))}
             <button
@@ -567,137 +583,152 @@ export function AdditionalInfoStep({
 
         {/* Optional individual values are only validated if the user actually enters a value. */}
         {/* Weight */}
-        <label className={assessmentStyles.formLabel}>
+        <label htmlFor="weight-input" className={assessmentStyles.formLabel}>
           Gewicht in kg
-          <input
-            className={assessmentStyles.input}
-            type="text"
-            inputMode="numeric"
-            value={additionalData.weight}
-            onChange={(e) => {
-              const value = e.target.value;
-              setAdditionalData({
-                ...additionalData,
-                weight: value,
-              });
-              setWeightError(validateWeight(value));
-            }}
-            placeholder="z. B. 72"
-          />
-          {weightError && <p className={assessmentStyles.errorText}>{weightError}</p>}
         </label>
+        <input
+          id="weight-input"
+          className={assessmentStyles.input}
+          type="text"
+          inputMode="numeric"
+          aria-invalid={!!weightError}
+          aria-describedby={weightError ? "weight-error" : undefined}
+          value={additionalData.weight}
+          onChange={(e) => {
+            const value = e.target.value;
+            setAdditionalData({
+              ...additionalData,
+              weight: value,
+            });
+            setWeightError(validateWeight(value));
+          }}
+          placeholder="z. B. 72"
+        />
+        {weightError && <p id="weight-error" className={assessmentStyles.errorText}>{weightError}</p>}
 
         {/* Height */}
-        <label className={assessmentStyles.formLabel}>
+        <label htmlFor="height-input" className={assessmentStyles.formLabel}>
           Größe in cm
-          <input
-            className={assessmentStyles.input}
-            type="text"
-            inputMode="numeric"
-            value={additionalData.height}
-            onChange={(e) => {
-              const value = e.target.value;
-              setAdditionalData({
-                ...additionalData,
-                height: value,
-              });
-              setHeightError(validateHeight(value));
-            }}
-            placeholder="z. B. 175"
-          />
-          {heightError && <p className={assessmentStyles.errorText}>{heightError}</p>}
         </label>
+        <input
+          id="height-input"
+          className={assessmentStyles.input}
+          type="text"
+          inputMode="numeric"
+          aria-invalid={!!heightError}
+          aria-describedby={heightError ? "height-error" : undefined}
+          value={additionalData.height}
+          onChange={(e) => {
+            const value = e.target.value;
+            setAdditionalData({
+              ...additionalData,
+              height: value,
+            });
+            setHeightError(validateHeight(value));
+          }}
+          placeholder="z. B. 175"
+        />
+        {heightError && <p id="height-error" className={assessmentStyles.errorText}>{heightError}</p>}
 
         {/* Breastfeeding as an optional categorical health detail. */}
-        <label className={assessmentStyles.formLabel}>
+        <label htmlFor="breastfeeding-select" className={assessmentStyles.formLabel}>
           Stillzeit
-          <select
-            className={assessmentStyles.input}
-            value={additionalData.breastfeeding}
-            onChange={(e) =>
-              setAdditionalData({ ...additionalData, breastfeeding: e.target.value })
-            }
-          >
-            <option value="">Bitte auswählen</option>
-            <option value="ja">Ja</option>
-            <option value="nein">Nein</option>
-            <option value="keine Angabe">Keine Angabe</option>
-          </select>
         </label>
+        <select
+          id="breastfeeding-select"
+          className={assessmentStyles.input}
+          value={additionalData.breastfeeding}
+          onChange={(e) =>
+            setAdditionalData({ ...additionalData, breastfeeding: e.target.value })
+          }
+        >
+          <option value="">Bitte auswählen</option>
+          <option value="ja">Ja</option>
+          <option value="nein">Nein</option>
+          <option value="keine Angabe">Keine Angabe</option>
+        </select>
 
         {/* Decimal value for the measured body temperature. */}
-        <label className={assessmentStyles.formLabel}>
+        <label htmlFor="temperature-input" className={assessmentStyles.formLabel}>
           Haben Sie Temperatur gemessen?
-          <input
-            className={assessmentStyles.input}
-            type="text"
-            inputMode="decimal"
-            step="0.1"
-            value={additionalData.temperature}
-            onChange={(e) => {
-              const value = e.target.value;
-              setAdditionalData({
-                ...additionalData,
-                temperature: value,
-              });
-              setTemperatureError(validateTemperature(value));
-            }}
-            placeholder="z. B. 38.5"
-          />
-          {temperatureError && <p className={assessmentStyles.errorText}>{temperatureError}</p>}
         </label>
+        <input
+          id="temperature-input"
+          className={assessmentStyles.input}
+          type="text"
+          inputMode="decimal"
+          step="0.1"
+          aria-invalid={!!temperatureError}
+          aria-describedby={temperatureError ? "temperature-error" : undefined}
+          value={additionalData.temperature}
+          onChange={(e) => {
+            const value = e.target.value;
+            setAdditionalData({
+              ...additionalData,
+              temperature: value,
+            });
+            setTemperatureError(validateTemperature(value));
+          }}
+          placeholder="z. B. 38.5"
+        />
+        {temperatureError && <p id="temperature-error" className={assessmentStyles.errorText}>{temperatureError}</p>}
 
         {/* Duration of symptoms in integer days. */}
-        <label className={assessmentStyles.formLabel}>
+        <label htmlFor="duration-input" className={assessmentStyles.formLabel}>
           Seit wie vielen Tagen bestehen die Beschwerden?
-          <input
-            className={assessmentStyles.input}
-            type="text"
-            inputMode="numeric"
-            value={additionalData.duration}
-            onChange={(e) => {
-              const value = e.target.value;
-              setAdditionalData({
-                ...additionalData,
-                duration: value,
-              });
-              setDurationError(validateDuration(value));
-            }}
-            placeholder="z. B. 2"
-          />
-          {durationError && <p className={assessmentStyles.errorText}>{durationError}</p>}
         </label>
+        <input
+          id="duration-input"
+          className={assessmentStyles.input}
+          type="text"
+          inputMode="numeric"
+          aria-invalid={!!durationError}
+          aria-describedby={durationError ? "duration-error" : undefined}
+          value={additionalData.duration}
+          onChange={(e) => {
+            const value = e.target.value;
+            setAdditionalData({
+              ...additionalData,
+              duration: value,
+            });
+            setDurationError(validateDuration(value));
+          }}
+          placeholder="z. B. 2"
+        />
+        {durationError && <p id="duration-error" className={assessmentStyles.errorText}>{durationError}</p>}
 
         {/* Subjective progression of the symptoms. */}
-        <label className={assessmentStyles.formLabel}>
+        <label htmlFor="worsening-select" className={assessmentStyles.formLabel}>
           Werden die Beschwerden stärker?
-          <select
-            className={assessmentStyles.input}
-            value={additionalData.worsening}
-            onChange={(e) =>
-              setAdditionalData({ ...additionalData, worsening: e.target.value })
-            }
-          >
-            <option value="">Bitte auswählen</option>
-            <option value="ja">Ja</option>
-            <option value="nein">Nein</option>
-            <option value="unklar">Unklar</option>
-          </select>
         </label>
+        <select
+          id="worsening-select"
+          className={assessmentStyles.input}
+          value={additionalData.worsening}
+          onChange={(e) =>
+            setAdditionalData({ ...additionalData, worsening: e.target.value })
+          }
+        >
+          <option value="">Bitte auswählen</option>
+          <option value="ja">Ja</option>
+          <option value="nein">Nein</option>
+          <option value="unklar">Unklar</option>
+        </select>
 
         {/* Free-text field for additional context not covered by the structured inputs. */}
-        <label className={assessmentStyles.formLabel}>
+        <label htmlFor="extrainfo-textarea" className={assessmentStyles.formLabel}>
           Gibt es weitere wichtige Informationen?
-          <textarea
-            className={assessmentStyles.input}
-            maxLength={500}
-            value={additionalData.extraInfo}
-            onChange={(e) =>
-              setAdditionalData({ ...additionalData, extraInfo: e.target.value })
-            }
-            placeholder="z. B. Kontakt zu erkrankten Personen, kürzliche Reise, Unfall..."
-          />
         </label>
+        <textarea
+          id="extrainfo-textarea"
+          className={assessmentStyles.input}
+          maxLength={500}
+          value={additionalData.extraInfo}
+          onChange={(e) =>
+            setAdditionalData({ ...additionalData, extraInfo: e.target.value })
+          }
+          placeholder="z. B. Kontakt zu erkrankten Personen, kürzliche Reise, Unfall..."
+        />
       </fieldset>
 
       {/*

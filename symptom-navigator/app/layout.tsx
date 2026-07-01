@@ -86,11 +86,12 @@ export default function RootLayout({
       lang="de"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      {/*
-        The body element contains
-        the application's main content.
-      */}
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <a href="#main-content" className="sr-only focus:not-sr-only">
+          Zum Hauptinhalt springen
+        </a>
+        {children}
+      </body>
     </html>
   );
 }

@@ -19,7 +19,7 @@
   --text-primary: #0f2340;
   --text-secondary: #16324f;
   --text-muted: #4d6178;
-  --text-subtle: #6b7e92;
+  --text-subtle: #596b7d;
 
   --primary: #1b334e;
   --primary-hover: #254769;
@@ -27,9 +27,9 @@
   --primary-soft: #e3eef9;
   --primary-surface: #eff6ff;
 
-  --info: #1c86ff;
-  --info-hover: #0f72df;
-  --info-active: #0a5db7;
+  --info: #0066cc;
+  --info-hover: #0052a3;
+  --info-active: #003d7a;
 
   --secondary: #ffffff;
   --secondary-hover: #e8f3ff;
@@ -41,7 +41,7 @@
   --danger-soft: #fff0f0;
   --danger-border: #ffc4c4;
 
-  --focus-ring: rgba(28, 134, 255, 0.28);
+  --focus-ring: #0066cc;
 
   --radius-card: 18px;
   --radius-control: 16px;

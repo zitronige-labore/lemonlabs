@@ -224,9 +224,9 @@ export function CheckInfo({
         <div className={assessmentStyles.dataPanel}>
           <div className={assessmentStyles.dataHeader}>
             <div>
-              <p className={assessmentStyles.dataTitle}>
+              <h2 className={assessmentStyles.dataTitle}>
                 Daten zur Überprüfung
-              </p>
+              </h2>
               <p className={assessmentStyles.dataMeta}>
                 Kontrollieren Sie Ihre Angaben vor dem Abschluss.
               </p>
@@ -235,7 +235,7 @@ export function CheckInfo({
 
           {/* Review basic information and edit it in the original step if necessary. */}
           <section className={assessmentStyles.dataSection}>
-            <p className={assessmentStyles.dataSectionTitle}>Basisdaten</p>
+            <h3 className={assessmentStyles.dataSectionTitle}>Basisdaten</h3>
             <div className={assessmentStyles.dataGrid}>
               {renderDataRow("Alter", basisData.age)}
               {renderDataRow("Geschlecht", basisData.gender)}
@@ -259,7 +259,7 @@ export function CheckInfo({
 
           {/* Symptoms can be removed individually or extended with additional symptoms. */}
           <section className={assessmentStyles.dataSection}>
-            <p className={assessmentStyles.dataSectionTitle}>Beschwerden</p>
+            <h3 className={assessmentStyles.dataSectionTitle}>Beschwerden</h3>
             <div className={assessmentStyles.dataGrid}>
               <div className={`${assessmentStyles.dataRow} ${assessmentStyles.dataRowWide}`}>
                 <span className={assessmentStyles.dataLabel}>
@@ -291,7 +291,7 @@ export function CheckInfo({
 
           {/* Review optional health information, including medication details. */}
           <section className={assessmentStyles.dataSection}>
-            <p className={assessmentStyles.dataSectionTitle}>Zusatzangaben</p>
+            <h3 className={assessmentStyles.dataSectionTitle}>Zusatzangaben</h3>
             <div className={assessmentStyles.dataGrid}>
               {renderDataRow("Größe", additionalData.height)}
               {renderDataRow("Gewicht", additionalData.weight)}

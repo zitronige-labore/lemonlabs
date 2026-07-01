@@ -1,3 +1,5 @@
+import { useRef } from "react";
+import { useFocusTrap } from "../hooks/useFocusTrap";
 import type { Step } from "../../types/assessment";
 import homeStyles from "../../Home.module.css";
 import { CheckCircle, X } from "@phosphor-icons/react";
@@ -498,6 +500,10 @@ export function TutorialModal({
   isOffline,
   startFormOffline,
 }: TutorialModalProps) {
+  const modalRef = useRef<HTMLDivElement | null>(null);
+
+  useFocusTrap(modalRef, isOpen, onClose);
+
   /*
     Do not render anything while the modal is closed.
     This also keeps it hidden from screen readers and keyboard navigation.
@@ -512,7 +518,7 @@ export function TutorialModal({
   return (
     /* Overlay displayed above the current page. */
     <div className={homeStyles.tutorialOverlay}>
-      <div className={homeStyles.tutorialModalBox}>
+      <div className={homeStyles.tutorialModalBox} ref={modalRef}>
         {/* Close button displayed in the top-right corner. */}
         <button
           type="button"

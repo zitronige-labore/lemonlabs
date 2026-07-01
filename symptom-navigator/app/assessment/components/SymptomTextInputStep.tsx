@@ -94,27 +94,28 @@ export function SymptomTextInputStep({
           Beschwerden
         </legend>
 
-        <label className={assessmentStyles.formLabel}>
+        <label htmlFor="symptom-text-desc" className={assessmentStyles.formLabel}>
           Beschreiben Sie Ihre Beschwerden:
-
-          <textarea
-            className={assessmentStyles.input}
-            onChange={(event) => {
-              setCurrentText(event.target.value);
-            }}
-            placeholder="Beschreiben Sie Ihre Symptome..."
-            maxLength={1000}
-          />
-
-          {/* Display the current character count. */}
-          <span className={assessmentStyles.characterCounter}>
-            {currentText.length}/1000 Zeichen
-          </span>
         </label>
+        <textarea
+          id="symptom-text-desc"
+          className={assessmentStyles.input}
+          onChange={(event) => {
+            setCurrentText(event.target.value);
+          }}
+          placeholder="Beschreiben Sie Ihre Symptome..."
+          maxLength={1000}
+        />
+
+        {/* Display the current character count. */}
+        <span className={assessmentStyles.characterCounter}>
+          {currentText.length}/1000 Zeichen
+        </span>
 
         {/* Optional indication whether the symptom involves pain. */}
-        <label className={assessmentStyles.label}>
+        <label htmlFor="is-pain-symptom-checkbox" className={assessmentStyles.label}>
           <input
+            id="is-pain-symptom-checkbox"
             type="checkbox"
             checked={isPainSymptom}
             onChange={() => {
@@ -139,11 +140,13 @@ export function SymptomTextInputStep({
             <strong className={assessmentStyles.selectedText}>{painscale || "nicht gewählt"}/10</strong>
 
             <input
+              id="pain-intensity-slider"
               className={assessmentStyles.slider}
               type="range"
               min="0"
               max="10"
               step="1"
+              aria-label="Schmerzstärke"
               onChange={(event) =>
                 setPainscale(event.target.value)
               }
