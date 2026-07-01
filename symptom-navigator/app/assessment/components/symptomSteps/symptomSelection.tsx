@@ -85,7 +85,7 @@ export default function SymptomSelection({
                   <p className={assessmentStyles.text}>
                     Wie stark sind Ihre Schmerzen?
                   </p>
-                  {/* Anzeige des aktuellen Wertes */}
+                  {/* Display of the current value */}
                   <strong className={assessmentStyles.text}>{painscales[element.symptomValue] || "nicht ausgewählt"}/10</strong>
 
                   <input
