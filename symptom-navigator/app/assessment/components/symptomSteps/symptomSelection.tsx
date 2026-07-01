@@ -64,11 +64,11 @@ export default function SymptomSelection({
       {symptoms.map((element) => 
         (
           <div className={assessmentStyles.fieldset} key={`${element.symptomName}-${selectedSubRegion}`}>
-            <label className={assessmentStyles.label}>
+            <label htmlFor={element.symptomName} className={assessmentStyles.label}>
               <input
                 type="checkbox"
                 id={element.symptomName}
-                name= {element.symptomName}
+                name={element.symptomName}
                 checked={selectedSymptoms.some((s) =>s.includes(`{"name": "${element.symptomValue}", "bodyRegion": "${selectedSubRegion}"`))}
                 onChange={() => {
                     toggleSymptom(`{"name": "${element.symptomValue}", "bodyRegion": "${selectedSubRegion}"`,
@@ -89,12 +89,14 @@ export default function SymptomSelection({
                   <strong className={assessmentStyles.text}>{painscales[element.symptomValue] || "nicht ausgewählt"}/10</strong>
 
                   <input
+                    id={`symptom-pain-slider-${element.symptomValue}`}
                     className={assessmentStyles.slider}
                     defaultValue={painscales[element.symptomValue]}
                     type="range"
                     min="0"
                     max="10"
                     step="1"
+                    aria-label={`Schmerzstärke für ${element.symptomName}`}
                     onChange={(event) => {
                     setPainscales((prev => ({
                       ...prev,

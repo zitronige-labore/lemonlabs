@@ -378,7 +378,7 @@ export function ResultStep({
         }>
           <div className={assessmentStyles.dataHeader}>
             <div>
-              <p className={assessmentStyles.dataTitle}>KI-Einschätzung</p>
+              <h2 className={assessmentStyles.dataTitle}>KI-Einschätzung</h2>
               <p className={assessmentStyles.dataMetaUrgency}
               >
                 Dringlichkeitsstufe {aiAnswer.assessment.urgency}:{" "}
@@ -411,7 +411,7 @@ export function ResultStep({
         <div className={assessmentStyles.dataPanel}>
           <div className={assessmentStyles.dataHeader}>
             <div>
-              <p className={assessmentStyles.dataTitle}>KI-Begründung</p>
+              <h2 className={assessmentStyles.dataTitle}>KI-Begründung</h2>
               <p className={assessmentStyles.dataMeta}>
                 Hinweise und Vermutungen aus der Auswertung.
               </p>
@@ -464,7 +464,7 @@ export function ResultStep({
         <div className={assessmentStyles.dataPanel}>
           <div className={assessmentStyles.dataHeader}>
             <div>
-              <p className={assessmentStyles.dataTitle}>Gespeicherte Daten</p>
+              <h2 className={assessmentStyles.dataTitle}>Gespeicherte Daten</h2>
               <p className={assessmentStyles.dataMeta}>
                 Ihre Angaben aus dieser Ersteinschätzung.
               </p>
@@ -472,7 +472,7 @@ export function ResultStep({
           </div>
 
           <section className={assessmentStyles.dataSection}>
-            <p className={assessmentStyles.dataSectionTitle}>Basisdaten</p>
+            <h3 className={assessmentStyles.dataSectionTitle}>Basisdaten</h3>
             <div className={assessmentStyles.dataGrid}>
               {renderDataRow("Alter", basisData.age)}
               {renderDataRow("Geschlecht", basisData.gender)}
@@ -482,7 +482,7 @@ export function ResultStep({
           </section>
 
           <section className={assessmentStyles.dataSection}>
-            <p className={assessmentStyles.dataSectionTitle}>Beschwerden</p>
+            <h3 className={assessmentStyles.dataSectionTitle}>Beschwerden</h3>
             <div className={assessmentStyles.dataGrid}>
               <div className={`${assessmentStyles.dataRow} ${assessmentStyles.dataRowWide}`}>
                 <span className={assessmentStyles.dataLabel}>
@@ -500,7 +500,7 @@ export function ResultStep({
           </section>
 
           <section className={assessmentStyles.dataSection}>
-            <p className={assessmentStyles.dataSectionTitle}>Zusatzangaben</p>
+            <h3 className={assessmentStyles.dataSectionTitle}>Zusatzangaben</h3>
             <div className={assessmentStyles.dataGrid}>
               {renderDataRow("Größe", additionalData.height)}
               {renderDataRow("Gewicht", additionalData.weight)}

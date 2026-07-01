@@ -63,78 +63,78 @@ export function BasisStartStep({
         </legend>
 
         {/* Uses a text field while inputMode opens the numeric keyboard on mobile devices. */}
-        <label className={assessmentStyles.formLabel}>
+        <label htmlFor="age-input" className={assessmentStyles.formLabel}>
           Alter
-
-          <input
-            className={assessmentStyles.input}
-            type="text"
-            inputMode="numeric"
-            value={basisData.age}
-            onChange={(event) => {
-              /* Stores the raw input value and validates it as a number. */
-              const value = event.target.value;
-
-
-              setBasisData({
-                ...basisData,
-                age: value,
-              });
-              //validates wether age is an integer between 0 and 120 
-              const age = Number(value);
-              if (
-                value === "" ||
-                Number.isNaN(age) ||
-                !Number.isInteger(age) ||
-                age < 0
-                || age > 120) {
-                setAgeError("Bitte geben Sie ein gültiges Alter ein.")
-              } else {
-                setAgeError("");
-              }
-            }
-            } placeholder="Zum Beispiel: 25 (Neugeborene: 0)"
-          />
-          {ageError && (
-            <p className={assessmentStyles.errorText}>
-              {ageError}
-            </p>
-          )}
-
         </label>
+        <input
+          id="age-input"
+          className={assessmentStyles.input}
+          type="text"
+          inputMode="numeric"
+          aria-invalid={!!ageError}
+          aria-describedby={ageError ? "age-error-msg" : undefined}
+          value={basisData.age}
+          onChange={(event) => {
+            /* Stores the raw input value and validates it as a number. */
+            const value = event.target.value;
+
+            setBasisData({
+              ...basisData,
+              age: value,
+            });
+            //validates wether age is an integer between 0 and 120 
+            const age = Number(value);
+            if (
+              value === "" ||
+              Number.isNaN(age) ||
+              !Number.isInteger(age) ||
+              age < 0
+              || age > 120) {
+              setAgeError("Bitte geben Sie ein gültiges Alter ein.")
+            } else {
+              setAgeError("");
+            }
+          }}
+          placeholder="Zum Beispiel: 25 (Neugeborene: 0)"
+        />
+        {ageError && (
+          <p id="age-error-msg" className={assessmentStyles.errorText}>
+            {ageError}
+          </p>
+        )}
 
         {/* The selected gender also determines whether the pregnancy field is shown. */}
-        <label className={assessmentStyles.formLabel}>
+        <label htmlFor="gender-select" className={assessmentStyles.formLabel}>
           Geschlecht
-
-          <select
-            className={assessmentStyles.input}
-            value={basisData.gender}
-            onChange={(event) =>
-              setBasisData({
-                ...basisData,
-                gender: event.target.value,
-
-                /*
-                  Keeps the current pregnancy value only if the selected
-                  gender still requires the additional question.
-                */
-                pregnancy:
-                  event.target.value === "weiblich" ||
-                    event.target.value === "divers" ||
-                    event.target.value === "keine Angabe"
-                    ? basisData.pregnancy
-                    : "",
-              })
-            }
-          >
-            <option value="">Bitte auswählen</option>
-            <option value="weiblich">Weiblich</option>
-            <option value="männlich">Männlich</option>
-            <option value="divers">Divers</option>
-            <option value="keine Angabe">Keine Angabe</option>
-          </select>
         </label>
+        <select
+          id="gender-select"
+          className={assessmentStyles.input}
+          value={basisData.gender}
+          onChange={(event) =>
+            setBasisData({
+              ...basisData,
+              gender: event.target.value,
+
+              /*
+                Keeps the current pregnancy value only if the selected
+                gender still requires the additional question.
+              */
+              pregnancy:
+                event.target.value === "weiblich" ||
+                  event.target.value === "divers" ||
+                  event.target.value === "keine Angabe"
+                  ? basisData.pregnancy
+                  : "",
+            })
+          }
+        >
+          <option value="">Bitte auswählen</option>
+          <option value="weiblich">Weiblich</option>
+          <option value="männlich">Männlich</option>
+          <option value="divers">Divers</option>
+          <option value="keine Angabe">Keine Angabe</option>
+        </select>
 
         { /*
           Additional pregnancy selection.
@@ -148,26 +148,28 @@ export function BasisStartStep({
           basisData.gender === "divers" ||
           basisData.gender === "keine Angabe"
         ) && (
-            <label className={assessmentStyles.formLabel}>
+          <>
+            <label htmlFor="pregnancy-select" className={assessmentStyles.formLabel}>
               Schwangerschaft
-
-              <select
-                className={assessmentStyles.input}
-                value={basisData.pregnancy}
-                onChange={(event) =>
-                  setBasisData({
-                    ...basisData,
-                    pregnancy: event.target.value,
-                  })
-                }
-              >
-                <option value="">Bitte auswählen</option>
-                <option value="ja">Ja</option>
-                <option value="nein">Nein</option>
-                <option value="keine Angabe">Keine Angabe</option>
-              </select>
             </label>
-          )}
+            <select
+              id="pregnancy-select"
+              className={assessmentStyles.input}
+              value={basisData.pregnancy}
+              onChange={(event) =>
+                setBasisData({
+                  ...basisData,
+                  pregnancy: event.target.value,
+                })
+              }
+            >
+              <option value="">Bitte auswählen</option>
+              <option value="ja">Ja</option>
+              <option value="nein">Nein</option>
+              <option value="keine Angabe">Keine Angabe</option>
+            </select>
+          </>
+        )}
       </fieldset>
 
       {/* Continues to the body map during the normal assessment workflow. */}

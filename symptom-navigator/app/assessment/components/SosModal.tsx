@@ -1,9 +1,5 @@
-/*
-  Styles used across the Home views.
-
-  The SOS modal is shared between the start page, information page,
-  and red flag page, so it uses the common Home modal styles.
-*/
+import { useRef } from "react";
+import { useFocusTrap } from "../hooks/useFocusTrap";
 import homeStyles from "../../Home.module.css";
 
 /*
@@ -28,6 +24,10 @@ type SosModalProps = {
   on their device.
 */
 export function SosModal({ isOpen, onClose }: SosModalProps) {
+  const modalRef = useRef<HTMLDivElement | null>(null);
+
+  useFocusTrap(modalRef, isOpen, onClose);
+
   /*
      Do not render the modal while it is closed so the overlay,
      content, and focusable elements are completely removed from the DOM.
@@ -39,7 +39,7 @@ export function SosModal({ isOpen, onClose }: SosModalProps) {
   */
   return (
     <div className={homeStyles.sosModalOverlay}>
-      <div className={homeStyles.sosModalBox}>
+      <div className={homeStyles.sosModalBox} ref={modalRef}>
         <h2 className={homeStyles.emergencyTitleModal}>Notruf 112</h2>
 
         <p className={homeStyles.warningText}>

@@ -120,7 +120,7 @@ export function RedFlagsStep({
 
       {/* Any selected warning sign interrupts the normal assessment flow. */}
       {hasEmergency && (
-        <div className={assessmentStyles.emergencyBox}>
+        <div className={assessmentStyles.emergencyBox} role="alert">
           <h2 className={assessmentStyles.emergencyTitle}>
             Notfallhinweis
           </h2>

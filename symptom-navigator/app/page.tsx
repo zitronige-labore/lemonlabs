@@ -84,6 +84,18 @@ export default function Home() {
 
   // reference to current step
   const stepRef = useRef<Step>("start");
+  const mainRef = useRef<HTMLElement | null>(null);
+  const isFirstMount = useRef(true);
+
+  useEffect(() => {
+    if (isFirstMount.current) {
+      isFirstMount.current = false;
+      return;
+    }
+    if (mainRef.current) {
+      mainRef.current.focus();
+    }
+  }, [step]);
 
   /*
    Stores whether the instructions have been acknowledged.
@@ -638,6 +650,10 @@ export default function Home() {
 
   return (
     <main
+      id="main-content"
+      ref={mainRef}
+      tabIndex={-1}
+      style={{ outline: "none" }}
       className={
         step === "start" || step === "hinweise" || step === "other" || step === "datenschutz" || step === "impressum" || step === "kontakt" || step === "support"
           ? homeStyles.main
