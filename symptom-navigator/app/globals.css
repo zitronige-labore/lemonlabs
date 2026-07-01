@@ -1,4 +1,5 @@
 @import "tailwindcss";
+
 /*
   Global design tokens.
 
@@ -63,7 +64,8 @@
   --button-width: 340px;
   --button-height: 65px;
 }
- /*
+
+/*
   Expose CSS variables to Tailwind.
 */
 @theme inline {
@@ -73,6 +75,7 @@
   --font-sans: var(--font-base);
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
+
 /*
   Global reset and base layout.
 */
@@ -96,6 +99,7 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
 }
+
 /*
   Use the application's default typography
   for all form controls.
@@ -106,6 +110,7 @@ select,
 textarea {
   font: inherit;
 }
+
 /*
   Keep letter spacing consistent across
   common text and form elements.
@@ -119,6 +124,7 @@ textarea,
 button {
   letter-spacing: 0;
 }
+
 /*
   Visible keyboard focus indicator
   for accessibility.
@@ -130,4 +136,10 @@ select:focus-visible,
 textarea:focus-visible {
   outline: 3px solid var(--focus-ring);
   outline-offset: 3px;
+}
+
+/* Minimal styling for skip-link contrast on focus */
+.sr-only:focus {
+  background-color: var(--primary);
+  color: #ffffff;
 }
