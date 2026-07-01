@@ -1,9 +1,9 @@
 // server side actions for assessment page
 "use server"
 
-import { getSymptomList } from "../medicalLogic/SymptomLists"; // for snomed mapping
-import { Step, AdditionalData, BasisData, SymptomSelectionList, MedicationEntry } from "../../types/assessment"; // needed type
-import { connectionPool } from "../../dbs/db"; // for database queries
+import { getSymptomList } from "../assessment/medicalLogic/SymptomLists"; // for snomed mapping
+import { Step, AdditionalData, BasisData, SymptomSelectionList, MedicationEntry } from "../types/assessment"; // needed type
+import { connectionPool } from "../dbs/db"; // for database queries
 
 
 
