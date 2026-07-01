@@ -19,7 +19,7 @@
   --text-primary: #0f2340;
   --text-secondary: #16324f;
   --text-muted: #4d6178;
-  --text-subtle: #596b7d;
+  --text-subtle: #4b5a6a;
 
   --primary: #1b334e;
   --primary-hover: #254769;
@@ -35,9 +35,9 @@
   --secondary-hover: #e8f3ff;
   --secondary-text: #16324f;
 
-  --danger: #ff4141;
-  --danger-hover: #e73535;
-  --danger-active: #c92828;
+  --danger: #d32f2f;
+  --danger-hover: #b71c1c;
+  --danger-active: #990000;
   --danger-soft: #fff0f0;
   --danger-border: #ffc4c4;
 
