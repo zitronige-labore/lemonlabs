@@ -130,7 +130,7 @@ export function getSymptomList(gender?: string) {
                         { symptomName: "Verlust des Geruchssinns", schmerzen: false, symptomValue: "Anosmie: Akuter, vollständiger Verlust der Riechfähigkeit (und konsequent des Geschmackssinns) ohne oder mit Schnupfen.", snomedCode: "44169009" },
                         { symptomName: "Einseitige Verstopfung", schmerzen: false, symptomValue: "Einseitige nasale Obstruktion: Nur ein Nasenloch ist chronisch verstopft, oft begleitet von eitrig-blutigem, auffällig faulig oder übel riechendem Sekret (Verdacht auf Fremdkörper oder Gewebeveränderung).", snomedCode: "697968004" },
                         { symptomName: "Übelriechender Ausfluss aus der Nase", schmerzen: false, symptomValue: "übelriechender Ausfluss: Austreten von übelriechendem Sekret aus der Nase", snomedCode: "827090008" },
-                        { symptomName: "Wässriges Dauerrinnen der Nase", schmerzen: false, symptomValue: "Vasomotorische Rhinitis: ständiges Nasenlaufen ohne bekannte Allergie und ersichtlichen Grund." snomedCode: "8229003" },
+                        { symptomName: "Wässriges Dauerrinnen der Nase", schmerzen: false, symptomValue: "Vasomotorische Rhinitis: ständiges Nasenlaufen ohne bekannte Allergie und ersichtlichen Grund.", snomedCode: "8229003" },
                         { symptomName: "Niesreiz", schmerzen: false, symptomValue: "Niesen: starker Niesreiz.", snomedCode: "76067001" },
                         { symptomName: "Austritt von glasklarer Flüssigkeit nach Kopfverletzung", schmerzen: false, symptomValue: "Rhinorrhö (Liquorverdacht): Unstillbares Laufen von spiegelklarer, wässriger Flüssigkeit aus der Nase nach einem Sturz oder Schlag auf den Kopf.", snomedCode: "85638002" },
                         { symptomName: "Trockene Schleimhäute", schmerzen: false, symptomValue: "Trockene Schleimhäute: Schleimhäute in der Nase sind sehr trocken", snomedCode: "42201002" }
@@ -177,7 +177,7 @@ export function getSymptomList(gender?: string) {
                     [
                         { symptomName: "Explosionsartiger Vernichtungsschmerz", schmerzen: true, symptomValue: "Donnerschlagkopfschmerz: Explosionsartiger Schmerz von einer Sekunde auf die andere (so schlimm wie noch nie)", snomedCode: "95660002" },
                         { symptomName: "Fieber", schmerzen: true, symptomValue: "Kopfschmerz kombiniert mit Fieber", snomedCode: "386661006" },
-                        { symptomName: "steifer Nacken", schmerzen: true, symptomValue: "Kopfschmerz kombiniert mit versteiftem Nacken", snomedCode: "161882006" }
+                        { symptomName: "steifer Nacken", schmerzen: true, symptomValue: "Kopfschmerz kombiniert mit versteiftem Nacken", snomedCode: "161882006" },
                         { symptomName: "Sprachstörung", schmerzen: true, symptomValue: " Sprachstörungen mit Kopfschmerzen", snomedCode: "23168003" },
                         { symptomName: "Lähmung", schmerzen: true, symptomValue: " Lähmung mit Kopfschmerzen", snomedCode: "44695005" }
                         
@@ -221,7 +221,7 @@ export function getSymptomList(gender?: string) {
                         { symptomName: "Zahnfleischbluten beim Zähneputzen", schmerzen: false, symptomValue: "Gingivitis: Leicht auslösbare Blutungen am Zahnfleischrand.", snomedCode: "86276007" },
                         { symptomName: "Weißer, abwischbarer Belag", schmerzen: false, symptomValue: "Candidose: Trockenes Gefühl im Mund gepaart mit stippchenartigen, weißen Belägen auf der Zunge oder Wangeninnenseite, die sich abwischen lassen.", snomedCode: "249406006" },
                         { symptomName: "Anhaltende Mundtrockenheit", schmerzen: false, symptomValue: "Mundtrockenheit: Zu geringer Speichelfluss, brennendes Gefühl auf der Zunge.", snomedCode: "87715008" },
-                        { symptomName: "Chronisch brennende Zunge", schmerzen: true, symptomValue: "Zungenbrennen: Missempfindungen oder brennender Schmerz auf der Zungenoberfläche ohne sichtbare Verletzung (z.B. bei Vitaminmangel).", snomedCode: "30731004" }
+                        { symptomName: "Chronisch brennende Zunge", schmerzen: true, symptomValue: "Zungenbrennen: Missempfindungen oder brennender Schmerz auf der Zungenoberfläche ohne sichtbare Verletzung (z.B. bei Vitaminmangel).", snomedCode: "30731004" },
                         { symptomName: "Chronisch gerötete  Zunge", schmerzen: false, symptomValue: "Zungenröte: Rötung der Zunge.", snomedCode: "249386009" }
                     ]
             },
