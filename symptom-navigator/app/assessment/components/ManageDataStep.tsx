@@ -14,7 +14,7 @@ import {
   accessAiDataWithAccessCode,
   accessDataWithAccessCode,
   deleteDataOnAccessCode,
-} from "../actions/dbActions";
+} from "../../actions/dbActions";
 /* Type for the central page navigation. */
 import type { Step } from "../../types/assessment";
 /* Converts encoded database values into readable German labels. */

@@ -12,7 +12,7 @@ import assessmentStyles from "../Assessment.module.css";
 import homeStyles from "../../Home.module.css";
 
 /* Retrieves the access code associated with the saved case from the server. */
-import { getAccessCode } from "../actions/dbActions";
+import { getAccessCode } from "../../actions/dbActions";
 /* Generates downloadable TXT and PDF files in the browser. */
 import { downloadTxt, downloadPdf } from "../utils/exportUtils";
 
