@@ -6,5 +6,9 @@ export default defineConfig({
   workers: 1,
   use: {
     baseURL: 'http://localhost:3000',
-  },
+    video: {
+      mode: 'on',
+      size: { width: 1920, height: 1080 },
+    },
+  }
 });
