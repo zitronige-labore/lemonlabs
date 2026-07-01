@@ -4,7 +4,7 @@
 import { getSymptomList } from "../assessment/medicalLogic/SymptomLists"; // for snomed mapping
 import { Step, AdditionalData, BasisData, SymptomSelectionList, MedicationEntry } from "../types/assessment"; // needed type
 import { connectionPool } from "../dbs/db"; // for database queries
-import { getUserDataFromDB } from "./dbActions";
+import { getUserDataFromDB, getAccessCode } from "./dbActions";
 
 
 /**
@@ -72,7 +72,7 @@ export async function buildFhirBundle(caseId: string): Promise<any> {
 
 
   const fhirEntries: any[] = [];
-  const patientRef = "urn:uuid:patient-1";
+  const patientRef = `urn:uuid:accessCode:${getAccessCode(caseId)}`; // Unique reference for the patient resource
 
   // Patient anchor
   fhirEntries.push({
